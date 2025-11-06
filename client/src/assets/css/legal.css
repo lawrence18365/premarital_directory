@@ -1,0 +1,141 @@
+/* Legal/Policy pages styling - scoped to Privacy page */
+.about-page .container-narrow,
+.privacy-page .container-narrow { max-width: 900px; margin: 0 auto; }
+.privacy-page .page-header {
+  background: linear-gradient(135deg, var(--gray-25) 0%, var(--gray-50) 100%);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-10) var(--space-8);
+  margin: var(--space-8) 0 var(--space-8);
+  text-align: center;
+}
+
+.privacy-page .page-header h1 {
+  color: var(--primary);
+  font-family: var(--font-display);
+  margin-bottom: var(--space-2);
+}
+
+.privacy-page .page-header .lead {
+  color: var(--gray-600);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.privacy-page .content-section {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-10) var(--space-8);
+}
+
+.privacy-page .policy-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.privacy-page .policy-section + .policy-section {
+  margin-top: var(--space-8);
+}
+
+.privacy-page .policy-section h2 {
+  color: var(--charcoal);
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-3);
+}
+
+.privacy-page .policy-section p {
+  color: var(--gray-700);
+  line-height: 1.75;
+  margin-bottom: var(--space-3);
+}
+
+.privacy-page .policy-section ul {
+  padding-left: var(--space-6);
+  color: var(--gray-700);
+}
+
+.privacy-page .policy-section li {
+  margin: 0.25rem 0;
+}
+
+.privacy-page .contact-info {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.privacy-page .policy-footer {
+  border-top: 1px solid var(--gray-100);
+  color: var(--gray-600);
+  margin-top: var(--space-10);
+  padding-top: var(--space-4);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .privacy-page .page-header {
+    padding: var(--space-8) var(--space-6);
+  }
+  .privacy-page .content-section {
+    padding: var(--space-8) var(--space-6);
+  }
+}
+.about-page .page-header {
+  background: linear-gradient(135deg, var(--gray-25) 0%, var(--gray-50) 100%);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-10) var(--space-8);
+  margin: var(--space-8) 0 var(--space-8);
+  text-align: center;
+}
+.about-page .page-header h1 {
+  color: var(--primary);
+  font-family: var(--font-display);
+  margin-bottom: var(--space-2);
+}
+.about-page .page-header .lead {
+  color: var(--gray-600);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-page .content-section {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-10) var(--space-8);
+  margin-bottom: var(--space-12);
+}
+
+.about-page .content-section h2 { color: var(--charcoal); margin-bottom: var(--space-3); }
+.about-page .content-section h3 { color: var(--charcoal); margin-top: var(--space-6); margin-bottom: var(--space-2); }
+.about-page .content-section h4 { color: var(--primary); margin-bottom: var(--space-2); }
+.about-page .content-section h5 { color: var(--gray-700); margin-bottom: var(--space-2); }
+.about-page .content-section p { color: var(--gray-700); line-height: 1.75; }
+.about-page .content-section ul { color: var(--gray-700); line-height: 1.7; padding-left: var(--space-6); }
+
+.about-page .feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-4);
+}
+.about-page .mini-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.about-cta { text-align: center; margin: var(--space-12) 0; }
+.about-cta .lead { color: var(--gray-600); margin-bottom: var(--space-6); }
+.about-cta .cta-actions { display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap; }
+
+@media (max-width: 768px) {
+  .about-page .page-header { padding: var(--space-8) var(--space-6); }
+  .about-page .content-section { padding: var(--space-8) var(--space-6); }
+}

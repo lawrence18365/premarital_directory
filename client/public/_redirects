@@ -1,0 +1,21 @@
+# Domain redirects (301 Permanent) - Most specific first
+http://weddingcounselors.com/* https://www.weddingcounselors.com/:splat 301!
+https://weddingcounselors.com/* https://www.weddingcounselors.com/:splat 301!
+
+# Remove trailing slashes (301 Permanent) - except root
+/about/ /about 301!
+/contact/ /contact 301!
+/pricing/ /pricing 301!
+/features/ /features 301!
+/support/ /support 301!
+/guidelines/ /guidelines 301!
+/privacy/ /privacy 301!
+/terms/ /terms 301!
+/blog/ /blog 301!
+/states/ /states 301!
+
+# Handle blog post URLs specifically to prevent issues
+/blog/:slug/ /blog/:slug 301!
+
+# SPA fallback (200 OK)
+/* /index.html 200

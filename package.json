@@ -1,0 +1,17 @@
+{
+  "name": "premarital_directory",
+  "version": "1.0.0",
+  "description": "**A complete, turnkey online directory connecting couples with qualified premarital counseling professionals.**",
+  "main": "test_frontend_fetch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.55.0",
+    "dotenv": "^17.2.1",
+    "node-fetch": "^3.3.2"
+  }
+}

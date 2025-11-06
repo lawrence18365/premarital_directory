@@ -1,0 +1,61 @@
+/* Transparent navbar variant for immersive hero */
+.navbar--transparent {
+  background: transparent !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.navbar--transparent .navbar-brand { color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+
+.navbar--transparent .navbar-nav a,
+.navbar--transparent .navbar-nav a.active {
+  color: #ffffff;
+  position: relative;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.45);
+  color: #fff !important;
+}
+
+.navbar--transparent .navbar-nav a:hover { opacity: 1; }
+.navbar--transparent .navbar-nav a.active { opacity: 1; }
+
+.navbar--transparent .navbar-actions .btn.btn-outline {
+  color: #ffffff;
+  border-color: rgba(255,255,255,0.6);
+  background: transparent;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+}
+
+.navbar--transparent .navbar-actions .btn.btn-outline:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.9);
+}
+
+.navbar--transparent .mobile-menu-btn { background: transparent !important; border-color: rgba(255,255,255,0.5) !important; }
+
+.navbar--transparent .hamburger { background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+
+/* Minimal active indicator */
+.navbar--transparent .navbar-nav a.active:after {
+  display: block;
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -6px;
+  height: 2px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 9999px;
+}
+.navbar--transparent .navbar-actions .btn.btn-primary {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.9);
+}
+.navbar--transparent .navbar-actions .btn.btn-primary:hover { background: rgba(255,255,255,0.12); }

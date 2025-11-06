@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3DMVJVG5VF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-3DMVJVG5VF');
+    </script>
+    
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="description" content="Find qualified premarital counseling professionals - therapists, coaches, and clergy specializing in relationship preparation and marriage readiness." />
+    <meta name="keywords" content="premarital counseling, marriage counseling, relationship therapy, wedding preparation, couples therapy" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- Optimized Google Fonts -->
+    <script>window.__WC_START = performance.now && performance.now() || Date.now();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <title>Wedding Counselors - Find Premarital Counseling Near You</title>
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="author" content="Wedding Counselors" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <!-- Primary canonical for homepage -->
+    <link rel="canonical" href="https://www.weddingcounselors.com/" />
+    
+    <!-- Language and Geo Tags -->
+    <meta name="language" content="en-US" />
+    <meta name="geo.region" content="US" />
+    <meta name="geo.placename" content="United States" />
+    
+    <!-- Verification Tags -->
+    <meta name="google-site-verification" content="%REACT_APP_GOOGLE_SITE_VERIFICATION%" />
+    <meta name="msvalidate.01" content="%REACT_APP_BING_VERIFICATION%" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Premarital Counseling Directory" />
+    <meta property="og:description" content="Connect with qualified therapists, coaches, and clergy who specialize in helping couples build strong foundations for marriage." />
+    <meta property="og:url" content="https://www.weddingcounselors.com" />
+    <meta property="og:image" content="https://www.weddingcounselors.com/media/og-image.jpg" />
+    <meta property="og:site_name" content="Premarital Counseling Directory" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Premarital Counseling Directory" />
+    <meta name="twitter:description" content="Find qualified premarital counseling professionals to help build strong foundations for marriage." />
+    
+    <style>
+      /* Critical CSS for font loading */
+      html {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      }
+      
+      /* Prevent flash of unstyled content */
+      body {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      body.loaded {
+        opacity: 1;
+      }
+
+      /* Minimal inline preloader (before React mounts) */
+      #wc-preloader {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(120% 120% at 50% 10%, #f9f8f6, #ffffff 45%, #f9f8f6 90%);
+        transition: opacity .25s ease, visibility .25s ease;
+      }
+      #wc-preloader.hidden { opacity: 0; visibility: hidden; }
+      #wc-preloader .inner { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 24px; }
+      #wc-preloader .ring { position: relative; width: 72px; height: 72px; border-radius: 50%; overflow: hidden; }
+      #wc-preloader .ring::before { content: ""; position: absolute; inset: -2px; border-radius: 50%; background: conic-gradient(from 0deg, #0e5e5e 0%, #a5c9b8 40%, #ff6b6b 55%, #0e5e5e 100%); animation: arc 1.3s cubic-bezier(.45,.05,.2,.95) infinite; filter: saturate(108%); }
+      #wc-preloader .spark { position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; background: radial-gradient(circle at 30% 30%, #ff6b6b, #ff8a8a 60%, rgba(255,107,107,0.1) 100%); border-radius: 50%; transform-origin: center; box-shadow: 0 0 0 1px rgba(255,107,107,0.25), 0 4px 10px rgba(255,107,107,0.25); animation: spark 1.3s cubic-bezier(.45,.05,.2,.95) infinite; }
+      #wc-preloader .brand { color: #0e5e5e; font-weight: 600; font-family: 'Cormorant Garamond', Georgia, serif; letter-spacing: .01em; }
+      #wc-preloader .tag { color: #64748b; font-weight: 500; font-size: 14px; }
+      @keyframes arc { 0%{transform:rotate(0)} 50%{transform:rotate(180deg)} 100%{transform:rotate(360deg)} }
+      @keyframes spark { 0%{ transform: translate(-50%,-50%) rotate(0deg) translateX(34px); opacity: 1;} 47%{opacity:1} 50%{opacity:.95} 75%{opacity:.98} 100%{ transform: translate(-50%,-50%) rotate(360deg) translateX(34px); opacity:1; } }
+      @media (prefers-reduced-motion: reduce) { #wc-preloader .ring::before, #wc-preloader .spark { animation: none !important; } }
+    </style>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="wc-preloader" aria-hidden="true">
+      <div class="inner">
+        <div class="ring"><span class="spark"></span></div>
+        <div class="brand">Wedding Counselors</div>
+        <div class="tag">Preparing something wonderful…</div>
+      </div>
+    </div>
+    <div id="root"></div>
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Wedding Counselors",
+        "alternateName": "Premarital Counseling Directory",
+        "url": "https://www.weddingcounselors.com/",
+        "description": "Find qualified premarital counselors, therapists, and coaches near you. Complete directory of wedding counseling professionals.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Wedding Counselors",
+          "url": "https://www.weddingcounselors.com/"
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://www.weddingcounselors.com/professionals?search={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Wedding Counselors",
+        "url": "https://www.weddingcounselors.com/",
+        "logo": "https://www.weddingcounselors.com/logo192.png",
+        "contactPoint": [{
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "email": "hello@weddingcounselors.com"
+        }]
+      }
+    </script>
+        
+    
+    <script>
+      // Prevent flash of unstyled content + ensure preloader is visible for a minimum time
+      window.addEventListener('load', function() {
+        document.body.classList.add('loaded');
+        var p = document.getElementById('wc-preloader');
+        var start = window.__WC_START || (performance.now ? performance.now() : Date.now());
+        var now = performance.now ? performance.now() : Date.now();
+        var elapsed = now - start;
+        var minVisible = 400; // ms
+        var delay = Math.max(0, minVisible - elapsed);
+        if (p) {
+          setTimeout(function(){
+            p.classList.add('hidden');
+            setTimeout(function(){ p.remove && p.remove(); }, 350);
+          }, delay);
+        }
+      });
+      
+      // Google Analytics 4 Setup
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      
+      // GA4 Configuration - will be populated from environment variables
+      const ga4Id = '%REACT_APP_GA4_MEASUREMENT_ID%';
+      if (ga4Id && ga4Id !== '%REACT_APP_GA4_MEASUREMENT_ID%') {
+        gtag('config', ga4Id);
+      }
+    </script>
+  </body>
+</html>

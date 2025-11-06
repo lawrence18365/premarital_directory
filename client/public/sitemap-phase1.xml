@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- PHASE 1: Core Pages Only -->
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://www.weddingcounselors.com/</loc>
+    <lastmod>2025-08-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Core Information Pages -->
+  <url>
+    <loc>https://www.weddingcounselors.com/about</loc>
+    <lastmod>2025-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.weddingcounselors.com/contact</loc>
+    <lastmod>2025-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.weddingcounselors.com/pricing</loc>
+    <lastmod>2025-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.weddingcounselors.com/features</loc>
+    <lastmod>2025-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.weddingcounselors.com/guidelines</loc>
+    <lastmod>2025-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Legal Pages -->
+  <url>
+    <loc>https://www.weddingcounselors.com/privacy</loc>
+    <lastmod>2025-08-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.weddingcounselors.com/terms</loc>
+    <lastmod>2025-08-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <!-- Professional Pages -->
+  <url>
+    <loc>https://www.weddingcounselors.com/claim-profile</loc>
+    <lastmod>2025-08-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Blog Index -->
+  <url>
+    <loc>https://www.weddingcounselors.com/blog</loc>
+    <lastmod>2025-08-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- HOLDING BACK FOR PHASE 2+ -->
+  <!-- /states (main directory index) -->
+  <!-- /professionals/[state] (all 50 state pages) -->  
+  <!-- /professionals/[state]/[city] (all city pages) -->
+  <!-- Individual profile pages -->
+</urlset>

@@ -1,0 +1,21 @@
+# Dependencies
+/node_modules
+/client/node_modules
+
+# Build artifacts
+/client/build
+
+# Supabase
+/supabase/.temp
+.env
+.env.local
+
+# OS-specific
+.DS_Store
+.vercel
+
+# Exclude everything outside this directory
+../
+../../
+Desktop/
+Users/

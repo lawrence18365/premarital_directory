@@ -1,0 +1,385 @@
+import React, { useState, useEffect } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import ProfileList from '../components/profiles/ProfileList'
+import SEOHelmet from '../components/analytics/SEOHelmet'
+import '../assets/css/hero-modern.css'
+import '../assets/css/hero-immersive.css'
+import '../assets/css/trust-cards.css'
+import StateDropdown from '../components/common/StateDropdown'
+import { normalizeStateAbbr } from '../lib/utils'
+import { supabase, profileOperations } from '../lib/supabaseClient'
+import FAQ, { premaritalCounselingFAQs } from '../components/common/FAQ'
+import '../assets/css/blog.css'
+
+// Import images
+import trustMatchImg from '../assets/images/Cute_couple_woman_side_profile.webp'
+import trustFoundationImg from '../assets/images/premarital_couple_over_coffee.webp'
+import trustJourneyImg from '../assets/images/couple_walking_in_Central_Park.webp'
+import trustSecureImg from '../assets/images/phone_and_lock.webp'
+import heroBg from '../assets/images/oil_painting_premarital_couple_in_distress.webp'
+
+const HomePage = () => {
+  const [profiles, setProfiles] = useState([])
+  const [filteredProfiles, setFilteredProfiles] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [latestPosts, setLatestPosts] = useState([]);
+  const [filters, setFilters] = useState({
+    profession: '',
+    city: '',
+    state: '',
+    specialty: ''
+  })
+  
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  // Set initial profession based on route
+  useEffect(() => {
+    const path = location.pathname
+    let initialProfession = ''
+    
+    if (path === '/therapists') {
+      initialProfession = 'Therapist'
+    } else if (path === '/coaches') {
+      initialProfession = 'Coach'
+    } else if (path === '/clergy') {
+      initialProfession = 'Clergy'
+    }
+    
+    if (initialProfession) {
+      setFilters(prev => ({ ...prev, profession: initialProfession }))
+    }
+  }, [location.pathname])
+
+  // Load profiles on component mount
+  useEffect(() => {
+    loadProfiles()
+  }, [])
+
+  useEffect(() => {
+    const fetchLatestPosts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('posts')
+          .select('*')
+          .eq('status', 'published')
+          .order('date', { ascending: false })
+          .limit(4);
+
+        if (!error) {
+          setLatestPosts(data);
+        }
+      } catch (error) {
+        // Silent error handling for production
+      }
+    };
+
+    fetchLatestPosts();
+  }, []);
+
+  // Apply filters whenever profiles or filters change
+  useEffect(() => {
+    const applyFilters = () => {
+      let filtered = [...profiles]
+
+      // Text search
+      if (searchTerm.trim()) {
+        const term = searchTerm.toLowerCase()
+        filtered = filtered.filter(profile => 
+          profile.full_name.toLowerCase().includes(term) ||
+          profile.bio?.toLowerCase().includes(term) ||
+          profile.city?.toLowerCase().includes(term) ||
+          profile.state_province?.toLowerCase().includes(term) ||
+          profile.specialties?.some(specialty => 
+            specialty.toLowerCase().includes(term)
+          )
+        )
+      }
+
+      // Profession filter
+      if (filters.profession) {
+        filtered = filtered.filter(profile => 
+          profile.profession === filters.profession
+        )
+      }
+
+      // Location filters
+      if (filters.city) {
+        filtered = filtered.filter(profile => 
+          profile.city?.toLowerCase().includes(filters.city.toLowerCase())
+        )
+      }
+
+      if (filters.state) {
+        const filterAbbr = normalizeStateAbbr(filters.state)
+        filtered = filtered.filter(profile => {
+          const st = profile.state_province || ''
+          const stAbbr = normalizeStateAbbr(st)
+          return stAbbr === filterAbbr || st.toLowerCase().includes(filters.state.toLowerCase())
+        })
+      }
+
+      // Specialty filter
+      if (filters.specialty) {
+        filtered = filtered.filter(profile => 
+          profile.specialties?.some(specialty => 
+            specialty.toLowerCase().includes(filters.specialty.toLowerCase())
+          )
+        )
+      }
+
+      setFilteredProfiles(filtered)
+    }
+
+    applyFilters()
+  }, [profiles, searchTerm, filters])
+
+  const loadProfiles = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const { data, error } = await profileOperations.getProfiles()
+      
+      if (error) {
+        setError(error.message)
+        console.log('HomePage - Supabase error:', error)
+      } else {
+        console.log('HomePage - Loaded profiles count:', (data || []).length)
+        console.log('HomePage - First profile sample:', data?.[0])
+        setProfiles(data || [])
+      }
+    } catch (err) {
+      setError('Failed to load profiles')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }))
+  }
+
+  const handleHeroSubmit = (e) => {
+    e.preventDefault()
+    const params = new URLSearchParams()
+    if (searchTerm.trim()) params.set('search', searchTerm.trim())
+    if (filters.state) params.set('state', filters.state)
+    if (filters.profession) params.set('profession', filters.profession)
+    if (filters.state) {
+      const stateSlug = (filters.state || '').toLowerCase().replace(/\s+/g, '-')
+      navigate(`/professionals/${stateSlug}${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`)
+    } else {
+      navigate('/states')
+    }
+  }
+
+  return (
+    <>
+      <SEOHelmet 
+        title="Find Premarital Counselors Near You"
+        description="Connect with qualified premarital counselors, therapists, and coaches. Find marriage preparation professionals in your area to build a strong foundation for your relationship."
+        url="/"
+        keywords="premarital counseling, marriage counseling, wedding counselors, relationship therapy, couples therapy, marriage preparation"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Wedding Counselors",
+          "url": "https://www.weddingcounselors.com",
+          "description": "Find qualified premarital counselors, therapists, and coaches near you.",
+          "potentialAction": {
+            "@type": "SearchAction",
+          "target": "https://www.weddingcounselors.com/states?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }}
+      />
+      
+      <div className="homepage">
+        {/* Above-the-fold Hero: premium full-bleed background */}
+        <section className="hero-immersive">
+          {/* High-priority background image for better LCP */}
+          <img
+            src={heroBg}
+            alt=""
+            className="hero-bg"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            aria-hidden="true"
+          />
+          <div className="hero-layers" aria-hidden="true" />
+          <div className="container">
+            <div className="hero-immersive-content">
+              <h1 className="hero-title">Find Trusted Premarital Counselors Near You</h1>
+              <p className="hero-subtitle">Therapists, coaches, and clergy who help you start strong.</p>
+
+              {/* Minimal, focused above-the-fold */}
+
+              <form 
+                className="hero-form hero-form--minimal"
+                onSubmit={handleHeroSubmit}
+              >
+                <div className="hero-input-group">
+                  <input
+                    type="text"
+                    className="form-control hero-input"
+                    placeholder="Search by name or specialty"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    aria-label="Search by name or specialty"
+                  />
+                  <StateDropdown 
+                    value={filters.state}
+                    onChange={(val) => handleFilterChange('state', val)}
+                    className="form-control hero-input"
+                    placeholderLabel="All States"
+                  />
+                  <button type="submit" className="btn btn-primary hero-cta hero-cta--minimal" aria-label="Find counselors">
+                    Find Counselors
+                  </button>
+                </div>
+              </form>
+              <div className="hero-sub-cta">
+                <Link to="/states">Browse all states</Link>
+              </div>
+
+              {/* Trust row removed to keep hero calm */}
+            </div>
+          </div>
+        </section>
+
+        {/* Trust Indicators */}
+        <section className="trust-cards">
+          <div className="container">
+            <h2 className="text-center">Real Couples, Real Results</h2>
+            <div className="trust-grid">
+              <div className="trust-card">
+                <div className="trust-media"><img src={trustMatchImg} alt="Smiling couple outdoors after finding a counselor through the directory." className="trust-image" /></div>
+                <h3 className="trust-title">Find Your Perfect Match</h3>
+                <p className="trust-description">Our diverse network of counselors ensures you'll find someone who understands you.</p>
+              </div>
+
+              <div className="trust-card">
+                <div className="trust-media"><img src={trustFoundationImg} alt="A couple feeling confident and connected after premarital counseling, hands together over coffee." className="trust-image" /></div>
+                <h3 className="trust-title">Build a Stronger Foundation</h3>
+                <p className="trust-description">Invest in your relationship's future with expert guidance.</p>
+              </div>
+
+              <div className="trust-card">
+                <div className="trust-media"><img src={trustJourneyImg} alt="A couple walking hand-in-hand in the park, ready to start their journey together." className="trust-image" /></div>
+                <h3 className="trust-title">Start Your Journey Together</h3>
+                <p className="trust-description">Take the first step towards a long and happy marriage.</p>
+              </div>
+
+              <div className="trust-card">
+                <div className="trust-media"><img src={trustSecureImg} alt="Secure matching: privacy-first platform symbolized by a phone and lock still life." className="trust-image" /></div>
+                <h3 className="trust-title">A Platform You Can Trust</h3>
+                <p className="trust-description">Your privacy and security are our top priorities.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Featured Professionals */}
+        <section className="profiles-section" style={{ background: 'white' }}>
+          <div className="container">
+            <div className="section-header text-center">
+              <h2 className="font-display">Featured Premarital Counselors</h2>
+              <p className="lead">Connect with top-rated premarital counseling experts near you</p>
+            </div>
+          </div>
+          
+          <ProfileList 
+            profiles={filteredProfiles.slice(0, 6)}
+            loading={loading}
+            error={error}
+            showViewAll={true}
+          />
+        </section>
+
+        {/* Latest Blog Posts */}
+        {latestPosts.length > 0 && (
+          <section className="latest-posts-section py-5 bg-light">
+            <div className="container">
+              <div className="section-header text-center">
+                <h2 className="font-display">Latest From our Blog</h2>
+                <p className="lead">Explore our latest articles on marriage and relationship guidance</p>
+              </div>
+              <div className="blog-grid">
+                {latestPosts.map((post) => (
+                  <article key={post.id} className="blog-card">
+                    <div className="blog-card-header">
+                      <span className="blog-category">{post.category}</span>
+                      <span className="blog-date">{new Date(post.date).toLocaleDateString()}</span>
+                    </div>
+                    <h2 className="blog-title">
+                      <Link to={`/blog/${post.slug}`}>{post.title}</Link>
+                    </h2>
+                    <p className="blog-excerpt">{post.excerpt}</p>
+                    <div className="blog-card-footer">
+                      <span className="read-time">{post.read_time}</span>
+                      <Link to={`/blog/${post.slug}`} className="read-more">
+                        Read Article →
+                      </Link>
+                    </div>
+                  </article>
+                ))}
+              </div>
+              <div className="text-center mt-5">
+                <Link to="/blog" className="btn btn-secondary">View All Posts</Link>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* FAQ Section */}
+        <FAQ 
+          faqs={premaritalCounselingFAQs}
+          title="Common Questions About Premarital Counseling"
+          description="Get answers to the most frequently asked questions about premarital counseling and finding the right counselor for your relationship."
+          className="homepage-faq"
+        />
+
+        {/* Call to Action for Professionals */}
+        <section className="pros-cta">
+          <div className="container">
+            <div className="pros-card">
+              <div className="pros-card-inner">
+                <p className="eyebrow">For Professionals</p>
+                <h2 className="section-title">Ready to Grow Your Practice?</h2>
+                <p className="section-subtitle">
+                  Join hundreds of therapists, coaches, and clergy connecting with couples actively seeking premarital counseling.
+                </p>
+
+                <div className="benefit-chips">
+                  <div className="chip"><span className="chip-icon"><i className="fa fa-users" aria-hidden="true"></i></span>Qualified leads</div>
+                  <div className="chip"><span className="chip-icon"><i className="fa fa-chart-line" aria-hidden="true"></i></span>Grow your practice</div>
+                  <div className="chip"><span className="chip-icon"><i className="fa fa-shield-alt" aria-hidden="true"></i></span>Verified credibility</div>
+                </div>
+
+                <div className="cta-actions">
+                  <Link to="/professional/signup" className="btn btn-cta-primary">
+                    <i className="fa fa-plus-circle mr-2" aria-hidden="true"></i>
+                    Join Directory Now
+                  </Link>
+                  <Link to="/pricing" className="btn btn-cta-ghost">
+                    View Pricing
+                  </Link>
+                </div>
+
+                <p className="cta-note">Free basic listing • No setup fees • Start connecting today</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </>
+  )
+}
+
+export default HomePage
