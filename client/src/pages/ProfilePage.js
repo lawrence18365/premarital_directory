@@ -135,26 +135,27 @@ const ProfilePage = () => {
     )
   }
 
-  // Generate breadcrumbs
-  const breadcrumbItems = state && profile
+  // Generate breadcrumbs - handle missing state gracefully
+  const stateName = profile?.state_province || (state ? state.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : null)
+  const breadcrumbItems = stateName && profile
     ? generateBreadcrumbs.profilePage(
-        profile.state_province || state.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        stateName,
         profile.full_name,
-        `/professionals/${state}`,
+        `/professionals/${state || generateSlug(stateName)}`,
         null
       )
     : generateBreadcrumbs.profilePage(
-        profile?.state_province || 'Unknown State',
+        'All Locations',
         profile?.full_name || 'Profile',
-        null,
+        '/states',
         null
       )
 
   return (
     <>
-      <SEOHelmet 
-        title={`${profile?.full_name} - ${profile?.profession} in ${profile?.city}, ${profile?.state_province}`}
-        description={`Connect with ${profile?.full_name}, a qualified ${profile?.profession} in ${profile?.city}, ${profile?.state_province}. ${profile?.bio?.substring(0, 150)}...`}
+      <SEOHelmet
+        title={`${profile?.full_name} - ${profile?.profession}${profile?.city && stateName ? ` in ${profile.city}, ${stateName}` : ''} | Premarital Counseling`}
+        description={`Connect with ${profile?.full_name}, a qualified ${profile?.profession}${profile?.city && stateName ? ` in ${profile.city}, ${stateName}` : ''}. ${profile?.bio ? profile.bio.substring(0, 150) + '...' : 'Specializing in premarital and marriage counseling.'}`}
         url={window.location.pathname}
         type="profile"
         structuredData={profile ? generateProfessionalStructuredData(profile) : null}
@@ -226,13 +227,13 @@ const ProfilePage = () => {
                     Get in Touch
                   </button>
                   {profile.website && (
-                    <a 
-                      href={profile.website} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
+                    <a
+                      href={profile.website}
+                      target="_blank"
+                      rel="nofollow noopener noreferrer"
                       className="btn btn-secondary btn-large"
                     >
-                      Visit Website
+                      Visit External Profile
                     </a>
                   )}
                 </div>
@@ -364,47 +365,17 @@ const ProfilePage = () => {
 
             {/* Right Column - Sidebar */}
             <div className="profile-sidebar-content">
-              {/* Contact Card */}
+              {/* Contact Card - FOR COUPLES */}
               <div id="contact-section" className="sidebar-card contact-card">
-                {profile.is_sponsored ? (
-                  <LeadContactForm 
-                    profileId={profile.id}
-                    professionalName={profile.full_name}
-                    onSuccess={handleLeadSuccess}
-                  />
-                ) : (
-                  <div className="contact-paywall">
-                    <div className="paywall-icon">
-                      <i className="fa fa-lock fa-2x"></i>
-                    </div>
-                    <h3>Contact {profile.full_name}</h3>
-                    <p>Unlock direct contact to connect with this counselor</p>
-                    <div className="paywall-benefits">
-                      <div className="benefit">
-                        <i className="fa fa-phone"></i>
-                        <span>Direct phone contact</span>
-                      </div>
-                      <div className="benefit">
-                        <i className="fa fa-envelope"></i>
-                        <span>Email communication</span>
-                      </div>
-                      <div className="benefit">
-                        <i className="fa fa-calendar"></i>
-                        <span>Schedule consultation</span>
-                      </div>
-                    </div>
-                    <Link 
-                      to="/professional/subscription" 
-                      className="btn btn-primary btn-full"
-                    >
-                      <i className="fa fa-unlock mr-2"></i>
-                      Unlock Contact (Featured Plan)
-                    </Link>
-                    <p className="paywall-note">
-                      Upgrade to Featured plan to unlock direct contact for all professionals
-                    </p>
-                  </div>
-                )}
+                <h3 className="card-title">Contact this counselor</h3>
+                <p style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+                  Looking for premarital or marriage counseling in {profile.city || 'your area'}?
+                </p>
+                <LeadContactForm
+                  profileId={profile.id}
+                  professionalName={profile.full_name}
+                  onSuccess={handleLeadSuccess}
+                />
               </div>
 
               {/* Contact Info Card */}
@@ -451,9 +422,9 @@ const ProfilePage = () => {
                         </svg>
                       </div>
                       <div className="contact-info-content">
-                        <div className="contact-info-label">Website</div>
-                        <a href={profile.website} target="_blank" rel="noopener noreferrer" className="contact-info-value">
-                          {getDisplayUrl(profile.website)}
+                        <div className="contact-info-label">External Profile</div>
+                        <a href={profile.website} target="_blank" rel="nofollow noopener noreferrer" className="contact-info-value">
+                          Visit external profile
                         </a>
                       </div>
                     </div>
@@ -483,16 +454,16 @@ const ProfilePage = () => {
                 <h3 className="card-title">Quick Actions</h3>
                 <div className="quick-actions-list">
                   {profile.website && (
-                    <a 
-                      href={profile.website} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
+                    <a
+                      href={profile.website}
+                      target="_blank"
+                      rel="nofollow noopener noreferrer"
                       className="quick-action-btn"
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                       </svg>
-                      Visit Website
+                      Visit External Profile
                     </a>
                   )}
                   
@@ -517,6 +488,37 @@ const ProfilePage = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Claim Profile Section - FOR THE COUNSELOR */}
+      <section className="claim-profile-section" style={{ background: 'var(--bg-secondary)', padding: 'var(--space-16) 0' }}>
+        <div className="container">
+          <div className="claim-profile-card" style={{
+            background: 'white',
+            padding: 'var(--space-12)',
+            borderRadius: 'var(--radius-lg)',
+            maxWidth: '800px',
+            margin: '0 auto',
+            textAlign: 'center'
+          }}>
+            <h2 style={{ marginBottom: 'var(--space-4)' }}>Is this your profile?</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-6)' }}>
+              This listing was added so couples can find premarital and marriage counseling in {profile.city || 'your area'}.
+              {!profile.is_claimed && " It hasn't been claimed yet."}
+            </p>
+            <Link
+              to={`/claim-profile/${profile.slug || profile.id}`}
+              className="btn btn-primary btn-large"
+              style={{ marginBottom: 'var(--space-4)' }}
+            >
+              {profile.is_claimed ? 'Update this listing' : 'Claim this listing'}
+            </Link>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)' }}>
+              Free to claim. Verified counselors can update their info, add specialties, and receive lead notifications.
+              {!profile.is_claimed && ' You can also request removal if you prefer.'}
+            </p>
           </div>
         </div>
       </section>

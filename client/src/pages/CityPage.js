@@ -10,6 +10,7 @@ import { profileOperations } from '../lib/supabaseClient';
 import { STATE_CONFIG, CITY_CONFIG } from '../data/locationConfig';
 import CityContentGenerator from '../lib/cityContentGenerator';
 import LocalContent from '../components/common/LocalContent';
+import LeadContactForm from '../components/leads/LeadContactForm';
 import '../assets/css/state-page.css';
 
 const CityPage = () => {
@@ -110,9 +111,9 @@ const CityPage = () => {
 
   return (
     <div className="city-page">
-      <SEOHelmet 
-        title={cityContent?.title || `Premarital Counseling in ${cityName}, ${stateName} | Wedding Counselors`}
-        description={cityContent?.description || `Find the best premarital counselors in ${cityName}, ${stateName}. ${profiles.length}+ licensed therapists, coaches, and clergy specializing in marriage preparation and relationship counseling.`}
+      <SEOHelmet
+        title={cityContent?.title || `Marriage & Premarital Counseling in ${cityName}, ${stateName} | Wedding Counselors`}
+        description={cityContent?.description || `Find marriage and premarital counseling in ${cityName}, ${stateName}. ${profiles.length > 0 ? profiles.length + ' verified' : 'Qualified'} counselors and therapists specializing in couples therapy and marriage preparation.`}
         keywords={`premarital counseling ${cityName}, marriage counseling ${cityName} ${stateName}, couples therapy ${cityName}, wedding counselors ${cityName}, relationship therapy ${cityName}`}
         structuredData={structuredData}
         noindex={true}
@@ -123,24 +124,47 @@ const CityPage = () => {
         <div className="container">
           <Breadcrumbs items={breadcrumbData} variant="on-hero" />
           <div className="state-header-content">
-            <h1>Premarital Counseling in {cityName}, {stateName}</h1>
+            <h1>Marriage & Premarital Counseling in {cityName}, {stateName}</h1>
             <p className="lead">
-              Connect with qualified therapists, coaches, and clergy in {cityName} who specialize in marriage preparation and relationship counseling.
+              {profiles.length > 0 ? `${profiles.length} verified` : 'Find qualified'} counselors, therapists, and clergy serving couples in {cityName}.
             </p>
-            
+
+
             {/* City Stats */}
-            <div className="location-stats">
-              <div className="stat">
-                <span className="stat-number">{profiles.length}</span>
-                <span className="stat-label">Licensed Professionals</span>
+            {profiles.length > 0 && (
+              <div className="location-stats">
+                <div className="stat">
+                  <span className="stat-number">{profiles.length}</span>
+                  <span className="stat-label">Licensed Professionals</span>
+                </div>
+                <div className="stat">
+                  <span className="stat-number">{profiles.filter(p => p.profession?.includes('Therapist')).length}</span>
+                  <span className="stat-label">Licensed Therapists</span>
+                </div>
+                <div className="stat">
+                  <span className="stat-number">{profiles.filter(p => p.profession?.includes('Coach')).length}</span>
+                  <span className="stat-label">Certified Coaches</span>
+                </div>
               </div>
-              <div className="stat">
-                <span className="stat-number">{profiles.filter(p => p.profession?.includes('Therapist')).length}</span>
-                <span className="stat-label">Licensed Therapists</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">{profiles.filter(p => p.profession?.includes('Coach')).length}</span>
-                <span className="stat-label">Certified Coaches</span>
+            )}
+
+            {/* Quick CTA for Couples */}
+            <div className="state-cta-section" style={{ marginTop: 'var(--space-8)' }}>
+              <div className="cta-buttons">
+                <button
+                  onClick={() => document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' })}
+                  className="btn btn-primary btn-large"
+                >
+                  <i className="fa fa-heart mr-2"></i>
+                  Get Matched With A Counselor
+                </button>
+                <Link
+                  to="/professional/signup"
+                  className="btn btn-secondary btn-large"
+                >
+                  <i className="fa fa-plus-circle mr-2"></i>
+                  List Your Practice
+                </Link>
               </div>
             </div>
           </div>
@@ -296,7 +320,23 @@ const CityPage = () => {
               </div>
             )}
 
-            {/* CTA Section */}
+            {/* Contact Form for Couples */}
+            <div id="contact-form" className="sidebar-section cta-section" style={{ background: 'var(--bg-primary)', padding: 'var(--space-8)', borderRadius: 'var(--radius-md)' }}>
+              <h3>Get Matched With A Counselor</h3>
+              <p>Tell us about your needs and we'll connect you with counselors in {cityName}.</p>
+              <LeadContactForm
+                profileId={null}
+                professionalName={`Counselors in ${cityName}`}
+                stateName={stateName}
+                isStateMatching={true}
+                onSuccess={() => {
+                  // Could show success message
+                  alert('Thank you! We\'ll connect you with counselors in ' + cityName + '.')
+                }}
+              />
+            </div>
+
+            {/* CTA Section for Professionals */}
             <div className="sidebar-section cta-section">
               <h3>Join Our Directory</h3>
               <p>Are you a counselor, therapist, or coach in {cityName}?</p>
