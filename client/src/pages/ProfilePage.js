@@ -37,16 +37,23 @@ const ProfilePage = () => {
     }
   }, [profile])
 
-  // Redirect old URL to nested canonical when state known
+  // Redirect old UUID URLs to new slug-based URLs (SEO critical!)
   useEffect(() => {
     if (profile && !state) {
+      // We're on /profile/{uuid} - redirect to proper nested URL
       const stateSlug = profile.state_province ? generateSlug(profile.state_province) : null
+      const citySlug = profile.city ? generateSlug(profile.city) : null
       const profileSlug = profile.slug || generateSlug(profile.full_name)
-      if (stateSlug && profileSlug) {
+
+      if (stateSlug && citySlug && profileSlug) {
+        // Redirect to proper nested URL: /professionals/state/city/name-slug
+        navigate(`/professionals/${stateSlug}/${citySlug}/${profileSlug}`, { replace: true })
+      } else if (stateSlug && profileSlug) {
+        // Fallback: redirect to /professionals/state/name-slug
         navigate(`/professionals/${stateSlug}/${profileSlug}`, { replace: true })
       }
     }
-  }, [profile, state, navigate])
+  }, [profile, state, city, navigate])
 
   // Track profile view
   useEffect(() => {
