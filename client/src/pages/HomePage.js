@@ -180,11 +180,11 @@ const HomePage = () => {
 
   return (
     <>
-      <SEOHelmet 
-        title="Find Premarital Counselors Near You"
-        description="Connect with qualified premarital counselors, therapists, and coaches. Find marriage preparation professionals in your area to build a strong foundation for your relationship."
+      <SEOHelmet
+        title="Find Premarital Counselors Near You | Pre-Marriage Therapy for Engaged Couples"
+        description="Connect with qualified premarital counselors helping engaged couples prepare for marriage. Find pre-marriage therapy professionals in your area to build a strong foundation before your wedding."
         url="/"
-        keywords="premarital counseling, marriage counseling, wedding counselors, relationship therapy, couples therapy, marriage preparation"
+        keywords="premarital counseling, pre-marriage therapy, engaged couples counseling, marriage preparation, premarital therapy, pre-wedding counseling, relationship preparation"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "WebSite",
@@ -215,8 +215,8 @@ const HomePage = () => {
           <div className="hero-layers" aria-hidden="true" />
           <div className="container">
             <div className="hero-immersive-content">
-              <h1 className="hero-title">Find Trusted Premarital Counselors Near You</h1>
-              <p className="hero-subtitle">Therapists, coaches, and clergy who help you start strong.</p>
+              <h1 className="hero-title">Find Premarital Counselors Near You</h1>
+              <p className="hero-subtitle">Pre-marriage therapy for engaged couples. Prepare for a strong, lasting marriage.</p>
 
               {/* Minimal, focused above-the-fold */}
 
@@ -256,24 +256,24 @@ const HomePage = () => {
         {/* Trust Indicators */}
         <section className="trust-cards">
           <div className="container">
-            <h2 className="text-center">Real Couples, Real Results</h2>
+            <h2 className="text-center">Helping Engaged Couples Prepare for Marriage</h2>
             <div className="trust-grid">
               <div className="trust-card">
-                <div className="trust-media"><img src={trustMatchImg} alt="Smiling couple outdoors after finding a counselor through the directory." className="trust-image" /></div>
-                <h3 className="trust-title">Find Your Perfect Match</h3>
-                <p className="trust-description">Our diverse network of counselors ensures you'll find someone who understands you.</p>
+                <div className="trust-media"><img src={trustMatchImg} alt="Smiling engaged couple after finding a premarital counselor through the directory." className="trust-image" /></div>
+                <h3 className="trust-title">Find Your Premarital Counselor</h3>
+                <p className="trust-description">Connect with experienced counselors who specialize in pre-marriage preparation.</p>
               </div>
 
               <div className="trust-card">
-                <div className="trust-media"><img src={trustFoundationImg} alt="A couple feeling confident and connected after premarital counseling, hands together over coffee." className="trust-image" /></div>
-                <h3 className="trust-title">Build a Stronger Foundation</h3>
-                <p className="trust-description">Invest in your relationship's future with expert guidance.</p>
+                <div className="trust-media"><img src={trustFoundationImg} alt="Engaged couple feeling confident after premarital counseling, hands together over coffee." className="trust-image" /></div>
+                <h3 className="trust-title">Prepare for a Strong Marriage</h3>
+                <p className="trust-description">Build a solid foundation before your wedding with expert premarital counseling.</p>
               </div>
 
               <div className="trust-card">
-                <div className="trust-media"><img src={trustJourneyImg} alt="A couple walking hand-in-hand in the park, ready to start their journey together." className="trust-image" /></div>
-                <h3 className="trust-title">Start Your Journey Together</h3>
-                <p className="trust-description">Take the first step towards a long and happy marriage.</p>
+                <div className="trust-media"><img src={trustJourneyImg} alt="Engaged couple walking hand-in-hand, ready to prepare for marriage together." className="trust-image" /></div>
+                <h3 className="trust-title">Start Your Marriage Right</h3>
+                <p className="trust-description">Address important topics before you say "I do" with pre-marriage therapy.</p>
               </div>
 
               <div className="trust-card">
@@ -290,7 +290,7 @@ const HomePage = () => {
           <div className="container">
             <div className="section-header text-center">
               <h2 className="font-display">Featured Premarital Counselors</h2>
-              <p className="lead">Connect with top-rated premarital counseling experts near you</p>
+              <p className="lead">Connect with licensed premarital counselors who help engaged couples prepare for marriage</p>
             </div>
           </div>
           
@@ -350,10 +350,10 @@ const HomePage = () => {
           <div className="container">
             <div className="pros-card">
               <div className="pros-card-inner">
-                <p className="eyebrow">For Professionals</p>
-                <h2 className="section-title">Ready to Grow Your Practice?</h2>
+                <p className="eyebrow">For Premarital Counselors</p>
+                <h2 className="section-title">Connect With Engaged Couples</h2>
                 <p className="section-subtitle">
-                  Join hundreds of therapists, coaches, and clergy connecting with couples actively seeking premarital counseling.
+                  Join premarital counselors, therapists, and coaches connecting with engaged couples actively seeking pre-marriage therapy.
                 </p>
 
                 <div className="benefit-chips">

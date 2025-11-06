@@ -155,7 +155,7 @@ const ProfilePage = () => {
     <>
       <SEOHelmet
         title={`${profile?.full_name} - ${profile?.profession}${profile?.city && stateName ? ` in ${profile.city}, ${stateName}` : ''} | Premarital Counseling`}
-        description={`Connect with ${profile?.full_name}, a qualified ${profile?.profession}${profile?.city && stateName ? ` in ${profile.city}, ${stateName}` : ''}. ${profile?.bio ? profile.bio.substring(0, 150) + '...' : 'Specializing in premarital and marriage counseling.'}`}
+        description={`Connect with ${profile?.full_name}, a qualified ${profile?.profession}${profile?.city && stateName ? ` in ${profile.city}, ${stateName}` : ''}. ${profile?.bio ? profile.bio.substring(0, 150) + '...' : 'Specializing in premarital counseling for engaged couples.'}`}
         url={window.location.pathname}
         type="profile"
         structuredData={profile ? generateProfessionalStructuredData(profile) : null}
@@ -369,7 +369,7 @@ const ProfilePage = () => {
               <div id="contact-section" className="sidebar-card contact-card">
                 <h3 className="card-title">Contact this counselor</h3>
                 <p style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-                  Looking for premarital or marriage counseling in {profile.city || 'your area'}?
+                  Looking for premarital counseling in {profile.city || 'your area'}? Connect with this counselor.
                 </p>
                 <LeadContactForm
                   profileId={profile.id}
@@ -505,7 +505,7 @@ const ProfilePage = () => {
           }}>
             <h2 style={{ marginBottom: 'var(--space-4)' }}>Is this your profile?</h2>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-6)' }}>
-              This listing was added so couples can find premarital and marriage counseling in {profile.city || 'your area'}.
+              This listing was added so engaged couples can find premarital counseling in {profile.city || 'your area'}.
               {!profile.is_claimed && " It hasn't been claimed yet."}
             </p>
             <Link

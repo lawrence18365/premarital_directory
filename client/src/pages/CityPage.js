@@ -112,9 +112,9 @@ const CityPage = () => {
   return (
     <div className="city-page">
       <SEOHelmet
-        title={cityContent?.title || `Marriage & Premarital Counseling in ${cityName}, ${stateName} | Wedding Counselors`}
-        description={cityContent?.description || `Find marriage and premarital counseling in ${cityName}, ${stateName}. ${profiles.length > 0 ? profiles.length + ' verified' : 'Qualified'} counselors and therapists specializing in couples therapy and marriage preparation.`}
-        keywords={`premarital counseling ${cityName}, marriage counseling ${cityName} ${stateName}, couples therapy ${cityName}, wedding counselors ${cityName}, relationship therapy ${cityName}`}
+        title={cityContent?.title || `Premarital Counseling in ${cityName}, ${stateName} | Pre-Marriage Therapy`}
+        description={cityContent?.description || `Find premarital counseling for engaged couples in ${cityName}, ${stateName}. ${profiles.length > 0 ? profiles.length + ' verified' : 'Qualified'} counselors specializing in pre-marriage therapy and relationship preparation before your wedding.`}
+        keywords={`premarital counseling ${cityName}, pre-marriage therapy ${cityName}, engaged couples counseling ${cityName}, marriage preparation ${cityName}, premarital therapy ${cityName} ${stateName}`}
         structuredData={structuredData}
         noindex={true}
       />
@@ -124,9 +124,9 @@ const CityPage = () => {
         <div className="container">
           <Breadcrumbs items={breadcrumbData} variant="on-hero" />
           <div className="state-header-content">
-            <h1>Marriage & Premarital Counseling in {cityName}, {stateName}</h1>
+            <h1>Premarital Counseling in {cityName}, {stateName}</h1>
             <p className="lead">
-              {profiles.length > 0 ? `${profiles.length} verified` : 'Find qualified'} counselors, therapists, and clergy serving couples in {cityName}.
+              {profiles.length > 0 ? `${profiles.length} verified` : 'Find qualified'} premarital counselors helping engaged couples prepare for marriage in {cityName}.
             </p>
 
 
@@ -148,7 +148,7 @@ const CityPage = () => {
               </div>
             )}
 
-            {/* Quick CTA for Couples */}
+            {/* Quick CTA for Engaged Couples */}
             <div className="state-cta-section" style={{ marginTop: 'var(--space-8)' }}>
               <div className="cta-buttons">
                 <button
@@ -156,7 +156,7 @@ const CityPage = () => {
                   className="btn btn-primary btn-large"
                 >
                   <i className="fa fa-heart mr-2"></i>
-                  Get Matched With A Counselor
+                  Find Your Premarital Counselor
                 </button>
                 <Link
                   to="/professional/signup"
@@ -186,8 +186,8 @@ const CityPage = () => {
             ) : profiles.length > 0 ? (
               <>
                 <div className="results-header">
-                  <h2>Top Premarital Counselors in {cityName}</h2>
-                  <p>All professionals are licensed and specialize in marriage preparation</p>
+                  <h2>Premarital Counselors in {cityName}</h2>
+                  <p>Licensed professionals specializing in pre-marriage counseling and relationship preparation for engaged couples</p>
                 </div>
                 <ProfileList 
                   profiles={profiles}
@@ -199,10 +199,10 @@ const CityPage = () => {
               </>
             ) : (
               <div className="no-profiles">
-                <h2>No professionals found in {cityName}</h2>
-                <p>Try searching in nearby areas or <Link to={`/professionals/${state}`}>browse all {stateName} professionals</Link>.</p>
+                <h2>No premarital counselors listed yet in {cityName}</h2>
+                <p>Try searching in nearby areas or <Link to={`/professionals/${state}`}>browse all {stateName} premarital counselors</Link>.</p>
                 <Link to="/claim-profile" className="btn btn-primary">
-                  Are you a counselor in {cityName}? Join our directory
+                  Are you a premarital counselor in {cityName}? Join our directory
                 </Link>
               </div>
             )}
@@ -219,7 +219,7 @@ const CityPage = () => {
               <>
                 {/* AI-Generated Intro */}
                 <div className="sidebar-section">
-                  <h3>About Premarital Counseling in {cityName}</h3>
+                  <h3>Premarital Counseling for Engaged Couples in {cityName}</h3>
                   <p>{cityContent.intro}</p>
                   <small className="content-source">
                     AI-generated local insights
@@ -320,10 +320,10 @@ const CityPage = () => {
               </div>
             )}
 
-            {/* Contact Form for Couples */}
+            {/* Contact Form for Engaged Couples */}
             <div id="contact-form" className="sidebar-section cta-section" style={{ background: 'var(--bg-primary)', padding: 'var(--space-8)', borderRadius: 'var(--radius-md)' }}>
-              <h3>Get Matched With A Counselor</h3>
-              <p>Tell us about your needs and we'll connect you with counselors in {cityName}.</p>
+              <h3>Connect With a Premarital Counselor</h3>
+              <p>Preparing for marriage? We'll connect you with experienced premarital counselors in {cityName}.</p>
               <LeadContactForm
                 profileId={null}
                 professionalName={`Counselors in ${cityName}`}
