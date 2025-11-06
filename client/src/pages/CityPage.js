@@ -116,7 +116,7 @@ const CityPage = () => {
         description={cityContent?.description || `Find premarital counseling for engaged couples in ${cityName}, ${stateName}. ${profiles.length > 0 ? profiles.length + ' verified' : 'Qualified'} counselors specializing in pre-marriage therapy and relationship preparation before your wedding.`}
         keywords={`premarital counseling ${cityName}, pre-marriage therapy ${cityName}, engaged couples counseling ${cityName}, marriage preparation ${cityName}, premarital therapy ${cityName} ${stateName}`}
         structuredData={structuredData}
-        noindex={true}
+        noindex={false}
       />
 
       {/* City Header */}
