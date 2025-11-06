@@ -42,17 +42,36 @@ const CityPage = () => {
     try {
       setLoading(true)
       setError(null)
-      
+
       // Search for profiles in this city and state
       const { data, error } = await profileOperations.getProfiles({
         state: stateConfig?.abbr || state.toUpperCase(),
         city: cityName
       })
-      
+
       if (error) {
         setError(error.message)
       } else {
-        setProfiles(data || [])
+        // Sort profiles by tier: Area Spotlight > Local Featured > Community
+        const sortedProfiles = (data || []).sort((a, b) => {
+          const tierOrder = {
+            'area_spotlight': 1,
+            'local_featured': 2,
+            'community': 3
+          }
+
+          const aTier = tierOrder[a.tier] || 999
+          const bTier = tierOrder[b.tier] || 999
+
+          if (aTier !== bTier) {
+            return aTier - bTier
+          }
+
+          // If same tier, sort by created_at (newest first)
+          return new Date(b.created_at) - new Date(a.created_at)
+        })
+
+        setProfiles(sortedProfiles)
       }
     } catch (err) {
       setError('Failed to load professionals for this city')
