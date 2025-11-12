@@ -52,25 +52,25 @@ const Breadcrumbs = ({ items = [], className = '', variant }) => {
 
 // Helper function to generate common breadcrumb patterns
 export const generateBreadcrumbs = {
-  // Home > States > State Name
+  // Home > Premarital Counseling > State Name
   statePage: (stateName) => [
     { name: 'Home', url: '/' },
-    { name: 'States', url: '/states' },
+    { name: 'Premarital Counseling', url: '/premarital-counseling' },
     { name: stateName, url: null }
   ],
 
-  // Home > States > State Name > City Name
+  // Home > Premarital Counseling > State Name > City Name
   cityPage: (stateName, cityName, stateUrl = null) => [
     { name: 'Home', url: '/' },
-    { name: 'States', url: '/states' },
+    { name: 'Premarital Counseling', url: '/premarital-counseling' },
     { name: stateName, url: stateUrl },
     { name: cityName, url: null }
   ],
 
-  // Home > States > State Name > Professional Name
+  // Home > Premarital Counseling > State Name > Professional Name
   profilePage: (stateName, professionalName, stateUrl = null, profileUrl = null) => [
     { name: 'Home', url: '/' },
-    { name: 'States', url: '/states' },
+    { name: 'Premarital Counseling', url: '/premarital-counseling' },
     { name: stateName, url: stateUrl },
     { name: professionalName, url: profileUrl }
   ],

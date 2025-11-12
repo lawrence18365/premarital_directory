@@ -79,7 +79,7 @@ const CityPage = () => {
     setContentLoading(false)
   }
 
-  const breadcrumbData = generateBreadcrumbs.cityPage(stateName, cityName, `/professionals/${state}`)
+  const breadcrumbData = generateBreadcrumbs.cityPage(stateName, cityName, `/premarital-counseling/${state}`)
 
   const nearbyStates = Object.entries(STATE_CONFIG)
     .filter(([key]) => key !== state)
@@ -108,14 +108,17 @@ const CityPage = () => {
     }
   }
 
+  // Determine if page should be noindexed (thin content - fewer than 8 profiles)
+  const shouldNoindex = profiles.length < 8
+
   return (
     <div className="city-page">
-      <SEOHelmet 
-        title={cityContent?.title || `Premarital Counseling in ${cityName}, ${stateName} | Wedding Counselors`}
-        description={cityContent?.description || `Find the best premarital counselors in ${cityName}, ${stateName}. ${profiles.length}+ licensed therapists, coaches, and clergy specializing in marriage preparation and relationship counseling.`}
-        keywords={`premarital counseling ${cityName}, marriage counseling ${cityName} ${stateName}, couples therapy ${cityName}, wedding counselors ${cityName}, relationship therapy ${cityName}`}
+      <SEOHelmet
+        title={cityContent?.title || `Premarital Counseling in ${cityName}, ${stateName} — Therapists, Faith-Based & Online`}
+        description={cityContent?.description || `Find premarital counseling in ${cityName}, ${stateName}. ${profiles.length}+ licensed therapists (LMFT, LPC), Christian and faith-based counselors, online sessions. Compare prices, methods, and book intro calls.`}
+        keywords={`premarital counseling ${cityName}, premarital therapy ${cityName} ${stateName}, pre marriage counseling ${cityName}, christian premarital counseling ${cityName}, pre cana ${cityName}`}
         structuredData={structuredData}
-        noindex={true}
+        noindex={shouldNoindex}
       />
 
       {/* City Header */}
@@ -125,7 +128,7 @@ const CityPage = () => {
           <div className="state-header-content">
             <h1>Premarital Counseling in {cityName}, {stateName}</h1>
             <p className="lead">
-              Connect with qualified therapists, coaches, and clergy in {cityName} who specialize in marriage preparation and relationship counseling.
+              Find premarital counseling in {cityName}, {stateName}. Licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, and online options. Compare methods, pricing, and availability—book intro sessions now.
             </p>
             
             {/* City Stats */}

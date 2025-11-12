@@ -215,8 +215,8 @@ const HomePage = () => {
           <div className="hero-layers" aria-hidden="true" />
           <div className="container">
             <div className="hero-immersive-content">
-              <h1 className="hero-title">Find Trusted Premarital Counselors Near You</h1>
-              <p className="hero-subtitle">Therapists, coaches, and clergy who help you start strong.</p>
+              <h1 className="hero-title">Premarital Counseling Near You — Therapists, Faith-Based & Online Options</h1>
+              <p className="hero-subtitle">Licensed therapists (LMFT, LPC), Christian counselors, and online programs. Compare prices, methods, and book intro sessions.</p>
 
               {/* Minimal, focused above-the-fold */}
 
@@ -245,7 +245,7 @@ const HomePage = () => {
                 </div>
               </form>
               <div className="hero-sub-cta">
-                <Link to="/states">Browse all states</Link>
+                <Link to="/premarital-counseling">Browse all states</Link>
               </div>
 
               {/* Trust row removed to keep hero calm */}

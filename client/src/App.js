@@ -102,17 +102,21 @@ function AppInner() {
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<HomePage />} />
-                <Route path="/professionals" element={<Navigate to="/states" replace />} />
+                {/* Premarital Counseling Directory - SEO-optimized URLs */}
+                <Route path="/premarital-counseling" element={<StatesIndexPage />} />
+                <Route path="/premarital-counseling/:state" element={<StatePage />} />
+                <Route path="/premarital-counseling/:state/:cityOrSlug" element={<CityOrProfilePage />} />
+                <Route path="/premarital-counseling/:state/:city/:profileSlug" element={<ProfilePage />} />
+                {/* 301 Redirects: old URL patterns to new SEO-optimized structure */}
+                <Route path="/states" element={<Navigate to="/premarital-counseling" replace />} />
+                <Route path="/states/:state/:city/:profileSlug" element={<ProfileRedirect />} />
+                <Route path="/states/:state/:cityOrSlug" element={<CityRedirect />} />
+                <Route path="/states/:state" element={<StateRedirect />} />
+                <Route path="/professionals" element={<Navigate to="/premarital-counseling" replace />} />
                 <Route path="/professionals-list" element={<Navigate to="/professionals-search" replace />} />
-                <Route path="/find-counselor" element={<Navigate to="/states" replace />} />
-                <Route path="/find-counselors" element={<Navigate to="/states" replace />} />
-                <Route path="/counselors" element={<Navigate to="/states" replace />} />
-                <Route path="/states" element={<StatesIndexPage />} />
-                {/* New state/city URL structure */}
-                <Route path="/states/:state" element={<StatePage />} />
-                <Route path="/states/:state/:cityOrSlug" element={<CityOrProfilePage />} />
-                <Route path="/states/:state/:city/:profileSlug" element={<ProfilePage />} />
-                {/* 301 Redirects: old /professionals/:state URLs to new /states/:state structure */}
+                <Route path="/find-counselor" element={<Navigate to="/premarital-counseling" replace />} />
+                <Route path="/find-counselors" element={<Navigate to="/premarital-counseling" replace />} />
+                <Route path="/counselors" element={<Navigate to="/premarital-counseling" replace />} />
                 <Route path="/professionals/:state/:city/:profileSlug" element={<ProfileRedirect />} />
                 <Route path="/professionals/:state/:cityOrSlug" element={<CityRedirect />} />
                 <Route path="/professionals/:state" element={<StateRedirect />} />

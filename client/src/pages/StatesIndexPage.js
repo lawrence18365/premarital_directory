@@ -74,7 +74,7 @@ const StatesIndexPage = () => {
         "item": {
           "@type": "WebPage",
           "name": state.name,
-          "url": `https://www.weddingcounselors.com/states/${state.slug}`,
+          "url": `https://www.weddingcounselors.com/premarital-counseling/${state.slug}`,
           "description": `Find premarital counselors in ${state.name}`
         }
       }))
@@ -83,19 +83,19 @@ const StatesIndexPage = () => {
 
   const breadcrumbs = [
     { name: 'Home', url: '/' },
-    { name: 'States', url: null }
+    { name: 'Premarital Counseling', url: null }
   ]
 
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHelmet
-        title="Premarital Counselors by State | Find Therapists, Coaches & Clergy"
-        description="Browse all 50 states and D.C. to find verified premarital counselors near you. See pricing, specialties, and book intros."
-        url="/states"
-        keywords="premarital counseling, marriage counselors by state, couples therapy, wedding counselors"
+        title="Premarital Counseling by State | Licensed Therapists, Coaches & Clergy"
+        description="Find premarital counseling in all 50 states. Compare licensed therapists, faith-based counselors, and online options. Book intro sessions, read reviews, see pricing."
+        url="/premarital-counseling"
+        keywords="premarital counseling, premarital therapy, pre marriage counseling, couples counseling before marriage, pre cana"
         breadcrumbs={breadcrumbs}
         structuredData={statesItemList}
-        canonicalUrl="https://www.weddingcounselors.com/states"
+        canonicalUrl="https://www.weddingcounselors.com/premarital-counseling"
       />
       {/* Header */}
       <div className="states-page-header">
@@ -104,15 +104,15 @@ const StatesIndexPage = () => {
             <nav className="text-sm text-gray-500 mb-4">
               <Link to="/" className="hover:text-blue-600">Home</Link>
               <span className="mx-2">/</span>
-              <span className="text-gray-900">States</span>
+              <span className="text-gray-900">Premarital Counseling</span>
             </nav>
-            
+
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Premarital Counselors by State
+              Premarital Counseling by State — Find Therapists, Faith-Based & Online Options
             </h1>
-            
+
             <p className="text-xl text-gray-600 mb-6">
-              Find premarital counselors by state. Licensed therapists, plus vetted coaches and clergy. Book an intro in minutes.
+              Find premarital counseling in your state. Licensed therapists, Christian and faith-based counselors, and online programs. Compare prices, read reviews, and book intro sessions.
             </p>
           </div>
         </div>
@@ -136,7 +136,7 @@ const StatesIndexPage = () => {
           {STATES.map(state => (
             <Link
               key={state.slug}
-              to={`/states/${state.slug}`}
+              to={`/premarital-counseling/${state.slug}`}
               className="state-card"
             >
               <div>
