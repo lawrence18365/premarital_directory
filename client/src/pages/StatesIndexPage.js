@@ -204,7 +204,6 @@ const StatesIndexPage = () => {
             </div>
           </div>
         </div>
-      </div>
     </div>
   )
 }
