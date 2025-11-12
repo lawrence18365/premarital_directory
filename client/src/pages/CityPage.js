@@ -173,9 +173,9 @@ const CityPage = () => {
         <div className="container">
           <Breadcrumbs items={breadcrumbData} variant="on-hero" />
           <div className="state-header-content">
-            <h1>Best Premarital Counselors in {cityName}, {stateName}</h1>
+            <h1>Premarital Counseling in {cityName}, {stateName} — {profiles.length} Counselors</h1>
             <p className="lead">
-              Compare {profiles.length} premarital counselors in {cityName}, {stateName}. Find licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples. See session costs, insurance options, and availability — book intro calls today.
+              Find premarital counselors in {cityName}, {stateName}. Compare {profiles.length} licensed therapists (LMFT, LPC, LCSW), Christian counselors, clergy, and online options for engaged couples. See prices, specialties, availability, and insurance — book intro sessions today.
             </p>
 
 
@@ -238,6 +238,64 @@ const CityPage = () => {
                   <h2>Premarital Counselors in {cityName}</h2>
                   <p>Licensed professionals specializing in pre-marriage counseling and relationship preparation for engaged couples</p>
                 </div>
+
+                {/* Top Picks Section - SEO & UX boost */}
+                {profiles.length >= 3 && (
+                  <div style={{
+                    background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                    padding: 'var(--space-8)',
+                    borderRadius: 'var(--radius-lg)',
+                    marginBottom: 'var(--space-8)',
+                    border: '2px solid var(--accent)'
+                  }}>
+                    <h3 style={{ marginBottom: 'var(--space-4)', color: 'var(--text-primary)' }}>
+                      ⭐ Top Premarital Counselors in {cityName}
+                    </h3>
+                    <p style={{ marginBottom: 'var(--space-6)', color: 'var(--text-secondary)' }}>
+                      Highly qualified professionals helping engaged couples in {cityName} prepare for marriage
+                    </p>
+                    <div style={{
+                      display: 'grid',
+                      gap: 'var(--space-4)'
+                    }}>
+                      {profiles.slice(0, 5).map((profile, idx) => (
+                        <div key={profile.id} style={{
+                          background: 'white',
+                          padding: 'var(--space-4)',
+                          borderRadius: 'var(--radius-md)',
+                          border: '1px solid #e5e7eb'
+                        }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                            <div>
+                              <h4 style={{ margin: 0, marginBottom: 'var(--space-2)' }}>
+                                <Link to={`/premarital-counseling/${state}/${city}/${profile.slug}`} style={{ color: 'var(--color-primary)' }}>
+                                  {profile.full_name}
+                                </Link>
+                              </h4>
+                              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                                {profile.profession}
+                                {profile.specialties && profile.specialties.length > 0 && (
+                                  <> • {profile.specialties.slice(0, 2).join(', ')}</>
+                                )}
+                              </p>
+                            </div>
+                            <span style={{
+                              fontSize: '0.75rem',
+                              padding: '4px 8px',
+                              background: 'var(--color-primary)',
+                              color: 'white',
+                              borderRadius: '4px',
+                              whiteSpace: 'nowrap'
+                            }}>
+                              #{idx + 1} in {cityName}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <ProfileList
                   profiles={profiles}
                   loading={false}
@@ -245,12 +303,77 @@ const CityPage = () => {
                   showLocation={false}
                 />
 
+                {/* Nearby Cities - Critical for internal linking & SEO */}
+                {stateConfig?.major_cities && stateConfig.major_cities.length > 1 && (
+                  <div style={{
+                    marginTop: 'var(--space-12)',
+                    padding: 'var(--space-8)',
+                    background: 'var(--gray-50)',
+                    borderRadius: 'var(--radius-lg)'
+                  }}>
+                    <h3 style={{ marginBottom: 'var(--space-4)' }}>
+                      Premarital Counseling in Other {stateName} Cities
+                    </h3>
+                    <p style={{ marginBottom: 'var(--space-6)', color: 'var(--text-secondary)' }}>
+                      Also serving engaged couples throughout {stateName}
+                    </p>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                      gap: 'var(--space-3)'
+                    }}>
+                      {stateConfig.major_cities
+                        .filter(c => c.toLowerCase().replace(/\s+/g, '-') !== city)
+                        .slice(0, 8)
+                        .map(cityName => {
+                          const citySlug = cityName.toLowerCase().replace(/\s+/g, '-')
+                          return (
+                            <Link
+                              key={citySlug}
+                              to={`/premarital-counseling/${state}/${citySlug}`}
+                              style={{
+                                padding: 'var(--space-3)',
+                                background: 'white',
+                                borderRadius: 'var(--radius-md)',
+                                border: '1px solid #e5e7eb',
+                                textDecoration: 'none',
+                                color: 'var(--color-primary)',
+                                fontSize: '0.875rem',
+                                transition: 'all 0.2s',
+                                textAlign: 'center'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'translateY(-2px)'
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)'
+                                e.currentTarget.style.boxShadow = 'none'
+                              }}
+                            >
+                              {cityName}
+                            </Link>
+                          )
+                        })}
+                    </div>
+                    <div style={{ marginTop: 'var(--space-6)', textAlign: 'center' }}>
+                      <Link
+                        to={`/premarital-counseling/${state}`}
+                        className="btn btn-secondary"
+                        style={{ fontSize: '0.875rem' }}
+                      >
+                        View All {stateName} Counselors →
+                      </Link>
+                    </div>
+                  </div>
+                )}
+
                 {/* City-specific FAQ for rich results */}
                 <div style={{ marginTop: 'var(--space-12)' }}>
                   <FAQ
                     faqs={cityFAQs}
                     title={`Premarital Counseling in ${cityName} — Frequently Asked Questions`}
-                    description={`Common questions about marriage and premarital counseling in ${cityName}, ${stateName}`}
+                    description={`Common questions about premarital counseling in ${cityName}, ${stateName} for engaged couples`}
                     showSearch={false}
                     showAside={false}
                   />

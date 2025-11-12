@@ -21,8 +21,7 @@ const ClaimProfilePage = () => {
     state_province: '',
     postal_code: '',
     country: 'United States',
-    keep_listed: 'yes',
-    interested_in_featured: 'no'
+    keep_listed: 'yes'
   })
   const [currentStep, setCurrentStep] = useState(1)
   const [submitted, setSubmitted] = useState(false)
@@ -77,24 +76,34 @@ const ClaimProfilePage = () => {
     setLoading(true);
 
     try {
-      // This form should only be used for claiming existing profiles for now.
-      if (!existingProfile) {
-        alert("This form is for claiming existing profiles. Please contact us to create a new profile.");
-        setLoading(false);
-        return;
-      }
+      if (existingProfile) {
+        // Claiming existing profile
+        const claimData = {
+          profile_id: existingProfile.id,
+          submitted_by_email: formData.email,
+          claim_data: formData,
+          status: 'pending',
+        };
 
-      const claimData = {
-        profile_id: existingProfile.id,
-        submitted_by_email: formData.email,
-        claim_data: formData,
-        status: 'pending',
-      };
+        const { data, error } = await profileOperations.createProfileClaim(claimData);
 
-      const { data, error } = await profileOperations.createProfileClaim(claimData);
+        if (error) {
+          throw error;
+        }
+      } else {
+        // Creating new profile directly
+        const newProfileData = {
+          ...formData,
+          status: 'pending',
+          tier: 'community',
+          created_at: new Date().toISOString()
+        };
 
-      if (error) {
-        throw error;
+        const { data, error } = await profileOperations.createProfile(newProfileData);
+
+        if (error) {
+          throw error;
+        }
       }
 
       // Show success page
@@ -102,8 +111,8 @@ const ClaimProfilePage = () => {
       setLoading(false);
 
     } catch (err) {
-      console.error('Error submitting claim:', err);
-      alert('There was an error submitting your claim. Please try again.');
+      console.error('Error submitting:', err);
+      alert('There was an error submitting your profile. Please try again.');
       setLoading(false);
     }
   };
@@ -163,9 +172,11 @@ const ClaimProfilePage = () => {
           }}>
             <i className="fa fa-check-circle" aria-hidden="true"></i>
           </div>
-          <h1>Claim Submitted!</h1>
+          <h1>{existingProfile ? 'Claim Submitted!' : 'Profile Created!'}</h1>
           <p className="text-large text-secondary mb-8">
-            Thank you for claiming your profile. Our team will review your submission within 24-48 hours.
+            {existingProfile
+              ? 'Thank you for claiming your profile. Our team will review your submission within 24-48 hours.'
+              : 'Thank you for joining our directory! Our team will review your profile within 24-48 hours.'}
           </p>
           <div style={{ 
             background: 'var(--gray-50)', 
@@ -177,8 +188,8 @@ const ClaimProfilePage = () => {
             <h3>What happens next?</h3>
             <ul style={{ textAlign: 'left', color: 'var(--gray-600)', marginTop: 'var(--space-4)' }}>
               <li>✅ We will verify the information you submitted.</li>
-              <li>✅ You will receive an email confirmation once your claim is approved.</li>
-              <li>✅ Once approved, you will be able to manage your profile.</li>
+              <li>✅ You will receive an email confirmation once approved.</li>
+              <li>✅ Once approved, you can manage your profile and start receiving leads.</li>
             </ul>
           </div>
           <a href="/" className="btn btn-primary btn-large">Return to Directory</a>
@@ -189,21 +200,21 @@ const ClaimProfilePage = () => {
 
   return (
     <div className="container" style={{ padding: 'var(--space-12) 0' }}>
-      <SEOHelmet 
-        title={existingProfile ? 'Claim Your Profile' : 'Join Our Directory'}
-        description={existingProfile ? 'Claim and manage your professional profile to connect with couples seeking premarital counseling.' : 'Join our directory to reach couples seeking premarital counseling and grow your practice.'}
+      <SEOHelmet
+        title={existingProfile ? 'Claim Your Profile' : 'Join Our Free Directory'}
+        description={existingProfile ? 'Claim your profile to connect with couples seeking premarital counseling.' : 'Join our free directory and connect with engaged couples seeking premarital counseling.'}
         url="/claim-profile"
       />
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 'var(--space-12)' }}>
           <h1>
-            {existingProfile ? `Claim Your Profile` : 'Join Our Directory'}
+            {existingProfile ? `Claim Your Profile` : 'Create Your Free Profile'}
           </h1>
           <p className="text-large text-secondary">
-            {existingProfile 
+            {existingProfile
               ? `Is this your profile? Claim it to manage your listing and connect with couples.`
-              : `Connect with couples seeking premarital counseling by joining our professional directory.`
+              : `Join our directory for free and start connecting with engaged couples seeking premarital counseling.`
             }
           </p>
         </div>
@@ -446,69 +457,40 @@ const ClaimProfilePage = () => {
                   </div>
                 </div>
 
-                {/* Listing Preferences */}
-                <div style={{ marginTop: 'var(--space-8)', padding: 'var(--space-6)', background: 'var(--gray-50)', borderRadius: 'var(--radius-lg)' }}>
-                  <h3 style={{ marginBottom: 'var(--space-4)' }}>Listing Preferences</h3>
+                {/* Only show listing preferences if claiming existing profile */}
+                {existingProfile && (
+                  <div style={{ marginTop: 'var(--space-8)', padding: 'var(--space-6)', background: 'var(--gray-50)', borderRadius: 'var(--radius-lg)' }}>
+                    <h3 style={{ marginBottom: 'var(--space-4)' }}>Listing Preferences</h3>
 
-                  <div className="form-group" style={{ marginBottom: 'var(--space-6)' }}>
-                    <label style={{ fontWeight: 'var(--font-weight-semibold)', display: 'block', marginBottom: 'var(--space-2)' }}>
-                      Do you want to keep this listing active?
-                    </label>
-                    <div style={{ display: 'flex', gap: 'var(--space-4)' }}>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
-                        <input
-                          type="radio"
-                          name="keep_listed"
-                          value="yes"
-                          checked={formData.keep_listed === 'yes'}
-                          onChange={(e) => handleInputChange('keep_listed', e.target.value)}
-                        />
-                        <span>Yes, keep my listing active</span>
+                    <div className="form-group">
+                      <label style={{ fontWeight: 'var(--font-weight-semibold)', display: 'block', marginBottom: 'var(--space-2)' }}>
+                        Do you want to keep this listing active?
                       </label>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
-                        <input
-                          type="radio"
-                          name="keep_listed"
-                          value="no"
-                          checked={formData.keep_listed === 'no'}
-                          onChange={(e) => handleInputChange('keep_listed', e.target.value)}
-                        />
-                        <span>No, please remove my listing</span>
-                      </label>
+                      <div style={{ display: 'flex', gap: 'var(--space-4)' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
+                          <input
+                            type="radio"
+                            name="keep_listed"
+                            value="yes"
+                            checked={formData.keep_listed === 'yes'}
+                            onChange={(e) => handleInputChange('keep_listed', e.target.value)}
+                          />
+                          <span>Yes, keep my listing active</span>
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
+                          <input
+                            type="radio"
+                            name="keep_listed"
+                            value="no"
+                            checked={formData.keep_listed === 'no'}
+                            onChange={(e) => handleInputChange('keep_listed', e.target.value)}
+                          />
+                          <span>No, please remove my listing</span>
+                        </label>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="form-group">
-                    <label style={{ fontWeight: 'var(--font-weight-semibold)', display: 'block', marginBottom: 'var(--space-2)' }}>
-                      Interested in Featured placement for your city?
-                    </label>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: 'var(--space-3)' }}>
-                      Featured counselors appear at the top of search results in your city ($49/month)
-                    </p>
-                    <div style={{ display: 'flex', gap: 'var(--space-4)' }}>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
-                        <input
-                          type="radio"
-                          name="interested_in_featured"
-                          value="yes"
-                          checked={formData.interested_in_featured === 'yes'}
-                          onChange={(e) => handleInputChange('interested_in_featured', e.target.value)}
-                        />
-                        <span>Yes, I'm interested</span>
-                      </label>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
-                        <input
-                          type="radio"
-                          name="interested_in_featured"
-                          value="no"
-                          checked={formData.interested_in_featured === 'no'}
-                          onChange={(e) => handleInputChange('interested_in_featured', e.target.value)}
-                        />
-                        <span>No thanks</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
             )}
 

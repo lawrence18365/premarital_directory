@@ -20,7 +20,7 @@ const generateBreadcrumbStructuredData = (breadcrumbs, siteUrl = 'https://www.we
 
 const generateFAQStructuredData = (faqs) => {
   if (!faqs || faqs.length === 0) return null
-  
+
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -32,6 +32,38 @@ const generateFAQStructuredData = (faqs) => {
         "text": faq.answer
       }
     }))
+  }
+}
+
+const generateOrganizationStructuredData = (siteUrl) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Wedding Counselors",
+    "url": siteUrl,
+    "logo": `${siteUrl}/logo.png`,
+    "description": "Directory of qualified premarital counselors, therapists, and coaches helping engaged couples prepare for marriage.",
+    "sameAs": [
+      "https://www.facebook.com/weddingcounselors",
+      "https://twitter.com/weddingcounsel"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "Customer Service",
+      "email": "support@weddingcounselors.com",
+      "availableLanguage": ["English"]
+    },
+    "areaServed": {
+      "@type": "Country",
+      "name": "United States"
+    },
+    "knowsAbout": [
+      "Premarital Counseling",
+      "Marriage Preparation",
+      "Pre-Marriage Therapy",
+      "Relationship Counseling",
+      "Engaged Couples Counseling"
+    ]
   }
 }
 
@@ -136,6 +168,10 @@ const SEOHelmet = ({
       <script type="application/ld+json">
         {(() => {
           const allData = [];
+
+          // Always include Organization schema for E-E-A-T
+          allData.push(generateOrganizationStructuredData(siteUrl));
+
           if (structuredData) {
             allData.push(structuredData);
           }
