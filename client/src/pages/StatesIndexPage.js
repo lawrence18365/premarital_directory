@@ -73,8 +73,7 @@ const StatesIndexPage = () => {
             </h1>
             
             <p className="text-xl text-gray-600 mb-6">
-              Find premarital counselors helping engaged couples prepare for marriage.
-              Browse our directory of licensed professionals specializing in pre-marriage therapy and relationship preparation.
+              Find premarital counselors by state. Licensed therapists, plus vetted coaches and clergy. Book an intro in minutes.
             </p>
           </div>
         </div>
@@ -144,19 +143,19 @@ const StatesIndexPage = () => {
                 
                 <div className="space-y-4 text-gray-600">
                   <p>
-                    Our comprehensive directory makes it easy to find qualified premarital counselors 
-                    in your state and city. All professionals are licensed and specialize in couples therapy.
+                    Our comprehensive directory makes it easy to find qualified premarital counselors
+                    in your state and city. Licensed therapists, plus coaches and clergy reviewed for credentials and scope of practice.
                   </p>
                   
                   <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">
                     What You'll Find:
                   </h3>
                   <ul className="space-y-2">
-                    <li>• Licensed therapists and counselors</li>
-                    <li>• Marriage and family therapists (MFT)</li>
-                    <li>• Faith-based counseling options</li>
+                    <li>• Licensed therapists and marriage & family therapists (LMFT, LPC)</li>
+                    <li>• Certified relationship coaches</li>
+                    <li>• Faith-based counselors and clergy</li>
                     <li>• Online and in-person sessions</li>
-                    <li>• Verified professional profiles</li>
+                    <li>• Verified profiles with transparent credentials</li>
                   </ul>
                 </div>
               </div>
