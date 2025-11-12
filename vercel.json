@@ -9,16 +9,11 @@
   ],
   "redirects": [
     {
-      "source": "/index.html",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/:path((?!api/).*)",
+      "source": "/:path*",
       "has": [
         { "type": "host", "value": "www.weddingcounselors.com" }
       ],
-      "destination": "https://weddingcounselors.com/:path",
+      "destination": "https://weddingcounselors.com/:path*",
       "permanent": true
     }
   ],
