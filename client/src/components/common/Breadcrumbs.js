@@ -55,14 +55,14 @@ export const generateBreadcrumbs = {
   // Home > States > State Name
   statePage: (stateName) => [
     { name: 'Home', url: '/' },
-    { name: 'Find Counselors', url: '/states' },
+    { name: 'States', url: '/states' },
     { name: stateName, url: null }
   ],
 
   // Home > States > State Name > City Name
   cityPage: (stateName, cityName, stateUrl = null) => [
     { name: 'Home', url: '/' },
-    { name: 'Find Counselors', url: '/states' },
+    { name: 'States', url: '/states' },
     { name: stateName, url: stateUrl },
     { name: cityName, url: null }
   ],
@@ -70,7 +70,7 @@ export const generateBreadcrumbs = {
   // Home > States > State Name > Professional Name
   profilePage: (stateName, professionalName, stateUrl = null, profileUrl = null) => [
     { name: 'Home', url: '/' },
-    { name: 'Find Counselors', url: '/states' },
+    { name: 'States', url: '/states' },
     { name: stateName, url: stateUrl },
     { name: professionalName, url: profileUrl }
   ],

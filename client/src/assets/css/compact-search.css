@@ -1,0 +1,143 @@
+.compact-search {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.compact-search-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.compact-search-field {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.compact-search-location {
+  flex: 2;
+}
+
+.compact-search-specialty {
+  flex: 1.5;
+}
+
+.compact-search-input,
+.compact-search-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.compact-search-input:focus,
+.compact-search-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.compact-search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.25rem;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+  list-style: none;
+  padding: 0;
+  margin-left: 0;
+}
+
+.compact-search-suggestion {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.compact-search-suggestion:hover {
+  background-color: #f3f4f6;
+}
+
+.compact-search-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.compact-search-button:hover {
+  background-color: #2563eb;
+}
+
+.compact-search-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .compact-search {
+    padding: 0.75rem;
+  }
+
+  .compact-search-form {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .compact-search-field {
+    min-width: 100%;
+  }
+
+  .compact-search-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .compact-search-button-text {
+    display: inline;
+  }
+}
+
+@media (min-width: 769px) {
+  .compact-search-button-text {
+    display: inline;
+  }
+}

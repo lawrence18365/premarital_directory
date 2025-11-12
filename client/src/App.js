@@ -8,6 +8,7 @@ import ScrollToTop from './components/common/ScrollToTop'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import PremiumLoader from './components/common/PremiumLoader'
 import PageTransitionLoader from './components/common/PageTransitionLoader'
+import { StateRedirect, CityRedirect, ProfileRedirect } from './components/routing/StateRedirect'
 
 // CSS
 import './assets/css/main.css'
@@ -107,10 +108,15 @@ function AppInner() {
                 <Route path="/find-counselors" element={<Navigate to="/states" replace />} />
                 <Route path="/counselors" element={<Navigate to="/states" replace />} />
                 <Route path="/states" element={<StatesIndexPage />} />
-                <Route path="/professionals/:state" element={<StatePage />} />
+                {/* New state/city URL structure */}
+                <Route path="/states/:state" element={<StatePage />} />
+                <Route path="/states/:state/:cityOrSlug" element={<CityOrProfilePage />} />
+                <Route path="/states/:state/:city/:profileSlug" element={<ProfilePage />} />
+                {/* 301 Redirects: old /professionals/:state URLs to new /states/:state structure */}
+                <Route path="/professionals/:state/:city/:profileSlug" element={<ProfileRedirect />} />
+                <Route path="/professionals/:state/:cityOrSlug" element={<CityRedirect />} />
+                <Route path="/professionals/:state" element={<StateRedirect />} />
                 <Route path="/profile/:slugOrId" element={<ProfilePage />} />
-                <Route path="/professionals/:state/:cityOrSlug" element={<CityOrProfilePage />} />
-                <Route path="/professionals/:state/:city/:profileSlug" element={<ProfilePage />} />
                 <Route path="/claim-profile" element={<ClaimProfilePage />} />
                 <Route path="/claim-profile/:slugOrId" element={<ClaimProfilePage />} />
                 <Route path="/about" element={<AboutPage />} />
