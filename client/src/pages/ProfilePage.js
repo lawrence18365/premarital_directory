@@ -18,7 +18,13 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [showContactForm, setShowContactForm] = useState(true)
+  const [phoneRevealed, setPhoneRevealed] = useState(false)
+  const [emailRevealed, setEmailRevealed] = useState(false)
   const navigate = useNavigate()
+
+  // Determine if contact info should be visible based on tier
+  const canShowDirectContact = profile?.tier === 'local_featured' || profile?.tier === 'area_spotlight'
+  const isCommunityTier = profile?.tier === 'community' || !profile?.tier
 
   useEffect(() => {
     loadProfile()
@@ -31,16 +37,23 @@ const ProfilePage = () => {
     }
   }, [profile])
 
-  // Redirect old URL to nested canonical when state known
+  // Redirect old UUID URLs to new slug-based URLs (SEO critical!)
   useEffect(() => {
     if (profile && !state) {
+      // We're on /profile/{uuid} - redirect to proper nested URL
       const stateSlug = profile.state_province ? generateSlug(profile.state_province) : null
+      const citySlug = profile.city ? generateSlug(profile.city) : null
       const profileSlug = profile.slug || generateSlug(profile.full_name)
-      if (stateSlug && profileSlug) {
+
+      if (stateSlug && citySlug && profileSlug) {
+        // Redirect to proper nested URL: /professionals/state/city/name-slug
+        navigate(`/professionals/${stateSlug}/${citySlug}/${profileSlug}`, { replace: true })
+      } else if (stateSlug && profileSlug) {
+        // Fallback: redirect to /professionals/state/name-slug
         navigate(`/professionals/${stateSlug}/${profileSlug}`, { replace: true })
       }
     }
-  }, [profile, state, navigate])
+  }, [profile, state, city, navigate])
 
   // Track profile view
   useEffect(() => {
@@ -109,6 +122,28 @@ const ProfilePage = () => {
     console.log('Lead submitted successfully:', leadData)
   }
 
+  const handleRevealContact = async (type) => {
+    // Log contact reveal for analytics
+    try {
+      await profileOperations.logContactReveal({
+        profile_id: profile.id,
+        reveal_type: type,
+        ip_address: null, // Will be captured server-side
+        user_agent: navigator.userAgent,
+        session_id: sessionStorage.getItem('session_id') || null
+      })
+
+      // Show the contact info
+      if (type === 'phone') setPhoneRevealed(true)
+      if (type === 'email') setEmailRevealed(true)
+    } catch (err) {
+      console.error('Failed to log reveal:', err)
+      // Show anyway even if logging fails
+      if (type === 'phone') setPhoneRevealed(true)
+      if (type === 'email') setEmailRevealed(true)
+    }
+  }
+
   if (loading) {
     return (
       <div className="loading">
@@ -135,26 +170,27 @@ const ProfilePage = () => {
     )
   }
 
-  // Generate breadcrumbs
-  const breadcrumbItems = state && profile
+  // Generate breadcrumbs - handle missing state gracefully
+  const stateName = profile?.state_province || (state ? state.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : null)
+  const breadcrumbItems = stateName && profile
     ? generateBreadcrumbs.profilePage(
-        profile.state_province || state.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        stateName,
         profile.full_name,
-        `/professionals/${state}`,
+        `/professionals/${state || generateSlug(stateName)}`,
         null
       )
     : generateBreadcrumbs.profilePage(
-        profile?.state_province || 'Unknown State',
+        'All Locations',
         profile?.full_name || 'Profile',
-        null,
+        '/states',
         null
       )
 
   return (
     <>
-      <SEOHelmet 
-        title={`${profile?.full_name} - ${profile?.profession} in ${profile?.city}, ${profile?.state_province}`}
-        description={`Connect with ${profile?.full_name}, a qualified ${profile?.profession} in ${profile?.city}, ${profile?.state_province}. ${profile?.bio?.substring(0, 150)}...`}
+      <SEOHelmet
+        title={`${profile?.full_name} - ${profile?.profession}${profile?.city && stateName ? ` in ${profile.city}, ${stateName}` : ''} | Premarital Counseling`}
+        description={`Connect with ${profile?.full_name}, a qualified ${profile?.profession}${profile?.city && stateName ? ` in ${profile.city}, ${stateName}` : ''}. ${profile?.bio ? profile.bio.substring(0, 150) + '...' : 'Specializing in premarital counseling for engaged couples.'}`}
         url={window.location.pathname}
         type="profile"
         structuredData={profile ? generateProfessionalStructuredData(profile) : null}
@@ -186,8 +222,10 @@ const ProfilePage = () => {
                     {getInitials(profile.full_name)}
                   </div>
                 )}
-                {profile.is_sponsored && (
-                  <div className="hero-sponsored-badge">Featured Professional</div>
+                {(profile.tier === 'local_featured' || profile.tier === 'area_spotlight') && (
+                  <div className="hero-sponsored-badge">
+                    {profile.tier === 'area_spotlight' ? `Area Spotlight` : `Featured in ${profile.city}`}
+                  </div>
                 )}
               </div>
               
@@ -226,13 +264,13 @@ const ProfilePage = () => {
                     Get in Touch
                   </button>
                   {profile.website && (
-                    <a 
-                      href={profile.website} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
+                    <a
+                      href={profile.website}
+                      target="_blank"
+                      rel="nofollow noopener noreferrer"
                       className="btn btn-secondary btn-large"
                     >
-                      Visit Website
+                      Visit External Profile
                     </a>
                   )}
                 </div>
@@ -364,159 +402,191 @@ const ProfilePage = () => {
 
             {/* Right Column - Sidebar */}
             <div className="profile-sidebar-content">
-              {/* Contact Card */}
+              {/* Contact Card - FOR COUPLES */}
               <div id="contact-section" className="sidebar-card contact-card">
-                {profile.is_sponsored ? (
-                  <LeadContactForm 
-                    profileId={profile.id}
-                    professionalName={profile.full_name}
-                    onSuccess={handleLeadSuccess}
-                  />
-                ) : (
-                  <div className="contact-paywall">
-                    <div className="paywall-icon">
-                      <i className="fa fa-lock fa-2x"></i>
-                    </div>
-                    <h3>Contact {profile.full_name}</h3>
-                    <p>Unlock direct contact to connect with this counselor</p>
-                    <div className="paywall-benefits">
-                      <div className="benefit">
-                        <i className="fa fa-phone"></i>
-                        <span>Direct phone contact</span>
-                      </div>
-                      <div className="benefit">
-                        <i className="fa fa-envelope"></i>
-                        <span>Email communication</span>
-                      </div>
-                      <div className="benefit">
-                        <i className="fa fa-calendar"></i>
-                        <span>Schedule consultation</span>
-                      </div>
-                    </div>
-                    <Link 
-                      to="/professional/subscription" 
-                      className="btn btn-primary btn-full"
-                    >
-                      <i className="fa fa-unlock mr-2"></i>
-                      Unlock Contact (Featured Plan)
-                    </Link>
-                    <p className="paywall-note">
-                      Upgrade to Featured plan to unlock direct contact for all professionals
-                    </p>
-                  </div>
-                )}
+                <h3 className="card-title">Contact this counselor</h3>
+                <p style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+                  Looking for premarital counseling in {profile.city || 'your area'}? Connect with this counselor.
+                </p>
+                <LeadContactForm
+                  profileId={profile.id}
+                  professionalName={profile.full_name}
+                  onSuccess={handleLeadSuccess}
+                />
               </div>
 
-              {/* Contact Info Card */}
-              <div className="sidebar-card contact-info-card">
-                <h3 className="card-title">Contact Information</h3>
-                <div className="contact-info-list">
-                  {profile.phone && (
-                    <div className="contact-info-item">
-                      <div className="contact-info-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                        </svg>
+              {/* Contact Info Card - Only show for Local Featured / Area Spotlight */}
+              {canShowDirectContact && (
+                <div className="sidebar-card contact-info-card">
+                  <h3 className="card-title">Contact Information</h3>
+                  <div className="contact-info-list">
+                    {profile.phone && (
+                      <div className="contact-info-item">
+                        <div className="contact-info-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                          </svg>
+                        </div>
+                        <div className="contact-info-content">
+                          <div className="contact-info-label">Phone</div>
+                          {phoneRevealed ? (
+                            <a href={`tel:${profile.phone}`} className="contact-info-value">
+                              {formatPhoneNumber(profile.phone)}
+                            </a>
+                          ) : (
+                            <button
+                              onClick={() => handleRevealContact('phone')}
+                              className="btn btn-sm btn-outline"
+                              style={{ marginTop: '0.5rem' }}
+                            >
+                              Show Phone Number
+                            </button>
+                          )}
+                        </div>
                       </div>
-                      <div className="contact-info-content">
-                        <div className="contact-info-label">Phone</div>
-                        <a href={`tel:${profile.phone}`} className="contact-info-value">
-                          {formatPhoneNumber(profile.phone)}
-                        </a>
-                      </div>
-                    </div>
-                  )}
+                    )}
 
-                  {profile.email && (
-                    <div className="contact-info-item">
-                      <div className="contact-info-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
+                    {profile.email && (
+                      <div className="contact-info-item">
+                        <div className="contact-info-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                          </svg>
+                        </div>
+                        <div className="contact-info-content">
+                          <div className="contact-info-label">Email</div>
+                          {emailRevealed ? (
+                            <a href={`mailto:${profile.email}`} className="contact-info-value">
+                              {profile.email}
+                            </a>
+                          ) : (
+                            <button
+                              onClick={() => handleRevealContact('email')}
+                              className="btn btn-sm btn-outline"
+                              style={{ marginTop: '0.5rem' }}
+                            >
+                              Show Email
+                            </button>
+                          )}
+                        </div>
                       </div>
-                      <div className="contact-info-content">
-                        <div className="contact-info-label">Email</div>
-                        <a href={`mailto:${profile.email}`} className="contact-info-value">
-                          {profile.email}
-                        </a>
-                      </div>
-                    </div>
-                  )}
+                    )}
 
-                  {profile.website && (
-                    <div className="contact-info-item">
-                      <div className="contact-info-icon">
+                    {profile.website && (
+                      <div className="contact-info-item">
+                        <div className="contact-info-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                          </svg>
+                        </div>
+                        <div className="contact-info-content">
+                          <div className="contact-info-label">Website</div>
+                          <a
+                            href={profile.website}
+                            target="_blank"
+                            rel="nofollow noopener noreferrer"
+                            className="contact-info-value"
+                            onClick={() => handleRevealContact('website')}
+                          >
+                            Visit Website
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {profile.address_line1 && (
+                      <div className="contact-info-item">
+                        <div className="contact-info-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                          </svg>
+                        </div>
+                        <div className="contact-info-content">
+                          <div className="contact-info-label">Address</div>
+                          <div className="contact-info-value">
+                            {profile.address_line1}<br />
+                            {formatLocation(profile)} {profile.postal_code}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Quick Actions Card - Only show for paid tiers */}
+              {canShowDirectContact && (
+                <div className="sidebar-card quick-actions-card">
+                  <h3 className="card-title">Quick Actions</h3>
+                  <div className="quick-actions-list">
+                    {profile.website && (
+                      <a
+                        href={profile.website}
+                        target="_blank"
+                        rel="nofollow noopener noreferrer"
+                        className="quick-action-btn"
+                        onClick={() => handleRevealContact('website')}
+                      >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                         </svg>
-                      </div>
-                      <div className="contact-info-content">
-                        <div className="contact-info-label">Website</div>
-                        <a href={profile.website} target="_blank" rel="noopener noreferrer" className="contact-info-value">
-                          {getDisplayUrl(profile.website)}
-                        </a>
-                      </div>
-                    </div>
-                  )}
+                        Visit Website
+                      </a>
+                    )}
 
-                  {profile.address_line1 && (
-                    <div className="contact-info-item">
-                      <div className="contact-info-icon">
+                    {profile.phone && phoneRevealed && (
+                      <a
+                        href={`tel:${profile.phone}`}
+                        className="quick-action-btn"
+                      >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                          <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                         </svg>
-                      </div>
-                      <div className="contact-info-content">
-                        <div className="contact-info-label">Address</div>
-                        <div className="contact-info-value">
-                          {profile.address_line1}<br />
-                          {formatLocation(profile)} {profile.postal_code}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+                        Call Now
+                      </a>
+                    )}
 
-              {/* Quick Actions Card */}
-              <div className="sidebar-card quick-actions-card">
-                <h3 className="card-title">Quick Actions</h3>
-                <div className="quick-actions-list">
-                  {profile.website && (
-                    <a 
-                      href={profile.website} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="quick-action-btn"
-                    >
+                    <Link to={`/professionals/${state || 'all'}`} className="quick-action-btn">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
                       </svg>
-                      Visit Website
-                    </a>
-                  )}
-                  
-                  {profile.phone && (
-                    <a 
-                      href={`tel:${profile.phone}`}
-                      className="quick-action-btn"
-                    >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                      </svg>
-                      Call Now
-                    </a>
-                  )}
-                  
-                  <Link to="/" className="quick-action-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                    </svg>
-                    Browse More Professionals
-                  </Link>
+                      Browse More Counselors
+                    </Link>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Claim Profile Section - FOR THE COUNSELOR */}
+      <section className="claim-profile-section" style={{ background: 'var(--bg-secondary)', padding: 'var(--space-16) 0' }}>
+        <div className="container">
+          <div className="claim-profile-card" style={{
+            background: 'white',
+            padding: 'var(--space-12)',
+            borderRadius: 'var(--radius-lg)',
+            maxWidth: '800px',
+            margin: '0 auto',
+            textAlign: 'center'
+          }}>
+            <h2 style={{ marginBottom: 'var(--space-4)' }}>Is this your profile?</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-6)' }}>
+              This listing was added so engaged couples can find premarital counseling in {profile.city || 'your area'}.
+              {!profile.is_claimed && " It hasn't been claimed yet."}
+            </p>
+            <Link
+              to={`/claim-profile/${profile.slug || profile.id}`}
+              className="btn btn-primary btn-large"
+              style={{ marginBottom: 'var(--space-4)' }}
+            >
+              {profile.is_claimed ? 'Update this listing' : 'Claim this listing'}
+            </Link>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)' }}>
+              Free to claim. Verified counselors can update their info, add specialties, and receive lead notifications.
+              {!profile.is_claimed && ' You can also request removal if you prefer.'}
+            </p>
           </div>
         </div>
       </section>

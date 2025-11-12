@@ -20,7 +20,9 @@ const ClaimProfilePage = () => {
     city: '',
     state_province: '',
     postal_code: '',
-    country: 'United States'
+    country: 'United States',
+    keep_listed: 'yes',
+    interested_in_featured: 'no'
   })
   const [currentStep, setCurrentStep] = useState(1)
   const [submitted, setSubmitted] = useState(false)
@@ -441,6 +443,70 @@ const ClaimProfilePage = () => {
                       value={formData.postal_code}
                       onChange={(e) => handleInputChange('postal_code', e.target.value)}
                     />
+                  </div>
+                </div>
+
+                {/* Listing Preferences */}
+                <div style={{ marginTop: 'var(--space-8)', padding: 'var(--space-6)', background: 'var(--gray-50)', borderRadius: 'var(--radius-lg)' }}>
+                  <h3 style={{ marginBottom: 'var(--space-4)' }}>Listing Preferences</h3>
+
+                  <div className="form-group" style={{ marginBottom: 'var(--space-6)' }}>
+                    <label style={{ fontWeight: 'var(--font-weight-semibold)', display: 'block', marginBottom: 'var(--space-2)' }}>
+                      Do you want to keep this listing active?
+                    </label>
+                    <div style={{ display: 'flex', gap: 'var(--space-4)' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
+                        <input
+                          type="radio"
+                          name="keep_listed"
+                          value="yes"
+                          checked={formData.keep_listed === 'yes'}
+                          onChange={(e) => handleInputChange('keep_listed', e.target.value)}
+                        />
+                        <span>Yes, keep my listing active</span>
+                      </label>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
+                        <input
+                          type="radio"
+                          name="keep_listed"
+                          value="no"
+                          checked={formData.keep_listed === 'no'}
+                          onChange={(e) => handleInputChange('keep_listed', e.target.value)}
+                        />
+                        <span>No, please remove my listing</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label style={{ fontWeight: 'var(--font-weight-semibold)', display: 'block', marginBottom: 'var(--space-2)' }}>
+                      Interested in Featured placement for your city?
+                    </label>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: 'var(--space-3)' }}>
+                      Featured counselors appear at the top of search results in your city ($49/month)
+                    </p>
+                    <div style={{ display: 'flex', gap: 'var(--space-4)' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
+                        <input
+                          type="radio"
+                          name="interested_in_featured"
+                          value="yes"
+                          checked={formData.interested_in_featured === 'yes'}
+                          onChange={(e) => handleInputChange('interested_in_featured', e.target.value)}
+                        />
+                        <span>Yes, I'm interested</span>
+                      </label>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
+                        <input
+                          type="radio"
+                          name="interested_in_featured"
+                          value="no"
+                          checked={formData.interested_in_featured === 'no'}
+                          onChange={(e) => handleInputChange('interested_in_featured', e.target.value)}
+                        />
+                        <span>No thanks</span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>

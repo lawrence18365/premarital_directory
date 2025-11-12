@@ -73,8 +73,8 @@ const StatesIndexPage = () => {
             </h1>
             
             <p className="text-xl text-gray-600 mb-6">
-              Find qualified premarital counselors and couples therapists in your state. 
-              Browse our directory of licensed professionals specializing in marriage preparation and relationship counseling.
+              Find premarital counselors helping engaged couples prepare for marriage.
+              Browse our directory of licensed professionals specializing in pre-marriage therapy and relationship preparation.
             </p>
           </div>
         </div>
@@ -87,7 +87,7 @@ const StatesIndexPage = () => {
             All 50 States + Washington DC
           </h2>
           <p className="text-gray-600">
-            Select your state to find premarital counselors and couples therapists in your area.
+            Select your state to find premarital counselors specializing in pre-marriage therapy in your area.
           </p>
         </div>
 

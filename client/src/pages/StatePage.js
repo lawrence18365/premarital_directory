@@ -79,11 +79,11 @@ const StatePage = () => {
 
   return (
     <>
-      <SEOHelmet 
-        title={stateContent?.title || `Premarital Counselors in ${stateConfig.name}`}
-        description={stateContent?.description || `Find qualified premarital counselors and marriage therapists in ${stateConfig.name}. Browse licensed professionals specializing in couples therapy and relationship preparation.`}
+      <SEOHelmet
+        title={stateContent?.title || `Premarital Counselors in ${stateConfig.name} | Pre-Marriage Therapy`}
+        description={stateContent?.description || `Find premarital counselors helping engaged couples prepare for marriage in ${stateConfig.name}. Browse licensed professionals specializing in pre-marriage therapy and relationship preparation.`}
         url={`/professionals/${state}`}
-        keywords={`premarital counseling ${stateConfig.name}, marriage counselors ${stateConfig.name}, couples therapy ${stateConfig.name}, ${stateConfig.major_cities.join(', ')}`}
+        keywords={`premarital counseling ${stateConfig.name}, pre-marriage therapy ${stateConfig.name}, engaged couples counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, marriage preparation ${stateConfig.name}`}
         breadcrumbs={breadcrumbItems}
         canonicalUrl={`https://www.weddingcounselors.com/professionals/${state}`}
       />
@@ -99,18 +99,18 @@ const StatePage = () => {
             </h1>
             
             <p className="state-subtitle">
-              {stateContent?.description || `Find qualified premarital counselors and couples therapists in ${stateConfig.name}. Get relationship counseling from licensed professionals specializing in marriage preparation.`}
+              {stateContent?.description || `Find premarital counselors helping engaged couples prepare for marriage in ${stateConfig.name}. Connect with licensed professionals specializing in pre-marriage therapy.`}
             </p>
 
             {/* Dual CTAs */}
             <div className="state-cta-section">
               <div className="cta-buttons">
-                <button 
+                <button
                   onClick={() => setShowGetMatchedForm(true)}
                   className="btn btn-primary btn-large"
                 >
                   <i className="fa fa-heart mr-2"></i>
-                  Get Matched With A Counselor
+                  Find a Premarital Counselor
                 </button>
                 <Link 
                   to="/professional/signup" 
@@ -124,7 +124,7 @@ const StatePage = () => {
 
             <div className="popular-cities">
               <h2 className="popular-cities-title">
-                Popular Cities in {stateConfig.name}
+                Find Premarital Counselors by City in {stateConfig.name}
               </h2>
               <div className="popular-cities-chips">
                 {stateConfig.major_cities.map(city => (
@@ -146,10 +146,10 @@ const StatePage = () => {
       <div className="state-container state-results">
         <div className="mb-6">
           <h2 className="state-results-title">
-            Cities in {stateConfig.name}
+            Premarital Counseling in {stateConfig.name}
           </h2>
           <p className="state-results-subtitle">
-            Select a city to find premarital counselors and couples therapists in your area.
+            Select a city to find premarital counselors helping engaged couples prepare for marriage.
           </p>
         </div>
 
@@ -175,7 +175,7 @@ const StatePage = () => {
       <div className="state-seo-section">
         <div className="state-container">
           <div className="state-seo-inner">
-            <h2 className="state-seo-title">About Premarital Counseling in {stateConfig.name}</h2>
+            <h2 className="state-seo-title">Premarital Counseling for Engaged Couples in {stateConfig.name}</h2>
             <StateAIContent stateName={stateConfig.name} content={stateContent} loading={contentLoading} />
             <LocalContent locationName={stateConfig.name} />
 
@@ -212,7 +212,7 @@ const StatePage = () => {
         <div className="modal-overlay" onClick={() => setShowGetMatchedForm(false)}>
           <div className="modal-content get-matched-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Get Matched With A Counselor in {stateConfig.name}</h3>
+              <h3>Find a Premarital Counselor in {stateConfig.name}</h3>
               <button 
                 onClick={() => setShowGetMatchedForm(false)}
                 className="modal-close"
@@ -222,7 +222,7 @@ const StatePage = () => {
               </button>
             </div>
             <div className="modal-body">
-              <p>Tell us about your needs and we'll connect you with qualified counselors in {stateConfig.name}.</p>
+              <p>Preparing for marriage? We'll connect you with qualified premarital counselors in {stateConfig.name}.</p>
               <LeadContactForm 
                 profileId={null} // Unassigned lead
                 professionalName={`Counselors in ${stateConfig.name}`}
