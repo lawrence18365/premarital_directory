@@ -47,6 +47,7 @@ export const STATE_CONFIG = {
   'vermont': { name: 'Vermont', abbr: 'VT', major_cities: ['Burlington', 'South Burlington', 'Rutland', 'Barre'] },
   'virginia': { name: 'Virginia', abbr: 'VA', major_cities: ['Virginia Beach', 'Norfolk', 'Chesapeake', 'Richmond', 'Newport News'] },
   'washington': { name: 'Washington', abbr: 'WA', major_cities: ['Seattle', 'Spokane', 'Tacoma', 'Vancouver', 'Bellevue'] },
+  'washington-dc': { name: 'Washington, DC', abbr: 'DC', major_cities: ['Capitol Hill', 'Georgetown', 'Dupont Circle', 'Adams Morgan'] },
   'west-virginia': { name: 'West Virginia', abbr: 'WV', major_cities: ['Charleston', 'Huntington', 'Morgantown', 'Parkersburg'] },
   'wisconsin': { name: 'Wisconsin', abbr: 'WI', major_cities: ['Milwaukee', 'Madison', 'Green Bay', 'Kenosha', 'Racine'] },
   'wyoming': { name: 'Wyoming', abbr: 'WY', major_cities: ['Cheyenne', 'Casper', 'Laramie', 'Gillette'] }
