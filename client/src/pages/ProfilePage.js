@@ -514,6 +514,33 @@ const ProfilePage = () => {
                 </div>
               )}
 
+              {/* Browse More in City - Critical for internal linking SEO */}
+              {profile.city && profile.state_province && (
+                <div className="sidebar-card quick-actions-card">
+                  <h3 className="card-title">Looking for more options?</h3>
+                  <div className="quick-actions-list">
+                    <Link
+                      to={`/premarital-counseling/${state || generateSlug(profile.state_province)}/${generateSlug(profile.city)}`}
+                      className="quick-action-btn"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+                      </svg>
+                      Premarital counseling in {profile.city}
+                    </Link>
+                    <Link
+                      to={`/premarital-counseling/${state || generateSlug(profile.state_province)}`}
+                      className="quick-action-btn"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                      </svg>
+                      Browse all {profile.state_province} counselors
+                    </Link>
+                  </div>
+                </div>
+              )}
+
               {/* Quick Actions Card - Only show for paid tiers */}
               {canShowDirectContact && (
                 <div className="sidebar-card quick-actions-card">
@@ -545,13 +572,6 @@ const ProfilePage = () => {
                         Call Now
                       </a>
                     )}
-
-                    <Link to={`/professionals/${state || 'all'}`} className="quick-action-btn">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                      </svg>
-                      Browse More Counselors
-                    </Link>
                   </div>
                 </div>
               )}

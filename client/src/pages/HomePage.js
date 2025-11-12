@@ -285,6 +285,99 @@ const HomePage = () => {
           </div>
         </section>
 
+        {/* Popular Cities - Critical for SEO internal linking */}
+        <section className="popular-cities-section" style={{ background: '#f8f9fa', padding: 'var(--space-16) 0' }}>
+          <div className="container">
+            <div className="section-header text-center" style={{ marginBottom: 'var(--space-12)' }}>
+              <h2 className="font-display">Find Premarital Counseling Near You</h2>
+              <p className="lead">Search for premarital counselors in these popular cities</p>
+            </div>
+            <div className="cities-grid" style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: 'var(--space-6)',
+              marginBottom: 'var(--space-8)'
+            }}>
+              {/* Top 20 priority cities based on GSC data */}
+              {[
+                { city: 'Indianapolis', state: 'Indiana', slug: 'indianapolis', stateSlug: 'indiana' },
+                { city: 'Sioux Falls', state: 'South Dakota', slug: 'sioux-falls', stateSlug: 'south-dakota' },
+                { city: 'Honolulu', state: 'Hawaii', slug: 'honolulu', stateSlug: 'hawaii' },
+                { city: 'Wilmington', state: 'Delaware', slug: 'wilmington', stateSlug: 'delaware' },
+                { city: 'Springfield', state: 'Illinois', slug: 'springfield', stateSlug: 'illinois' },
+                { city: 'Miami', state: 'Florida', slug: 'miami', stateSlug: 'florida' },
+                { city: 'Tampa', state: 'Florida', slug: 'tampa', stateSlug: 'florida' },
+                { city: 'Austin', state: 'Texas', slug: 'austin', stateSlug: 'texas' },
+                { city: 'Dallas', state: 'Texas', slug: 'dallas', stateSlug: 'texas' },
+                { city: 'Houston', state: 'Texas', slug: 'houston', stateSlug: 'texas' },
+                { city: 'Phoenix', state: 'Arizona', slug: 'phoenix', stateSlug: 'arizona' },
+                { city: 'Los Angeles', state: 'California', slug: 'los-angeles', stateSlug: 'california' },
+                { city: 'San Francisco', state: 'California', slug: 'san-francisco', stateSlug: 'california' },
+                { city: 'San Diego', state: 'California', slug: 'san-diego', stateSlug: 'california' },
+                { city: 'Seattle', state: 'Washington', slug: 'seattle', stateSlug: 'washington' },
+                { city: 'Portland', state: 'Oregon', slug: 'portland', stateSlug: 'oregon' },
+                { city: 'Denver', state: 'Colorado', slug: 'denver', stateSlug: 'colorado' },
+                { city: 'Chicago', state: 'Illinois', slug: 'chicago', stateSlug: 'illinois' },
+                { city: 'New York', state: 'New York', slug: 'new-york', stateSlug: 'new-york' },
+                { city: 'Boston', state: 'Massachusetts', slug: 'boston', stateSlug: 'massachusetts' }
+              ].map((location, index) => (
+                <Link
+                  key={index}
+                  to={`/premarital-counseling/${location.stateSlug}/${location.slug}`}
+                  className="city-card"
+                  style={{
+                    background: 'white',
+                    padding: 'var(--space-6)',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid #e5e7eb',
+                    textDecoration: 'none',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 'var(--space-2)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = 'none'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  <h3 style={{
+                    fontSize: '1.125rem',
+                    fontWeight: '600',
+                    color: 'var(--text-primary)',
+                    margin: 0
+                  }}>
+                    Premarital counseling in {location.city}
+                  </h3>
+                  <p style={{
+                    fontSize: '0.875rem',
+                    color: 'var(--text-secondary)',
+                    margin: 0
+                  }}>
+                    {location.state}
+                  </p>
+                  <span style={{
+                    fontSize: '0.875rem',
+                    color: 'var(--color-primary)',
+                    fontWeight: '500'
+                  }}>
+                    View counselors →
+                  </span>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center">
+              <Link to="/premarital-counseling" className="btn btn-secondary">
+                View All Cities
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Featured Professionals */}
         <section className="profiles-section" style={{ background: 'white' }}>
           <div className="container">

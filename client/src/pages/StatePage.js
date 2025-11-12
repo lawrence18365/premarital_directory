@@ -112,10 +112,10 @@ const StatePage = () => {
   return (
     <>
       <SEOHelmet
-        title={stateContent?.title || `Premarital Counseling in ${stateConfig.name} — Therapists, Faith-Based & Online`}
-        description={stateContent?.description || `Find premarital counseling in ${stateConfig.name}. Licensed therapists (LMFT, LPC), Christian and faith-based options, online sessions. Compare prices, methods, and availability.`}
+        title={stateContent?.title || `Premarital Counseling in ${stateConfig.name} — Find Counselors (2025)`}
+        description={stateContent?.description || `Find premarital counseling in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples. See prices, specialties, and availability across ${stateConfig.major_cities.length}+ cities.`}
         url={`/premarital-counseling/${state}`}
-        keywords={`premarital counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, ${stateConfig.major_cities.join(', ')}`}
+        keywords={`premarital counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, pre cana ${stateConfig.name}, clergy premarital counseling, ${stateConfig.major_cities.join(', ')}`}
         breadcrumbs={breadcrumbItems}
         structuredData={citiesItemList}
         canonicalUrl={`https://www.weddingcounselors.com/premarital-counseling/${state}`}
@@ -133,7 +133,7 @@ const StatePage = () => {
             </h1>
 
             <p className="state-subtitle">
-              {stateContent?.description || `Find premarital counseling in ${stateConfig.name}. Licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, and online options. Compare methods (Gottman, PREPARE-ENRICH), pricing, and availability.`}
+              {stateContent?.description || `Find premarital counseling in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples across ${stateConfig.major_cities.length}+ cities. See methods (Gottman, PREPARE-ENRICH), pricing, and availability.`}
             </p>
 
             {/* Dual CTAs */}
@@ -180,7 +180,7 @@ const StatePage = () => {
                 className="city-card-large"
               >
                 <h3>Premarital Counseling in {cityName}</h3>
-                <p>Find therapists, faith-based counselors, and online options in {cityName}, {stateConfig.abbr}</p>
+                <p>Find therapists, Christian counselors, clergy, and online options for engaged couples in {cityName}, {stateConfig.abbr}</p>
                 <span className="city-arrow">→</span>
               </Link>
             )
