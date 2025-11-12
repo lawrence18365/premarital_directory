@@ -11,6 +11,7 @@ import { STATE_CONFIG, CITY_CONFIG } from '../data/locationConfig';
 import CityContentGenerator from '../lib/cityContentGenerator';
 import LocalContent from '../components/common/LocalContent';
 import LeadContactForm from '../components/leads/LeadContactForm';
+import FAQ from '../components/common/FAQ';
 import '../assets/css/state-page.css';
 
 const CityPage = () => {
@@ -105,39 +106,65 @@ const CityPage = () => {
     .filter(([key]) => key !== state)
     .slice(0, 6)
 
-  const structuredData = {
+  // Generate ItemList structured data for provider directory (SEO-critical for rankings)
+  const structuredData = profiles.length > 0 ? {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    'name': `Premarital Counseling in ${cityName}, ${stateName}`,
-    'description': `Find qualified premarital counselors, therapists, and coaches in ${cityName}, ${stateName}. Licensed professionals specializing in marriage preparation and relationship counseling.`,
-    'areaServed': {
-      '@type': 'City',
-      'name': cityName,
-      'containedInPlace': {
-        '@type': 'State',
-        'name': stateName
+    '@type': 'ItemList',
+    'name': `Premarital Counselors in ${cityName}, ${stateName}`,
+    'description': `Find qualified premarital counselors in ${cityName}, ${stateName}. ${profiles.length} licensed professionals specializing in pre-marriage preparation and relationship counseling for engaged couples.`,
+    'numberOfItems': profiles.length,
+    'itemListElement': profiles.slice(0, 20).map((profile, index) => ({
+      '@type': 'ListItem',
+      'position': index + 1,
+      'item': {
+        '@type': 'Person',
+        'name': profile.full_name,
+        'jobTitle': profile.profession || 'Premarital Counselor',
+        'address': {
+          '@type': 'PostalAddress',
+          'addressLocality': profile.city || cityName,
+          'addressRegion': profile.state_province || stateConfig?.abbr
+        },
+        'url': profile.slug ? `https://www.weddingcounselors.com/premarital-counseling/${state}/${city}/${profile.slug}` : undefined
       }
-    },
-    'serviceArea': {
-      '@type': 'GeoCircle',
-      'geoMidpoint': {
-        '@type': 'GeoCoordinates',
-        'addressLocality': cityName,
-        'addressRegion': stateConfig?.abbr
-      }
-    }
-  }
+    }))
+  } : null
 
-  // Determine if page should be noindexed (thin content - fewer than 8 profiles)
-  const shouldNoindex = profiles.length < 8
+  // City-specific FAQ data for rich results
+  const cityFAQs = [
+    {
+      question: `How much does premarital counseling cost in ${cityName}?`,
+      answer: `Premarital counseling in ${cityName}, ${stateName} typically costs between $100-$200 per session. Many counselors offer package deals for 5-8 sessions. Faith-based options like Pre-Cana may be free or low-cost through churches. Some insurance plans may cover premarital therapy.`
+    },
+    {
+      question: `How many premarital counseling sessions do engaged couples need in ${cityName}?`,
+      answer: `Most engaged couples in ${cityName} complete 5-8 premarital counseling sessions over 2-3 months before their wedding. Programs like PREPARE-ENRICH and Gottman Method have structured timelines. Clergy-led programs may require 4-6 sessions.`
+    },
+    {
+      question: `Are there Christian and faith-based premarital counselors in ${cityName}?`,
+      answer: `Yes, ${cityName} has Christian premarital counselors, Catholic Pre-Cana programs, and faith-based marriage preparation. Many licensed therapists (LMFT, LPC) integrate Christian values. Local churches also offer clergy-led premarital programs for engaged couples.`
+    },
+    {
+      question: `Can engaged couples do premarital counseling online in ${cityName}?`,
+      answer: `Yes, many ${cityName} premarital counselors offer online sessions via telehealth. This is ideal for busy engaged couples with different schedules or if one partner travels. Online premarital counseling is just as effective as in-person for marriage preparation.`
+    },
+    {
+      question: `What topics are covered in premarital counseling in ${cityName}?`,
+      answer: `Premarital counseling in ${cityName} covers communication skills, conflict resolution, finances, family planning, intimacy expectations, roles and responsibilities, faith and values, and in-law relationships. Counselors help engaged couples prepare for a strong marriage foundation.`
+    }
+  ]
+
+  // Determine if page should be noindexed (thin content - fewer than 5 profiles now, was 8)
+  const shouldNoindex = profiles.length < 5
 
   return (
     <div className="city-page">
       <SEOHelmet
-        title={cityContent?.title || `Premarital Counseling in ${cityName}, ${stateName} — Therapists, Faith-Based & Online`}
-        description={cityContent?.description || `Find premarital counseling in ${cityName}, ${stateName}. ${profiles.length}+ licensed therapists (LMFT, LPC), Christian and faith-based counselors, online sessions. Compare prices, methods, and book intro calls.`}
-        keywords={`premarital counseling ${cityName}, premarital therapy ${cityName} ${stateName}, pre marriage counseling ${cityName}, christian premarital counseling ${cityName}, pre cana ${cityName}`}
+        title={cityContent?.title || `Premarital Counseling in ${cityName}, ${stateConfig?.abbr || stateName} — ${profiles.length} Counselors (2025)`}
+        description={cityContent?.description || `Find premarital counseling in ${cityName}, ${stateName}. Compare ${profiles.length} licensed therapists (LMFT, LPC, LCSW), Christian counselors, clergy, and online options for engaged couples. See prices, specialties, and availability — book intro calls today.`}
+        keywords={`premarital counseling ${cityName}, premarital therapy ${cityName}, pre marriage counseling ${cityName} ${stateName}, christian premarital counseling ${cityName}, pre cana ${cityName}, clergy premarital counseling ${cityName}`}
         structuredData={structuredData}
+        faqs={cityFAQs}
         noindex={shouldNoindex}
       />
 
@@ -146,9 +173,9 @@ const CityPage = () => {
         <div className="container">
           <Breadcrumbs items={breadcrumbData} variant="on-hero" />
           <div className="state-header-content">
-            <h1>Premarital Counseling in {cityName}, {stateName}</h1>
+            <h1>Best Premarital Counselors in {cityName}, {stateName}</h1>
             <p className="lead">
-              Find premarital counseling in {cityName}, {stateName}. Licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, and online options. Compare methods, pricing, and availability—book intro sessions now.
+              Compare {profiles.length} premarital counselors in {cityName}, {stateName}. Find licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples. See session costs, insurance options, and availability — book intro calls today.
             </p>
 
 
@@ -211,12 +238,24 @@ const CityPage = () => {
                   <h2>Premarital Counselors in {cityName}</h2>
                   <p>Licensed professionals specializing in pre-marriage counseling and relationship preparation for engaged couples</p>
                 </div>
-                <ProfileList 
+                <ProfileList
                   profiles={profiles}
                   loading={false}
                   error={null}
                   showLocation={false}
                 />
+
+                {/* City-specific FAQ for rich results */}
+                <div style={{ marginTop: 'var(--space-12)' }}>
+                  <FAQ
+                    faqs={cityFAQs}
+                    title={`Premarital Counseling in ${cityName} — Frequently Asked Questions`}
+                    description={`Common questions about marriage and premarital counseling in ${cityName}, ${stateName}`}
+                    showSearch={false}
+                    showAside={false}
+                  />
+                </div>
+
                 <LocalContent locationName={cityName} />
               </>
             ) : (
@@ -329,15 +368,15 @@ const CityPage = () => {
                       const citySlug = cityName.toLowerCase().replace(/\s+/g, '-')
                       return (
                         <li key={citySlug}>
-                          <Link to={`/professionals/${state}/${citySlug}`}>
-                            {cityName}
+                          <Link to={`/premarital-counseling/${state}/${citySlug}`}>
+                            Premarital counseling in {cityName}
                           </Link>
                         </li>
                       )
                     })}
                 </ul>
-                <Link to={`/professionals/${state}`} className="view-all-link">
-                  View all {stateName} professionals →
+                <Link to={`/premarital-counseling/${state}`} className="view-all-link">
+                  View all {stateName} cities →
                 </Link>
               </div>
             )}
