@@ -77,15 +77,49 @@ const StatePage = () => {
   if (loading) return <LoadingSpinner />
   if (error) return <ErrorMessage message={error} />
 
+  // Determine if page should be noindexed (thin content detection)
+  const shouldNoindex =
+    // State has fewer than 5 cities
+    stateConfig.major_cities.length < 5 ||
+    // Content contains placeholder text
+    (stateContent?.description && (
+      stateContent.description.toLowerCase().includes('placeholder') ||
+      stateContent.description.toLowerCase().includes('coming soon')
+    ))
+
+  // Generate ItemList structured data for cities
+  const citiesItemList = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": `Cities in ${stateConfig.name}`,
+    "description": `Find premarital counselors in ${stateConfig.name} cities`,
+    "numberOfItems": stateConfig.major_cities.length,
+    "itemListElement": stateConfig.major_cities.map((cityName, index) => {
+      const citySlug = cityName.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')
+      return {
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "WebPage",
+          "name": `${cityName}, ${stateConfig.abbr}`,
+          "url": `https://www.weddingcounselors.com/premarital-counseling/${state}/${citySlug}`,
+          "description": `Find premarital counselors in ${cityName}, ${stateConfig.name}`
+        }
+      }
+    })
+  }
+
   return (
     <>
       <SEOHelmet
-        title={stateContent?.title || `Premarital Counselors in ${stateConfig.name} | Pre-Marriage Therapy`}
-        description={stateContent?.description || `Find premarital counselors helping engaged couples prepare for marriage in ${stateConfig.name}. Browse licensed professionals specializing in pre-marriage therapy and relationship preparation.`}
-        url={`/professionals/${state}`}
-        keywords={`premarital counseling ${stateConfig.name}, pre-marriage therapy ${stateConfig.name}, engaged couples counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, marriage preparation ${stateConfig.name}`}
+        title={stateContent?.title || `Premarital Counseling in ${stateConfig.name} — Therapists, Faith-Based & Online`}
+        description={stateContent?.description || `Find premarital counseling in ${stateConfig.name}. Licensed therapists (LMFT, LPC), Christian and faith-based options, online sessions. Compare prices, methods, and availability.`}
+        url={`/premarital-counseling/${state}`}
+        keywords={`premarital counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, ${stateConfig.major_cities.join(', ')}`}
         breadcrumbs={breadcrumbItems}
-        canonicalUrl={`https://www.weddingcounselors.com/professionals/${state}`}
+        structuredData={citiesItemList}
+        canonicalUrl={`https://www.weddingcounselors.com/premarital-counseling/${state}`}
+        noindex={shouldNoindex}
       />
       <div className="state-page">
         {/* SEO Optimized Header */}
@@ -95,11 +129,11 @@ const StatePage = () => {
             <div className="state-header-content">
             
             <h1 className="state-title">
-              {stateContent?.h1 || `Premarital Counselors in ${stateConfig.name}`}
+              {stateContent?.h1 || `Premarital Counseling in ${stateConfig.name}`}
             </h1>
-            
+
             <p className="state-subtitle">
-              {stateContent?.description || `Find premarital counselors helping engaged couples prepare for marriage in ${stateConfig.name}. Connect with licensed professionals specializing in pre-marriage therapy.`}
+              {stateContent?.description || `Find premarital counseling in ${stateConfig.name}. Licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, and online options. Compare methods (Gottman, PREPARE-ENRICH), pricing, and availability.`}
             </p>
 
             {/* Dual CTAs */}
@@ -112,30 +146,13 @@ const StatePage = () => {
                   <i className="fa fa-heart mr-2"></i>
                   Find a Premarital Counselor
                 </button>
-                <Link 
-                  to="/professional/signup" 
+                <Link
+                  to="/professional/signup"
                   className="btn btn-secondary btn-large"
                 >
                   <i className="fa fa-plus-circle mr-2"></i>
                   List Your Practice
                 </Link>
-              </div>
-            </div>
-
-            <div className="popular-cities">
-              <h2 className="popular-cities-title">
-                Find Premarital Counselors by City in {stateConfig.name}
-              </h2>
-              <div className="popular-cities-chips">
-                {stateConfig.major_cities.map(city => (
-                  <Link
-                    key={city}
-                    to={`/professionals/${state}/${city.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="city-chip"
-                  >
-                    {city}
-                  </Link>
-                ))}
               </div>
             </div>
           </div>
@@ -157,13 +174,13 @@ const StatePage = () => {
           {stateConfig.major_cities.map(cityName => {
             const citySlug = cityName.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')
             return (
-              <Link 
+              <Link
                 key={citySlug}
-                to={`/professionals/${state}/${citySlug}`}
+                to={`/premarital-counseling/${state}/${citySlug}`}
                 className="city-card-large"
               >
-                <h3>{cityName}</h3>
-                <p>Find counselors in {cityName}, {stateConfig.abbr}</p>
+                <h3>Premarital Counseling in {cityName}</h3>
+                <p>Find therapists, faith-based counselors, and online options in {cityName}, {stateConfig.abbr}</p>
                 <span className="city-arrow">→</span>
               </Link>
             )
@@ -178,30 +195,6 @@ const StatePage = () => {
             <h2 className="state-seo-title">Premarital Counseling for Engaged Couples in {stateConfig.name}</h2>
             <StateAIContent stateName={stateConfig.name} content={stateContent} loading={contentLoading} />
             <LocalContent locationName={stateConfig.name} />
-
-            {/* Major Cities Section */}
-            {stateConfig.major_cities && stateConfig.major_cities.length > 0 && (
-              <div className="major-cities-section">
-                <h3>Major Cities in {stateConfig.name}</h3>
-                <p>Find premarital counselors in these {stateConfig.name} cities:</p>
-                <div className="major-cities-grid">
-                  {stateConfig.major_cities.map(cityName => {
-                    const citySlug = cityName.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')
-                    return (
-                      <Link 
-                        key={citySlug}
-                        to={`/professionals/${state}/${citySlug}`}
-                        className="city-card"
-                      >
-                        <h4>{cityName}</h4>
-                        <p>Find counselors in {cityName}, {stateConfig.abbr}</p>
-                        <span className="city-arrow">→</span>
-                      </Link>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

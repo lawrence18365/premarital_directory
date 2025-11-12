@@ -61,12 +61,21 @@
   transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
   text-decoration: none;
   color: inherit;
+  display: block;
+  min-height: 44px; /* WCAG minimum touch target */
+  cursor: pointer;
 }
 
-.state-card:hover {
+.state-card:hover,
+.state-card:focus {
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
   border-color: var(--primary);
+}
+
+.state-card:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .state-card h3 {
@@ -88,7 +97,9 @@
 }
 
 .state-card:hover svg,
-.state-card:hover h3 {
+.state-card:hover h3,
+.state-card:focus svg,
+.state-card:focus h3 {
   color: var(--primary);
 }
 

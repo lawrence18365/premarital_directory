@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import SEOHelmet from '../components/analytics/SEOHelmet'
+import CompactSearch from '../components/common/CompactSearch'
 import '../assets/css/states-page.css'
 
 const STATES = [
@@ -50,14 +52,51 @@ const STATES = [
   { slug: 'vermont', name: 'Vermont', abbr: 'VT' },
   { slug: 'virginia', name: 'Virginia', abbr: 'VA' },
   { slug: 'washington', name: 'Washington', abbr: 'WA' },
+  { slug: 'washington-dc', name: 'Washington, DC', abbr: 'DC' },
   { slug: 'west-virginia', name: 'West Virginia', abbr: 'WV' },
   { slug: 'wisconsin', name: 'Wisconsin', abbr: 'WI' },
   { slug: 'wyoming', name: 'Wyoming', abbr: 'WY' }
 ]
 
 const StatesIndexPage = () => {
+  // Generate ItemList structured data for states
+  const statesItemList = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Premarital Counselors by State",
+    "description": "Browse all 50 states and D.C. to find verified premarital counselors near you.",
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": STATES.length,
+      "itemListElement": STATES.map((state, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "WebPage",
+          "name": state.name,
+          "url": `https://www.weddingcounselors.com/premarital-counseling/${state.slug}`,
+          "description": `Find premarital counselors in ${state.name}`
+        }
+      }))
+    }
+  }
+
+  const breadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: 'Premarital Counseling', url: null }
+  ]
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHelmet
+        title="Premarital Counseling by State | Licensed Therapists, Coaches & Clergy"
+        description="Find premarital counseling in all 50 states. Compare licensed therapists, faith-based counselors, and online options. Book intro sessions, read reviews, see pricing."
+        url="/premarital-counseling"
+        keywords="premarital counseling, premarital therapy, pre marriage counseling, couples counseling before marriage, pre cana"
+        breadcrumbs={breadcrumbs}
+        structuredData={statesItemList}
+        canonicalUrl="https://www.weddingcounselors.com/premarital-counseling"
+      />
       {/* Header */}
       <div className="states-page-header">
         <div className="states-grid !pt-0">
@@ -65,16 +104,15 @@ const StatesIndexPage = () => {
             <nav className="text-sm text-gray-500 mb-4">
               <Link to="/" className="hover:text-blue-600">Home</Link>
               <span className="mx-2">/</span>
-              <span className="text-gray-900">States</span>
+              <span className="text-gray-900">Premarital Counseling</span>
             </nav>
-            
+
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Premarital Counselors by State
+              Premarital Counseling by State — Find Therapists, Faith-Based & Online Options
             </h1>
-            
+
             <p className="text-xl text-gray-600 mb-6">
-              Find premarital counselors helping engaged couples prepare for marriage.
-              Browse our directory of licensed professionals specializing in pre-marriage therapy and relationship preparation.
+              Find premarital counseling in your state. Licensed therapists, Christian and faith-based counselors, and online programs. Compare prices, read reviews, and book intro sessions.
             </p>
           </div>
         </div>
@@ -82,9 +120,12 @@ const StatesIndexPage = () => {
 
       {/* States Grid */}
       <div className="states-grid">
+        {/* Quick Search */}
+        <CompactSearch />
+
         <div className="mb-8 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            All 50 States + Washington DC
+            All 50 States + Washington, DC
           </h2>
           <p className="text-gray-600">
             Select your state to find premarital counselors specializing in pre-marriage therapy in your area.
@@ -95,7 +136,7 @@ const StatesIndexPage = () => {
           {STATES.map(state => (
             <Link
               key={state.slug}
-              to={`/professionals/${state.slug}`}
+              to={`/premarital-counseling/${state.slug}`}
               className="state-card"
             >
               <div>
@@ -144,8 +185,8 @@ const StatesIndexPage = () => {
                 
                 <div className="space-y-4 text-gray-600">
                   <p>
-                    Our comprehensive directory makes it easy to find qualified premarital counselors 
-                    in your state and city. All professionals are licensed and specialize in couples therapy.
+                    Our comprehensive directory makes it easy to find qualified premarital counselors
+                    in your state and city. Licensed therapists with verified credentials, plus vetted coaches and clergy reviewed for scope and qualifications.
                   </p>
                   
                   <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">
@@ -164,6 +205,7 @@ const StatesIndexPage = () => {
           </div>
         </div>
       </div>
+    </div>
   )
 }
 

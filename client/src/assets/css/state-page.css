@@ -272,6 +272,8 @@
   transition: all var(--transition);
   position: relative;
   overflow: hidden;
+  min-height: 44px; /* WCAG minimum touch target */
+  cursor: pointer;
 }
 
 .city-card::before {
@@ -286,13 +288,20 @@
   transition: opacity var(--transition);
 }
 
-.city-card:hover {
+.city-card:hover,
+.city-card:focus {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
   border-color: var(--teal);
 }
 
-.city-card:hover::before {
+.city-card:focus {
+  outline: 3px solid var(--teal);
+  outline-offset: 2px;
+}
+
+.city-card:hover::before,
+.city-card:focus::before {
   opacity: 1;
 }
 
@@ -743,6 +752,8 @@
   position: relative;
   overflow: hidden;
   display: block;
+  min-height: 44px; /* WCAG minimum touch target */
+  cursor: pointer;
 }
 
 .city-card-large::before {
@@ -757,13 +768,20 @@
   transition: opacity var(--transition);
 }
 
-.city-card-large:hover {
+.city-card-large:hover,
+.city-card-large:focus {
   transform: translateY(-8px);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   border-color: var(--primary);
 }
 
-.city-card-large:hover::before {
+.city-card-large:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.city-card-large:hover::before,
+.city-card-large:focus::before {
   opacity: 1;
 }
 

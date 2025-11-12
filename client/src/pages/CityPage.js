@@ -99,7 +99,7 @@ const CityPage = () => {
     setContentLoading(false)
   }
 
-  const breadcrumbData = generateBreadcrumbs.cityPage(stateName, cityName, `/professionals/${state}`)
+  const breadcrumbData = generateBreadcrumbs.cityPage(stateName, cityName, `/premarital-counseling/${state}`)
 
   const nearbyStates = Object.entries(STATE_CONFIG)
     .filter(([key]) => key !== state)
@@ -128,14 +128,17 @@ const CityPage = () => {
     }
   }
 
+  // Determine if page should be noindexed (thin content - fewer than 8 profiles)
+  const shouldNoindex = profiles.length < 8
+
   return (
     <div className="city-page">
       <SEOHelmet
-        title={cityContent?.title || `Premarital Counseling in ${cityName}, ${stateName} | Pre-Marriage Therapy`}
-        description={cityContent?.description || `Find premarital counseling for engaged couples in ${cityName}, ${stateName}. ${profiles.length > 0 ? profiles.length + ' verified' : 'Qualified'} counselors specializing in pre-marriage therapy and relationship preparation before your wedding.`}
-        keywords={`premarital counseling ${cityName}, pre-marriage therapy ${cityName}, engaged couples counseling ${cityName}, marriage preparation ${cityName}, premarital therapy ${cityName} ${stateName}`}
+        title={cityContent?.title || `Premarital Counseling in ${cityName}, ${stateName} — Therapists, Faith-Based & Online`}
+        description={cityContent?.description || `Find premarital counseling in ${cityName}, ${stateName}. ${profiles.length}+ licensed therapists (LMFT, LPC), Christian and faith-based counselors, online sessions. Compare prices, methods, and book intro calls.`}
+        keywords={`premarital counseling ${cityName}, premarital therapy ${cityName} ${stateName}, pre marriage counseling ${cityName}, christian premarital counseling ${cityName}, pre cana ${cityName}`}
         structuredData={structuredData}
-        noindex={false}
+        noindex={shouldNoindex}
       />
 
       {/* City Header */}
@@ -145,7 +148,7 @@ const CityPage = () => {
           <div className="state-header-content">
             <h1>Premarital Counseling in {cityName}, {stateName}</h1>
             <p className="lead">
-              {profiles.length > 0 ? `${profiles.length} verified` : 'Find qualified'} premarital counselors helping engaged couples prepare for marriage in {cityName}.
+              Find premarital counseling in {cityName}, {stateName}. Licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, and online options. Compare methods, pricing, and availability—book intro sessions now.
             </p>
 
 
