@@ -384,7 +384,7 @@ const CityPage = () => {
             ) : (
               <div className="no-profiles">
                 <h2>No premarital counselors listed yet in {cityName}</h2>
-                <p>Try searching in nearby areas or <Link to={`/professionals/${state}`}>browse all {stateName} premarital counselors</Link>.</p>
+                <p>Try searching in nearby areas or <Link to={`/premarital-counseling/${state}`}>browse all {stateName} premarital counselors</Link>.</p>
                 <Link to="/claim-profile" className="btn btn-primary">
                   Are you a premarital counselor in {cityName}? Join our directory
                 </Link>

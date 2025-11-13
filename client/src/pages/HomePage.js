@@ -172,9 +172,9 @@ const HomePage = () => {
     if (filters.profession) params.set('profession', filters.profession)
     if (filters.state) {
       const stateSlug = (filters.state || '').toLowerCase().replace(/\s+/g, '-')
-      navigate(`/professionals/${stateSlug}${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`)
+      navigate(`/premarital-counseling/${stateSlug}${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`)
     } else {
-      navigate('/states')
+      navigate('/premarital-counseling')
     }
   }
 
