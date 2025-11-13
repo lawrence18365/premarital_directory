@@ -66,6 +66,7 @@ const SubscriptionPage = React.lazy(() => import('./pages/professional/Subscript
 // Admin Pages
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'))
 const CampaignDashboard = React.lazy(() => import('./pages/admin/CampaignDashboard'))
+const ClaimReviewDashboard = React.lazy(() => import('./pages/admin/ClaimReviewDashboard'))
 const SitemapGenerator = React.lazy(() => import('./pages/SitemapGenerator'))
 
 // Missing pages that exist but weren't routed
@@ -189,15 +190,23 @@ function AppInner() {
                     </ProtectedRoute>
                   } 
                 />
-                <Route 
-                  path="/admin/campaigns" 
+                <Route
+                  path="/admin/campaigns"
                   element={
                     <ProtectedRoute requireAdmin={true}>
                       <CampaignDashboard />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
+                <Route
+                  path="/admin/claims"
+                  element={
+                    <ProtectedRoute requireAdmin={true}>
+                      <ClaimReviewDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
                   path="/admin/sitemap" 
                   element={
                     <ProtectedRoute requireAdmin={true}>

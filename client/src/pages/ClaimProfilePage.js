@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 
 import { profileOperations } from '../lib/supabaseClient'
+import { sendClaimSubmittedEmail } from '../lib/emailNotifications'
 
 const ClaimProfilePage = () => {
   const { id } = useParams() // Optional - for claiming specific profile
@@ -26,6 +27,8 @@ const ClaimProfilePage = () => {
   const [currentStep, setCurrentStep] = useState(1)
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [checkingDuplicate, setCheckingDuplicate] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -71,8 +74,102 @@ const ClaimProfilePage = () => {
     }))
   }
 
+  // Validate current step before proceeding
+  const validateStep = (step) => {
+    setError('')
+
+    if (step === 1) {
+      if (!formData.full_name || !formData.full_name.trim()) {
+        setError('Please enter your full name')
+        return false
+      }
+      if (!formData.profession) {
+        setError('Please select your profession')
+        return false
+      }
+      if (!formData.email || !formData.email.trim()) {
+        setError('Please enter your email address')
+        return false
+      }
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(formData.email)) {
+        setError('Please enter a valid email address')
+        return false
+      }
+    }
+
+    if (step === 3) {
+      if (!formData.city || !formData.city.trim()) {
+        setError('Please enter your city')
+        return false
+      }
+      if (!formData.state_province || !formData.state_province.trim()) {
+        setError('Please enter your state/province')
+        return false
+      }
+    }
+
+    return true
+  }
+
+  // Check for duplicate claims
+  const checkDuplicateClaim = async () => {
+    if (!existingProfile || !formData.email) return true
+
+    setCheckingDuplicate(true)
+
+    try {
+      const { data, error } = await profileOperations.checkDuplicateClaim(
+        existingProfile.id,
+        formData.email
+      )
+
+      if (error) {
+        console.error('Error checking duplicate:', error)
+        return true // Allow submission if check fails
+      }
+
+      if (data && data.length > 0) {
+        setError('You have already submitted a claim for this profile. Please check your email for updates.')
+        return false
+      }
+
+      return true
+    } catch (err) {
+      console.error('Error checking duplicate:', err)
+      return true // Allow submission if check fails
+    } finally {
+      setCheckingDuplicate(false)
+    }
+  }
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
+  const handlePrevious = () => {
+    setError('')
+    setCurrentStep(currentStep - 1)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('')
+
+    // Validate final step
+    if (!validateStep(3)) {
+      return
+    }
+
+    // Check for duplicates
+    const isDuplicateOk = await checkDuplicateClaim()
+    if (!isDuplicateOk) {
+      return
+    }
+
     setLoading(true);
 
     try {
@@ -80,7 +177,7 @@ const ClaimProfilePage = () => {
         // Claiming existing profile
         const claimData = {
           profile_id: existingProfile.id,
-          submitted_by_email: formData.email,
+          submitted_by_email: formData.email.trim(),
           claim_data: formData,
           status: 'pending',
         };
@@ -91,19 +188,31 @@ const ClaimProfilePage = () => {
           throw error;
         }
       } else {
-        // Creating new profile directly
-        const newProfileData = {
-          ...formData,
-          status: 'pending',
-          tier: 'community',
-          created_at: new Date().toISOString()
+        // Creating new profile via claim system
+        const claimData = {
+          profile_id: null, // No existing profile
+          submitted_by_email: formData.email.trim(),
+          claim_data: {
+            ...formData,
+            tier: 'community',
+            is_claimed: false
+          },
+          status: 'pending'
         };
 
-        const { data, error } = await profileOperations.createProfile(newProfileData);
+        const { data, error } = await profileOperations.createProfileClaim(claimData);
 
         if (error) {
           throw error;
         }
+      }
+
+      // Send confirmation email (non-blocking)
+      try {
+        await sendClaimSubmittedEmail(formData.email.trim(), formData)
+      } catch (emailError) {
+        console.error('Email notification failed:', emailError)
+        // Don't block success on email failure
       }
 
       // Show success page
@@ -112,8 +221,20 @@ const ClaimProfilePage = () => {
 
     } catch (err) {
       console.error('Error submitting:', err);
-      alert('There was an error submitting your profile. Please try again.');
       setLoading(false);
+
+      // Handle specific error types
+      if (err.code === '23505') {
+        setError('A claim with this email already exists. Please check your inbox for confirmation.')
+      } else if (err.code === '23503') {
+        setError('Profile not found. Please contact support at support@weddingcounselors.com')
+      } else if (err.message?.includes('JWT')) {
+        setError('Session expired. Please refresh the page and try again.')
+      } else if (err.message) {
+        setError(`Unable to submit: ${err.message}`)
+      } else {
+        setError('There was an error submitting your claim. Please try again or contact support.')
+      }
     }
   };
 
@@ -275,11 +396,29 @@ const ClaimProfilePage = () => {
           ))}
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div style={{
+            background: '#fee',
+            border: '1px solid #fcc',
+            borderRadius: 'var(--radius-md)',
+            padding: 'var(--space-4)',
+            marginBottom: 'var(--space-6)',
+            color: '#c33',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-2)'
+          }}>
+            <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+            <span>{error}</span>
+          </div>
+        )}
+
         {/* Form */}
-        <div style={{ 
-          background: 'var(--white)', 
-          padding: 'var(--space-8)', 
-          borderRadius: 'var(--radius-2xl)', 
+        <div style={{
+          background: 'var(--white)',
+          padding: 'var(--space-8)',
+          borderRadius: 'var(--radius-2xl)',
           boxShadow: 'var(--shadow-lg)',
           border: '1px solid var(--gray-200)'
         }}>
@@ -502,10 +641,11 @@ const ClaimProfilePage = () => {
               gap: 'var(--space-4)'
             }}>
               {currentStep > 1 ? (
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-outline"
-                  onClick={() => setCurrentStep(currentStep - 1)}
+                  onClick={handlePrevious}
+                  disabled={loading || checkingDuplicate}
                 >
                   Previous
                 </button>
@@ -514,20 +654,21 @@ const ClaimProfilePage = () => {
               )}
 
               {currentStep < 3 ? (
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-primary"
-                  onClick={() => setCurrentStep(currentStep + 1)}
+                  onClick={handleNext}
+                  disabled={loading}
                 >
                   Next
                 </button>
               ) : (
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="btn btn-primary"
-                  disabled={loading}
+                  disabled={loading || checkingDuplicate}
                 >
-                  {loading ? 'Submitting...' : (window.DEMO_MODE ? 'Submit Demo Claim' : 'Submit Profile Claim')}
+                  {checkingDuplicate ? 'Checking...' : loading ? 'Submitting...' : 'Submit Profile Claim'}
                 </button>
               )}
             </div>
