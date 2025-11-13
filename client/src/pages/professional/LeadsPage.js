@@ -224,7 +224,7 @@ const LeadsPage = () => {
             }
           </p>
           {leads.length === 0 && (
-            <Link to={(profile?.state_province ? `/professionals/${String(profile.state_province).toLowerCase().replace(/\s+/g, '-')}/${profile?.slug || profile?.id}` : `/profile/${profile?.slug || profile?.id}`)} className="btn btn-primary">
+            <Link to={(profile?.state_province && profile?.city ? `/premarital-counseling/${String(profile.state_province).toLowerCase().replace(/\s+/g, '-')}/${String(profile.city).toLowerCase().replace(/\s+/g, '-')}/${profile?.slug || profile?.id}` : `/profile/${profile?.slug || profile?.id}`)} className="btn btn-primary">
               View Your Public Profile
             </Link>
           )}

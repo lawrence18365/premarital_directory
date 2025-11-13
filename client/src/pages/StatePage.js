@@ -65,7 +65,7 @@ const StatePage = () => {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">State Not Found</h1>
         <p className="text-gray-600">The state you're looking for doesn't exist.</p>
-        <Link to="/states" className="text-blue-600 hover:underline">
+        <Link to="/premarital-counseling" className="text-blue-600 hover:underline">
           Browse all states
         </Link>
       </div>

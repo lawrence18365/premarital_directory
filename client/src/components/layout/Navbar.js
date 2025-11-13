@@ -31,7 +31,7 @@ const Navbar = () => {
 
   const baseLinks = [
     { path: '/', label: 'Home', exact: true },
-    { path: '/states', label: 'Find Counselors' },
+    { path: '/premarital-counseling', label: 'Find Counselors' },
     { path: '/blog', label: 'Blog' },
   ]
   const isHome = ['/', '/therapists', '/coaches', '/clergy'].includes(location.pathname)

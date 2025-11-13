@@ -212,7 +212,7 @@ const ProfessionalDashboard = () => {
             </div>
             <h3>No leads yet</h3>
             <p>Once couples start contacting you through the directory, you'll see their information here.</p>
-            <Link to={(profile?.state_province ? `/professionals/${String(profile.state_province).toLowerCase().replace(/\s+/g, '-')}/${profile?.slug || profile?.id}` : `/profile/${profile?.slug || profile?.id}`)} className="btn btn-primary">
+            <Link to={(profile?.state_province && profile?.city ? `/premarital-counseling/${String(profile.state_province).toLowerCase().replace(/\s+/g, '-')}/${String(profile.city).toLowerCase().replace(/\s+/g, '-')}/${profile?.slug || profile?.id}` : `/profile/${profile?.slug || profile?.id}`)} className="btn btn-primary">
               View Your Public Profile
             </Link>
           </div>

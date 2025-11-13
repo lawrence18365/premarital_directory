@@ -46,11 +46,11 @@ const ProfilePage = () => {
       const profileSlug = profile.slug || generateSlug(profile.full_name)
 
       if (stateSlug && citySlug && profileSlug) {
-        // Redirect to proper nested URL: /professionals/state/city/name-slug
-        navigate(`/professionals/${stateSlug}/${citySlug}/${profileSlug}`, { replace: true })
+        // Redirect to proper nested URL: /premarital-counseling/state/city/name-slug
+        navigate(`/premarital-counseling/${stateSlug}/${citySlug}/${profileSlug}`, { replace: true })
       } else if (stateSlug && profileSlug) {
-        // Fallback: redirect to /professionals/state/name-slug
-        navigate(`/professionals/${stateSlug}/${profileSlug}`, { replace: true })
+        // Fallback: redirect to /premarital-counseling/state/name-slug
+        navigate(`/premarital-counseling/${stateSlug}/${profileSlug}`, { replace: true })
       }
     }
   }, [profile, state, city, navigate])
@@ -176,13 +176,13 @@ const ProfilePage = () => {
     ? generateBreadcrumbs.profilePage(
         stateName,
         profile.full_name,
-        `/professionals/${state || generateSlug(stateName)}`,
+        `/premarital-counseling/${state || generateSlug(stateName)}`,
         null
       )
     : generateBreadcrumbs.profilePage(
         'All Locations',
         profile?.full_name || 'Profile',
-        '/states',
+        '/premarital-counseling',
         null
       )
 

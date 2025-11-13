@@ -43,10 +43,10 @@ const Footer = () => {
           <div className="footer-section">
             <h4>For Couples</h4>
             <ul>
-              <li><Link to="/states">Find Counselors</Link></li>
-              <li><Link to="/states">Therapists</Link></li>
-              <li><Link to="/states">Coaches</Link></li>
-              <li><Link to="/states">Clergy</Link></li>
+              <li><Link to="/premarital-counseling">Find Counselors</Link></li>
+              <li><Link to="/therapists">Therapists</Link></li>
+              <li><Link to="/coaches">Coaches</Link></li>
+              <li><Link to="/clergy">Clergy</Link></li>
             </ul>
           </div>
           
