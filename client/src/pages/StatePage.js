@@ -137,10 +137,10 @@ const StatePage = () => {
   return (
     <>
       <SEOHelmet
-        title={stateContent?.title || `Premarital Counseling in ${stateConfig.name} — Find Counselors (2025)`}
-        description={stateContent?.description || `Find premarital counseling in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples. See prices, specialties, and availability across ${stateConfig.major_cities.length}+ cities.`}
+        title={stateContent?.title || `Premarital Counseling & Marriage Prep in ${stateConfig.name} — Therapists & Clergy`}
+        description={stateContent?.description || `Find premarital counseling and marriage preparation in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples. See prices, specialties, and availability across ${stateConfig.major_cities.length}+ cities.`}
         url={`/premarital-counseling/${state}`}
-        keywords={`premarital counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, pre cana ${stateConfig.name}, clergy premarital counseling, ${stateConfig.major_cities.join(', ')}`}
+        keywords={`premarital counseling ${stateConfig.name}, marriage counseling ${stateConfig.name}, marriage prep ${stateConfig.name}, premarital therapy ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, pre cana ${stateConfig.name}, clergy premarital counseling ${stateConfig.name}, ${stateConfig.major_cities.join(', ')}`}
         breadcrumbs={breadcrumbItems}
         structuredData={citiesItemList}
         faqs={stateFAQs}
@@ -160,6 +160,19 @@ const StatePage = () => {
 
             <p className="state-subtitle">
               {stateContent?.description || `Find premarital counseling in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples across ${stateConfig.major_cities.length}+ cities. See methods (Gottman, PREPARE-ENRICH), pricing, and availability.`}
+            </p>
+
+            <p style={{
+              marginTop: 'var(--space-4)',
+              fontSize: '0.95rem',
+              color: 'rgba(255, 255, 255, 0.9)',
+              maxWidth: '800px',
+              margin: '0 auto',
+              marginTop: 'var(--space-4)'
+            }}>
+              Many people search for "marriage counseling {stateConfig.name.toLowerCase()}" when planning a wedding.
+              We specialize in <strong>premarital and marriage preparation</strong> — connecting engaged couples with
+              licensed therapists and clergy who focus on building a strong foundation, not just crisis intervention.
             </p>
 
             {/* Dual CTAs */}
@@ -189,10 +202,10 @@ const StatePage = () => {
       <div className="state-container state-results">
         <div className="mb-6">
           <h2 className="state-results-title">
-            Premarital Counseling in {stateConfig.name}
+            Premarital Counseling & Marriage Prep by City
           </h2>
           <p className="state-results-subtitle">
-            Select a city to find premarital counselors helping engaged couples prepare for marriage.
+            Select a city to find licensed therapists, Christian counselors, and clergy helping engaged couples prepare for marriage across {stateConfig.name}.
           </p>
         </div>
 
@@ -205,8 +218,8 @@ const StatePage = () => {
                 to={`/premarital-counseling/${state}/${citySlug}`}
                 className="city-card-large"
               >
-                <h3>Premarital Counseling in {cityName}</h3>
-                <p>Find therapists, Christian counselors, clergy, and online options for engaged couples in {cityName}, {stateConfig.abbr}</p>
+                <h3>Premarital Counseling & Marriage Prep in {cityName}</h3>
+                <p>Licensed therapists (LMFT, LPC), Christian counselors, clergy, and online options for engaged couples in {cityName}, {stateConfig.abbr}</p>
                 <span className="city-arrow">→</span>
               </Link>
             )
@@ -229,7 +242,7 @@ const StatePage = () => {
       <div className="state-seo-section">
         <div className="state-container">
           <div className="state-seo-inner">
-            <h2 className="state-seo-title">Premarital Counseling for Engaged Couples in {stateConfig.name}</h2>
+            <h2 className="state-seo-title">Premarital Counseling & Marriage Preparation in {stateConfig.name}</h2>
             <StateAIContent stateName={stateConfig.name} content={stateContent} loading={contentLoading} />
             <LocalContent locationName={stateConfig.name} />
           </div>
