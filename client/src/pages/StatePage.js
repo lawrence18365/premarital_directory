@@ -10,6 +10,7 @@ import StateContentGenerator from '../lib/stateContentGenerator';
 import StateAIContent from '../components/state/StateAIContent';
 import LeadContactForm from '../components/leads/LeadContactForm';
 import LocalContent from '../components/common/LocalContent';
+import FAQ from '../components/common/FAQ';
 import '../assets/css/state-page.css';
 
 const StatePage = () => {
@@ -74,6 +75,30 @@ const StatePage = () => {
   // Generate breadcrumbs
   const breadcrumbItems = generateBreadcrumbs.statePage(stateConfig.name)
 
+  // State-specific FAQ data for rich results
+  const stateFAQs = stateConfig ? [
+    {
+      question: `How much does premarital counseling cost in ${stateConfig.name}?`,
+      answer: `Premarital counseling in ${stateConfig.name} typically costs between $100-$200 per session. Many counselors offer package deals for 5-8 sessions. Faith-based options like Pre-Cana may be free or low-cost through churches. Some insurance plans may cover premarital therapy.`
+    },
+    {
+      question: `How many sessions do engaged couples need in ${stateConfig.name}?`,
+      answer: `Most engaged couples in ${stateConfig.name} complete 5-8 premarital counseling sessions over 2-3 months. Programs like PREPARE-ENRICH and Gottman Method have structured timelines. Clergy-led programs may require 4-6 sessions before your wedding.`
+    },
+    {
+      question: `Are there Christian and faith-based premarital counselors in ${stateConfig.name}?`,
+      answer: `Yes, ${stateConfig.name} has many Christian premarital counselors, Catholic Pre-Cana programs, and faith-based marriage preparation options. Many licensed therapists (LMFT, LPC) integrate Christian values, and local churches offer clergy-led premarital programs.`
+    },
+    {
+      question: `Can we do premarital counseling online in ${stateConfig.name}?`,
+      answer: `Yes, many ${stateConfig.name} premarital counselors offer online sessions via telehealth. This is ideal for busy engaged couples with different schedules. Online premarital counseling is just as effective as in-person for marriage preparation.`
+    },
+    {
+      question: `What should engaged couples look for in a premarital counselor in ${stateConfig.name}?`,
+      answer: `Look for licensed professionals (LMFT, LPC, LCSW) with premarital counseling experience. Consider their approach (Gottman, PREPARE-ENRICH, faith-based), availability, cost, and whether they accept insurance. Many ${stateConfig.name} counselors offer free consultations.`
+    }
+  ] : []
+
   if (loading) return <LoadingSpinner />
   if (error) return <ErrorMessage message={error} />
 
@@ -118,6 +143,7 @@ const StatePage = () => {
         keywords={`premarital counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, pre cana ${stateConfig.name}, clergy premarital counseling, ${stateConfig.major_cities.join(', ')}`}
         breadcrumbs={breadcrumbItems}
         structuredData={citiesItemList}
+        faqs={stateFAQs}
         canonicalUrl={`https://www.weddingcounselors.com/premarital-counseling/${state}`}
         noindex={shouldNoindex}
       />
@@ -186,6 +212,17 @@ const StatePage = () => {
             )
           })}
         </div>
+      </div>
+
+      {/* FAQ Section for rich results */}
+      <div className="state-container" style={{ marginTop: 'var(--space-12)', marginBottom: 'var(--space-12)' }}>
+        <FAQ
+          faqs={stateFAQs}
+          title={`Premarital Counseling in ${stateConfig.name} — Frequently Asked Questions`}
+          description={`Common questions about premarital counseling in ${stateConfig.name} for engaged couples`}
+          showSearch={false}
+          showAside={false}
+        />
       </div>
 
       {/* AI-Generated SEO Content Section */}
