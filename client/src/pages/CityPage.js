@@ -160,9 +160,9 @@ const CityPage = () => {
   return (
     <div className="city-page">
       <SEOHelmet
-        title={cityContent?.title || `Premarital Counseling in ${cityName}, ${stateConfig?.abbr || stateName} — ${profiles.length} Counselors (2025)`}
-        description={cityContent?.description || `Find premarital counseling in ${cityName}, ${stateName}. Compare ${profiles.length} licensed therapists (LMFT, LPC, LCSW), Christian counselors, clergy, and online options for engaged couples. See prices, specialties, and availability — book intro calls today.`}
-        keywords={`premarital counseling ${cityName}, premarital therapy ${cityName}, pre marriage counseling ${cityName} ${stateName}, christian premarital counseling ${cityName}, pre cana ${cityName}, clergy premarital counseling ${cityName}`}
+        title={cityContent?.title || `Premarital Counseling & Marriage Prep in ${cityName}, ${stateConfig?.abbr || stateName} – Therapists & Clergy`}
+        description={cityContent?.description || `Find premarital counseling and marriage prep in ${cityName}, ${stateName}. Compare ${profiles.length} licensed therapists (LMFT, LPC, LCSW), Christian counselors, clergy, and online options for engaged couples preparing for marriage. See prices, specialties, and availability.`}
+        keywords={`premarital counseling ${cityName}, marriage counseling ${cityName}, marriage prep ${cityName}, premarital therapy ${cityName}, pre marriage counseling ${cityName} ${stateName}, christian premarital counseling ${cityName}, pre cana ${cityName}, clergy premarital counseling ${cityName}, marriage counseling ${cityName} ${stateName}`}
         structuredData={structuredData}
         faqs={cityFAQs}
         noindex={shouldNoindex}
@@ -173,9 +173,21 @@ const CityPage = () => {
         <div className="container">
           <Breadcrumbs items={breadcrumbData} variant="on-hero" />
           <div className="state-header-content">
-            <h1>Premarital Counseling in {cityName}, {stateName} — {profiles.length} Counselors</h1>
+            <h1>Premarital Counseling in {cityName}, {stateName}</h1>
             <p className="lead">
               Find premarital counselors in {cityName}, {stateName}. Compare {profiles.length} licensed therapists (LMFT, LPC, LCSW), Christian counselors, clergy, and online options for engaged couples. See prices, specialties, availability, and insurance — book intro sessions today.
+            </p>
+
+            <p style={{
+              marginTop: 'var(--space-4)',
+              fontSize: '0.95rem',
+              color: 'var(--text-secondary)',
+              maxWidth: '800px'
+            }}>
+              Many people search for "marriage counseling {cityName.toLowerCase()}" when they're engaged or newly married.
+              This page focuses on <strong>premarital and early-marriage counseling</strong> — therapists and clergy who help couples
+              prepare for marriage, not just address crisis situations. Whether you're looking for a licensed therapist (LMFT, LPC)
+              or faith-based clergy guidance, you'll find professionals who specialize in marriage preparation.
             </p>
 
 
@@ -235,8 +247,8 @@ const CityPage = () => {
             ) : profiles.length > 0 ? (
               <>
                 <div className="results-header">
-                  <h2>Premarital Counselors in {cityName}</h2>
-                  <p>Licensed professionals specializing in pre-marriage counseling and relationship preparation for engaged couples</p>
+                  <h2>Premarital Counselors in {cityName} — Therapists & Clergy</h2>
+                  <p>Licensed professionals and faith-based counselors specializing in marriage preparation for engaged couples</p>
                 </div>
 
                 {/* Top Picks Section - SEO & UX boost */}
@@ -296,12 +308,94 @@ const CityPage = () => {
                   </div>
                 )}
 
-                <ProfileList
-                  profiles={profiles}
-                  loading={false}
-                  error={null}
-                  showLocation={false}
-                />
+                {/* Separate Therapists and Clergy Sections */}
+                {(() => {
+                  const therapists = profiles.filter(p =>
+                    p.profession?.toLowerCase().includes('therapist') ||
+                    p.profession?.toLowerCase().includes('lmft') ||
+                    p.profession?.toLowerCase().includes('lpc') ||
+                    p.profession?.toLowerCase().includes('lcsw') ||
+                    p.profession?.toLowerCase().includes('counselor') && !p.profession?.toLowerCase().includes('clergy')
+                  )
+                  const clergy = profiles.filter(p =>
+                    p.profession?.toLowerCase().includes('clergy') ||
+                    p.profession?.toLowerCase().includes('pastor') ||
+                    p.profession?.toLowerCase().includes('priest') ||
+                    p.profession?.toLowerCase().includes('minister') ||
+                    p.profession?.toLowerCase().includes('reverend')
+                  )
+                  const others = profiles.filter(p => !therapists.includes(p) && !clergy.includes(p))
+
+                  return (
+                    <>
+                      {therapists.length > 0 && (
+                        <div style={{ marginBottom: 'var(--space-12)' }}>
+                          <h3 style={{
+                            fontSize: '1.5rem',
+                            marginBottom: 'var(--space-4)',
+                            color: 'var(--text-primary)',
+                            borderBottom: '2px solid var(--color-primary)',
+                            paddingBottom: 'var(--space-2)'
+                          }}>
+                            Licensed Therapists & Counselors (LMFT, LPC, LCSW)
+                          </h3>
+                          <p style={{ marginBottom: 'var(--space-6)', color: 'var(--text-secondary)' }}>
+                            Licensed mental health professionals offering premarital and early marriage counseling
+                          </p>
+                          <ProfileList
+                            profiles={therapists}
+                            loading={false}
+                            error={null}
+                            showLocation={false}
+                          />
+                        </div>
+                      )}
+
+                      {clergy.length > 0 && (
+                        <div style={{ marginBottom: 'var(--space-12)' }}>
+                          <h3 style={{
+                            fontSize: '1.5rem',
+                            marginBottom: 'var(--space-4)',
+                            color: 'var(--text-primary)',
+                            borderBottom: '2px solid var(--color-primary)',
+                            paddingBottom: 'var(--space-2)'
+                          }}>
+                            Clergy & Faith-Based Marriage Preparation
+                          </h3>
+                          <p style={{ marginBottom: 'var(--space-6)', color: 'var(--text-secondary)' }}>
+                            Religious leaders and clergy offering Christian, Catholic, and faith-based premarital counseling
+                          </p>
+                          <ProfileList
+                            profiles={clergy}
+                            loading={false}
+                            error={null}
+                            showLocation={false}
+                          />
+                        </div>
+                      )}
+
+                      {others.length > 0 && (
+                        <div style={{ marginBottom: 'var(--space-12)' }}>
+                          <h3 style={{
+                            fontSize: '1.5rem',
+                            marginBottom: 'var(--space-4)',
+                            color: 'var(--text-primary)',
+                            borderBottom: '2px solid var(--color-primary)',
+                            paddingBottom: 'var(--space-2)'
+                          }}>
+                            Other Marriage Preparation Professionals
+                          </h3>
+                          <ProfileList
+                            profiles={others}
+                            loading={false}
+                            error={null}
+                            showLocation={false}
+                          />
+                        </div>
+                      )}
+                    </>
+                  )
+                })()}
 
                 {/* Nearby Cities - Critical for internal linking & SEO */}
                 {stateConfig?.major_cities && stateConfig.major_cities.length > 1 && (
