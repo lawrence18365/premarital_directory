@@ -202,7 +202,66 @@ export const profileOperations = {
       .insert(claimData)
       .select()
       .single()
-    
+
+    return { data, error }
+  },
+
+  // Check for duplicate claims
+  async checkDuplicateClaim(profileId, email) {
+    const { data, error } = await supabase
+      .from('profile_claims')
+      .select('id, status, submitted_at')
+      .eq('profile_id', profileId)
+      .eq('submitted_by_email', email)
+      .eq('status', 'pending')
+
+    return { data, error }
+  },
+
+  // Get all pending claims (admin only)
+  async getPendingClaims() {
+    const { data, error } = await supabase
+      .from('profile_claims')
+      .select(`
+        *,
+        profile:profiles(*)
+      `)
+      .eq('status', 'pending')
+      .order('submitted_at', { ascending: false })
+
+    return { data, error }
+  },
+
+  // Approve a profile claim
+  async approveProfileClaim(claimId, reviewedBy) {
+    const { data, error } = await supabase
+      .from('profile_claims')
+      .update({
+        status: 'approved',
+        reviewed_by: reviewedBy,
+        reviewed_at: new Date().toISOString()
+      })
+      .eq('id', claimId)
+      .select()
+      .single()
+
+    return { data, error }
+  },
+
+  // Reject a profile claim
+  async rejectProfileClaim(claimId, reviewedBy, notes) {
+    const { data, error} = await supabase
+      .from('profile_claims')
+      .update({
+        status: 'rejected',
+        reviewed_by: reviewedBy,
+        reviewed_at: new Date().toISOString(),
+        notes: notes
+      })
+      .eq('id', claimId)
+      .select()
+      .single()
+
     return { data, error }
   },
 
