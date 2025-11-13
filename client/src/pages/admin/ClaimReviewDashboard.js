@@ -30,7 +30,7 @@ const ClaimReviewDashboard = () => {
   }
 
   const handleApproveClaim = async (claim) => {
-    if (!confirm(`Approve claim from ${claim.submitted_by_email}?`)) return
+    if (!window.confirm(`Approve claim from ${claim.submitted_by_email}?`)) return
 
     setActionLoading(true)
     try {
@@ -94,7 +94,7 @@ const ClaimReviewDashboard = () => {
       return
     }
 
-    if (!confirm(`Reject claim from ${claim.submitted_by_email}?`)) return
+    if (!window.confirm(`Reject claim from ${claim.submitted_by_email}?`)) return
 
     setActionLoading(true)
     try {

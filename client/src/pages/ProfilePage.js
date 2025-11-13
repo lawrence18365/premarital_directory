@@ -88,27 +88,8 @@ const ProfilePage = () => {
   } else if (!data) {
     setError('Profile not found')
   } else {
-    // Enhance profile data with additional computed fields
-    // DUMMY DATA: Replace with actual reviews from your data source
-    const dummyReviews = [
-      {
-        author: 'Jane Doe',
-        rating: 5,
-        reviewBody: 'Dr. Smith was incredibly helpful. I highly recommend her!'
-      },
-      {
-        author: 'John Doe',
-        rating: 4,
-        reviewBody: 'A great experience. We learned a lot.'
-      }
-    ];
-
-    const enhancedProfile = {
-      ...data,
-      reviews: dummyReviews, // Add dummy reviews to the profile object
-      // Add any computed fields here if needed
-    };
-    setProfile(enhancedProfile);
+    // Set profile data (reviews will be added when we have a real review system)
+    setProfile(data);
   }
     } catch (err) {
       setError('Failed to load profile')
@@ -194,7 +175,6 @@ const ProfilePage = () => {
         url={window.location.pathname}
         type="profile"
         structuredData={profile ? generateProfessionalStructuredData(profile) : null}
-        reviews={profile ? profile.reviews : null}
         professional={profile}
         keywords={`${profile?.profession}, premarital counseling, ${profile?.city}, ${profile?.state_province}, ${profile?.specialties?.join(', ') || ''}`}
         breadcrumbs={breadcrumbItems}
@@ -297,7 +277,28 @@ const ProfilePage = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted">No bio available for this professional.</p>
+                    <div className="profile-bio-content">
+                      <p className="bio-paragraph">
+                        {profile.full_name} is a {profile.profession || 'professional counselor'} serving couples in {profile.city}, {profile.state_province}.
+                        {profile.years_experience && ` With ${profile.years_experience} years of experience in the field, `}
+                        {profile.full_name.split(' ')[0]} specializes in helping engaged couples prepare for a successful marriage through premarital counseling.
+                      </p>
+                      <p className="bio-paragraph">
+                        {profile.specialties && profile.specialties.length > 0
+                          ? `Areas of focus include ${profile.specialties.slice(0, 3).join(', ')}${profile.specialties.length > 3 ? ', and more' : ''}.`
+                          : 'Premarital counseling helps couples build strong communication skills, resolve conflicts effectively, and establish a solid foundation for their future together.'}
+                      </p>
+                      <p className="bio-paragraph" style={{
+                        padding: 'var(--space-3)',
+                        background: 'var(--warning-bg)',
+                        borderLeft: '3px solid var(--warning)',
+                        borderRadius: 'var(--radius-sm)',
+                        fontSize: '0.875rem'
+                      }}>
+                        <strong>Note:</strong> This profile hasn't been claimed yet. Information may be limited.
+                        If this is your profile, <Link to={`/claim-profile/${profile.slug || profile.id}`} style={{ color: 'var(--primary)', textDecoration: 'underline' }}>claim it now</Link> to add your bio and complete your listing.
+                      </p>
+                    </div>
                   )}
                 </div>
               </div>
@@ -398,15 +399,207 @@ const ProfilePage = () => {
                   </div>
                 </div>
               )}
+
+              {/* Education Section */}
+              {profile.education && Array.isArray(profile.education) && profile.education.length > 0 && (
+                <div className="content-section">
+                  <h2 className="section-title">Education & Training</h2>
+                  <div className="section-content">
+                    <div className="credentials-list">
+                      {profile.education.map((edu, index) => (
+                        <div key={index} className="credential-item">
+                          <div className="credential-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/>
+                            </svg>
+                          </div>
+                          <span className="credential-name">{edu}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Pricing & Insurance Section */}
+              {(profile.pricing_range || profile.insurance_accepted || profile.offers_free_consultation) && (
+                <div className="content-section">
+                  <h2 className="section-title">Pricing & Insurance</h2>
+                  <div className="section-content">
+                    {profile.pricing_range && (
+                      <div className="info-item" style={{ marginBottom: 'var(--space-4)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--primary)' }}>
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+                          </svg>
+                          <strong>Session Fees:</strong>
+                        </div>
+                        <p style={{ marginLeft: '1.75rem', color: 'var(--text-secondary)' }}>{profile.pricing_range}</p>
+                      </div>
+                    )}
+
+                    {profile.insurance_accepted && profile.insurance_accepted.length > 0 && (
+                      <div className="info-item" style={{ marginBottom: 'var(--space-4)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--primary)' }}>
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                          </svg>
+                          <strong>Insurance Accepted:</strong>
+                        </div>
+                        <div style={{ marginLeft: '1.75rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                          {profile.insurance_accepted.map((insurance, index) => (
+                            <span key={index} className="hero-specialty-tag" style={{ fontSize: '0.875rem' }}>
+                              {insurance}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {profile.offers_free_consultation && (
+                      <div className="info-item" style={{
+                        padding: 'var(--space-3)',
+                        background: 'var(--success-bg)',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1px solid var(--success)'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success-dark)' }}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                          </svg>
+                          <strong>Free consultation available</strong>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* FAQ Section - Always show for SEO */}
+              <div className="content-section">
+                <h2 className="section-title">Frequently Asked Questions</h2>
+                <div className="section-content">
+                  <div className="faq-list">
+                    <div className="faq-item" style={{ marginBottom: 'var(--space-4)' }}>
+                      <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                        What is premarital counseling?
+                      </h3>
+                      <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                        Premarital counseling is a type of therapy that helps couples prepare for marriage. It addresses important topics like communication, conflict resolution, finances, family planning, and expectations to build a strong foundation for your relationship.
+                      </p>
+                    </div>
+
+                    <div className="faq-item" style={{ marginBottom: 'var(--space-4)' }}>
+                      <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                        How long does premarital counseling take?
+                      </h3>
+                      <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                        Most couples attend 4-8 sessions before their wedding. Some programs are more intensive, while others are flexible based on your needs and schedule.
+                      </p>
+                    </div>
+
+                    <div className="faq-item" style={{ marginBottom: 'var(--space-4)' }}>
+                      <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                        Does insurance cover premarital counseling?
+                      </h3>
+                      <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                        {profile.insurance_accepted && profile.insurance_accepted.length > 0
+                          ? `${profile.full_name.split(' ')[0]} accepts ${profile.insurance_accepted.join(', ')}. Contact your insurance provider to verify your specific coverage for premarital counseling.`
+                          : 'Coverage varies by insurance provider. Some plans cover premarital counseling as preventive care. Contact your insurance company to check your benefits, or ask this counselor about payment options.'}
+                      </p>
+                    </div>
+
+                    <div className="faq-item">
+                      <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                        What should we expect in our first session?
+                      </h3>
+                      <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                        The first session typically involves getting to know your counselor, discussing your relationship goals, and identifying areas you'd like to work on together. It's a comfortable, confidential space to begin your journey.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Local SEO Content */}
+              {profile.city && profile.state_province && (
+                <div className="content-section" style={{ background: 'var(--bg-secondary)', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)' }}>
+                  <h2 className="section-title">Premarital Counseling in {profile.city}, {profile.state_province}</h2>
+                  <div className="section-content">
+                    <p style={{ color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: 'var(--space-3)' }}>
+                      {profile.full_name.split(' ')[0]} serves couples in {profile.city} and the surrounding {profile.state_province} area.
+                      {profile.session_types && profile.session_types.includes('Online') &&
+                        ' Online sessions are also available for couples who prefer virtual counseling.'}
+                    </p>
+                    <p style={{ color: 'var(--text-secondary)', lineHeight: '1.7' }}>
+                      Finding the right premarital counselor is an important step in preparing for marriage.
+                      {profile.years_experience && ` With ${profile.years_experience} years of experience, `}
+                      {profile.full_name.split(' ')[0]} helps engaged couples build strong, lasting relationships through proven therapeutic approaches.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Right Column - Sidebar */}
             <div className="profile-sidebar-content">
+              {/* Quick Stats Card */}
+              <div className="sidebar-card" style={{ background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)', color: 'white', textAlign: 'center' }}>
+                <div style={{ padding: 'var(--space-6)' }}>
+                  <h3 style={{ fontSize: '1.25rem', marginBottom: 'var(--space-4)', color: 'white' }}>
+                    Ready to strengthen your relationship?
+                  </h3>
+                  {profile.years_experience && (
+                    <div style={{ marginBottom: 'var(--space-3)' }}>
+                      <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>
+                        {profile.years_experience}+
+                      </div>
+                      <div style={{ fontSize: '0.875rem', opacity: 0.9 }}>
+                        Years of Experience
+                      </div>
+                    </div>
+                  )}
+                  {profile.accepting_new_clients && (
+                    <div style={{
+                      padding: 'var(--space-2)',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: 'var(--radius-md)',
+                      marginTop: 'var(--space-3)',
+                      fontSize: '0.875rem',
+                      fontWeight: 'bold'
+                    }}>
+                      ✓ Accepting New Clients
+                    </div>
+                  )}
+                  {profile.booking_url ? (
+                    <a
+                      href={profile.booking_url}
+                      target="_blank"
+                      rel="nofollow noopener noreferrer"
+                      className="btn btn-secondary btn-large"
+                      style={{ marginTop: 'var(--space-4)', width: '100%', background: 'white', color: 'var(--primary)' }}
+                    >
+                      Book Appointment Now
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' })}
+                      className="btn btn-secondary btn-large"
+                      style={{ marginTop: 'var(--space-4)', width: '100%', background: 'white', color: 'var(--primary)' }}
+                    >
+                      Get in Touch
+                    </button>
+                  )}
+                </div>
+              </div>
+
               {/* Contact Card - FOR COUPLES */}
               <div id="contact-section" className="sidebar-card contact-card">
-                <h3 className="card-title">Contact this counselor</h3>
+                <h3 className="card-title">Send a Message</h3>
                 <p style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-                  Looking for premarital counseling in {profile.city || 'your area'}? Connect with this counselor.
+                  {profile.offers_free_consultation
+                    ? 'Request your free consultation today!'
+                    : `Interested in working with ${profile.full_name.split(' ')[0]}? Send a message to get started.`}
                 </p>
                 <LeadContactForm
                   profileId={profile.id}
