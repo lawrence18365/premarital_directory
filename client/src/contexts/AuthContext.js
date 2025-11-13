@@ -96,18 +96,7 @@ export const AuthProvider = ({ children }) => {
       email,
       password
     })
-    
-    return { data, error }
-  }
 
-  const signInWithGoogle = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/professional/dashboard`
-      }
-    })
-    
     return { data, error }
   }
 
@@ -201,7 +190,6 @@ export const AuthProvider = ({ children }) => {
     loading,
     isAdmin,
     signIn,
-    signInWithGoogle,
     signUp,
     signOut,
     claimProfile,

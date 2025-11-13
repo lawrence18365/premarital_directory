@@ -9,25 +9,12 @@ const LoginForm = () => {
   const [error, setError] = useState('')
   const [resetEmailSent, setResetEmailSent] = useState(false)
 
-  const { signIn, signInWithGoogle, resetPassword } = useAuth()
+  const { signIn, resetPassword } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
   // Redirect to intended page after login, or to dashboard
   const from = location.state?.from?.pathname || '/professional/dashboard'
-
-  const handleGoogleSignIn = async () => {
-    setLoading(true)
-    setError('')
-
-    const { error } = await signInWithGoogle()
-
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-    }
-    // Note: OAuth will redirect automatically, so we don't need to handle success here
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -136,29 +123,14 @@ const LoginForm = () => {
             />
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn btn-primary btn-full"
             disabled={loading}
           >
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
-
-        <div className="auth-separator">
-          <span>or</span>
-        </div>
-
-        <div className="auth-social">
-          <button 
-            className="btn btn-outline btn-full"
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-          >
-            <i className="fab fa-google"></i>
-            Sign in with Google
-          </button>
-        </div>
 
         <div className="auth-links">
           <button 
