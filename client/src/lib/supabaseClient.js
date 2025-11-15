@@ -279,18 +279,88 @@ export const profileOperations = {
   async uploadPhoto(file, profileId) {
     const fileExt = file.name.split('.').pop()
     const fileName = `${profileId}.${fileExt}`
-    
+
     const { data, error } = await supabase.storage
       .from('profile_photos')
       .upload(fileName, file, { upsert: true })
-    
+
     if (error) return { data: null, error }
-    
+
     const { data: { publicUrl } } = supabase.storage
       .from('profile_photos')
       .getPublicUrl(fileName)
-    
+
     return { data: { publicUrl }, error: null }
+  },
+
+  // Log contact reveal for analytics (with city tracking)
+  async logContactReveal(revealData) {
+    const { data, error } = await supabase
+      .from('contact_reveals')
+      .insert({
+        profile_id: revealData.profile_id,
+        reveal_type: revealData.reveal_type,
+        ip_address: revealData.ip_address || null,
+        user_agent: revealData.user_agent || null,
+        session_id: revealData.session_id || null,
+        city: revealData.city || null,
+        state_province: revealData.state_province || null,
+        page_url: revealData.page_url || window.location.href,
+        referrer: revealData.referrer || document.referrer || null
+      })
+      .select()
+      .single()
+
+    // Also increment the profile's contact_reveals_count
+    if (!error && revealData.profile_id) {
+      await supabase.rpc('increment_reveal_count', {
+        profile_id: revealData.profile_id
+      }).catch(err => {
+        console.warn('Failed to increment reveal count:', err)
+      })
+    }
+
+    return { data, error }
+  },
+
+  // Get contact reveals by city (for admin analytics)
+  async getContactRevealsByCity() {
+    const { data, error } = await supabase
+      .from('contact_reveals')
+      .select('city, state_province, revealed_at')
+      .not('city', 'is', null)
+      .order('revealed_at', { ascending: false })
+
+    if (error) return { data: null, error }
+
+    // Aggregate by city
+    const cityStats = {}
+    const now = new Date()
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+
+    data.forEach(reveal => {
+      const key = `${reveal.city}, ${reveal.state_province}`
+      if (!cityStats[key]) {
+        cityStats[key] = {
+          city: reveal.city,
+          state: reveal.state_province,
+          total: 0,
+          last7Days: 0,
+          last30Days: 0
+        }
+      }
+      cityStats[key].total++
+
+      const revealDate = new Date(reveal.revealed_at)
+      if (revealDate >= sevenDaysAgo) cityStats[key].last7Days++
+      if (revealDate >= thirtyDaysAgo) cityStats[key].last30Days++
+    })
+
+    const sortedStats = Object.values(cityStats)
+      .sort((a, b) => b.total - a.total)
+
+    return { data: sortedStats, error: null }
   }
 }
 

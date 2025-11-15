@@ -105,14 +105,19 @@ const ProfilePage = () => {
   }
 
   const handleRevealContact = async (type) => {
-    // Log contact reveal for analytics
+    // Log contact reveal for analytics with city tracking
     try {
       await profileOperations.logContactReveal({
         profile_id: profile.id,
         reveal_type: type,
         ip_address: null, // Will be captured server-side
         user_agent: navigator.userAgent,
-        session_id: sessionStorage.getItem('session_id') || null
+        session_id: sessionStorage.getItem('session_id') || null,
+        // Include city information for geographic analytics
+        city: profile.city || city || null,
+        state_province: profile.state_province || state || null,
+        page_url: window.location.href,
+        referrer: document.referrer || null
       })
 
       // Show the contact info
