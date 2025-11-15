@@ -12,6 +12,8 @@ import CityContentGenerator from '../lib/cityContentGenerator';
 import LocalContent from '../components/common/LocalContent';
 import LeadContactForm from '../components/leads/LeadContactForm';
 import FAQ from '../components/common/FAQ';
+import HowToChooseSection from '../components/city/HowToChooseSection';
+import { clickTrackingOperations, cityOverridesOperations } from '../lib/supabaseClient';
 import '../assets/css/state-page.css';
 
 const CityPage = () => {
@@ -22,6 +24,7 @@ const CityPage = () => {
   const [error, setError] = useState(null)
   const [cityContent, setCityContent] = useState(null)
   const [contentLoading, setContentLoading] = useState(true)
+  const [cityOverride, setCityOverride] = useState(null)
 
   const stateConfig = STATE_CONFIG[state]
   const cityConfig = CITY_CONFIG[state]?.[city]
@@ -36,8 +39,24 @@ const CityPage = () => {
   useEffect(() => {
     loadCityProfiles()
     loadCityContent()
+    loadCityOverride()
     trackLocationPageView(stateName, cityName)
   }, [state, city])
+
+  const loadCityOverride = async () => {
+    const { data } = await cityOverridesOperations.getCityOverride(state, city)
+    setCityOverride(data)
+  }
+
+  // Track profile click for conversion analytics
+  const handleProfileClick = (profile) => {
+    clickTrackingOperations.logProfileClick({
+      profileId: profile.id,
+      city: cityName,
+      state: stateName,
+      source: 'city_page'
+    })
+  }
 
   const loadCityProfiles = async () => {
     try {
@@ -170,36 +189,28 @@ const CityPage = () => {
         noindex={shouldNoindex}
       />
 
-      {/* City Header */}
+      {/* City Header - Short & Focused on Conversion */}
       <section className="state-header city-header">
         <div className="container">
           <Breadcrumbs items={breadcrumbData} variant="on-hero" />
           <div className="state-header-content">
             <h1>Premarital Counseling in {cityName}, {stateName}</h1>
-            <p className="lead">
-              Find premarital counselors in {cityName}, {stateName}. Compare {profiles.length} licensed therapists (LMFT, LPC, LCSW), Christian counselors, clergy, and online options for engaged couples. See prices, specialties, availability, and insurance — book intro sessions today.
+            <p className="lead" style={{ marginBottom: 'var(--space-4)' }}>
+              Compare {profiles.length > 0 ? profiles.length : ''} premarital counselors, therapists, and clergy in {cityName}. Browse profiles, see their focus, and reach out directly.
             </p>
 
-            <p style={{
-              marginTop: 'var(--space-4)',
-              fontSize: '0.95rem',
-              color: 'var(--text-secondary)',
-              maxWidth: '800px'
-            }}>
-              Many people search for "marriage counseling {cityName.toLowerCase()}" when they're engaged or newly married.
-              This page focuses on <strong>premarital and early-marriage counseling</strong> — therapists and clergy who help couples
-              prepare for marriage, not just address crisis situations. Whether you're looking for a licensed therapist (LMFT, LPC)
-              or faith-based clergy guidance, you'll find professionals who specialize in marriage preparation.
-            </p>
-
-            <p style={{
-              marginTop: 'var(--space-3)',
-              fontSize: '0.85rem',
-              color: 'var(--text-muted)',
-              fontStyle: 'italic'
-            }}>
-              Note: This service is also known as "premarital counselling" (British spelling) or "pre-marital counseling" — we use all terms so couples can find the right support.
-            </p>
+            {/* Use custom intro if available, otherwise show short default */}
+            {cityOverride?.custom_intro && (
+              <p style={{
+                marginTop: 'var(--space-2)',
+                fontSize: '0.95rem',
+                color: 'var(--text-secondary)',
+                maxWidth: '800px',
+                lineHeight: '1.6'
+              }}>
+                {cityOverride.custom_intro}
+              </p>
+            )}
 
 
             {/* City Stats */}
@@ -224,19 +235,11 @@ const CityPage = () => {
             <div className="state-cta-section" style={{ marginTop: 'var(--space-8)' }}>
               <div className="cta-buttons">
                 <button
-                  onClick={() => document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => document.getElementById('providers-list').scrollIntoView({ behavior: 'smooth' })}
                   className="btn btn-primary btn-large"
                 >
-                  <i className="fa fa-heart mr-2"></i>
-                  Find Your Premarital Counselor
+                  Browse {profiles.length} Counselors Below
                 </button>
-                <Link
-                  to="/professional/signup"
-                  className="btn btn-secondary btn-large"
-                >
-                  <i className="fa fa-plus-circle mr-2"></i>
-                  List Your Practice
-                </Link>
               </div>
             </div>
           </div>
@@ -245,7 +248,7 @@ const CityPage = () => {
 
       {/* City Content */}
       <div className="container">
-        <div className="state-content">
+        <div id="providers-list" className="state-content">
           {/* Left Column - Profiles */}
           <div className="state-main">
             {loading ? (
@@ -295,6 +298,7 @@ const CityPage = () => {
                                   to={`/premarital-counseling/${state}/${city}/${profile.slug}`}
                                   style={{ color: 'var(--color-primary)' }}
                                   title={`${profile.full_name} - ${profile.profession || 'Premarital Counselor'} in ${cityName}`}
+                                  onClick={() => handleProfileClick(profile)}
                                 >
                                   {profile.full_name} – {profile.profession || 'Premarital Counselor'} in {cityName}
                                 </Link>
@@ -475,6 +479,9 @@ const CityPage = () => {
                     </div>
                   </div>
                 )}
+
+                {/* Decision Help - More Valuable Than Generic Content */}
+                <HowToChooseSection cityName={cityName} />
 
                 {/* City-specific FAQ for rich results */}
                 <div style={{ marginTop: 'var(--space-12)' }}>
@@ -667,23 +674,23 @@ const CityPage = () => {
                   </div>
                 )}
 
-                {/* Local Venues */}
-                {cityContent.sections?.venues && cityContent.sections.venues.length > 0 && (
+                {/* REMOVED: Fake venues section - AI generates fake venue names */}
+                {/* REMOVED: Demographics & Stats - AI generates unverified statistics */}
+
+                {/* Keep only verified, helpful content in sidebar */}
+                {cityContent.sections?.demographics && cityContent.sections.demographics.population && (
                   <div className="sidebar-section">
-                    <h3>Popular Local Venues</h3>
-                    <div className="venues-list">
-                      {cityContent.sections.venues.slice(0, 4).map((venue, index) => (
-                        <div key={index} className="venue-item">
-                          <strong>{venue.name}</strong>
-                          {venue.description && <p><small>{venue.description}</small></p>}
-                        </div>
-                      ))}
-                    </div>
+                    <h3>About {cityName}</h3>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                      Population: ~{Math.round(cityContent.sections.demographics.population / 1000)}k
+                    </p>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 'var(--space-2)' }}>
+                      Check your local county clerk's office for current marriage license requirements.
+                    </p>
                   </div>
                 )}
 
-                {/* Demographics & Stats */}
-                {cityContent.sections?.demographics && (
+                {false && cityContent.sections?.demographics && (
                   <div className="sidebar-section">
                     <h3>Local Marriage Trends</h3>
                     <div className="demographics">
