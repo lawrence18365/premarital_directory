@@ -1,6 +1,29 @@
 import React, { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
+import '../../assets/css/professional-auth.css'
+
+const signupHighlights = [
+  { label: '12+', detail: 'active metro directories' },
+  { label: '0%', detail: 'commission or referral fees' },
+  { label: '5 min', detail: 'average setup time' }
+]
+
+const featureList = [
+  'City + statewide listing with SEO support',
+  'Direct inquiries (email + phone — no middleman)',
+  'Update profile, availability, and pricing anytime',
+  'Optional upgrades for featured placement'
+]
+
+const professionOptions = [
+  'Licensed Therapist',
+  'Marriage & Family Therapist',
+  'Certified Coach',
+  'Clergy/Pastor',
+  'Licensed Clinical Social Worker',
+  'Licensed Psychologist'
+]
 
 const SignupForm = () => {
   const [formData, setFormData] = useState({
@@ -8,7 +31,7 @@ const SignupForm = () => {
     password: '',
     confirmPassword: '',
     fullName: '',
-    profession: 'Therapist',
+    profession: professionOptions[0],
     phone: '',
     agreeToTerms: false
   })
@@ -75,165 +98,161 @@ const SignupForm = () => {
 
   if (success) {
     return (
-      <div className="auth-container">
-        <div className="auth-card">
-          <div className="auth-header">
-            <div className="success-icon">
-              <i className="fa fa-check-circle" aria-hidden="true"></i>
-            </div>
-            <h2>Welcome to Our Directory! 🎉</h2>
-            <p>We've sent a confirmation email to <strong>{formData.email}</strong></p>
-            
-            <div className="next-steps">
-              <h3>What's Next?</h3>
-              <ol>
-                <li>Check your inbox and click the confirmation link</li>
-                <li>Complete your professional profile</li>
-                <li>Start receiving qualified leads from couples</li>
-              </ol>
-            </div>
+      <div className="professional-auth professional-auth--success">
+        <div className="professional-auth__success-card">
+          <div className="professional-auth__success-icon">
+            <i className="fa fa-check-circle" aria-hidden="true"></i>
           </div>
-          <div className="auth-form">
-            <Link to="/professional/login" className="btn btn-primary btn-full">
-              Activate & Complete Profile
-            </Link>
-            <p className="text-center text-sm mt-3">
-              <span>Didn't get the email? Check your spam folder or </span>
-              <button onClick={() => setSuccess(false)} className="link-button">
-                try again
-              </button>
-            </p>
-          </div>
+          <p className="section-eyebrow">Email on its way</p>
+          <h1>Confirm your email to finish setup</h1>
+          <p className="professional-auth__success-lead">
+            We’ve sent a confirmation link to <strong>{formData.email}</strong>. Click it to activate your account and publish your profile.
+          </p>
+          <ol className="professional-auth__success-steps">
+            <li>Check your inbox (and spam folder just in case).</li>
+            <li>Click the verification link to secure your account.</li>
+            <li>Complete your profile details and go live.</li>
+          </ol>
+          <Link to="/professional/login" className="professional-auth__button professional-auth__button--primary">
+            Go to Login
+          </Link>
+          <p className="professional-auth__panel-note">
+            Didn’t get it? Check spam or <button className="link-button" onClick={() => setSuccess(false)}>resend</button>.
+          </p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h2>Join Our Professional Directory</h2>
-          <p>Connect with couples actively seeking premarital counseling</p>
-          
-          <div className="signup-benefits">
-            <div className="benefit">
-              <i className="fa fa-users" aria-hidden="true"></i>
-              <span>Connect with qualified leads</span>
-            </div>
-            <div className="benefit">
-              <i className="fa fa-map-marker-alt" aria-hidden="true"></i>
-              <span>Local SEO visibility</span>
-            </div>
-            <div className="benefit">
-              <i className="fa fa-shield-alt" aria-hidden="true"></i>
-              <span>Verified professional badge</span>
-            </div>
+    <div className="professional-auth">
+      <div className="professional-auth__hero">
+        <div className="professional-auth__hero-copy">
+          <p className="section-eyebrow">Professional signup</p>
+          <h1>Join the directory trusted by engaged couples</h1>
+          <p className="professional-auth__hero-text">
+            Create a free account to secure your spot on city and statewide listings. Couples contact you directly—no hidden fees, no middlemen.
+          </p>
+          <div className="professional-auth__stats">
+            {signupHighlights.map((item) => (
+              <div className="professional-auth__stat" key={item.detail}>
+                <span className="professional-auth__stat-value">{item.label}</span>
+                <span className="professional-auth__stat-label">{item.detail}</span>
+              </div>
+            ))}
           </div>
         </div>
+        <div className="professional-auth__hero-panel">
+          <h3>Why professionals join</h3>
+          <ul>
+            {featureList.map((feature) => (
+              <li key={feature}>{feature}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
-        {error && (
-          <div className="error-message">
-            <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-            {error}
+      <section className="professional-auth__content">
+        <div className="professional-auth__form-card">
+          <div className="professional-auth__form-header">
+            <h2>Create your free account</h2>
+            <p>Already have an account? <Link to="/professional/login">Sign in</Link></p>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-row">
+          {error && (
+            <div className="professional-auth__alert" role="alert">
+              <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="professional-auth__form">
+            <div className="professional-auth__grid professional-auth__grid--2">
+              <div className="form-group">
+                <label htmlFor="fullName">Full Name *</label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  placeholder="Dr. Sarah Mitchell"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="profession">Professional Type *</label>
+                <select
+                  id="profession"
+                  name="profession"
+                  value={formData.profession}
+                  onChange={handleChange}
+                  required
+                >
+                  {professionOptions.map((option) => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className="form-group">
-              <label htmlFor="fullName">Full Name *</label>
+              <label htmlFor="email">Email Address *</label>
               <input
-                type="text"
-                id="fullName"
-                name="fullName"
-                value={formData.fullName}
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
-                placeholder="Dr. Sarah Mitchell"
+                placeholder="your.email@example.com"
                 required
+                autoComplete="email"
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="profession">Profession *</label>
-              <select
-                id="profession"
-                name="profession"
-                value={formData.profession}
-                onChange={handleChange}
-                required
-              >
-                <option value="Therapist">Licensed Therapist</option>
-                <option value="Marriage & Family Therapist">Marriage & Family Therapist</option>
-                <option value="Coach">Certified Coach</option>
-                <option value="Clergy">Clergy/Pastor</option>
-                <option value="Clinical Social Worker">Licensed Clinical Social Worker</option>
-                <option value="Psychologist">Licensed Psychologist</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Email Address *</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="your.email@example.com"
-              required
-              autoComplete="email"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="phone">Phone Number</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="(555) 123-4567"
-              autoComplete="tel"
-            />
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="password">Password *</label>
+              <label htmlFor="phone">Phone Number (optional)</label>
               <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
                 onChange={handleChange}
-                placeholder="Create a secure password"
-                required
-                minLength="6"
-                autoComplete="new-password"
+                placeholder="(555) 123-4567"
+                autoComplete="tel"
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password *</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirm your password"
-                required
-                minLength="6"
-                autoComplete="new-password"
-              />
+            <div className="professional-auth__grid professional-auth__grid--2">
+              <div className="form-group">
+                <label htmlFor="password">Password *</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Create a secure password"
+                  required
+                  autoComplete="new-password"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="confirmPassword">Confirm Password *</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm your password"
+                  required
+                  autoComplete="new-password"
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="form-group checkbox-group">
-            <label className="checkbox-label">
+            <label className="professional-auth__checkbox">
               <input
                 type="checkbox"
                 name="agreeToTerms"
@@ -241,34 +260,30 @@ const SignupForm = () => {
                 onChange={handleChange}
                 required
               />
-              <span className="checkmark"></span>
-              I agree to the 
-              <Link to="/terms" target="_blank" className="auth-link">Terms of Service</Link> 
-              and 
-              <Link to="/privacy" target="_blank" className="auth-link">Privacy Policy</Link>
+              <span>I agree to the <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link></span>
             </label>
-          </div>
 
-          <button 
-            type="submit" 
-            className="btn btn-primary btn-full"
-            disabled={loading}
-          >
-            {loading ? 'Creating Account...' : 'Create Account'}
-          </button>
-        </form>
-
-        <div className="auth-footer">
-          <p>
-            Already have an account? 
-            <Link to="/professional/login" className="auth-link">
-              Sign In
-            </Link>
-          </p>
+            <button type="submit" className="professional-auth__button professional-auth__button--primary" disabled={loading}>
+              {loading ? 'Creating your account...' : 'Create Free Account'}
+            </button>
+          </form>
         </div>
-      </div>
+
+        <aside className="professional-auth__aside">
+          <h3>Included with your account</h3>
+          <ul>
+            <li>Profile visible on city + statewide directories</li>
+            <li>Direct inquiries sent straight to your inbox</li>
+            <li>Analytics dashboard for profile views & contacts</li>
+            <li>Edit availability, pricing, and session types anytime</li>
+            <li>Upgrade later for featured placement when you're ready</li>
+          </ul>
+        </aside>
+      </section>
     </div>
   )
+}
+
 }
 
 export default SignupForm

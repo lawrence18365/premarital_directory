@@ -6,22 +6,46 @@ import { trackProfileClaim } from '../../components/analytics/GoogleAnalytics'
 import SEOHelmet from '../../components/analytics/SEOHelmet'
 import { STATE_CONFIG } from '../../data/locationConfig'
 import { sendProfileCreatedEmail } from '../../lib/emailNotifications'
+import '../../assets/css/professional-signup.css'
 
 const CreateProfilePage = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { user, refreshProfile } = useAuth()
+  const [currentStep, setCurrentStep] = useState(1)
+  const totalSteps = 4
 
   const [formData, setFormData] = useState({
+    // Step 1: Basic Info
     full_name: '',
     email: '',
+    phone: '',
+    website: '',
     profession: '',
+    pronouns: '',
+
+    // Step 2: Professional Details
+    years_experience: '',
+    credentials: [],
+    education: '',
+    bio: '',
+
+    // Step 3: Services & Pricing
+    offers_free_consultation: false,
+    session_fee_min: '',
+    session_fee_max: '',
+    payment_methods: [],
+    insurance_accepted: [],
+
+    // Step 4: Specialties & Availability
+    specialties: [],
+    treatment_approaches: [],
+    client_focus: [],
+    session_types: [],
+    accepting_new_clients: true,
     city: '',
     state_province: '',
-    country: 'United States',
-    session_types: [],
-    website: '',
-    phone: ''
+    country: 'United States'
   })
 
   const [loading, setLoading] = useState(false)
@@ -48,14 +72,15 @@ const CreateProfilePage = () => {
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+    setError('')
   }
 
-  const handleSessionTypeToggle = (type) => {
+  const handleArrayToggle = (field, value) => {
     setFormData(prev => ({
       ...prev,
-      session_types: prev.session_types.includes(type)
-        ? prev.session_types.filter(t => t !== type)
-        : [...prev.session_types, type]
+      [field]: prev[field].includes(value)
+        ? prev[field].filter(item => item !== value)
+        : [...prev[field], value]
     }))
   }
 
@@ -66,20 +91,16 @@ const CreateProfilePage = () => {
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .trim()
-
-    // Add timestamp to ensure uniqueness
     const timestamp = Date.now().toString(36)
     return `${baseSlug}-${timestamp}`
   }
 
   const getStateSlug = (stateName) => {
-    // Find the state slug from STATE_CONFIG
     for (const [slug, config] of Object.entries(STATE_CONFIG)) {
       if (config.name === stateName || config.abbr === stateName) {
         return slug
       }
     }
-    // Fallback: convert state name to slug
     return stateName.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')
   }
 
@@ -87,52 +108,77 @@ const CreateProfilePage = () => {
     return cityName.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')
   }
 
-  const validateForm = () => {
+  const validateStep = (step) => {
     setError('')
 
-    if (!formData.full_name.trim()) {
-      setError('Please enter your full name')
-      return false
+    if (step === 1) {
+      if (!formData.full_name.trim()) {
+        setError('Please enter your full name')
+        return false
+      }
+      if (!formData.profession) {
+        setError('Please select your profession')
+        return false
+      }
+      if (!formData.email.trim()) {
+        setError('Please enter your email address')
+        return false
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(formData.email)) {
+        setError('Please enter a valid email address')
+        return false
+      }
     }
 
-    if (!formData.profession) {
-      setError('Please select your profession')
-      return false
+    if (step === 2) {
+      if (!formData.years_experience) {
+        setError('Please select your years of experience')
+        return false
+      }
     }
 
-    if (!formData.email.trim()) {
-      setError('Please enter your email address')
-      return false
+    if (step === 3) {
+      // Pricing is optional but recommended
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(formData.email)) {
-      setError('Please enter a valid email address')
-      return false
-    }
-
-    if (!formData.city.trim()) {
-      setError('Please enter your city')
-      return false
-    }
-
-    if (!formData.state_province.trim()) {
-      setError('Please enter your state/province')
-      return false
-    }
-
-    if (formData.session_types.length === 0) {
-      setError('Please select at least one session type')
-      return false
+    if (step === 4) {
+      if (!formData.city.trim()) {
+        setError('Please enter your city')
+        return false
+      }
+      if (!formData.state_province.trim()) {
+        setError('Please enter your state/province')
+        return false
+      }
+      if (formData.session_types.length === 0) {
+        setError('Please select at least one session type')
+        return false
+      }
+      if (formData.specialties.length === 0) {
+        setError('Please select at least one specialty')
+        return false
+      }
     }
 
     return true
   }
 
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => Math.min(prev + 1, totalSteps))
+    }
+  }
+
+  const handleBack = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1))
+    setError('')
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!validateForm()) return
+    if (!validateStep(currentStep)) return
 
     if (!user) {
       setError('You must be logged in to create a profile')
@@ -152,17 +198,33 @@ const CreateProfilePage = () => {
         phone: formData.phone.trim() || null,
         website: formData.website.trim() || null,
         profession: formData.profession,
+        pronouns: formData.pronouns || null,
+        bio: formData.bio.trim() || null,
+        years_experience: formData.years_experience ? parseInt(formData.years_experience) : null,
+        credentials: formData.credentials.length > 0 ? formData.credentials : null,
+        education: formData.education ? [formData.education] : null,
+        offers_free_consultation: formData.offers_free_consultation,
+        session_fee_min: formData.session_fee_min ? parseInt(formData.session_fee_min) * 100 : null, // Convert to cents
+        session_fee_max: formData.session_fee_max ? parseInt(formData.session_fee_max) * 100 : null,
+        pricing_range: formData.session_fee_min && formData.session_fee_max
+          ? `$${formData.session_fee_min}-$${formData.session_fee_max}`
+          : null,
+        payment_methods: formData.payment_methods.length > 0 ? formData.payment_methods : null,
+        insurance_accepted: formData.insurance_accepted.length > 0 ? formData.insurance_accepted : null,
+        specialties: formData.specialties,
+        treatment_approaches: formData.treatment_approaches.length > 0 ? formData.treatment_approaches : null,
+        client_focus: formData.client_focus.length > 0 ? formData.client_focus : null,
+        session_types: formData.session_types,
+        accepting_new_clients: formData.accepting_new_clients,
         city: formData.city.trim(),
         state_province: formData.state_province.trim(),
         country: formData.country,
-        session_types: formData.session_types,
         slug: slug,
         is_claimed: true,
         claimed_at: new Date().toISOString(),
         last_login: new Date().toISOString(),
         tier: 'community',
         contact_reveals_count: 0,
-        accepting_new_clients: true,
         // Attribution fields
         signup_source: utmParams.signup_source || 'organic',
         utm_source: utmParams.utm_source || null,
@@ -176,13 +238,9 @@ const CreateProfilePage = () => {
         throw createError
       }
 
-      // Track the profile creation
       trackProfileClaim(profile.id, 'self_service')
-
-      // Refresh the user's profile in auth context
       await refreshProfile()
 
-      // Navigate to success page with profile info
       const stateSlug = getStateSlug(formData.state_province)
       const citySlug = getCitySlug(formData.city)
       const profileUrl = `/premarital-counseling/${stateSlug}/${citySlug}/${slug}`
@@ -199,7 +257,6 @@ const CreateProfilePage = () => {
         )
       } catch (emailError) {
         console.error('Welcome email failed:', emailError)
-        // Don't block on email failure
       }
 
       navigate('/professional/profile-created', {
@@ -225,15 +282,116 @@ const CreateProfilePage = () => {
     }
   }
 
+  // Options for dropdowns and multi-selects
   const professionOptions = [
     'Licensed Therapist',
     'Marriage & Family Therapist',
     'Licensed Clinical Social Worker',
+    'Psychologist',
     'Relationship Coach',
     'Life Coach',
     'Clergy/Pastor',
     'Chaplain',
     'Counselor'
+  ]
+
+  const pronounOptions = [
+    { value: '', label: 'Prefer not to say' },
+    { value: 'he/him', label: 'He/Him' },
+    { value: 'she/her', label: 'She/Her' },
+    { value: 'they/them', label: 'They/Them' }
+  ]
+
+  const yearsExperienceOptions = [
+    { value: '1', label: 'Less than 1 year' },
+    { value: '2', label: '1-3 years' },
+    { value: '5', label: '4-6 years' },
+    { value: '8', label: '7-10 years' },
+    { value: '12', label: '10-15 years' },
+    { value: '20', label: '15+ years' }
+  ]
+
+  const credentialOptions = [
+    'Licensed Marriage and Family Therapist (LMFT)',
+    'Licensed Clinical Social Worker (LCSW)',
+    'Licensed Professional Counselor (LPC)',
+    'Licensed Psychologist (PhD/PsyD)',
+    'Certified Gottman Therapist',
+    'Prepare/Enrich Facilitator',
+    'Certified Relationship Coach',
+    'Ordained Minister',
+    'Board Certified Chaplain'
+  ]
+
+  const paymentMethodOptions = [
+    'Cash',
+    'Check',
+    'Credit Card',
+    'Debit Card',
+    'HSA/FSA',
+    'PayPal',
+    'Venmo',
+    'Zelle'
+  ]
+
+  const insuranceOptions = [
+    'Aetna',
+    'Anthem',
+    'Blue Cross Blue Shield',
+    'Cigna',
+    'Humana',
+    'Kaiser Permanente',
+    'Medicare',
+    'Medicaid',
+    'United Healthcare',
+    'Out of Network',
+    'Sliding Scale Available',
+    'No Insurance Accepted'
+  ]
+
+  const specialtyOptions = [
+    'Premarital Counseling',
+    'Communication Skills',
+    'Conflict Resolution',
+    'Financial Planning',
+    'Intimacy & Sexuality',
+    'Blended Families',
+    'Interfaith Marriage',
+    'Cultural Differences',
+    'Trust Building',
+    'Relationship Anxiety',
+    'Family of Origin Issues',
+    'Life Transitions',
+    'Parenting Planning',
+    'Faith-Based Counseling',
+    'LGBTQ+ Affirming',
+    'Military Couples'
+  ]
+
+  const treatmentApproachOptions = [
+    'Gottman Method',
+    'Emotionally Focused Therapy (EFT)',
+    'Cognitive Behavioral Therapy (CBT)',
+    'Prepare/Enrich',
+    'Solution-Focused',
+    'Narrative Therapy',
+    'Attachment-Based',
+    'Faith-Based Approach',
+    'Psychodynamic',
+    'Integrative'
+  ]
+
+  const clientFocusOptions = [
+    'Engaged Couples',
+    'Newlyweds (0-2 years)',
+    'Young Adults (20s-30s)',
+    'Established Adults (30s-40s)',
+    'Second Marriages',
+    'Blended Families',
+    'LGBTQ+ Couples',
+    'Military Couples',
+    'Interfaith Couples',
+    'Long-Distance Couples'
   ]
 
   const sessionTypeOptions = [
@@ -242,281 +400,528 @@ const CreateProfilePage = () => {
     { value: 'hybrid', label: 'Hybrid (Both)' }
   ]
 
+  const heroStats = [
+    { value: '12+', label: 'Active city directories' },
+    { value: '0%', label: 'Commission or lead fees' },
+    { value: '5 min', label: 'Average setup time' }
+  ]
+
   if (!user) {
     return (
-      <div className="container" style={{ padding: 'var(--space-20) 0', textAlign: 'center' }}>
+      <div className="professional-signup">
         <SEOHelmet
-          title="Create Your Free Profile"
-          description="Create your free profile on WeddingCounselors.com and start connecting with engaged couples."
+          title="Join the Directory"
+          description="Create your free account to list your premarital counseling services."
           url="/professional/create"
         />
-        <div style={{
-          background: 'var(--white)',
-          padding: 'var(--space-12)',
-          borderRadius: 'var(--radius-2xl)',
-          boxShadow: 'var(--shadow-xl)',
-          maxWidth: '500px',
-          margin: '0 auto'
-        }}>
-          <h2>Sign Up Required</h2>
-          <p className="text-secondary mb-6">
-            Please create an account first to create your professional profile.
-          </p>
-          <a href="/professional/signup" className="btn btn-primary btn-large">
-            Create Account
-          </a>
-          <p className="mt-4 text-small text-muted">
-            Already have an account? <a href="/professional/login">Sign In</a>
-          </p>
-        </div>
+        <section className="professional-signup__hero">
+          <div className="professional-signup__hero-content">
+            <p className="section-eyebrow">For premarital counselors</p>
+            <h1>Join the directory in two steps</h1>
+            <p className="professional-signup__hero-subtitle">
+              Create a free account, add your profile, and start receiving direct inquiries from engaged couples.
+            </p>
+            <div className="professional-signup__metrics">
+              {heroStats.map((stat) => (
+                <div className="professional-signup__metric" key={stat.label}>
+                  <span className="professional-signup__metric-value">{stat.value}</span>
+                  <span className="professional-signup__metric-label">{stat.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="professional-signup__hero-panel">
+            <h3>Create your account to continue</h3>
+            <p>We'll guide you through adding your practice details once you're signed in.</p>
+            <a href="/professional/signup" className="professional-signup__button professional-signup__button--primary">
+              Create Account
+            </a>
+            <p className="professional-signup__panel-note">
+              Already have an account? <a href="/professional/login">Sign in</a>
+            </p>
+          </div>
+        </section>
       </div>
     )
   }
 
   return (
-    <div className="container" style={{ padding: 'var(--space-12) 0' }}>
+    <div className="professional-signup">
       <SEOHelmet
-        title="Create Your Free Profile - Wedding Counselors"
+        title="Create Your Professional Profile - Wedding Counselors"
         description="Join the Wedding Counselors directory for free. Create your professional profile and start receiving leads from engaged couples seeking premarital counseling."
         url="/professional/create"
       />
 
-      <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 'var(--space-10)' }}>
-          <h1>Create Your Free Profile</h1>
-          <p className="text-large text-secondary">
-            Get listed instantly and start connecting with engaged couples today.
+      <section className="professional-signup__hero">
+        <div className="professional-signup__hero-content">
+          <p className="section-eyebrow">For premarital counselors</p>
+          <h1>Create your professional profile</h1>
+          <p className="professional-signup__hero-subtitle">
+            Complete your profile to help engaged couples find you. The more details you provide, the better matches you'll receive.
           </p>
-          <p className="text-small text-muted mt-2">
-            Your profile will be live immediately. You can add more details later.
-          </p>
-        </div>
-
-        {/* Error Message */}
-        {error && (
-          <div style={{
-            background: '#fee',
-            border: '1px solid #fcc',
-            borderRadius: 'var(--radius-md)',
-            padding: 'var(--space-4)',
-            marginBottom: 'var(--space-6)',
-            color: '#c33',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-2)'
-          }}>
-            <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-            <span>{error}</span>
+          <div className="professional-signup__metrics">
+            {heroStats.map((stat) => (
+              <div className="professional-signup__metric" key={stat.label}>
+                <span className="professional-signup__metric-value">{stat.value}</span>
+                <span className="professional-signup__metric-label">{stat.label}</span>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+        <div className="professional-signup__hero-panel">
+          <h3>Step {currentStep} of {totalSteps}</h3>
+          <div className="professional-signup__progress">
+            <div
+              className="professional-signup__progress-bar"
+              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+            />
+          </div>
+          <ul>
+            <li className={currentStep >= 1 ? 'active' : ''}>Basic Information</li>
+            <li className={currentStep >= 2 ? 'active' : ''}>Professional Details</li>
+            <li className={currentStep >= 3 ? 'active' : ''}>Services & Pricing</li>
+            <li className={currentStep >= 4 ? 'active' : ''}>Specialties & Location</li>
+          </ul>
+        </div>
+      </section>
 
-        {/* Form */}
-        <div style={{
-          background: 'var(--white)',
-          padding: 'var(--space-8)',
-          borderRadius: 'var(--radius-2xl)',
-          boxShadow: 'var(--shadow-lg)',
-          border: '1px solid var(--gray-200)'
-        }}>
-          <form onSubmit={handleSubmit}>
-            {/* Basic Info */}
-            <div style={{ marginBottom: 'var(--space-6)' }}>
-              <h3 style={{ marginBottom: 'var(--space-4)', color: 'var(--primary)' }}>
-                Basic Information
-              </h3>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
-                <div className="form-group">
-                  <label htmlFor="full_name">Full Name *</label>
-                  <input
-                    type="text"
-                    id="full_name"
-                    className="form-control"
-                    required
-                    value={formData.full_name}
-                    onChange={(e) => handleInputChange('full_name', e.target.value)}
-                    placeholder="Dr. Jane Smith"
-                  />
+      <section className="professional-signup__form-section" id="create-profile">
+        <div className="professional-signup__form-wrapper">
+          <div className="professional-signup__form-card">
+            {error && (
+              <div className="professional-signup__alert" role="alert">
+                <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                <span>{error}</span>
+              </div>
+            )}
+            <form onSubmit={handleSubmit}>
+              {/* Step 1: Basic Information */}
+              {currentStep === 1 && (
+                <div className="professional-signup__fieldset">
+                  <div className="professional-signup__fieldset-header">
+                    <h3>Basic Information</h3>
+                    <p>Your public contact and professional identity.</p>
+                  </div>
+                  <div className="professional-signup__grid professional-signup__grid--2">
+                    <div className="form-group">
+                      <label htmlFor="full_name">Full Name with Credentials *</label>
+                      <input
+                        type="text"
+                        id="full_name"
+                        className="form-control"
+                        required
+                        value={formData.full_name}
+                        onChange={(e) => handleInputChange('full_name', e.target.value)}
+                        placeholder="Dr. Jane Smith, LMFT"
+                      />
+                      <small>Include titles and credentials (e.g., PhD, LMFT, LPC)</small>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="pronouns">Pronouns (optional)</label>
+                      <select
+                        id="pronouns"
+                        className="form-control"
+                        value={formData.pronouns}
+                        onChange={(e) => handleInputChange('pronouns', e.target.value)}
+                      >
+                        {pronounOptions.map(option => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="profession">Professional Type *</label>
+                    <select
+                      id="profession"
+                      className="form-control"
+                      required
+                      value={formData.profession}
+                      onChange={(e) => handleInputChange('profession', e.target.value)}
+                    >
+                      <option value="">Select your role</option>
+                      {professionOptions.map(option => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="professional-signup__grid professional-signup__grid--2">
+                    <div className="form-group">
+                      <label htmlFor="email">Email *</label>
+                      <input
+                        type="email"
+                        id="email"
+                        className="form-control"
+                        required
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        placeholder="you@practice.com"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="phone">Phone</label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        className="form-control"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        placeholder="(555) 123-4567"
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="website">Website</label>
+                    <input
+                      type="url"
+                      id="website"
+                      className="form-control"
+                      value={formData.website}
+                      onChange={(e) => handleInputChange('website', e.target.value)}
+                      placeholder="https://yourpractice.com"
+                    />
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="profession">Profession *</label>
-                  <select
-                    id="profession"
-                    className="form-control"
-                    required
-                    value={formData.profession}
-                    onChange={(e) => handleInputChange('profession', e.target.value)}
+              )}
+
+              {/* Step 2: Professional Details */}
+              {currentStep === 2 && (
+                <div className="professional-signup__fieldset">
+                  <div className="professional-signup__fieldset-header">
+                    <h3>Professional Details</h3>
+                    <p>Help couples understand your qualifications and experience.</p>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="years_experience">Years of Experience *</label>
+                    <select
+                      id="years_experience"
+                      className="form-control"
+                      required
+                      value={formData.years_experience}
+                      onChange={(e) => handleInputChange('years_experience', e.target.value)}
+                    >
+                      <option value="">Select experience level</option>
+                      {yearsExperienceOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Credentials & Certifications</label>
+                    <div className="professional-signup__checkbox-grid">
+                      {credentialOptions.map(credential => (
+                        <label key={credential} className="professional-signup__checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={formData.credentials.includes(credential)}
+                            onChange={() => handleArrayToggle('credentials', credential)}
+                          />
+                          <span>{credential}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="education">Education (School & Degree)</label>
+                    <input
+                      type="text"
+                      id="education"
+                      className="form-control"
+                      value={formData.education}
+                      onChange={(e) => handleInputChange('education', e.target.value)}
+                      placeholder="e.g., MA in Marriage & Family Therapy, Azusa Pacific University"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="bio">Professional Bio</label>
+                    <textarea
+                      id="bio"
+                      className="form-control"
+                      rows="6"
+                      value={formData.bio}
+                      onChange={(e) => handleInputChange('bio', e.target.value)}
+                      placeholder="Describe your approach to premarital counseling, what clients can expect, and what makes your practice unique..."
+                    />
+                    <small>This appears on your public profile. Aim for 150-300 words.</small>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Services & Pricing */}
+              {currentStep === 3 && (
+                <div className="professional-signup__fieldset">
+                  <div className="professional-signup__fieldset-header">
+                    <h3>Services & Pricing</h3>
+                    <p>Help couples understand your fees and payment options.</p>
+                  </div>
+                  <div className="form-group">
+                    <label className="professional-signup__toggle-label">
+                      <input
+                        type="checkbox"
+                        checked={formData.offers_free_consultation}
+                        onChange={(e) => handleInputChange('offers_free_consultation', e.target.checked)}
+                      />
+                      <span>I offer free initial consultations</span>
+                    </label>
+                    <small>Professionals offering free consultations receive 40% more inquiries</small>
+                  </div>
+                  <div className="professional-signup__grid professional-signup__grid--2">
+                    <div className="form-group">
+                      <label htmlFor="session_fee_min">Session Fee - Minimum ($)</label>
+                      <input
+                        type="number"
+                        id="session_fee_min"
+                        className="form-control"
+                        min="0"
+                        step="10"
+                        value={formData.session_fee_min}
+                        onChange={(e) => handleInputChange('session_fee_min', e.target.value)}
+                        placeholder="100"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="session_fee_max">Session Fee - Maximum ($)</label>
+                      <input
+                        type="number"
+                        id="session_fee_max"
+                        className="form-control"
+                        min="0"
+                        step="10"
+                        value={formData.session_fee_max}
+                        onChange={(e) => handleInputChange('session_fee_max', e.target.value)}
+                        placeholder="200"
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Payment Methods Accepted</label>
+                    <div className="professional-signup__checkbox-grid">
+                      {paymentMethodOptions.map(method => (
+                        <label key={method} className="professional-signup__checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={formData.payment_methods.includes(method)}
+                            onChange={() => handleArrayToggle('payment_methods', method)}
+                          />
+                          <span>{method}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Insurance Accepted</label>
+                    <div className="professional-signup__checkbox-grid">
+                      {insuranceOptions.map(insurance => (
+                        <label key={insurance} className="professional-signup__checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={formData.insurance_accepted.includes(insurance)}
+                            onChange={() => handleArrayToggle('insurance_accepted', insurance)}
+                          />
+                          <span>{insurance}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Specialties & Location */}
+              {currentStep === 4 && (
+                <div className="professional-signup__fieldset">
+                  <div className="professional-signup__fieldset-header">
+                    <h3>Specialties & Location</h3>
+                    <p>Help couples find you based on their specific needs.</p>
+                  </div>
+                  <div className="form-group">
+                    <label>Specialties * (Select at least one)</label>
+                    <div className="professional-signup__pill-group">
+                      {specialtyOptions.map(specialty => (
+                        <button
+                          type="button"
+                          key={specialty}
+                          className={`professional-signup__pill ${formData.specialties.includes(specialty) ? 'is-selected' : ''}`}
+                          onClick={() => handleArrayToggle('specialties', specialty)}
+                        >
+                          {specialty}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Treatment Approaches</label>
+                    <div className="professional-signup__checkbox-grid">
+                      {treatmentApproachOptions.map(approach => (
+                        <label key={approach} className="professional-signup__checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={formData.treatment_approaches.includes(approach)}
+                            onChange={() => handleArrayToggle('treatment_approaches', approach)}
+                          />
+                          <span>{approach}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Client Focus</label>
+                    <div className="professional-signup__checkbox-grid">
+                      {clientFocusOptions.map(focus => (
+                        <label key={focus} className="professional-signup__checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={formData.client_focus.includes(focus)}
+                            onChange={() => handleArrayToggle('client_focus', focus)}
+                          />
+                          <span>{focus}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Session Formats * (Select at least one)</label>
+                    <div className="professional-signup__pill-group">
+                      {sessionTypeOptions.map((option) => (
+                        <button
+                          type="button"
+                          key={option.value}
+                          className={`professional-signup__pill ${formData.session_types.includes(option.value) ? 'is-selected' : ''}`}
+                          onClick={() => handleArrayToggle('session_types', option.value)}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label className="professional-signup__toggle-label">
+                      <input
+                        type="checkbox"
+                        checked={formData.accepting_new_clients}
+                        onChange={(e) => handleInputChange('accepting_new_clients', e.target.checked)}
+                      />
+                      <span>Currently accepting new clients</span>
+                    </label>
+                  </div>
+                  <div className="professional-signup__grid professional-signup__grid--2">
+                    <div className="form-group">
+                      <label htmlFor="city">City *</label>
+                      <input
+                        type="text"
+                        id="city"
+                        className="form-control"
+                        required
+                        value={formData.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        placeholder="Austin"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="state_province">State/Province *</label>
+                      <input
+                        type="text"
+                        id="state_province"
+                        className="form-control"
+                        required
+                        value={formData.state_province}
+                        onChange={(e) => handleInputChange('state_province', e.target.value)}
+                        placeholder="Texas"
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="country">Country</label>
+                    <select
+                      id="country"
+                      className="form-control"
+                      value={formData.country}
+                      onChange={(e) => handleInputChange('country', e.target.value)}
+                    >
+                      <option value="United States">United States</option>
+                      <option value="Canada">Canada</option>
+                      <option value="United Kingdom">United Kingdom</option>
+                      <option value="Australia">Australia</option>
+                      <option value="Ireland">Ireland</option>
+                      <option value="New Zealand">New Zealand</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation Buttons */}
+              <div className="professional-signup__actions">
+                {currentStep > 1 && (
+                  <button
+                    type="button"
+                    className="professional-signup__button professional-signup__button--secondary"
+                    onClick={handleBack}
                   >
-                    <option value="">Select profession...</option>
-                    {professionOptions.map(profession => (
-                      <option key={profession} value={profession}>{profession}</option>
-                    ))}
-                  </select>
-                </div>
+                    Back
+                  </button>
+                )}
+                {currentStep < totalSteps ? (
+                  <button
+                    type="button"
+                    className="professional-signup__button professional-signup__button--primary"
+                    onClick={handleNext}
+                  >
+                    Continue
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="professional-signup__submit"
+                    disabled={loading}
+                  >
+                    {loading ? 'Creating Your Profile...' : 'Publish My Free Profile'}
+                  </button>
+                )}
               </div>
+              {currentStep === totalSteps && (
+                <p className="professional-signup__terms">
+                  By creating a profile, you agree to our{' '}
+                  <a href="/terms" target="_blank" rel="noreferrer">Terms of Service</a> and{' '}
+                  <a href="/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>.
+                </p>
+              )}
+            </form>
+          </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
-                <div className="form-group">
-                  <label htmlFor="email">Email *</label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="form-control"
-                    required
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="jane@example.com"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="phone">Phone (Optional)</label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    className="form-control"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    placeholder="(555) 123-4567"
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="website">Website (Optional)</label>
-                <input
-                  type="url"
-                  id="website"
-                  className="form-control"
-                  placeholder="https://yourwebsite.com"
-                  value={formData.website}
-                  onChange={(e) => handleInputChange('website', e.target.value)}
+          <aside className="professional-signup__benefits-card">
+            <h3>Why complete your profile?</h3>
+            <ul>
+              <li><strong>More visibility:</strong> Complete profiles rank higher in search results</li>
+              <li><strong>Better matches:</strong> Couples filter by specialties, insurance, and approach</li>
+              <li><strong>Trust signals:</strong> Credentials and experience build credibility</li>
+              <li><strong>More inquiries:</strong> Free consultations increase lead conversion by 40%</li>
+              <li><strong>Professional image:</strong> Detailed profiles reflect your expertise</li>
+            </ul>
+            <div className="professional-signup__completeness">
+              <strong>Profile Completeness</strong>
+              <div className="professional-signup__completeness-bar">
+                <div
+                  className="professional-signup__completeness-fill"
+                  style={{
+                    width: `${Math.min(100,
+                      (formData.full_name ? 10 : 0) +
+                      (formData.email ? 10 : 0) +
+                      (formData.profession ? 10 : 0) +
+                      (formData.years_experience ? 10 : 0) +
+                      (formData.bio ? 15 : 0) +
+                      (formData.credentials.length > 0 ? 10 : 0) +
+                      (formData.specialties.length > 0 ? 10 : 0) +
+                      (formData.session_fee_min ? 10 : 0) +
+                      (formData.city ? 10 : 0) +
+                      (formData.session_types.length > 0 ? 5 : 0)
+                    )}%`
+                  }}
                 />
               </div>
             </div>
-
-            {/* Location */}
-            <div style={{ marginBottom: 'var(--space-6)' }}>
-              <h3 style={{ marginBottom: 'var(--space-4)', color: 'var(--primary)' }}>
-                Practice Location
-              </h3>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
-                <div className="form-group">
-                  <label htmlFor="city">City *</label>
-                  <input
-                    type="text"
-                    id="city"
-                    className="form-control"
-                    required
-                    value={formData.city}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
-                    placeholder="Austin"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="state_province">State/Province *</label>
-                  <input
-                    type="text"
-                    id="state_province"
-                    className="form-control"
-                    required
-                    value={formData.state_province}
-                    onChange={(e) => handleInputChange('state_province', e.target.value)}
-                    placeholder="Texas"
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="country">Country</label>
-                <select
-                  id="country"
-                  className="form-control"
-                  value={formData.country}
-                  onChange={(e) => handleInputChange('country', e.target.value)}
-                >
-                  <option value="United States">United States</option>
-                  <option value="Canada">Canada</option>
-                  <option value="United Kingdom">United Kingdom</option>
-                  <option value="Australia">Australia</option>
-                  <option value="Ireland">Ireland</option>
-                  <option value="New Zealand">New Zealand</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Session Types */}
-            <div style={{ marginBottom: 'var(--space-8)' }}>
-              <h3 style={{ marginBottom: 'var(--space-4)', color: 'var(--primary)' }}>
-                Session Types *
-              </h3>
-              <p className="text-small text-muted mb-4">
-                Select all that apply
-              </p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
-                {sessionTypeOptions.map(option => (
-                  <label
-                    key={option.value}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      cursor: 'pointer',
-                      padding: 'var(--space-3) var(--space-4)',
-                      borderRadius: 'var(--radius-lg)',
-                      border: `2px solid ${formData.session_types.includes(option.value) ? 'var(--primary)' : 'var(--gray-300)'}`,
-                      background: formData.session_types.includes(option.value) ? 'var(--primary-light)' : 'var(--white)',
-                      transition: 'all var(--transition-normal)'
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={formData.session_types.includes(option.value)}
-                      onChange={() => handleSessionTypeToggle(option.value)}
-                      style={{ marginRight: 'var(--space-2)' }}
-                    />
-                    {option.label}
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="btn btn-primary btn-large"
-              style={{ width: '100%' }}
-              disabled={loading}
-            >
-              {loading ? 'Creating Your Profile...' : 'Create Free Profile'}
-            </button>
-
-            <p className="text-center text-small text-muted mt-4">
-              By creating a profile, you agree to our{' '}
-              <a href="/terms" target="_blank">Terms of Service</a> and{' '}
-              <a href="/privacy" target="_blank">Privacy Policy</a>.
-            </p>
-          </form>
+          </aside>
         </div>
-
-        {/* Benefits */}
-        <div style={{
-          marginTop: 'var(--space-10)',
-          background: 'var(--gray-50)',
-          padding: 'var(--space-6)',
-          borderRadius: 'var(--radius-xl)',
-          border: '1px solid var(--gray-200)'
-        }}>
-          <h3 style={{ marginBottom: 'var(--space-4)' }}>What You Get (Free)</h3>
-          <ul style={{ color: 'var(--gray-700)', lineHeight: 1.8 }}>
-            <li><strong>Instant visibility</strong> - Your profile goes live immediately</li>
-            <li><strong>SEO-optimized listing</strong> - Appear in local search results</li>
-            <li><strong>Direct leads</strong> - Couples can contact you directly</li>
-            <li><strong>Complete control</strong> - Edit your profile anytime</li>
-            <li><strong>No commitment</strong> - Cancel or hide your profile anytime</li>
-          </ul>
-        </div>
-      </div>
+      </section>
     </div>
   )
 }
