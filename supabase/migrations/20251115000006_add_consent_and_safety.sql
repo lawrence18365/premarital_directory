@@ -55,6 +55,10 @@ CREATE INDEX IF NOT EXISTS idx_profiles_is_hidden ON profiles(is_hidden) WHERE i
 
 -- 2.1 Token expiry for claim links
 -- Required to prevent abuse of forwarded claim links
+-- First ensure claim_token column exists (may have been added in previous migration)
+ALTER TABLE profiles
+  ADD COLUMN IF NOT EXISTS claim_token UUID DEFAULT gen_random_uuid();
+
 ALTER TABLE profiles
   ADD COLUMN IF NOT EXISTS claim_token_expires_at TIMESTAMPTZ;
 
@@ -104,10 +108,16 @@ CREATE POLICY "Admins can view provider events"
   );
 
 -- 3.2 Outreach rate limiting tracking
-ALTER TABLE provider_outreach
-  ADD COLUMN IF NOT EXISTS last_contacted_at TIMESTAMPTZ,
-  ADD COLUMN IF NOT EXISTS contact_count INTEGER DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS email_template_used TEXT;
+-- Only add columns if provider_outreach table exists (created in previous migration)
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'provider_outreach') THEN
+    ALTER TABLE provider_outreach
+      ADD COLUMN IF NOT EXISTS last_contacted_at TIMESTAMPTZ,
+      ADD COLUMN IF NOT EXISTS contact_count INTEGER DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS email_template_used TEXT;
+  END IF;
+END $$;
 
 -- View for today's outreach count (for rate limiting)
 CREATE OR REPLACE VIEW outreach_today AS
