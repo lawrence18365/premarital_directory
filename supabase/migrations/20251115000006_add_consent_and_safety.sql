@@ -119,16 +119,8 @@ BEGIN
   END IF;
 END $$;
 
--- View for today's outreach count (for rate limiting)
-CREATE OR REPLACE VIEW outreach_today AS
-SELECT
-  COUNT(*) as emails_sent_today,
-  (SELECT value::int FROM app_settings WHERE key = 'max_outreach_per_day') as daily_limit
-FROM provider_events
-WHERE event_type = 'email_sent'
-  AND created_at >= CURRENT_DATE;
-
 -- App settings table for configurable limits
+-- Must be created BEFORE the view that references it
 CREATE TABLE IF NOT EXISTS app_settings (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL,
@@ -140,6 +132,15 @@ CREATE TABLE IF NOT EXISTS app_settings (
 INSERT INTO app_settings (key, value, description)
 VALUES ('max_outreach_per_day', '25', 'Maximum outreach emails per day')
 ON CONFLICT (key) DO NOTHING;
+
+-- View for today's outreach count (for rate limiting)
+CREATE OR REPLACE VIEW outreach_today AS
+SELECT
+  COUNT(*) as emails_sent_today,
+  (SELECT value::int FROM app_settings WHERE key = 'max_outreach_per_day') as daily_limit
+FROM provider_events
+WHERE event_type = 'email_sent'
+  AND created_at >= CURRENT_DATE;
 
 -- Function to check if email is safe to contact
 CREATE OR REPLACE FUNCTION is_safe_to_contact(check_email TEXT)
