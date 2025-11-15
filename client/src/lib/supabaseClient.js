@@ -17,6 +17,7 @@ export const profileOperations = {
     let query = supabase
       .from('profiles')
       .select('*')
+      .eq('is_hidden', false)  // Filter out hidden profiles
       .order('sponsored_rank', { ascending: false })
       .order('is_sponsored', { ascending: false })
       .order('created_at', { ascending: false })
@@ -60,6 +61,7 @@ export const profileOperations = {
       let query = supabase
         .from('profiles')
         .select('*')
+        .eq('is_hidden', false)  // Filter out hidden profiles
         .order('sponsored_rank', { ascending: false })
         .order('is_sponsored', { ascending: false })
         .order('created_at', { ascending: false })
@@ -131,10 +133,11 @@ export const profileOperations = {
       .from('profiles')
       .select('*')
       .eq('state_province', stateAbbr)
+      .eq('is_hidden', false)  // Filter out hidden profiles
       .order('sponsored_rank', { ascending: false })
       .order('is_sponsored', { ascending: false })
       .order('created_at', { ascending: false })
-    
+
     return { data, error }
   },
 
@@ -145,6 +148,7 @@ export const profileOperations = {
       .select('*')
       .eq('state_province', stateAbbr)
       .ilike('city', `%${city}%`)
+      .eq('is_hidden', false)  // Filter out hidden profiles
       .order('sponsored_rank', { ascending: false })
       .order('is_sponsored', { ascending: false })
       .order('created_at', { ascending: false })

@@ -71,7 +71,7 @@ const ProfileList = ({ profiles, loading, error, showViewAll = false }) => {
             View All Professionals
           </a>
           <p className="text-muted mt-4">
-            Browse our complete directory of 1000+ verified counselors
+            Browse our growing directory of premarital counselors across the U.S.
           </p>
         </div>
       </div>
@@ -85,7 +85,7 @@ const ProfileList = ({ profiles, loading, error, showViewAll = false }) => {
           <>
             <div className="section-header">
               <h2 className="font-display">Featured Professionals</h2>
-              <p>Verified and highly recommended counselors</p>
+              <p>Premium listings from counselors who chose to be featured</p>
             </div>
             <div className="profiles-grid">
               {sponsoredProfiles.map(profile => (
