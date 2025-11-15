@@ -295,9 +295,160 @@ export const notifyAdminNewClaim = async (adminEmail, claimData, claimUrl) => {
   }
 }
 
+/**
+ * Send welcome email when professional creates their profile directly
+ * @param {string} email - Recipient email
+ * @param {object} profileData - Profile data
+ * @param {string} profileUrl - URL to the new profile
+ * @param {string} dashboardUrl - URL to the professional dashboard
+ */
+export const sendProfileCreatedEmail = async (email, profileData, profileUrl, dashboardUrl) => {
+  const subject = 'Your WeddingCounselors Profile is Live!'
+  const badgeSnippet = `&lt;a href="https://www.weddingcounselors.com" target="_blank" rel="noopener"&gt;
+  &lt;img src="https://www.weddingcounselors.com/badges/featured-premarital-directory.svg"
+       alt="Featured on WeddingCounselors.com"
+       style="width: 200px; height: auto;"&gt;
+&lt;/a&gt;`
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+      <!-- Header -->
+      <div style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a8c 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+        <h1 style="margin: 0; font-size: 24px;">Welcome to WeddingCounselors.com!</h1>
+        <p style="margin: 10px 0 0 0; opacity: 0.9;">Your profile is now live</p>
+      </div>
+
+      <div style="padding: 30px; background-color: #f9fafb;">
+        <p style="font-size: 16px;">Hi ${profileData.full_name},</p>
+
+        <p style="font-size: 16px; line-height: 1.6;">
+          <strong>Congratulations!</strong> Your professional profile is now live on WeddingCounselors.com.
+          Engaged couples can start finding you immediately.
+        </p>
+
+        <!-- Profile Link -->
+        <div style="background-color: #d4edda; border: 2px solid #28a745; padding: 20px; border-radius: 8px; margin: 25px 0; text-align: center;">
+          <h3 style="margin: 0 0 10px 0; color: #155724;">Your Profile is Live!</h3>
+          <a href="${profileUrl}"
+             style="display: inline-block; background-color: #28a745; color: white; padding: 14px 35px;
+                    text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
+            View Your Profile
+          </a>
+        </div>
+
+        <!-- Quick Actions -->
+        <div style="background-color: white; padding: 25px; border-radius: 8px; margin: 25px 0; border: 1px solid #e5e7eb;">
+          <h3 style="margin-top: 0; color: #1f2937;">Complete Your Profile to Get More Leads</h3>
+          <p style="color: #4b5563; margin-bottom: 20px;">Profiles with photos and complete information get 3x more inquiries:</p>
+
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 10px; vertical-align: top; width: 30px;">
+                <span style="display: inline-block; width: 24px; height: 24px; background: #fef3c7; border-radius: 50%; text-align: center; line-height: 24px;">1</span>
+              </td>
+              <td style="padding: 10px;">
+                <strong>Add a professional photo</strong><br>
+                <span style="color: #6b7280; font-size: 14px;">Builds trust with potential clients</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; vertical-align: top;">
+                <span style="display: inline-block; width: 24px; height: 24px; background: #fef3c7; border-radius: 50%; text-align: center; line-height: 24px;">2</span>
+              </td>
+              <td style="padding: 10px;">
+                <strong>Write your professional bio</strong><br>
+                <span style="color: #6b7280; font-size: 14px;">Share your approach and experience</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; vertical-align: top;">
+                <span style="display: inline-block; width: 24px; height: 24px; background: #fef3c7; border-radius: 50%; text-align: center; line-height: 24px;">3</span>
+              </td>
+              <td style="padding: 10px;">
+                <strong>Add pricing information</strong><br>
+                <span style="color: #6b7280; font-size: 14px;">Help couples know what to expect</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; vertical-align: top;">
+                <span style="display: inline-block; width: 24px; height: 24px; background: #fef3c7; border-radius: 50%; text-align: center; line-height: 24px;">4</span>
+              </td>
+              <td style="padding: 10px;">
+                <strong>Add booking link</strong><br>
+                <span style="color: #6b7280; font-size: 14px;">Make scheduling easy</span>
+              </td>
+            </tr>
+          </table>
+
+          <div style="text-align: center; margin-top: 20px;">
+            <a href="${dashboardUrl}/professional/profile/edit"
+               style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 30px;
+                      text-decoration: none; border-radius: 6px; font-weight: bold;">
+              Complete Your Profile
+            </a>
+          </div>
+        </div>
+
+        <!-- Badge Section -->
+        <div style="background-color: #fff3cd; border: 2px solid #ffc107; padding: 20px; border-radius: 8px; margin: 25px 0;">
+          <h3 style="margin-top: 0; color: #856404;">Add Our Badge to Your Website</h3>
+          <p style="color: #856404; margin-bottom: 15px;">
+            Show visitors you're a verified premarital counselor. Copy this code to your website:
+          </p>
+          <div style="background-color: #2d2d2d; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 12px; color: #a3e635; overflow-x: auto;">
+            ${badgeSnippet}
+          </div>
+        </div>
+
+        <!-- Helpful Links -->
+        <div style="margin: 25px 0;">
+          <h3 style="color: #1f2937;">Helpful Links:</h3>
+          <ul style="color: #4b5563; line-height: 2;">
+            <li><a href="${dashboardUrl}/professional/dashboard" style="color: #2563eb;">Your Dashboard</a> - View stats and manage your profile</li>
+            <li><a href="${dashboardUrl}/professional/leads" style="color: #2563eb;">Leads</a> - See couple inquiries</li>
+            <li><a href="${dashboardUrl}/support" style="color: #2563eb;">Support</a> - Get help and resources</li>
+          </ul>
+        </div>
+
+        <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">
+          Questions? Simply reply to this email - we're here to help!
+        </p>
+
+        <p style="color: #10b981; font-weight: bold; margin-top: 20px;">
+          Welcome to the WeddingCounselors community!
+        </p>
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          Best regards,<br>
+          The WeddingCounselors Team
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div style="background-color: #1f2937; color: #9ca3af; padding: 20px; border-radius: 0 0 8px 8px; text-align: center; font-size: 12px;">
+        <p style="margin: 0;">WeddingCounselors.com - Connecting engaged couples with premarital counselors</p>
+      </div>
+    </div>
+  `
+
+  try {
+    if (EMAIL_CONFIG.useResend) {
+      await sendViaResend(email, subject, html)
+      console.log('✅ Profile created welcome email sent to:', email)
+    } else {
+      logEmail(email, subject, html)
+    }
+    return { success: true }
+  } catch (error) {
+    console.error('❌ Failed to send profile created email:', error)
+    return { success: false, error: error.message }
+  }
+}
+
 export default {
   sendClaimSubmittedEmail,
   sendClaimApprovedEmail,
   sendClaimRejectedEmail,
-  notifyAdminNewClaim
+  notifyAdminNewClaim,
+  sendProfileCreatedEmail
 }

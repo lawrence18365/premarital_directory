@@ -7,7 +7,7 @@ import Breadcrumbs, { generateBreadcrumbs } from '../components/common/Breadcrum
 import SEOHelmet from '../components/analytics/SEOHelmet';
 import { trackLocationPageView } from '../components/analytics/GoogleAnalytics';
 import { profileOperations } from '../lib/supabaseClient';
-import { STATE_CONFIG, CITY_CONFIG } from '../data/locationConfig';
+import { STATE_CONFIG, CITY_CONFIG, isAnchorCity } from '../data/locationConfig';
 import CityContentGenerator from '../lib/cityContentGenerator';
 import LocalContent from '../components/common/LocalContent';
 import LeadContactForm from '../components/leads/LeadContactForm';
@@ -155,7 +155,9 @@ const CityPage = () => {
   ]
 
   // Determine if page should be noindexed (thin content - fewer than 5 profiles now, was 8)
-  const shouldNoindex = profiles.length < 5
+  // Anchor cities are always indexable to build SEO authority regardless of profile count
+  const isAnchor = isAnchorCity(state, city)
+  const shouldNoindex = !isAnchor && profiles.length < 5
 
   return (
     <div className="city-page">
