@@ -136,7 +136,7 @@ const BlogIndex = () => {
         <section className="blog-cta">
           <h3>Need Personalized Guidance?</h3>
           <p>Find qualified premarital counselors in your area</p>
-          <Link to="/" className="btn btn-primary">Find Counselors</Link>
+          <Link to="/premarital-counseling" className="btn btn-primary">Find Counselors</Link>
         </section>
       </div>
       </div>

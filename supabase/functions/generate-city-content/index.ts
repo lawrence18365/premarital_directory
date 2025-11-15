@@ -151,33 +151,41 @@ Create content that includes:
 2. H1 HEADING: Compelling main heading
 3. INTRO PARAGRAPH (200 words): Engaging introduction about premarital counseling in this city
 4. MARRIAGE STATISTICS: Local marriage trends, average age, divorce rates
-5. LOCAL VENUES: Popular wedding/event venues for engagement parties or preparation events
-6. PRICING INSIGHTS: Estimated session costs in this area (research-based ranges)
-7. LEGAL REQUIREMENTS: State-specific marriage requirements and waiting periods
+5. LOCAL VENUES: General venue types (NOT specific venue names)
+6. PRICING INSIGHTS: Estimated session costs in this area (use ranges, be conservative)
+7. LEGAL REQUIREMENTS: General guidance (NOT specific legal requirements)
 8. NEARBY CITIES: 3-5 related cities for "also serving" SEO
 9. DEMOGRAPHICS: Local population insights relevant to couples
 
 OUTPUT FORMAT: Valid JSON only with these keys:
 {
   "description": "meta description",
-  "h1": "main heading", 
+  "h1": "main heading",
   "intro": "intro paragraph",
   "marriageStats": {"avgAge": 28, "annualMarriages": 1200, "trends": "..."},
-  "venues": [{"name": "Venue Name", "type": "hotel", "description": "..."}],
+  "venues": [{"name": "Venue Type", "type": "type", "description": "..."}],
   "pricing": {"sessionCost": "$150-250", "packageDeals": "...", "insurance": "..."},
-  "legalRequirements": "marriage license process...",
+  "legalRequirements": "general guidance...",
   "nearbyCities": ["City1", "City2", "City3"],
   "demographics": {"population": 50000, "medianAge": 35, "married": "52%"}
 }
 
-IMPORTANT SEO INSTRUCTIONS:
-- Use REAL-TIME DATA from web research to outrank competitors
-- Include current trends, pricing, and reviews from 2024
-- Mention specific local competitors and what makes you better
-- Use trending keywords from web research
-- Include real pricing data and venue information that's more current than competitors
+CRITICAL SAFETY INSTRUCTIONS (to avoid hallucinations):
+- For LEGAL REQUIREMENTS: Use safe, general language like "Marriage laws vary by county and state. Contact your local clerk's office or government website for current marriage license requirements, waiting periods, and necessary documentation."
+- For VENUES: Do NOT invent specific venue names. Instead, use generic descriptions like "Many couples in ${city} choose local churches, hotel ballrooms, event centers, or outdoor venues. Your premarital counselor can often recommend trusted local options."
+- For PRICING: Use conservative ranges based on national averages. Do NOT claim specific dollar amounts as facts. Use phrases like "typically ranges from" or "counselors in similar markets often charge"
+- For STATISTICS: If unsure about specific numbers, use general phrases like "Similar to national trends" or "Comparable to other ${state} cities"
+- NEVER claim specific legal requirements (e.g., "Texas requires...")
+- NEVER invent specific venue or business names
+- NEVER state pricing as definitive facts
 
-Make content unique, factual, and locally relevant. Focus on helpful information for couples.`
+IMPORTANT SEO INSTRUCTIONS:
+- Focus on being helpful and accurate rather than overly specific
+- Use location keywords naturally: premarital counseling ${city}, premarital counselling ${city} (UK spelling), pre-marital counseling ${city}
+- Include "Christian premarital counseling ${city}" and "online premarital counseling" as keyword variations
+- Emphasize the value of professional guidance for engaged couples
+
+Make content unique, helpful, and safe from hallucinated facts. Focus on genuinely useful information for couples.`
 }
 
 // Fetch census data server-side

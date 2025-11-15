@@ -16,7 +16,14 @@
 
 const fs = require('fs')
 const path = require('path')
-const { createClient } = require('@supabase/supabase-js')
+
+// Try to load Supabase client (optional - for dynamic priority calculation)
+let createClient = null
+try {
+  createClient = require('@supabase/supabase-js').createClient
+} catch (err) {
+  console.log('Note: @supabase/supabase-js not available, using default priorities')
+}
 
 // Import location config (we'll inline the anchor cities here for Node.js compatibility)
 const ANCHOR_CITIES = [
@@ -104,6 +111,11 @@ function calculatePriority(profileCount, maxCount) {
 }
 
 async function fetchProfileCounts() {
+  if (!createClient) {
+    console.log('⚠️  Supabase client not available, using default priorities')
+    return null
+  }
+
   const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
   const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY
 
