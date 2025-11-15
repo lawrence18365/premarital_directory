@@ -364,4 +364,83 @@ export const profileOperations = {
   }
 }
 
+// Profile click tracking operations
+export const clickTrackingOperations = {
+  // Log a profile click from a city page
+  async logProfileClick(clickData) {
+    const { data, error } = await supabase
+      .from('profile_clicks')
+      .insert({
+        profile_id: clickData.profileId,
+        source_city: clickData.city,
+        source_state: clickData.state,
+        source_page: clickData.source || 'city_page',
+        user_agent: navigator.userAgent || null,
+        referrer: document.referrer || null
+      })
+
+    return { data, error }
+  },
+
+  // Get click stats by city (admin only)
+  async getClicksByCity() {
+    const { data, error } = await supabase
+      .from('profile_clicks')
+      .select('source_city, source_state, created_at')
+
+    if (error || !data) {
+      return { data: [], error }
+    }
+
+    // Aggregate by city
+    const cityStats = {}
+    const now = new Date()
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+
+    data.forEach(click => {
+      const key = `${click.source_city}, ${click.source_state}`
+      if (!cityStats[key]) {
+        cityStats[key] = {
+          city: click.source_city,
+          state: click.source_state,
+          total: 0,
+          last7Days: 0,
+          last30Days: 0
+        }
+      }
+      cityStats[key].total++
+
+      const clickDate = new Date(click.created_at)
+      if (clickDate >= sevenDaysAgo) cityStats[key].last7Days++
+      if (clickDate >= thirtyDaysAgo) cityStats[key].last30Days++
+    })
+
+    const sortedStats = Object.values(cityStats)
+      .sort((a, b) => b.total - a.total)
+
+    return { data: sortedStats, error: null }
+  }
+}
+
+// City overrides operations
+export const cityOverridesOperations = {
+  // Get override content for a city
+  async getCityOverride(stateSlug, citySlug) {
+    const { data, error } = await supabase
+      .from('city_overrides')
+      .select('*')
+      .eq('state_slug', stateSlug)
+      .eq('city_slug', citySlug)
+      .single()
+
+    // Not found is not an error, just return null
+    if (error?.code === 'PGRST116') {
+      return { data: null, error: null }
+    }
+
+    return { data, error }
+  }
+}
+
 export default supabase
