@@ -3,12 +3,6 @@ import { useAuth } from '../../contexts/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import '../../assets/css/professional-auth.css'
 
-const signupHighlights = [
-  { label: '12+', detail: 'active metro directories' },
-  { label: '0%', detail: 'commission or referral fees' },
-  { label: '5 min', detail: 'average setup time' }
-]
-
 const featureList = [
   'City + statewide listing with SEO support',
   'Direct inquiries (email + phone — no middleman)',
@@ -133,14 +127,6 @@ const SignupForm = () => {
           <p className="professional-auth__hero-text">
             Create a free account to secure your spot on city and statewide listings. Couples contact you directly—no hidden fees, no middlemen.
           </p>
-          <div className="professional-auth__stats">
-            {signupHighlights.map((item) => (
-              <div className="professional-auth__stat" key={item.detail}>
-                <span className="professional-auth__stat-value">{item.label}</span>
-                <span className="professional-auth__stat-label">{item.detail}</span>
-              </div>
-            ))}
-          </div>
         </div>
         <div className="professional-auth__hero-panel">
           <h3>Why professionals join</h3>
@@ -282,8 +268,6 @@ const SignupForm = () => {
       </section>
     </div>
   )
-}
-
 }
 
 export default SignupForm
