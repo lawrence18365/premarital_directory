@@ -13,6 +13,7 @@ import LocalContent from '../components/common/LocalContent';
 import LeadContactForm from '../components/leads/LeadContactForm';
 import FAQ from '../components/common/FAQ';
 import HowToChooseSection from '../components/city/HowToChooseSection';
+import MultiProviderInquiryForm from '../components/city/MultiProviderInquiryForm';
 import { clickTrackingOperations, cityOverridesOperations } from '../lib/supabaseClient';
 import '../assets/css/state-page.css';
 
@@ -324,6 +325,17 @@ const CityPage = () => {
                       ))}
                     </div>
                   </div>
+                )}
+
+                {/* Multi-Provider Inquiry Form - THE MONEY FEATURE */}
+                {profiles.length >= 3 && (
+                  <MultiProviderInquiryForm
+                    cityName={cityName}
+                    stateName={stateName}
+                    stateSlug={state}
+                    citySlug={city}
+                    providers={profiles}
+                  />
                 )}
 
                 {/* Separate Therapists and Clergy Sections */}

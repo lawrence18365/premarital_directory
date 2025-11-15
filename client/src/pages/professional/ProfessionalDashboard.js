@@ -124,11 +124,15 @@ const ProfessionalDashboard = () => {
           <p>Welcome back, {profile?.full_name || user?.email}</p>
         </div>
         <div className="dashboard-actions">
+          <Link to="/professional/analytics" className="btn btn-primary">
+            <i className="fa fa-chart-bar" aria-hidden="true"></i>
+            View Analytics
+          </Link>
           <Link to="/professional/profile/edit" className="btn btn-outline">
             <i className="fa fa-edit" aria-hidden="true"></i>
             Edit Profile
           </Link>
-          <Link to="/professional/subscription" className="btn btn-primary">
+          <Link to="/professional/subscription" className="btn btn-outline">
             <i className="fa fa-crown" aria-hidden="true"></i>
             Upgrade Plan
           </Link>
@@ -272,6 +276,12 @@ const ProfessionalDashboard = () => {
       <div className="dashboard-section">
         <h2>Quick Actions</h2>
         <div className="quick-actions">
+          <Link to="/professional/analytics" className="action-card">
+            <i className="fa fa-chart-line" aria-hidden="true"></i>
+            <h4>View Analytics</h4>
+            <p>See profile views, contact reveals, and inquiry stats</p>
+          </Link>
+
           <Link to="/professional/profile/edit" className="action-card">
             <i className="fa fa-user-edit" aria-hidden="true"></i>
             <h4>Update Profile</h4>

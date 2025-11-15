@@ -64,12 +64,14 @@ const LeadsPage = React.lazy(() => import('./pages/professional/LeadsPage'))
 const SubscriptionPage = React.lazy(() => import('./pages/professional/SubscriptionPage'))
 const CreateProfilePage = React.lazy(() => import('./pages/professional/CreateProfilePage'))
 const ProfileCreatedPage = React.lazy(() => import('./pages/professional/ProfileCreatedPage'))
+const AnalyticsDashboard = React.lazy(() => import('./pages/professional/AnalyticsDashboard'))
 
 // Admin Pages
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'))
 const CampaignDashboard = React.lazy(() => import('./pages/admin/CampaignDashboard'))
 const ClaimReviewDashboard = React.lazy(() => import('./pages/admin/ClaimReviewDashboard'))
 const MetricsDashboard = React.lazy(() => import('./pages/admin/MetricsDashboard'))
+const CityHealthDashboard = React.lazy(() => import('./pages/admin/CityHealthDashboard'))
 const SitemapGenerator = React.lazy(() => import('./pages/SitemapGenerator'))
 
 // Missing pages that exist but weren't routed
@@ -78,6 +80,7 @@ const ThankYouPage = React.lazy(() => import('./pages/ThankYouPage'))
 const ProfessionalsPage = React.lazy(() => import('./pages/ProfessionalsPage'))
 const ConfirmEmailPage = React.lazy(() => import('./pages/ConfirmEmailPage'))
 const SEOContentPage = React.lazy(() => import('./pages/SEOContentPage'))
+const ClaimWithTokenPage = React.lazy(() => import('./pages/ClaimWithTokenPage'))
 
 // Test functions for AI content generation (development only)
 if (process.env.NODE_ENV === 'development') {
@@ -127,6 +130,7 @@ function AppInner() {
                 <Route path="/profile/:slugOrId" element={<ProfilePage />} />
                 <Route path="/claim-profile" element={<ClaimProfilePage />} />
                 <Route path="/claim-profile/:slugOrId" element={<ClaimProfilePage />} />
+                <Route path="/claim/:token" element={<ClaimWithTokenPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/therapists" element={<HomePage />} />
@@ -191,15 +195,23 @@ function AppInner() {
                     </ProtectedRoute>
                   } 
                 />
-                <Route 
-                  path="/professional/subscription" 
+                <Route
+                  path="/professional/subscription"
                   element={
                     <ProtectedRoute>
                       <SubscriptionPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                
+                <Route
+                  path="/professional/analytics"
+                  element={
+                    <ProtectedRoute>
+                      <AnalyticsDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
                 {/* Protected Admin Routes */}
                 <Route 
                   path="/admin/dashboard" 
@@ -238,6 +250,14 @@ function AppInner() {
                   element={
                     <ProtectedRoute requireAdmin={true}>
                       <MetricsDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/cities"
+                  element={
+                    <ProtectedRoute requireAdmin={true}>
+                      <CityHealthDashboard />
                     </ProtectedRoute>
                   }
                 />
