@@ -54,79 +54,114 @@ export const STATE_CONFIG = {
 }
 
 // Extended city configurations with additional SEO data
+// is_anchor: true means this is a priority city for SEO focus
 export const CITY_CONFIG = {
   'texas': {
-    'austin': { 
-      name: 'Austin', 
+    'austin': {
+      name: 'Austin',
       population: '978,908',
       description: 'Austin, the vibrant capital of Texas, offers excellent premarital counseling services.',
-      specialties: ['LGBTQ+ friendly counseling', 'Tech industry professionals', 'University counseling']
+      specialties: ['LGBTQ+ friendly counseling', 'Tech industry professionals', 'University counseling'],
+      is_anchor: true
     },
-    'dallas': { 
-      name: 'Dallas', 
+    'dallas': {
+      name: 'Dallas',
       population: '1,304,379',
       description: 'Dallas provides comprehensive marriage preparation services for couples.',
-      specialties: ['Business professional counseling', 'Multicultural counseling', 'Financial planning focus']
+      specialties: ['Business professional counseling', 'Multicultural counseling', 'Financial planning focus'],
+      is_anchor: true
     },
-    'houston': { 
-      name: 'Houston', 
+    'houston': {
+      name: 'Houston',
       population: '2,304,580',
       description: 'Houston\'s diverse counseling community serves couples from all backgrounds.',
-      specialties: ['International couples', 'Medical professional counseling', 'Bilingual services']
+      specialties: ['International couples', 'Medical professional counseling', 'Bilingual services'],
+      is_anchor: true
     },
-    'san-antonio': { 
-      name: 'San Antonio', 
+    'san-antonio': {
+      name: 'San Antonio',
       population: '1,434,625',
       description: 'San Antonio offers culturally rich premarital counseling experiences.',
       specialties: ['Hispanic/Latino counseling', 'Military couples', 'Traditional values focus']
     }
   },
   'california': {
-    'los-angeles': { 
-      name: 'Los Angeles', 
+    'los-angeles': {
+      name: 'Los Angeles',
       population: '3,898,747',
       description: 'LA provides world-class premarital counseling in multiple languages.',
-      specialties: ['Entertainment industry professionals', 'Multicultural counseling', 'LGBTQ+ affirming']
+      specialties: ['Entertainment industry professionals', 'Multicultural counseling', 'LGBTQ+ affirming'],
+      is_anchor: true
     },
-    'san-francisco': { 
-      name: 'San Francisco', 
+    'san-francisco': {
+      name: 'San Francisco',
       population: '873,965',
       description: 'San Francisco offers progressive and inclusive marriage preparation services.',
-      specialties: ['Tech professionals', 'LGBTQ+ specialized', 'High-net-worth counseling']
+      specialties: ['Tech professionals', 'LGBTQ+ specialized', 'High-net-worth counseling'],
+      is_anchor: true
     },
-    'san-diego': { 
-      name: 'San Diego', 
+    'san-diego': {
+      name: 'San Diego',
       population: '1,386,932',
       description: 'San Diego combines beach-town relaxation with professional counseling excellence.',
       specialties: ['Military couples', 'Outdoor therapy options', 'Cross-border relationships']
     }
   },
   'new-york': {
-    'new-york': { 
-      name: 'New York City', 
+    'new-york': {
+      name: 'New York City',
       population: '8,336,817',
       description: 'NYC offers the most diverse selection of premarital counseling professionals.',
-      specialties: ['Financial district professionals', 'International couples', 'All cultural backgrounds']
+      specialties: ['Financial district professionals', 'International couples', 'All cultural backgrounds'],
+      is_anchor: true
     },
-    'buffalo': { 
-      name: 'Buffalo', 
+    'buffalo': {
+      name: 'Buffalo',
       population: '278,349',
       description: 'Buffalo provides warm, community-focused premarital counseling services.',
       specialties: ['Blue-collar professionals', 'Traditional counseling', 'Family-centered approach']
     }
   },
   'florida': {
-    'miami': { 
-      name: 'Miami', 
+    'miami': {
+      name: 'Miami',
       population: '442,241',
       description: 'Miami offers bilingual and culturally diverse premarital counseling.',
-      specialties: ['Latin American couples', 'Bilingual counseling', 'International relationships']
+      specialties: ['Latin American couples', 'Bilingual counseling', 'International relationships'],
+      is_anchor: true
     },
-    'orlando': { 
-      name: 'Orlando', 
+    'orlando': {
+      name: 'Orlando',
       population: '307,573',
       description: 'Orlando provides family-friendly premarital counseling services.',
       specialties: ['Tourism industry professionals', 'Theme park workers', 'Young families']
+    }
+  },
+  'illinois': {
+    'chicago': {
+      name: 'Chicago',
+      population: '2,746,388',
+      description: 'Chicago offers a rich tradition of marriage preparation services across diverse communities.',
+      specialties: ['Urban professionals', 'Diverse religious traditions', 'Multicultural counseling'],
+      is_anchor: true
+    }
+  },
+  'georgia': {
+    'atlanta': {
+      name: 'Atlanta',
+      population: '498,715',
+      description: 'Atlanta provides southern hospitality with modern premarital counseling approaches.',
+      specialties: ['African American counseling', 'Business professionals', 'Faith-based counseling'],
+      is_anchor: true
+    }
+  },
+  'colorado': {
+    'denver': {
+      name: 'Denver',
+      population: '715,522',
+      description: 'Denver combines outdoor lifestyle with holistic marriage preparation services.',
+      specialties: ['Active lifestyle couples', 'Holistic approaches', 'Young professionals'],
+      is_anchor: true
     }
   }
 }
@@ -166,11 +201,43 @@ export const getAllCityRoutes = () => {
 export const searchCities = (query, limit = 10) => {
   const routes = getAllCityRoutes()
   const searchTerm = query.toLowerCase()
-  
+
   return routes
-    .filter(route => 
+    .filter(route =>
       route.cityName.toLowerCase().includes(searchTerm) ||
       route.stateName.toLowerCase().includes(searchTerm)
     )
     .slice(0, limit)
+}
+
+// Get all anchor cities for priority SEO focus
+export const getAnchorCities = () => {
+  const anchorCities = []
+
+  Object.entries(CITY_CONFIG).forEach(([stateSlug, cities]) => {
+    Object.entries(cities).forEach(([citySlug, cityData]) => {
+      if (cityData.is_anchor) {
+        const stateData = STATE_CONFIG[stateSlug]
+        anchorCities.push({
+          citySlug,
+          cityName: cityData.name,
+          stateSlug,
+          stateName: stateData?.name || stateSlug,
+          stateAbbr: stateData?.abbr || '',
+          population: cityData.population,
+          description: cityData.description,
+          specialties: cityData.specialties,
+          url: `/premarital-counseling/${stateSlug}/${citySlug}`
+        })
+      }
+    })
+  })
+
+  return anchorCities
+}
+
+// Check if a city is an anchor city
+export const isAnchorCity = (stateSlug, citySlug) => {
+  const cityConfig = CITY_CONFIG[stateSlug]?.[citySlug]
+  return cityConfig?.is_anchor === true
 }

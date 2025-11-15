@@ -186,6 +186,12 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li>
+                  <Link to="/professional/create" onClick={() => setMobileMenuOpen(false)}>
+                    <i className="fa fa-plus-circle" aria-hidden="true"></i>
+                    Create Profile
+                  </Link>
+                </li>
+                <li>
                   <button onClick={() => { signOut(); setMobileMenuOpen(false) }} className="mobile-sign-out-btn">
                     <i className="fa fa-sign-out-alt" aria-hidden="true"></i>
                     Logout
@@ -195,20 +201,20 @@ const Navbar = () => {
             ) : (
               <li className="mobile-auth-section">
                 <Link
-                  to="/professional/login"
+                  to="/professional/signup"
                   className="btn btn-primary btn-full mobile-auth-btn"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <i className="fa fa-user-plus" aria-hidden="true"></i>
+                  Create Free Profile
+                </Link>
+                <Link
+                  to="/professional/login"
+                  className="btn btn-outline btn-full mobile-auth-btn"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <i className="fa fa-sign-in-alt" aria-hidden="true"></i>
                   Professional Login
-                </Link>
-                <Link
-                  to="/claim-profile"
-                  className="btn btn-outline btn-full mobile-auth-btn"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <i className="fa fa-user-plus" aria-hidden="true"></i>
-                  Claim Profile
                 </Link>
               </li>
             )}

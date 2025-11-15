@@ -62,11 +62,14 @@ const ProfessionalDashboard = React.lazy(() => import('./pages/professional/Prof
 const ProfileEditor = React.lazy(() => import('./pages/professional/ProfileEditor'))
 const LeadsPage = React.lazy(() => import('./pages/professional/LeadsPage'))
 const SubscriptionPage = React.lazy(() => import('./pages/professional/SubscriptionPage'))
+const CreateProfilePage = React.lazy(() => import('./pages/professional/CreateProfilePage'))
+const ProfileCreatedPage = React.lazy(() => import('./pages/professional/ProfileCreatedPage'))
 
 // Admin Pages
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'))
 const CampaignDashboard = React.lazy(() => import('./pages/admin/CampaignDashboard'))
 const ClaimReviewDashboard = React.lazy(() => import('./pages/admin/ClaimReviewDashboard'))
+const MetricsDashboard = React.lazy(() => import('./pages/admin/MetricsDashboard'))
 const SitemapGenerator = React.lazy(() => import('./pages/SitemapGenerator'))
 
 // Missing pages that exist but weren't routed
@@ -146,6 +149,22 @@ function AppInner() {
                 <Route path="/professional/login" element={<LoginForm />} />
                 <Route path="/professional/signup" element={<SignupForm />} />
                 <Route path="/professional/confirm-email" element={<ConfirmEmailPage />} />
+                <Route
+                  path="/professional/create"
+                  element={
+                    <ProtectedRoute>
+                      <CreateProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/professional/profile-created"
+                  element={
+                    <ProtectedRoute>
+                      <ProfileCreatedPage />
+                    </ProtectedRoute>
+                  }
+                />
                 
                 {/* Protected Professional Routes */}
                 <Route 
@@ -207,14 +226,22 @@ function AppInner() {
                   }
                 />
                 <Route
-                  path="/admin/sitemap" 
+                  path="/admin/sitemap"
                   element={
                     <ProtectedRoute requireAdmin={true}>
                       <SitemapGenerator />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                
+                <Route
+                  path="/admin/metrics"
+                  element={
+                    <ProtectedRoute requireAdmin={true}>
+                      <MetricsDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
                 {/* 404 Route */}
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
