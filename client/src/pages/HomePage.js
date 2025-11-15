@@ -17,6 +17,68 @@ import trustFoundationImg from '../assets/images/premarital_couple_over_coffee.w
 import trustJourneyImg from '../assets/images/couple_walking_in_Central_Park.webp'
 import heroBg from '../assets/images/oil_painting_premarital_couple_in_distress.webp'
 
+const TRUST_HIGHLIGHTS = [
+  {
+    title: 'Find Your Premarital Counselor',
+    description: 'Browse counselors who specialize in pre-marriage preparation for engaged couples.',
+    image: trustMatchImg,
+    alt: 'Engaged couple after finding a premarital counselor',
+    tag: 'Curated matches'
+  },
+  {
+    title: 'Prepare for a Strong Marriage',
+    description: 'Build a solid foundation before your wedding with expert guidance.',
+    image: trustFoundationImg,
+    alt: 'Engaged couple over coffee discussing marriage preparation',
+    tag: 'Holistic support'
+  },
+  {
+    title: 'Start Your Marriage Right',
+    description: 'Address important topics before you say "I do" with professional support.',
+    image: trustJourneyImg,
+    alt: 'Engaged couple walking hand-in-hand',
+    tag: 'Faith & evidence-based'
+  }
+]
+
+const POPULAR_CITIES = [
+  { city: 'Austin', state: 'Texas', slug: 'austin', stateSlug: 'texas' },
+  { city: 'Dallas', state: 'Texas', slug: 'dallas', stateSlug: 'texas' },
+  { city: 'Houston', state: 'Texas', slug: 'houston', stateSlug: 'texas' },
+  { city: 'Los Angeles', state: 'California', slug: 'los-angeles', stateSlug: 'california' },
+  { city: 'San Francisco', state: 'California', slug: 'san-francisco', stateSlug: 'california' },
+  { city: 'New York', state: 'New York', slug: 'new-york', stateSlug: 'new-york' },
+  { city: 'Miami', state: 'Florida', slug: 'miami', stateSlug: 'florida' },
+  { city: 'Chicago', state: 'Illinois', slug: 'chicago', stateSlug: 'illinois' },
+  { city: 'Atlanta', state: 'Georgia', slug: 'atlanta', stateSlug: 'georgia' },
+  { city: 'Denver', state: 'Colorado', slug: 'denver', stateSlug: 'colorado' },
+  { city: 'Seattle', state: 'Washington', slug: 'seattle', stateSlug: 'washington' },
+  { city: 'Phoenix', state: 'Arizona', slug: 'phoenix', stateSlug: 'arizona' }
+]
+
+const PROVIDER_FEATURES = [
+  {
+    title: 'Show up in the right cities',
+    description: 'Get listed on high-intent city pages couples already search.'
+  },
+  {
+    title: 'Leads go straight to you',
+    description: 'Couples email or call you directly so you control the relationship.'
+  },
+  {
+    title: 'Transparent analytics',
+    description: 'View profile visits, contact reveals, and new inquiries anytime.'
+  },
+  {
+    title: 'Edit your profile anytime',
+    description: 'Update specialties, pricing, and availability in minutes.'
+  },
+  {
+    title: 'No long-term commitments',
+    description: 'Start free, upgrade when you’re ready, cancel whenever you like.'
+  }
+]
+
 const HomePage = () => {
   const [profiles, setProfiles] = useState([])
   const [filteredProfiles, setFilteredProfiles] = useState([])
@@ -252,191 +314,104 @@ const HomePage = () => {
         </section>
 
         {/* How It Works - Clear next steps for couples */}
-        <section style={{
-          background: 'white',
-          padding: 'var(--space-12) 0',
-          borderBottom: '1px solid var(--gray-200)'
-        }}>
+        <section className="how-it-works" aria-labelledby="how-it-works-heading">
           <div className="container">
-            <h2 style={{
-              textAlign: 'center',
-              marginBottom: 'var(--space-8)',
-              fontSize: 'var(--text-2xl)',
-              color: 'var(--text-primary)'
-            }}>
-              How It Works
-            </h2>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: 'var(--space-8)',
-              maxWidth: '900px',
-              margin: '0 auto'
-            }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  background: 'var(--color-primary)',
-                  color: 'white',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto var(--space-4)',
-                  fontSize: '1.5rem',
-                  fontWeight: '700'
-                }}>1</div>
-                <h3 style={{ marginBottom: 'var(--space-2)', fontSize: '1.1rem' }}>Choose Your City</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0 }}>
-                  Browse counselors in your area or search nearby cities
-                </p>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  background: 'var(--color-primary)',
-                  color: 'white',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto var(--space-4)',
-                  fontSize: '1.5rem',
-                  fontWeight: '700'
-                }}>2</div>
-                <h3 style={{ marginBottom: 'var(--space-2)', fontSize: '1.1rem' }}>Compare Counselors</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0 }}>
-                  Read bios, see specialties, and compare therapists vs clergy vs coaches
-                </p>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  background: 'var(--color-primary)',
-                  color: 'white',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto var(--space-4)',
-                  fontSize: '1.5rem',
-                  fontWeight: '700'
-                }}>3</div>
-                <h3 style={{ marginBottom: 'var(--space-2)', fontSize: '1.1rem' }}>Contact Directly</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0 }}>
-                  Reach out directly via email or phone — no middleman, no hidden fees
-                </p>
-              </div>
+            <div className="how-it-works__header">
+              <p className="section-eyebrow">For engaged couples</p>
+              <h2 id="how-it-works-heading">How It Works</h2>
+              <p className="how-it-works__intro">
+                Follow three simple steps to discover premarital counselors that fit your relationship, communication style, and faith background.
+              </p>
+            </div>
+            <div className="how-it-works__steps">
+              {[
+                {
+                  number: '1',
+                  title: 'Choose Your City',
+                  description: 'Browse counselors in your area or search nearby cities.'
+                },
+                {
+                  number: '2',
+                  title: 'Compare Counselors',
+                  description: 'Read bios, specialties, and compare therapists, clergy, and coaches.'
+                },
+                {
+                  number: '3',
+                  title: 'Contact Directly',
+                  description: 'Reach out via email or phone — no middleman and no hidden fees.'
+                }
+              ].map((step) => (
+                <div className="how-it-works__step" key={step.number}>
+                  <div className="how-it-works__step-badge">{step.number}</div>
+                  <div className="how-it-works__step-content">
+                    <h3>{step.title}</h3>
+                    <p>{step.description}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* Trust Indicators - Updated to be honest */}
-        <section className="trust-cards">
+        <section className="trust-cards" aria-labelledby="trust-highlights-heading">
           <div className="container">
-            <h2 className="text-center">Helping Engaged Couples Prepare for Marriage</h2>
+            <div className="trust-cards__header">
+              <p className="section-eyebrow">Trusted guidance</p>
+              <h2 id="trust-highlights-heading">Helping Engaged Couples Prepare for Marriage</h2>
+              <p className="trust-cards__intro">
+                Modern counseling, faith-informed support, and practical coaching so both of you feel prepared on the wedding day and beyond.
+              </p>
+            </div>
             <div className="trust-grid">
-              <div className="trust-card">
-                <div className="trust-media"><img src={trustMatchImg} alt="Engaged couple after finding a premarital counselor" className="trust-image" /></div>
-                <h3 className="trust-title">Find Your Premarital Counselor</h3>
-                <p className="trust-description">Browse counselors who specialize in pre-marriage preparation for engaged couples.</p>
-              </div>
-
-              <div className="trust-card">
-                <div className="trust-media"><img src={trustFoundationImg} alt="Engaged couple over coffee discussing marriage preparation" className="trust-image" /></div>
-                <h3 className="trust-title">Prepare for a Strong Marriage</h3>
-                <p className="trust-description">Build a solid foundation before your wedding with expert guidance.</p>
-              </div>
-
-              <div className="trust-card">
-                <div className="trust-media"><img src={trustJourneyImg} alt="Engaged couple walking hand-in-hand" className="trust-image" /></div>
-                <h3 className="trust-title">Start Your Marriage Right</h3>
-                <p className="trust-description">Address important topics before you say "I do" with professional support.</p>
-              </div>
+              {TRUST_HIGHLIGHTS.map((highlight) => (
+                <article className="trust-card" key={highlight.title}>
+                  <figure className="trust-card__media">
+                    <img src={highlight.image} alt={highlight.alt} className="trust-card__image" loading="lazy" decoding="async" />
+                  </figure>
+                  <div className="trust-card__content">
+                    <p className="trust-card__tag">{highlight.tag}</p>
+                    <h3 className="trust-card__title">{highlight.title}</h3>
+                    <p className="trust-card__description">{highlight.description}</p>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>
 
         {/* Popular Cities - Critical for SEO internal linking */}
-        <section className="popular-cities-section" style={{ background: '#f8f9fa', padding: 'var(--space-16) 0' }}>
+        <section className="popular-cities" aria-labelledby="popular-cities-heading">
           <div className="container">
-            <div className="section-header text-center" style={{ marginBottom: 'var(--space-12)' }}>
-              <h2 className="font-display">Find Premarital Counseling Near You</h2>
-              <p className="lead">Search for premarital counselors in these popular cities</p>
+            <div className="popular-cities__header">
+              <p className="section-eyebrow">Local directories</p>
+              <h2 id="popular-cities-heading">Find Premarital Counseling Near You</h2>
+              <p className="popular-cities__intro">
+                Search top counselors serving major metro areas — explore therapists, clergy, and coaches who understand your community.
+              </p>
             </div>
-            <div className="cities-grid" style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: 'var(--space-6)',
-              marginBottom: 'var(--space-8)'
-            }}>
-              {[
-                { city: 'Austin', state: 'Texas', slug: 'austin', stateSlug: 'texas' },
-                { city: 'Dallas', state: 'Texas', slug: 'dallas', stateSlug: 'texas' },
-                { city: 'Houston', state: 'Texas', slug: 'houston', stateSlug: 'texas' },
-                { city: 'Los Angeles', state: 'California', slug: 'los-angeles', stateSlug: 'california' },
-                { city: 'San Francisco', state: 'California', slug: 'san-francisco', stateSlug: 'california' },
-                { city: 'New York', state: 'New York', slug: 'new-york', stateSlug: 'new-york' },
-                { city: 'Miami', state: 'Florida', slug: 'miami', stateSlug: 'florida' },
-                { city: 'Chicago', state: 'Illinois', slug: 'chicago', stateSlug: 'illinois' },
-                { city: 'Atlanta', state: 'Georgia', slug: 'atlanta', stateSlug: 'georgia' },
-                { city: 'Denver', state: 'Colorado', slug: 'denver', stateSlug: 'colorado' },
-                { city: 'Seattle', state: 'Washington', slug: 'seattle', stateSlug: 'washington' },
-                { city: 'Phoenix', state: 'Arizona', slug: 'phoenix', stateSlug: 'arizona' }
-              ].map((location, index) => (
+            <div className="popular-cities__grid">
+              {POPULAR_CITIES.map((location) => (
                 <Link
-                  key={index}
+                  key={location.slug}
                   to={`/premarital-counseling/${location.stateSlug}/${location.slug}`}
-                  className="city-card"
-                  style={{
-                    background: 'white',
-                    padding: 'var(--space-6)',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid #e5e7eb',
-                    textDecoration: 'none',
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 'var(--space-2)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = 'none'
-                    e.currentTarget.style.transform = 'translateY(0)'
-                  }}
+                  className="popular-cities__card"
+                  aria-label={`Premarital counseling in ${location.city}, ${location.state}`}
                 >
-                  <h3 style={{
-                    fontSize: '1.125rem',
-                    fontWeight: '600',
-                    color: 'var(--text-primary)',
-                    margin: 0
-                  }}>
-                    Premarital counseling in {location.city}
-                  </h3>
-                  <p style={{
-                    fontSize: '0.875rem',
-                    color: 'var(--text-secondary)',
-                    margin: 0
-                  }}>
-                    {location.state}
-                  </p>
-                  <span style={{
-                    fontSize: '0.875rem',
-                    color: 'var(--color-primary)',
-                    fontWeight: '500'
-                  }}>
-                    View counselors →
+                  <div className="popular-cities__card-top">
+                    <span className="popular-cities__pill">{location.state}</span>
+                    <span className="popular-cities__pin" aria-hidden="true">●</span>
+                  </div>
+                  <h3 className="popular-cities__city">Premarital counseling in {location.city}</h3>
+                  <p className="popular-cities__state">{location.state}</p>
+                  <span className="popular-cities__cta">
+                    View counselors
+                    <span aria-hidden="true"> →</span>
                   </span>
                 </Link>
               ))}
             </div>
-            <div className="text-center">
+            <div className="popular-cities__cta-wrap">
               <Link to="/premarital-counseling" className="btn btn-secondary">
                 View All Cities
               </Link>
@@ -445,56 +420,29 @@ const HomePage = () => {
         </section>
 
         {/* Provider CTA - MOVED HIGHER UP */}
-        <section style={{
-          background: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)',
-          padding: 'var(--space-8) 0',
-          color: 'white'
-        }}>
+        <section className="provider-cta" aria-labelledby="provider-cta-heading">
           <div className="container">
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 'var(--space-6)'
-            }}>
-              <div style={{ flex: '1 1 400px' }}>
-                <h3 style={{ color: 'white', marginBottom: 'var(--space-2)', fontSize: '1.25rem' }}>
-                  Are You a Premarital Counselor?
-                </h3>
-                <p style={{ margin: 0, opacity: 0.9, fontSize: '0.95rem' }}>
-                  Join our directory and connect with engaged couples actively searching for premarital counseling in your area.
+            <div className="provider-cta__content">
+              <div className="provider-cta__copy">
+                <p className="section-eyebrow">For professionals</p>
+                <h3 id="provider-cta-heading">Are You a Premarital Counselor?</h3>
+                <p className="provider-cta__subtitle">
+                  Join the directory trusted by engaged couples. Feature your approach, share your availability, and receive direct inquiries—no middleman.
                 </p>
+                <ul className="provider-cta__list">
+                  <li>Highlight specialties (faith-based, clinical, coaching)</li>
+                  <li>Receive inquiries directly in your inbox</li>
+                  <li>Start free, upgrade only when ready</li>
+                </ul>
               </div>
-              <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap' }}>
-                <Link
-                  to="/professional/create?signup_source=homepage"
-                  style={{
-                    padding: 'var(--space-3) var(--space-6)',
-                    background: 'white',
-                    color: '#0d9488',
-                    fontWeight: '600',
-                    borderRadius: 'var(--radius-md)',
-                    textDecoration: 'none',
-                    fontSize: '0.95rem'
-                  }}
-                >
-                  Create Your Free Profile
+              <div className="provider-cta__actions">
+                <Link to="/professional/create?signup_source=homepage" className="btn provider-cta__primary">
+                  <span className="provider-cta__btn-label">Create Your Free Profile</span>
+                  <span className="provider-cta__btn-subtext">List your practice in 5 minutes</span>
                 </Link>
-                <Link
-                  to="/pricing"
-                  style={{
-                    padding: 'var(--space-3) var(--space-6)',
-                    background: 'transparent',
-                    color: 'white',
-                    fontWeight: '500',
-                    borderRadius: 'var(--radius-md)',
-                    textDecoration: 'none',
-                    border: '1px solid rgba(255,255,255,0.5)',
-                    fontSize: '0.95rem'
-                  }}
-                >
-                  View Pricing
+                <Link to="/pricing" className="btn provider-cta__secondary">
+                  <span className="provider-cta__btn-label">View Pricing</span>
+                  <span className="provider-cta__btn-subtext">See premium placement options</span>
                 </Link>
               </div>
             </div>
@@ -563,70 +511,77 @@ const HomePage = () => {
           title="Common Questions About Premarital Counseling"
           description="Get answers to the most frequently asked questions about premarital counseling and finding the right counselor for your relationship."
           className="homepage-faq"
+          highlights={[
+            'Typical programs run 5–8 sessions with practical exercises.',
+            'Choose from licensed therapists, clergy, or certified coaches.',
+            'Most couples report improved communication after session two.'
+          ]}
         />
 
         {/* Full Provider Section - More concrete value props */}
-        <section className="pros-cta">
+        <section className="pros-cta" aria-labelledby="pros-cta-heading">
           <div className="container">
-            <div className="pros-card">
-              <div className="pros-card-inner">
-                <p className="eyebrow">For Premarital Counselors, Therapists & Clergy</p>
-                <h2 className="section-title">Get Found by Engaged Couples</h2>
-                <p className="section-subtitle">
-                  Couples actively search "premarital counseling [City]" — be there when they look.
+            <div className="pros-cta__shell">
+              <div className="pros-cta__content">
+                <p className="section-eyebrow">For premarital counselors, therapists & clergy</p>
+                <h2 id="pros-cta-heading">Get Found by Engaged Couples</h2>
+                <p className="pros-cta__subtitle">
+                  Couples actively search "premarital counseling [City]" — list your practice where they already look.
                 </p>
 
-                <div style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  padding: 'var(--space-6)',
-                  borderRadius: 'var(--radius-md)',
-                  marginBottom: 'var(--space-6)'
-                }}>
-                  <h4 style={{ marginBottom: 'var(--space-4)', fontSize: '1rem' }}>What You Get:</h4>
-                  <ul style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    margin: 0,
-                    display: 'grid',
-                    gap: 'var(--space-3)',
-                    fontSize: '0.95rem'
-                  }}>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)' }}>
-                      <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span>
-                      <span>Show up on city pages like "Premarital Counseling in Austin, Texas"</span>
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)' }}>
-                      <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span>
-                      <span>Couples contact you directly — you control the conversation</span>
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)' }}>
-                      <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span>
-                      <span>See analytics: profile views, contact reveals, inquiries</span>
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)' }}>
-                      <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span>
-                      <span>Edit your profile anytime — bio, specialties, contact info</span>
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)' }}>
-                      <span style={{ color: '#34d399', fontWeight: 'bold' }}>✓</span>
-                      <span>Remove your listing anytime if you change your mind</span>
-                    </li>
+                <div className="pros-cta__list-card">
+                  <p className="pros-cta__list-title">What you get</p>
+                  <ul className="pros-cta__list">
+                    {PROVIDER_FEATURES.map((feature) => (
+                      <li key={feature.title}>
+                        <span className="pros-cta__list-icon" aria-hidden="true">✓</span>
+                        <div>
+                          <p className="pros-cta__list-heading">{feature.title}</p>
+                          <p className="pros-cta__list-copy">{feature.description}</p>
+                        </div>
+                      </li>
+                    ))}
                   </ul>
                 </div>
 
-                <div className="cta-actions">
-                  <Link to="/professional/create?signup_source=homepage_cta" className="btn btn-cta-primary">
-                    <i className="fa fa-plus-circle mr-2" aria-hidden="true"></i>
-                    Create Your Free Profile
+                <div className="pros-cta__actions">
+                  <Link to="/professional/create?signup_source=homepage_cta" className="pros-cta__button pros-cta__button--primary">
+                    <span>Create Your Free Profile</span>
+                    <small>List your practice in five minutes</small>
                   </Link>
-                  <Link to="/pricing" className="btn btn-cta-ghost">
-                    View Upgrade Options
+                  <Link to="/pricing" className="pros-cta__button pros-cta__button--ghost">
+                    <span>View Upgrade Options</span>
+                    <small>Featured placement & city boosts</small>
                   </Link>
                 </div>
 
-                <p className="cta-note">
+                <p className="pros-cta__note">
                   Free basic listing • No credit card required • Upgrade later for featured placement
                 </p>
+              </div>
+
+              <div className="pros-cta__panel">
+                <div className="pros-cta__panel-card">
+                  <p className="pros-cta__panel-eyebrow">Why counselors join</p>
+                  <p className="pros-cta__panel-copy">
+                    Be part of a curated directory built for therapists, clergy, and coaches who specialize in pre-marriage preparation.
+                  </p>
+                  <ul className="pros-cta__panel-list">
+                    <li>Live in 12+ anchor cities today</li>
+                    <li>Profiles reviewed for quality & alignment</li>
+                    <li>Request featured placement when ready</li>
+                  </ul>
+                </div>
+                <div className="pros-cta__stat-grid">
+                  <div className="pros-cta__stat">
+                    <span className="pros-cta__stat-value">12+</span>
+                    <span className="pros-cta__stat-label">active metro directories</span>
+                  </div>
+                  <div className="pros-cta__stat">
+                    <span className="pros-cta__stat-value">0%</span>
+                    <span className="pros-cta__stat-label">commission or lead fees</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

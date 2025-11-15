@@ -8,7 +8,8 @@ const FAQ = ({
   showSearch = true,
   expandMultiple = false,
   className = '',
-  showAside = true
+  showAside = true,
+  highlights = []
 }) => {
   const [expandedItems, setExpandedItems] = useState(new Set())
   const [searchTerm, setSearchTerm] = useState('')
@@ -62,6 +63,16 @@ const FAQ = ({
             <h2 className="faq-title">{title}</h2>
             {description && (
               <p className="faq-description">{description}</p>
+            )}
+            {highlights.length > 0 && (
+              <ul className="faq-highlights" aria-label="Key things to know">
+                {highlights.map((highlight, index) => (
+                  <li key={index}>
+                    <span className="faq-highlight-icon" aria-hidden="true">★</span>
+                    <span className="faq-highlight-text">{highlight}</span>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
 

@@ -174,6 +174,14 @@ const CityPage = () => {
     }
   ]
 
+  const heroHighlights = [
+    { label: 'Licensed therapists', detail: 'LMFT, LPC, LMHC' },
+    { label: 'Faith-based programs', detail: 'Christian, Catholic, interfaith' },
+    { label: 'Online & local options', detail: 'Telehealth + in-person' }
+  ]
+
+  const hasProfiles = profiles.length > 0
+
   // Determine if page should be noindexed (thin content - fewer than 5 profiles now, was 8)
   // Anchor cities are always indexable to build SEO authority regardless of profile count
   const isAnchor = isAnchorCity(state, city)
@@ -196,9 +204,18 @@ const CityPage = () => {
           <Breadcrumbs items={breadcrumbData} variant="on-hero" />
           <div className="state-header-content">
             <h1>Premarital Counseling in {cityName}, {stateName}</h1>
-            <p className="lead" style={{ marginBottom: 'var(--space-4)' }}>
-              Compare {profiles.length > 0 ? profiles.length : ''} premarital counselors, therapists, and clergy in {cityName}. Browse profiles, see their focus, and reach out directly.
+            <p className="lead city-hero-subtitle">
+              Compare {profiles.length > 0 ? profiles.length : 'qualified'} premarital counselors, therapists, and clergy in {cityName}. Browse profiles, see their focus, and reach out directly.
             </p>
+
+            <div className="city-hero-highlights">
+              {heroHighlights.map((item) => (
+                <div className="city-hero-highlight" key={item.label}>
+                  <span className="city-hero-highlight__label">{item.label}</span>
+                  <span className="city-hero-highlight__detail">{item.detail}</span>
+                </div>
+              ))}
+            </div>
 
             {/* Use custom intro if available, otherwise show short default */}
             {cityOverride?.custom_intro && (
@@ -642,12 +659,25 @@ const CityPage = () => {
                 <LocalContent locationName={cityName} />
               </>
             ) : (
-              <div className="no-profiles">
-                <h2>No premarital counselors listed yet in {cityName}</h2>
-                <p>Try searching in nearby areas or <Link to={`/premarital-counseling/${state}`}>browse all {stateName} premarital counselors</Link>.</p>
-                <Link to="/claim-profile" className="btn btn-primary">
-                  Are you a premarital counselor in {cityName}? Join our directory
-                </Link>
+              <div className="city-empty">
+                <div className="city-empty__card">
+                  <p className="section-eyebrow">Growing coverage</p>
+                  <h2>No premarital counselors listed yet in {cityName}</h2>
+                  <p className="city-empty__lead">
+                    We’re still onboarding counselors in {cityName}. Explore nearby cities or browse statewide listings while we add local professionals.
+                  </p>
+                  <div className="city-empty__actions">
+                    <Link to={`/premarital-counseling/${state}`} className="city-empty__button city-empty__button--primary">
+                      Browse {stateName} Listings
+                    </Link>
+                    <Link to="/premarital-counseling" className="city-empty__button city-empty__button--ghost">
+                      Search All Cities
+                    </Link>
+                  </div>
+                  <div className="city-empty__note">
+                    <p>Are you a premarital counselor in {cityName}? <Link to="/claim-profile">Join the directory</Link> to be featured here.</p>
+                  </div>
+                </div>
               </div>
             )}
           </div>

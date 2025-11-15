@@ -21,6 +21,7 @@ const ProfilePage = () => {
   const [showContactForm, setShowContactForm] = useState(true)
   const [phoneRevealed, setPhoneRevealed] = useState(false)
   const [emailRevealed, setEmailRevealed] = useState(false)
+  const [imageError, setImageError] = useState(false)
   const navigate = useNavigate()
 
   // Determine if contact info should be visible based on tier
@@ -197,11 +198,12 @@ const ProfilePage = () => {
           <div className="profile-hero-content">
             <div className="profile-hero-main">
               <div className="profile-hero-photo">
-                {profile.photo_url ? (
-                  <img 
-                    src={profile.photo_url} 
+                {profile.photo_url && !imageError ? (
+                  <img
+                    src={profile.photo_url}
                     alt={profile.full_name}
                     className="hero-photo"
+                    onError={() => setImageError(true)}
                   />
                 ) : (
                   <div className="hero-photo-placeholder">

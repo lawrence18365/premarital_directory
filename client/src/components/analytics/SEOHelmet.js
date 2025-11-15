@@ -41,7 +41,7 @@ const generateOrganizationStructuredData = (siteUrl) => {
     "@type": "Organization",
     "name": "Wedding Counselors",
     "url": siteUrl,
-    "logo": `${siteUrl}/logo.png`,
+    "logo": `${siteUrl}/favicon.ico`,
     "description": "Directory of qualified premarital counselors, therapists, and coaches helping engaged couples prepare for marriage.",
     "sameAs": [
       "https://www.facebook.com/weddingcounselors",
@@ -92,12 +92,12 @@ const generateReviewStructuredData = (reviews, professional) => {
   }));
 };
 
-const SEOHelmet = ({ 
-  title, 
-  description, 
-  url, 
+const SEOHelmet = ({
+  title,
+  description,
+  url,
   type = 'website',
-  image = '/assets/images/og-default.webp',
+  image = '/media/couple_in_counselling_animation.png',
   structuredData = null,
   breadcrumbs = null,
   faqs = null,
@@ -213,7 +213,7 @@ export const generateProfessionalStructuredData = (professional) => {
     "name": professional.full_name,
     "jobTitle": professional.profession || "Marriage Counselor",
     "description": professional.bio,
-    "image": professional.photo_url ? `${baseUrl}${professional.photo_url}` : `${baseUrl}/media/default-therapist.webp`,
+    "image": professional.photo_url || `${baseUrl}/media/couple_in_counselling_animation.png`,
     "address": {
       "@type": "PostalAddress",
       "addressLocality": professional.city,

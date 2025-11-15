@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { generateSlug, formatLocation, getInitials, truncateText, getStateNameFromAbbr } from '../../lib/utils'
 
@@ -6,9 +6,9 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
   const profileSlug = profile.slug || generateSlug(profile.full_name)
   const stateSlug = profile.state_province ? getStateNameFromAbbr(profile.state_province) : null
   const citySlug = profile.city ? generateSlug(profile.city) : null
-  
 
-  const hasPhoto = Boolean(profile.photo_url)
+  const [imageError, setImageError] = useState(false)
+  const hasPhoto = Boolean(profile.photo_url) && !imageError
 
   return (
     <div className={`profile-card profile-card--${type} ${profile.is_sponsored ? 'sponsored' : ''} ${!hasPhoto ? 'no-photo' : ''}`}>
@@ -38,10 +38,11 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
       <div className="profile-header">
         <div className="profile-photo-container">
           {hasPhoto ? (
-            <img 
+            <img
               src={profile.photo_url}
               alt={profile.full_name}
               className="profile-photo"
+              onError={() => setImageError(true)}
             />
           ) : (
             <div className="profile-photo placeholder" aria-label={`Initials for ${profile.full_name}`}>
