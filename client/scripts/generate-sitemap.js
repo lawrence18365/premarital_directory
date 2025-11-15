@@ -113,7 +113,7 @@ function calculatePriority(profileCount, maxCount) {
 async function fetchProfileCounts() {
   if (!createClient) {
     console.log('⚠️  Supabase client not available, using default priorities')
-    return null
+    return { cityCounts: null, profiles: [] }
   }
 
   const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
@@ -121,20 +121,22 @@ async function fetchProfileCounts() {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.log('⚠️  Supabase credentials not found, using default priorities')
-    return null
+    return { cityCounts: null, profiles: [] }
   }
 
   try {
     const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-    // Fetch all profiles and count by city/state
+    // Fetch all profiles with their slugs for sitemap
     const { data: profiles, error } = await supabase
       .from('profiles')
-      .select('city, state_province')
+      .select('id, slug, city, state_province, full_name, updated_at, is_hidden')
+      .eq('is_hidden', false)
+      .order('updated_at', { ascending: false })
 
     if (error) {
       console.log('⚠️  Error fetching profiles:', error.message)
-      return null
+      return { cityCounts: null, profiles: [] }
     }
 
     // Count profiles per city/state combination
@@ -146,11 +148,36 @@ async function fetchProfileCounts() {
       }
     })
 
-    return cityCounts
+    return { cityCounts, profiles: profiles || [] }
   } catch (err) {
     console.log('⚠️  Failed to connect to Supabase:', err.message)
-    return null
+    return { cityCounts: null, profiles: [] }
   }
+}
+
+// Helper to generate state slug
+function getStateSlug(stateName) {
+  const stateMap = {
+    'TX': 'texas', 'CA': 'california', 'NY': 'new-york', 'FL': 'florida',
+    'IL': 'illinois', 'GA': 'georgia', 'CO': 'colorado', 'PA': 'pennsylvania',
+    'AZ': 'arizona', 'WA': 'washington', 'NC': 'north-carolina', 'NJ': 'new-jersey',
+    'VA': 'virginia', 'MA': 'massachusetts', 'MI': 'michigan', 'OH': 'ohio',
+    'TN': 'tennessee', 'IN': 'indiana', 'MO': 'missouri', 'MD': 'maryland',
+    'WI': 'wisconsin', 'MN': 'minnesota', 'SC': 'south-carolina', 'AL': 'alabama',
+    'LA': 'louisiana', 'KY': 'kentucky', 'OR': 'oregon', 'OK': 'oklahoma',
+    'CT': 'connecticut', 'IA': 'iowa', 'UT': 'utah', 'NV': 'nevada',
+    'AR': 'arkansas', 'MS': 'mississippi', 'KS': 'kansas', 'NM': 'new-mexico',
+    'NE': 'nebraska', 'WV': 'west-virginia', 'ID': 'idaho', 'HI': 'hawaii',
+    'NH': 'new-hampshire', 'ME': 'maine', 'MT': 'montana', 'RI': 'rhode-island',
+    'DE': 'delaware', 'SD': 'south-dakota', 'ND': 'north-dakota', 'AK': 'alaska',
+    'VT': 'vermont', 'WY': 'wyoming', 'DC': 'washington-dc'
+  }
+  return stateMap[stateName] || stateName.toLowerCase().replace(/\s+/g, '-')
+}
+
+// Helper to generate city slug
+function getCitySlug(cityName) {
+  return cityName.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
 }
 
 async function main() {
@@ -159,8 +186,8 @@ async function main() {
 
   console.log('🗺️  Generating focused sitemaps...')
 
-  // Fetch profile counts from Supabase
-  const profileCounts = await fetchProfileCounts()
+  // Fetch profile counts and profiles from Supabase
+  const { cityCounts: profileCounts, profiles: allProfiles } = await fetchProfileCounts()
 
   // 1. Core pages sitemap
   const coreUrls = CORE_PAGES.map(page => ({
@@ -234,23 +261,57 @@ async function main() {
   fs.writeFileSync(path.join(publicDir, 'sitemap-blog.xml'), blogSitemap)
   console.log(`✅ Generated sitemap-blog.xml (${blogUrls.length} URLs)`)
 
-  // 4. Main sitemap index
-  const sitemapIndex = generateSitemapIndex([
+  // 4. NEW: Profile URLs sitemap (individual professional profiles)
+  const profileUrls = []
+  if (allProfiles && allProfiles.length > 0) {
+    allProfiles.forEach(profile => {
+      if (profile.slug && profile.city && profile.state_province) {
+        const stateSlug = getStateSlug(profile.state_province)
+        const citySlug = getCitySlug(profile.city)
+        const lastmod = profile.updated_at
+          ? new Date(profile.updated_at).toISOString().split('T')[0]
+          : today
+
+        profileUrls.push({
+          url: `/premarital-counseling/${stateSlug}/${citySlug}/${profile.slug}`,
+          priority: 0.6,
+          changefreq: 'weekly',
+          lastmod: lastmod
+        })
+      }
+    })
+
+    const profileSitemap = generateSitemapXML(profileUrls)
+    fs.writeFileSync(path.join(publicDir, 'sitemap-profiles.xml'), profileSitemap)
+    console.log(`✅ Generated sitemap-profiles.xml (${profileUrls.length} URLs - individual profiles)`)
+  } else {
+    console.log('⚠️  No profiles found, skipping sitemap-profiles.xml')
+  }
+
+  // 5. Main sitemap index
+  const sitemapFiles = [
     'sitemap-core.xml',
     'sitemap-cities.xml',
     'sitemap-blog.xml'
-  ])
+  ]
+  if (profileUrls.length > 0) {
+    sitemapFiles.push('sitemap-profiles.xml')
+  }
+
+  const sitemapIndex = generateSitemapIndex(sitemapFiles)
   fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapIndex)
   console.log(`✅ Generated sitemap.xml (index file)`)
 
   // Summary
-  const totalUrls = coreUrls.length + cityUrls.length + blogUrls.length
+  const totalUrls = coreUrls.length + cityUrls.length + blogUrls.length + profileUrls.length
   console.log(`\n📊 Total URLs in sitemap: ${totalUrls}`)
   console.log('   - Core pages:', coreUrls.length)
   console.log('   - Anchor city pages:', cityUrls.length)
   console.log('   - Blog posts:', blogUrls.length)
+  console.log('   - Individual profiles:', profileUrls.length)
   console.log('\n🎯 Focused on anchor cities for SEO authority building')
   console.log('🏆 Cities with more profiles get higher sitemap priority')
+  console.log('👤 All visible profiles now included in sitemap')
 }
 
 main().catch(err => {
