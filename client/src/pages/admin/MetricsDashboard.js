@@ -14,7 +14,8 @@ const MetricsDashboard = () => {
     contactReveals7Days: 0,
     contactReveals30Days: 0,
     recentSignups: [],
-    signupSources: []
+    signupSources: [],
+    contactRevealsByCity: []
   })
 
   useEffect(() => {
@@ -107,6 +108,43 @@ const MetricsDashboard = () => {
         .map(([source, count]) => ({ source, count }))
         .sort((a, b) => b.count - a.count)
 
+      // Contact reveals by city (geographic KPI)
+      let contactRevealsByCity = []
+      try {
+        const { data: revealData } = await supabase
+          .from('contact_reveals')
+          .select('city, state_province, revealed_at')
+          .not('city', 'is', null)
+          .order('revealed_at', { ascending: false })
+
+        if (revealData) {
+          const cityRevealStats = {}
+          revealData.forEach(reveal => {
+            const key = `${reveal.city}, ${reveal.state_province}`
+            if (!cityRevealStats[key]) {
+              cityRevealStats[key] = {
+                city: reveal.city,
+                state: reveal.state_province,
+                total: 0,
+                last7Days: 0,
+                last30Days: 0
+              }
+            }
+            cityRevealStats[key].total++
+
+            const revealDate = new Date(reveal.revealed_at)
+            if (revealDate >= sevenDaysAgo) cityRevealStats[key].last7Days++
+            if (revealDate >= thirtyDaysAgo) cityRevealStats[key].last30Days++
+          })
+
+          contactRevealsByCity = Object.values(cityRevealStats)
+            .sort((a, b) => b.total - a.total)
+            .slice(0, 10)
+        }
+      } catch (err) {
+        console.warn('Failed to load city reveal stats:', err)
+      }
+
       setMetrics({
         totalProfiles,
         claimedProfiles,
@@ -116,7 +154,8 @@ const MetricsDashboard = () => {
         contactReveals7Days,
         contactReveals30Days,
         recentSignups,
-        signupSources
+        signupSources,
+        contactRevealsByCity
       })
 
     } catch (error) {
@@ -283,6 +322,56 @@ const MetricsDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Contact Reveals by City - Critical KPI */}
+      {metrics.contactRevealsByCity.length > 0 && (
+        <div style={{
+          background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+          padding: 'var(--space-8)',
+          borderRadius: 'var(--radius-xl)',
+          marginBottom: 'var(--space-12)',
+          border: '2px solid #ffc107'
+        }}>
+          <h2 style={{ marginBottom: 'var(--space-6)', color: '#92400e' }}>
+            Contact Reveals by City (Core KPI)
+          </h2>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: 'var(--space-4)'
+          }}>
+            {metrics.contactRevealsByCity.map((cityData, idx) => (
+              <div key={idx} style={{
+                background: 'var(--white)',
+                padding: 'var(--space-4)',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--gray-200)'
+              }}>
+                <div style={{ fontWeight: 'bold', marginBottom: 'var(--space-2)' }}>
+                  {cityData.city}, {cityData.state}
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-2)', fontSize: 'var(--text-sm)' }}>
+                  <div>
+                    <div style={{ color: 'var(--text-secondary)' }}>Total</div>
+                    <div style={{ fontWeight: 'bold', fontSize: 'var(--text-lg)', color: 'var(--primary)' }}>{cityData.total}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: 'var(--text-secondary)' }}>7 Days</div>
+                    <div style={{ fontWeight: 'bold', fontSize: 'var(--text-lg)', color: '#059669' }}>{cityData.last7Days}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: 'var(--text-secondary)' }}>30 Days</div>
+                    <div style={{ fontWeight: 'bold', fontSize: 'var(--text-lg)', color: '#d97706' }}>{cityData.last30Days}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p style={{ marginTop: 'var(--space-4)', color: '#92400e', fontSize: 'var(--text-sm)' }}>
+            Contact reveals indicate real value delivery - couples taking action to connect with providers.
+          </p>
+        </div>
+      )}
 
       {/* Tables */}
       <div style={{

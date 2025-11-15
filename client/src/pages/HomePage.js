@@ -193,7 +193,7 @@ const HomePage = () => {
           "description": "Find qualified premarital counselors, therapists, and coaches near you.",
           "potentialAction": {
             "@type": "SearchAction",
-          "target": "https://www.weddingcounselors.com/states?search={search_term_string}",
+          "target": "https://www.weddingcounselors.com/premarital-counseling?search={search_term_string}",
             "query-input": "required name=search_term_string"
           }
         }}

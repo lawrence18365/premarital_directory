@@ -7,7 +7,7 @@ const SitemapPage = () => {
 
   const publicRoutes = [
     { to: '/', label: 'Home' },
-    { to: '/states', label: 'Find Counselors (States)' },
+    { to: '/premarital-counseling', label: 'Find Premarital Counselors' },
     { to: '/about', label: 'About' },
     { to: '/contact', label: 'Contact' },
     { to: '/blog', label: 'Blog' },
@@ -67,9 +67,8 @@ const SitemapPage = () => {
           <h2 style={{ fontSize: 'var(--text-xl)', marginBottom: 'var(--space-3)' }}>XML Sitemaps</h2>
           <ul>
             <li style={{ marginBottom: '0.5rem' }}><a href="/sitemap.xml">Primary Sitemap Index</a></li>
-            <li style={{ marginBottom: '0.5rem' }}><a href="/sitemap-main.xml">Main Sitemap</a></li>
-            <li style={{ marginBottom: '0.5rem' }}><a href="/sitemap-states.xml">States Sitemap</a></li>
-            <li style={{ marginBottom: '0.5rem' }}><a href="/sitemap-profiles.xml">Profiles Sitemap</a></li>
+            <li style={{ marginBottom: '0.5rem' }}><a href="/sitemap-core.xml">Core Pages Sitemap</a></li>
+            <li style={{ marginBottom: '0.5rem' }}><a href="/sitemap-cities.xml">Cities Sitemap</a></li>
             <li style={{ marginBottom: '0.5rem' }}><a href="/sitemap-blog.xml">Blog Sitemap</a></li>
           </ul>
         </section>

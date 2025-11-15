@@ -164,7 +164,7 @@ const CityPage = () => {
       <SEOHelmet
         title={cityContent?.title || `Premarital Counseling & Marriage Prep in ${cityName}, ${stateConfig?.abbr || stateName} – Therapists & Clergy`}
         description={cityContent?.description || `Find premarital counseling and marriage prep in ${cityName}, ${stateName}. Compare ${profiles.length} licensed therapists (LMFT, LPC, LCSW), Christian counselors, clergy, and online options for engaged couples preparing for marriage. See prices, specialties, and availability.`}
-        keywords={`premarital counseling ${cityName}, marriage counseling ${cityName}, marriage prep ${cityName}, premarital therapy ${cityName}, pre marriage counseling ${cityName} ${stateName}, christian premarital counseling ${cityName}, pre cana ${cityName}, clergy premarital counseling ${cityName}, marriage counseling ${cityName} ${stateName}`}
+        keywords={`premarital counseling ${cityName}, premarital counselling ${cityName}, marriage counseling ${cityName}, marriage prep ${cityName}, premarital therapy ${cityName}, pre marriage counseling ${cityName} ${stateName}, pre-marital counseling ${cityName}, christian premarital counseling ${cityName}, pre cana ${cityName}, clergy premarital counseling ${cityName}, marriage counseling ${cityName} ${stateName}`}
         structuredData={structuredData}
         faqs={cityFAQs}
         noindex={shouldNoindex}
@@ -190,6 +190,15 @@ const CityPage = () => {
               This page focuses on <strong>premarital and early-marriage counseling</strong> — therapists and clergy who help couples
               prepare for marriage, not just address crisis situations. Whether you're looking for a licensed therapist (LMFT, LPC)
               or faith-based clergy guidance, you'll find professionals who specialize in marriage preparation.
+            </p>
+
+            <p style={{
+              marginTop: 'var(--space-3)',
+              fontSize: '0.85rem',
+              color: 'var(--text-muted)',
+              fontStyle: 'italic'
+            }}>
+              Note: This service is also known as "premarital counselling" (British spelling) or "pre-marital counseling" — we use all terms so couples can find the right support.
             </p>
 
 
@@ -282,14 +291,17 @@ const CityPage = () => {
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                             <div>
                               <h4 style={{ margin: 0, marginBottom: 'var(--space-2)' }}>
-                                <Link to={`/premarital-counseling/${state}/${city}/${profile.slug}`} style={{ color: 'var(--color-primary)' }}>
-                                  {profile.full_name}
+                                <Link
+                                  to={`/premarital-counseling/${state}/${city}/${profile.slug}`}
+                                  style={{ color: 'var(--color-primary)' }}
+                                  title={`${profile.full_name} - ${profile.profession || 'Premarital Counselor'} in ${cityName}`}
+                                >
+                                  {profile.full_name} – {profile.profession || 'Premarital Counselor'} in {cityName}
                                 </Link>
                               </h4>
                               <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                                {profile.profession}
                                 {profile.specialties && profile.specialties.length > 0 && (
-                                  <> • {profile.specialties.slice(0, 2).join(', ')}</>
+                                  <>Specializes in: {profile.specialties.slice(0, 2).join(', ')}</>
                                 )}
                               </p>
                             </div>
@@ -473,6 +485,139 @@ const CityPage = () => {
                     showSearch={false}
                     showAside={false}
                   />
+                </div>
+
+                {/* External Authority Resources for E-E-A-T */}
+                <div style={{
+                  marginTop: 'var(--space-8)',
+                  padding: 'var(--space-6)',
+                  background: 'var(--bg-secondary)',
+                  borderRadius: 'var(--radius-lg)',
+                  border: '1px solid var(--gray-200)'
+                }}>
+                  <h3 style={{
+                    fontSize: 'var(--text-lg)',
+                    marginBottom: 'var(--space-4)',
+                    color: 'var(--text-primary)'
+                  }}>
+                    Further Resources on Premarital Counseling
+                  </h3>
+                  <p style={{
+                    fontSize: '0.9rem',
+                    color: 'var(--text-secondary)',
+                    marginBottom: 'var(--space-4)'
+                  }}>
+                    For additional information on premarital counseling and marriage preparation, consult these authoritative sources:
+                  </p>
+                  <ul style={{
+                    listStyle: 'none',
+                    padding: 0,
+                    margin: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 'var(--space-3)'
+                  }}>
+                    <li>
+                      <a
+                        href="https://www.aamft.org/Consumer_Updates/Premarital_Counseling.aspx"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          color: 'var(--color-primary)',
+                          fontWeight: '500',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        AAMFT: Premarital Counseling Guide
+                      </a>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'block' }}>
+                        American Association for Marriage and Family Therapy
+                      </span>
+                    </li>
+                    <li>
+                      <a
+                        href="https://www.apa.org/topics/marriage-divorce"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          color: 'var(--color-primary)',
+                          fontWeight: '500',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        APA: Marriage & Divorce Resources
+                      </a>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'block' }}>
+                        American Psychological Association
+                      </span>
+                    </li>
+                    <li>
+                      <a
+                        href="https://www.gottman.com/couples/premarital/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          color: 'var(--color-primary)',
+                          fontWeight: '500',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        Gottman Institute: Premarital Resources
+                      </a>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'block' }}>
+                        Research-based relationship guidance
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Provider CTA for Local SEO + Supply Growth */}
+                <div style={{
+                  marginTop: 'var(--space-8)',
+                  padding: 'var(--space-6)',
+                  background: 'linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%)',
+                  borderRadius: 'var(--radius-lg)',
+                  color: 'white',
+                  textAlign: 'center'
+                }}>
+                  <h3 style={{
+                    fontSize: 'var(--text-xl)',
+                    marginBottom: 'var(--space-3)',
+                    color: 'white'
+                  }}>
+                    Are you a premarital counselor in {cityName}?
+                  </h3>
+                  <p style={{
+                    fontSize: '0.95rem',
+                    marginBottom: 'var(--space-4)',
+                    opacity: 0.95
+                  }}>
+                    Join our directory and connect with engaged couples looking for premarital counseling and marriage preparation services in {cityName}, {stateName}.
+                  </p>
+                  <Link
+                    to={`/professional/create?signup_source=city_page&city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}`}
+                    style={{
+                      display: 'inline-block',
+                      padding: 'var(--space-3) var(--space-6)',
+                      background: 'white',
+                      color: 'var(--teal)',
+                      fontWeight: '600',
+                      borderRadius: 'var(--radius-md)',
+                      textDecoration: 'none',
+                      transition: 'transform 0.2s ease'
+                    }}
+                    onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                    onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
+                  >
+                    Create Your Free Profile
+                  </Link>
+                  <p style={{
+                    fontSize: '0.8rem',
+                    marginTop: 'var(--space-3)',
+                    opacity: 0.8
+                  }}>
+                    Free listing • Instant visibility • No commitment required
+                  </p>
                 </div>
 
                 <LocalContent locationName={cityName} />

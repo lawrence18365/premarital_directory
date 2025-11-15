@@ -59,8 +59,10 @@ const generateOrganizationStructuredData = (siteUrl) => {
     },
     "knowsAbout": [
       "Premarital Counseling",
+      "Premarital Counselling",
       "Marriage Preparation",
       "Pre-Marriage Therapy",
+      "Pre-Marital Counseling",
       "Relationship Counseling",
       "Engaged Couples Counseling"
     ]

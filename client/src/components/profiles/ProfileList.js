@@ -67,7 +67,7 @@ const ProfileList = ({ profiles, loading, error, showViewAll = false }) => {
         </div>
         
         <div className="text-center mt-12">
-          <a href="/states" className="btn btn-primary btn-large">
+          <a href="/premarital-counseling" className="btn btn-primary btn-large">
             View All Professionals
           </a>
           <p className="text-muted mt-4">
@@ -115,7 +115,7 @@ const ProfileList = ({ profiles, loading, error, showViewAll = false }) => {
 
         {showViewAll && (
           <div className="text-center mt-8 mb-6">
-            <a href="/states" className="btn btn-primary btn-large">
+            <a href="/premarital-counseling" className="btn btn-primary btn-large">
               <span>View All {profiles.length > 4 ? profiles.length : ''} Professionals</span>
               <span className="btn-arrow">→</span>
             </a>

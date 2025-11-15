@@ -6,6 +6,40 @@ import { SEOHelmet } from '../../components/analytics';
 import Breadcrumbs, { generateBreadcrumbs } from '../../components/common/Breadcrumbs';
 import '../../assets/css/blog.css';
 
+// Generate Article/BlogPosting structured data for SEO
+const generateArticleStructuredData = (post) => {
+  if (!post) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title,
+    "description": post.meta_description || post.excerpt || post.title,
+    "datePublished": post.date ? new Date(post.date).toISOString() : new Date(post.created_at).toISOString(),
+    "dateModified": post.updated_at ? new Date(post.updated_at).toISOString() : (post.date ? new Date(post.date).toISOString() : new Date(post.created_at).toISOString()),
+    "author": {
+      "@type": "Organization",
+      "name": "Wedding Counselors",
+      "url": "https://www.weddingcounselors.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Wedding Counselors",
+      "url": "https://www.weddingcounselors.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.weddingcounselors.com/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://www.weddingcounselors.com/blog/${post.slug}`
+    },
+    "articleSection": post.category || "Relationship Guidance",
+    "keywords": `premarital counseling, ${post.category?.toLowerCase() || 'marriage preparation'}, engaged couples, relationship advice`
+  };
+};
+
 const BlogPostPage = () => {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
@@ -58,6 +92,7 @@ const BlogPostPage = () => {
   }
 
   const breadcrumbItems = generateBreadcrumbs.blogPost(post.title)
+  const articleStructuredData = generateArticleStructuredData(post)
 
   return (
     <div className="blog-post-page">
@@ -66,6 +101,7 @@ const BlogPostPage = () => {
         description={post.meta_description || post.excerpt || `Read: ${post.title}`}
         url={`/blog/${post.slug}`}
         breadcrumbs={breadcrumbItems}
+        structuredData={articleStructuredData}
       />
 
       <div className="container">
