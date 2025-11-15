@@ -13,6 +13,9 @@ const ProfessionalDashboard = () => {
     responseRate: 0
   })
   const [loading, setLoading] = useState(true)
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false)
+  const [removeLoading, setRemoveLoading] = useState(false)
+  const [removeSuccess, setRemoveSuccess] = useState(false)
 
   useEffect(() => {
     if (profile) {
@@ -74,6 +77,54 @@ const ProfessionalDashboard = () => {
 
   const handleSignOut = async () => {
     await signOut()
+  }
+
+  const handleRemoveProfile = async () => {
+    if (!profile) return
+
+    setRemoveLoading(true)
+    try {
+      // Soft delete - hide the profile but preserve data
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          is_hidden: true,
+          hidden_reason: 'provider_self_remove',
+          hidden_at: new Date().toISOString()
+        })
+        .eq('id', profile.id)
+
+      if (error) throw error
+
+      // Optionally add to do_not_contact to prevent future outreach
+      await supabase.from('do_not_contact').upsert({
+        email: profile.email,
+        reason: 'provider_self_remove',
+        notes: `Provider ${profile.full_name} removed their own listing on ${new Date().toISOString()}`
+      }, {
+        onConflict: 'email'
+      })
+
+      // Log the event
+      await supabase.from('provider_events').insert({
+        provider_email: profile.email,
+        profile_id: profile.id,
+        event_type: 'removed',
+        event_data: {
+          removed_by: 'self',
+          removed_at: new Date().toISOString(),
+          reason: 'provider_self_remove'
+        }
+      })
+
+      setRemoveSuccess(true)
+    } catch (error) {
+      console.error('Error removing profile:', error)
+      alert('Failed to remove profile. Please contact support@weddingcounselors.com')
+    }
+
+    setRemoveLoading(false)
+    setShowRemoveConfirm(false)
   }
 
   const formatDate = (dateString) => {
@@ -307,6 +358,133 @@ const ProfessionalDashboard = () => {
           </Link>
         </div>
       </div>
+
+      {/* Remove Profile Section */}
+      <div className="dashboard-section" style={{ marginTop: 'var(--space-12)' }}>
+        <h2 style={{ color: 'var(--text-secondary)' }}>Account Settings</h2>
+
+        {removeSuccess ? (
+          <div style={{
+            background: '#d1fae5',
+            padding: 'var(--space-6)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid #6ee7b7'
+          }}>
+            <h3 style={{ color: '#065f46', marginBottom: 'var(--space-2)' }}>
+              Profile Removed
+            </h3>
+            <p style={{ color: '#064e3b', margin: 0 }}>
+              Your profile has been removed from WeddingCounselors. You will no longer appear in search results or receive inquiries.
+              If you change your mind, contact us at support@weddingcounselors.com to restore your listing.
+            </p>
+          </div>
+        ) : (
+          <div style={{
+            background: 'var(--bg-secondary)',
+            padding: 'var(--space-4)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--gray-200)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h4 style={{ margin: '0 0 var(--space-2) 0' }}>Remove My Listing</h4>
+                <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                  Hide your profile from WeddingCounselors. You can contact us later to restore it.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowRemoveConfirm(true)}
+                style={{
+                  padding: 'var(--space-2) var(--space-4)',
+                  background: 'white',
+                  color: '#dc2626',
+                  border: '1px solid #fca5a5',
+                  borderRadius: 'var(--radius-sm)',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '500'
+                }}
+              >
+                Remove Profile
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Remove Confirmation Modal */}
+      {showRemoveConfirm && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'white',
+            padding: 'var(--space-8)',
+            borderRadius: 'var(--radius-lg)',
+            maxWidth: '500px',
+            width: '90%'
+          }}>
+            <h3 style={{ marginBottom: 'var(--space-4)', color: '#dc2626' }}>
+              Remove Your Profile?
+            </h3>
+            <p style={{ marginBottom: 'var(--space-4)' }}>
+              This will:
+            </p>
+            <ul style={{ marginBottom: 'var(--space-6)', paddingLeft: 'var(--space-4)' }}>
+              <li>Hide your profile from all search results</li>
+              <li>Stop sending you couple inquiries</li>
+              <li>Remove you from city pages</li>
+              <li>Prevent future outreach emails from us</li>
+            </ul>
+            <p style={{ marginBottom: 'var(--space-6)', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              You can contact support@weddingcounselors.com to restore your listing later if you change your mind.
+            </p>
+
+            <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+              <button
+                onClick={() => setShowRemoveConfirm(false)}
+                disabled={removeLoading}
+                style={{
+                  flex: 1,
+                  padding: 'var(--space-3)',
+                  background: 'var(--gray-100)',
+                  border: 'none',
+                  borderRadius: 'var(--radius-sm)',
+                  cursor: 'pointer',
+                  fontWeight: '500'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRemoveProfile}
+                disabled={removeLoading}
+                style={{
+                  flex: 1,
+                  padding: 'var(--space-3)',
+                  background: '#dc2626',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 'var(--radius-sm)',
+                  cursor: removeLoading ? 'not-allowed' : 'pointer',
+                  fontWeight: '500'
+                }}
+              >
+                {removeLoading ? 'Removing...' : 'Yes, Remove My Profile'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
