@@ -26,7 +26,6 @@ class CityContentGenerator {
     }
     
     // Generate content - no fallback
-    console.log(`🤖 Generating AI content for ${city}, ${state}`)
     return await this.generateAndCacheContent(state, city)
   }
   

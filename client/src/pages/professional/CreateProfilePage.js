@@ -29,6 +29,9 @@ const CreateProfilePage = () => {
     credentials: [],
     education: '',
     bio: '',
+    profile_intro: '', // NEW: Short 200-char hook
+    intro_video_url: '', // NEW: YouTube/Vimeo link
+    languages: [], // NEW: Languages spoken
 
     // Step 3: Services & Pricing
     offers_free_consultation: false,
@@ -36,6 +39,9 @@ const CreateProfilePage = () => {
     session_fee_max: '',
     payment_methods: [],
     insurance_accepted: [],
+    booking_url: '', // NEW: Calendly/Acuity link
+    typical_sessions: '', // NEW: Program structure
+    assessment_tools: [], // NEW: Prepare/Enrich, etc.
 
     // Step 4: Specialties & Availability
     specialties: [],
@@ -43,6 +49,7 @@ const CreateProfilePage = () => {
     client_focus: [],
     session_types: [],
     accepting_new_clients: true,
+    approach_type: '', // NEW: Faith-based vs secular
     city: '',
     state_province: '',
     country: 'United States'
@@ -400,6 +407,54 @@ const CreateProfilePage = () => {
     { value: 'hybrid', label: 'Hybrid (Both)' }
   ]
 
+  // NEW: Languages spoken options
+  const languageOptions = [
+    'English',
+    'Spanish',
+    'Mandarin',
+    'Cantonese',
+    'French',
+    'Vietnamese',
+    'Korean',
+    'Tagalog',
+    'Arabic',
+    'Hindi',
+    'Portuguese',
+    'Russian',
+    'Japanese',
+    'German',
+    'American Sign Language (ASL)'
+  ]
+
+  // NEW: Assessment tools for premarital counseling
+  const assessmentToolOptions = [
+    'Prepare/Enrich',
+    'SYMBIS (Saving Your Marriage Before It Starts)',
+    'FOCCUS (Facilitating Open Couple Communication)',
+    'Taylor-Johnson Temperament Analysis',
+    'Gottman Relationship Checkup',
+    'Myers-Briggs for Couples',
+    'Enneagram Assessment',
+    'Custom Assessment'
+  ]
+
+  // NEW: Typical session count options
+  const typicalSessionsOptions = [
+    { value: '3-5', label: '3-5 sessions (brief)' },
+    { value: '6-8', label: '6-8 sessions (standard)' },
+    { value: '8-12', label: '8-12 sessions (comprehensive)' },
+    { value: '12+', label: '12+ sessions (intensive)' },
+    { value: 'customized', label: 'Customized to couple needs' }
+  ]
+
+  // NEW: Approach type (faith-based vs secular)
+  const approachTypeOptions = [
+    { value: 'secular', label: 'Secular/Non-Religious' },
+    { value: 'faith-based', label: 'Faith-Based/Christian' },
+    { value: 'faith-flexible', label: 'Faith-Informed (flexible)' },
+    { value: 'interfaith', label: 'Interfaith Specialist' }
+  ]
+
   const heroStats = [
     { value: '12+', label: 'Active city directories' },
     { value: '0%', label: 'Commission or lead fees' },
@@ -634,6 +689,22 @@ const CreateProfilePage = () => {
                     />
                   </div>
                   <div className="form-group">
+                    <label htmlFor="profile_intro">Profile Intro (Short Hook) *</label>
+                    <input
+                      type="text"
+                      id="profile_intro"
+                      className="form-control"
+                      maxLength={200}
+                      value={formData.profile_intro}
+                      onChange={(e) => handleInputChange('profile_intro', e.target.value)}
+                      placeholder="I help engaged couples build strong foundations and navigate pre-wedding conflicts with confidence."
+                    />
+                    <small>
+                      {formData.profile_intro.length}/200 characters. This is your elevator pitch - the first thing couples see.
+                      Formula: "I help [ideal client] [desired outcome]"
+                    </small>
+                  </div>
+                  <div className="form-group">
                     <label htmlFor="bio">Professional Bio</label>
                     <textarea
                       id="bio"
@@ -644,6 +715,35 @@ const CreateProfilePage = () => {
                       placeholder="Describe your approach to premarital counseling, what clients can expect, and what makes your practice unique..."
                     />
                     <small>This appears on your public profile. Aim for 150-300 words.</small>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="intro_video_url">Video Introduction (Optional)</label>
+                    <input
+                      type="url"
+                      id="intro_video_url"
+                      className="form-control"
+                      value={formData.intro_video_url}
+                      onChange={(e) => handleInputChange('intro_video_url', e.target.value)}
+                      placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
+                    />
+                    <small>
+                      Profiles with videos get 4x more inquiries! Share a 1-2 minute intro about your approach.
+                    </small>
+                  </div>
+                  <div className="form-group">
+                    <label>Languages Spoken</label>
+                    <div className="professional-signup__checkbox-grid">
+                      {languageOptions.map(language => (
+                        <label key={language} className="professional-signup__checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={formData.languages.includes(language)}
+                            onChange={() => handleArrayToggle('languages', language)}
+                          />
+                          <span>{language}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
@@ -723,6 +823,49 @@ const CreateProfilePage = () => {
                         </label>
                       ))}
                     </div>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="booking_url">Online Booking URL (Optional)</label>
+                    <input
+                      type="url"
+                      id="booking_url"
+                      className="form-control"
+                      value={formData.booking_url}
+                      onChange={(e) => handleInputChange('booking_url', e.target.value)}
+                      placeholder="https://calendly.com/yourname or https://acuityscheduling.com/..."
+                    />
+                    <small>Direct scheduling link reduces friction and increases bookings</small>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="typical_sessions">Typical Program Length</label>
+                    <select
+                      id="typical_sessions"
+                      className="form-control"
+                      value={formData.typical_sessions}
+                      onChange={(e) => handleInputChange('typical_sessions', e.target.value)}
+                    >
+                      <option value="">Select typical session count</option>
+                      {typicalSessionsOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                    <small>How many sessions do you typically recommend for premarital couples?</small>
+                  </div>
+                  <div className="form-group">
+                    <label>Assessment Tools Used</label>
+                    <div className="professional-signup__checkbox-grid">
+                      {assessmentToolOptions.map(tool => (
+                        <label key={tool} className="professional-signup__checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={formData.assessment_tools.includes(tool)}
+                            onChange={() => handleArrayToggle('assessment_tools', tool)}
+                          />
+                          <span>{tool}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <small>Couples often look for specific assessment methodologies</small>
                   </div>
                 </div>
               )}

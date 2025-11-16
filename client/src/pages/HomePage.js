@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import ProfileList from '../components/profiles/ProfileList'
+import ProfileCard from '../components/profiles/ProfileCard'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import '../assets/css/hero-modern.css'
 import '../assets/css/hero-immersive.css'
 import '../assets/css/trust-cards.css'
+import '../assets/css/profiles-highlight.css'
 import StateDropdown from '../components/common/StateDropdown'
 import { normalizeStateAbbr } from '../lib/utils'
 import { supabase, profileOperations } from '../lib/supabaseClient'
@@ -451,22 +452,63 @@ const HomePage = () => {
 
         {/* Sample Profiles - Only show if we have premarital-focused ones */}
         {filteredProfiles.length > 0 && (
-          <section className="profiles-section" style={{ background: 'white', padding: 'var(--space-16) 0' }}>
+          <section className="profiles-highlight" aria-labelledby="profiles-highlight-heading">
             <div className="container">
-              <div className="section-header text-center">
-                <h2 className="font-display">Sample Counselors in Our Directory</h2>
-                <p className="lead">
-                  Example profiles from counselors offering premarital services
-                </p>
+              <div className="profiles-highlight__inner">
+                <div className="profiles-highlight__copy">
+                  <p className="section-eyebrow">Curated nationwide</p>
+                  <h2 className="font-display" id="profiles-highlight-heading">
+                    Sample Counselors in Our Directory
+                  </h2>
+                  <p className="lead">
+                    Meet a handful of premarital specialists trusted by couples for faith-based, clinical, and coaching approaches.
+                  </p>
+
+                  <ul className="profiles-highlight__list">
+                    <li>Licensed therapists, certified coaches, and clergy mentors</li>
+                    <li>Each profile includes specialties, availability, and direct contact info</li>
+                    <li>Spans major metros and remote-friendly practices</li>
+                  </ul>
+
+                  <div className="profiles-highlight__stats">
+                    <div className="profiles-highlight__stat">
+                      <span className="profiles-highlight__stat-value">150+</span>
+                      <span className="profiles-highlight__stat-label">Premarital specialists</span>
+                    </div>
+                    <div className="profiles-highlight__stat">
+                      <span className="profiles-highlight__stat-value">38</span>
+                      <span className="profiles-highlight__stat-label">States represented</span>
+                    </div>
+                    <div className="profiles-highlight__stat">
+                      <span className="profiles-highlight__stat-value">72%</span>
+                      <span className="profiles-highlight__stat-label">Offer virtual sessions</span>
+                    </div>
+                  </div>
+
+                  <div className="profiles-highlight__cta">
+                    <Link to="/premarital-counseling" className="btn btn-primary btn-large">
+                      Browse the full directory
+                    </Link>
+                    <Link to="/about" className="profiles-highlight__link">
+                      How we vet counselors →
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="profiles-highlight__cards" aria-live="polite">
+                  {filteredProfiles.slice(0, 6).map(profile => (
+                    <ProfileCard key={profile.id} profile={profile} type="featured" />
+                  ))}
+
+                  <div className="profiles-highlight__cards-cta">
+                    <p>Looking for someone nearby or with a niche specialty?</p>
+                    <Link to="/premarital-counseling" className="btn btn-secondary">
+                      View all counselors
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
-
-            <ProfileList
-              profiles={filteredProfiles.slice(0, 6)}
-              loading={loading}
-              error={error}
-              showViewAll={true}
-            />
           </section>
         )}
 

@@ -1,0 +1,110 @@
+.city-inquiry {
+  margin-top: var(--space-10);
+  padding: var(--space-8);
+  border-radius: var(--radius-3xl);
+  border: 1px solid rgba(14, 94, 94, 0.15);
+  background: linear-gradient(135deg, rgba(14, 94, 94, 0.08), rgba(137, 181, 162, 0.08));
+  box-shadow: var(--shadow-lg);
+}
+
+.city-inquiry__header {
+  max-width: 680px;
+  margin-bottom: var(--space-6);
+}
+
+.city-inquiry__header h3 {
+  margin: var(--space-2) 0;
+  color: var(--primary-dark);
+  font-size: var(--text-2xl);
+}
+
+.city-inquiry__header p {
+  color: var(--gray-dark);
+  margin: 0;
+}
+
+.city-inquiry__form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.city-inquiry .form-group label {
+  font-weight: var(--weight-medium);
+  color: var(--charcoal);
+}
+
+.city-inquiry .form-group input,
+.city-inquiry .form-group select,
+.city-inquiry .form-group textarea {
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  border: 1.5px solid rgba(14, 94, 94, 0.2);
+  font-size: var(--text-base);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  background: var(--white);
+}
+
+.city-inquiry .form-group input:focus,
+.city-inquiry .form-group select:focus,
+.city-inquiry .form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(14, 94, 94, 0.15);
+}
+
+.city-inquiry__error {
+  background: rgba(255, 107, 107, 0.1);
+  color: var(--accent-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+}
+
+.city-inquiry__submit {
+  border: none;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-4);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: var(--white);
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.city-inquiry__submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.city-inquiry__submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.city-inquiry__note {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--slate);
+}
+
+.city-inquiry--success {
+  margin-top: var(--space-10);
+  padding: var(--space-6);
+  border-radius: var(--radius-2xl);
+  background: var(--white);
+  border: 1px solid rgba(14, 94, 94, 0.15);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.city-inquiry--success h3 {
+  color: var(--primary);
+  margin: var(--space-2) 0;
+}
+
+@media (max-width: 640px) {
+  .city-inquiry {
+    padding: var(--space-6);
+  }
+}

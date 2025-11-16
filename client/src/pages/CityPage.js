@@ -285,63 +285,46 @@ const CityPage = () => {
 
                 {/* Top Picks Section - SEO & UX boost */}
                 {profiles.length >= 3 && (
-                  <div style={{
-                    background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                    padding: 'var(--space-8)',
-                    borderRadius: 'var(--radius-lg)',
-                    marginBottom: 'var(--space-8)',
-                    border: '2px solid var(--accent)'
-                  }}>
-                    <h3 style={{ marginBottom: 'var(--space-4)', color: 'var(--text-primary)' }}>
-                      ⭐ Top Premarital Counselors in {cityName}
-                    </h3>
-                    <p style={{ marginBottom: 'var(--space-6)', color: 'var(--text-secondary)' }}>
-                      Highly qualified professionals helping engaged couples in {cityName} prepare for marriage
-                    </p>
-                    <div style={{
-                      display: 'grid',
-                      gap: 'var(--space-4)'
-                    }}>
-                      {profiles.slice(0, 5).map((profile, idx) => (
-                        <div key={profile.id} style={{
-                          background: 'white',
-                          padding: 'var(--space-4)',
-                          borderRadius: 'var(--radius-md)',
-                          border: '1px solid #e5e7eb'
-                        }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                            <div>
-                              <h4 style={{ margin: 0, marginBottom: 'var(--space-2)' }}>
-                                <Link
-                                  to={`/premarital-counseling/${state}/${city}/${profile.slug}`}
-                                  style={{ color: 'var(--color-primary)' }}
-                                  title={`${profile.full_name} - ${profile.profession || 'Premarital Counselor'} in ${cityName}`}
-                                  onClick={() => handleProfileClick(profile)}
-                                >
-                                  {profile.full_name} – {profile.profession || 'Premarital Counselor'} in {cityName}
-                                </Link>
-                              </h4>
-                              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                                {profile.specialties && profile.specialties.length > 0 && (
-                                  <>Specializes in: {profile.specialties.slice(0, 2).join(', ')}</>
-                                )}
+                  <section className="city-top-picks">
+                    <div className="city-top-picks__heading">
+                      <p className="section-eyebrow">Featured premarital counselors</p>
+                      <h3>Top Premarital Counselors in {cityName}</h3>
+                      <p>
+                        Vetted therapists, clergy, and coaches serving engaged couples in {cityName}. Reach out directly to compare fit, approach, and availability.
+                      </p>
+                    </div>
+                    <div className="city-top-picks__list">
+                      {profiles.slice(0, 4).map((profile, idx) => (
+                        <article className="city-top-picks__card" key={profile.id}>
+                          <div className="city-top-picks__rank">#{idx + 1}</div>
+                          <div className="city-top-picks__card-body">
+                            <h4>
+                              <Link
+                                to={`/premarital-counseling/${state}/${city}/${profile.slug}`}
+                                title={`${profile.full_name} - ${profile.profession || 'Premarital Counselor'} in ${cityName}`}
+                                onClick={() => handleProfileClick(profile)}
+                              >
+                                {profile.full_name}
+                              </Link>
+                            </h4>
+                            <p className="city-top-picks__role">{profile.profession || 'Premarital Counselor'} · {profile.city}</p>
+                            {profile.specialties && profile.specialties.length > 0 && (
+                              <p className="city-top-picks__specialties">
+                                Focus: {profile.specialties.slice(0, 2).join(', ')}
                               </p>
-                            </div>
-                            <span style={{
-                              fontSize: '0.75rem',
-                              padding: '4px 8px',
-                              background: 'var(--color-primary)',
-                              color: 'white',
-                              borderRadius: '4px',
-                              whiteSpace: 'nowrap'
-                            }}>
-                              #{idx + 1} in {cityName}
-                            </span>
+                            )}
                           </div>
-                        </div>
+                          <Link
+                            to={`/premarital-counseling/${state}/${city}/${profile.slug}`}
+                            className="city-top-picks__cta"
+                            onClick={() => handleProfileClick(profile)}
+                          >
+                            View Profile
+                          </Link>
+                        </article>
                       ))}
                     </div>
-                  </div>
+                  </section>
                 )}
 
                 {/* Multi-Provider Inquiry Form - THE MONEY FEATURE */}
@@ -687,7 +670,6 @@ const CityPage = () => {
             {contentLoading ? (
               <div className="sidebar-loading">
                 <LoadingSpinner />
-                <p>Generating AI content for {cityName}...</p>
               </div>
             ) : cityContent ? (
               <>

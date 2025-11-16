@@ -492,6 +492,107 @@
   font-weight: var(--weight-semibold);
 }
 
+.city-top-picks {
+  margin-bottom: var(--space-12);
+  padding: var(--space-8);
+  border-radius: var(--radius-3xl);
+  background: linear-gradient(135deg, rgba(14, 94, 94, 0.12), rgba(255, 107, 107, 0.12));
+  border: 1px solid rgba(14, 94, 94, 0.15);
+  box-shadow: var(--shadow-lg);
+}
+
+.city-top-picks__heading {
+  max-width: 760px;
+  margin-bottom: var(--space-6);
+}
+
+.city-top-picks__heading h3 {
+  margin: var(--space-2) 0;
+  color: var(--primary-dark);
+  font-size: var(--text-2xl);
+}
+
+.city-top-picks__heading p {
+  color: var(--gray-dark);
+  margin: 0;
+}
+
+.city-top-picks__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.city-top-picks__card {
+  background: var(--white);
+  border-radius: var(--radius-2xl);
+  border: 1px solid rgba(14, 94, 94, 0.12);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  position: relative;
+  box-shadow: var(--shadow);
+}
+
+.city-top-picks__rank {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: var(--white);
+  font-weight: var(--weight-semibold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+}
+
+.city-top-picks__card-body h4 {
+  margin: 0;
+}
+
+.city-top-picks__card-body h4 a {
+  color: var(--primary-dark);
+  text-decoration: none;
+}
+
+.city-top-picks__card-body h4 a:hover {
+  text-decoration: underline;
+}
+
+.city-top-picks__role,
+.city-top-picks__specialties {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--gray-dark);
+}
+
+.city-top-picks__specialties {
+  color: var(--slate);
+}
+
+.city-top-picks__cta {
+  margin-top: auto;
+  align-self: flex-start;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(14, 94, 94, 0.2);
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  transition: background var(--transition), transform var(--transition);
+}
+
+.city-top-picks__cta:hover {
+  background: rgba(14, 94, 94, 0.08);
+  transform: translateY(-1px);
+}
+
 @media (max-width: 1024px) {
   .major-cities-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));

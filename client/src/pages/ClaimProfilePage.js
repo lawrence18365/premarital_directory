@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import SEOHelmet from '../components/analytics/SEOHelmet'
+import '../assets/css/claim-wizard.css'
 
 import { profileOperations } from '../lib/supabaseClient'
 import { sendClaimSubmittedEmail } from '../lib/emailNotifications'
@@ -271,49 +272,35 @@ const ClaimProfilePage = () => {
 
   if (submitted) {
     return (
-      <div className="container" style={{ padding: 'var(--space-20) 0', textAlign: 'center' }}>
-        <SEOHelmet 
-          title="Profile Created Successfully"
-          description="Your profile is now live on Wedding Counselors. Couples can start finding you immediately."
+      <div className="container" style={{ padding: 'var(--space-20) 0' }}>
+        <SEOHelmet
+          title="Profile Submitted - Wedding Counselors"
+          description="Thanks for sending in your profile. Our team will follow up shortly."
           url="/claim-profile"
         />
-        <div style={{ 
-          background: 'var(--white)', 
-          padding: 'var(--space-12)', 
-          borderRadius: 'var(--radius-2xl)', 
-          boxShadow: 'var(--shadow-xl)',
-          maxWidth: '600px',
-          margin: '0 auto',
-          border: '1px solid var(--gray-200)'
-        }}>
-          <div style={{ 
-            fontSize: 'var(--text-5xl)', 
-            marginBottom: 'var(--space-4)',
-            color: 'var(--success)'
-          }}>
-            <i className="fa fa-check-circle" aria-hidden="true"></i>
+        <div className="claim-wizard">
+          <div className="claim-wizard__success">
+            <div className="claim-wizard__success-icon">
+              <i className="fa fa-check-circle" aria-hidden="true"></i>
+            </div>
+            <p className="section-eyebrow">Next steps</p>
+            <h2>{existingProfile ? 'Claim submitted!' : 'Profile received!'}</h2>
+            <p>
+              {existingProfile
+                ? 'Our team will review your claim within 1–2 business days and email you at '
+                : 'We’re reviewing your details and will email updates to '}
+              <strong>{formData.email}</strong>.
+            </p>
+            <div className="claim-wizard__success-note">
+              <h4>What happens now?</h4>
+              <ul>
+                <li>We verify your information manually.</li>
+                <li>You’ll get an approval email with login instructions.</li>
+                <li>Once live, you can edit your listing anytime.</li>
+              </ul>
+            </div>
+            <a href="/" className="btn btn-primary btn-large">Return to Directory</a>
           </div>
-          <h1>{existingProfile ? 'Claim Submitted!' : 'Profile Created!'}</h1>
-          <p className="text-large text-secondary mb-8">
-            {existingProfile
-              ? 'Thank you for claiming your profile. Our team will review your submission within 24-48 hours.'
-              : 'Thank you for joining our directory! Our team will review your profile within 24-48 hours.'}
-          </p>
-          <div style={{ 
-            background: 'var(--gray-50)', 
-            padding: 'var(--space-6)', 
-            borderRadius: 'var(--radius-xl)', 
-            marginBottom: 'var(--space-8)',
-            border: '1px solid var(--gray-200)'
-          }}>
-            <h3>What happens next?</h3>
-            <ul style={{ textAlign: 'left', color: 'var(--gray-600)', marginTop: 'var(--space-4)' }}>
-              <li>✅ We will verify the information you submitted.</li>
-              <li>✅ You will receive an email confirmation once approved.</li>
-              <li>✅ Once approved, you can manage your profile and start receiving leads.</li>
-            </ul>
-          </div>
-          <a href="/" className="btn btn-primary btn-large">Return to Directory</a>
         </div>
       </div>
     )
@@ -326,107 +313,57 @@ const ClaimProfilePage = () => {
         description={existingProfile ? 'Claim your profile to connect with couples seeking premarital counseling.' : 'Join our free directory and connect with engaged couples seeking premarital counseling.'}
         url="/claim-profile"
       />
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 'var(--space-12)' }}>
-          <h1>
-            {existingProfile ? `Claim Your Profile` : 'Create Your Free Profile'}
-          </h1>
-          <p className="text-large text-secondary">
+      <div className="claim-wizard">
+        <section className="claim-wizard__hero">
+          <p className="section-eyebrow">Professional onboarding</p>
+          <h1>{existingProfile ? 'Claim Your Profile' : 'Create Your Free Profile'}</h1>
+          <p className="claim-wizard__hero-subtitle">
             {existingProfile
-              ? `Is this your profile? Claim it to manage your listing and connect with couples.`
-              : `Join our directory for free and start connecting with engaged couples seeking premarital counseling.`
+              ? 'Verify and manage your listing so engaged couples can contact you directly.'
+              : 'List your premarital counseling services, highlight specialties, and start receiving direct inquiries.'
             }
           </p>
-        </div>
+        </section>
 
-        {/* Existing Profile Preview */}
         {existingProfile && (
-          <div style={{ 
-            background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', 
-            border: '2px solid var(--accent)', 
-            padding: 'var(--space-6)', 
-            borderRadius: 'var(--radius-xl)',
-            marginBottom: 'var(--space-8)'
-          }}>
-            <h3>Is this your profile?</h3>
-            <div style={{ display: 'flex', alignItems: 'center', marginTop: 'var(--space-4)' }}>
+          <section className="claim-wizard__profile-preview">
+            <p className="section-eyebrow">Is this you?</p>
+            <div className="claim-wizard__profile-card">
               <div>
-                <div className="font-semibold text-dark">{existingProfile.full_name}</div>
-                <div className="text-secondary">{existingProfile.profession}</div>
-                <div className="text-muted">{existingProfile.city}, {existingProfile.state_province}</div>
+                <h3>{existingProfile.full_name}</h3>
+                <p>{existingProfile.profession}</p>
+                <p className="claim-wizard__profile-location">{existingProfile.city}, {existingProfile.state_province}</p>
               </div>
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Progress Steps */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          marginBottom: 'var(--space-12)',
-          gap: 'var(--space-4)'
-        }}>
+        <div className="claim-wizard__steps">
           {[1, 2, 3].map(step => (
-            <div key={step} style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: 'var(--radius-full)',
-                background: currentStep >= step ? 'var(--primary)' : 'var(--gray-300)',
-                color: currentStep >= step ? 'var(--white)' : 'var(--gray-500)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'var(--font-weight-semibold)',
-                transition: 'all var(--transition-normal)'
-              }}>
-                {step}
-              </div>
-              {step < 3 && (
-                <div style={{
-                  width: '60px',
-                  height: '2px',
-                  background: currentStep > step ? 'var(--primary)' : 'var(--gray-300)',
-                  margin: '0 var(--space-4)',
-                  transition: 'all var(--transition-normal)'
-                }} />
-              )}
+            <div key={step} className={`claim-wizard__step ${currentStep >= step ? 'is-complete' : ''}`}>
+              <div className="claim-wizard__step-number">{step}</div>
+              <span className="claim-wizard__step-label">
+                {step === 1 && 'Basics'}
+                {step === 2 && 'Professional Details'}
+                {step === 3 && 'Location'}
+              </span>
             </div>
           ))}
         </div>
 
-        {/* Error Message */}
         {error && (
-          <div style={{
-            background: '#fee',
-            border: '1px solid #fcc',
-            borderRadius: 'var(--radius-md)',
-            padding: 'var(--space-4)',
-            marginBottom: 'var(--space-6)',
-            color: '#c33',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-2)'
-          }}>
+          <div className="claim-wizard__alert">
             <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
             <span>{error}</span>
           </div>
         )}
 
-        {/* Form */}
-        <div style={{
-          background: 'var(--white)',
-          padding: 'var(--space-8)',
-          borderRadius: 'var(--radius-2xl)',
-          boxShadow: 'var(--shadow-lg)',
-          border: '1px solid var(--gray-200)'
-        }}>
+        <div className="claim-wizard__card">
           <form onSubmit={handleSubmit}>
-            {/* Step 1: Basic Information */}
             {currentStep === 1 && (
-              <div>
+              <div className="claim-wizard__fieldset">
                 <h2>Basic Information</h2>
+                <p className="claim-wizard__fieldset-subtitle">Tell us who you are and how couples can reach you.</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
                   <div className="form-group">
                     <label htmlFor="full_name">Full Name *</label>
@@ -494,10 +431,10 @@ const ClaimProfilePage = () => {
               </div>
             )}
 
-            {/* Step 2: Professional Details */}
             {currentStep === 2 && (
-              <div>
+              <div className="claim-wizard__fieldset">
                 <h2>Professional Details</h2>
+                <p className="claim-wizard__fieldset-subtitle">Share your approach, specialties, and what makes you a great fit.</p>
                 <div className="form-group">
                   <label htmlFor="bio">Professional Bio</label>
                   <textarea
@@ -546,10 +483,10 @@ const ClaimProfilePage = () => {
               </div>
             )}
 
-            {/* Step 3: Location */}
             {currentStep === 3 && (
-              <div>
+              <div className="claim-wizard__fieldset">
                 <h2>Practice Location</h2>
+                <p className="claim-wizard__fieldset-subtitle">Let couples know where you serve so we can place you in the right directories.</p>
                 <div className="form-group">
                   <label htmlFor="address_line1">Address</label>
                   <input
@@ -598,7 +535,7 @@ const ClaimProfilePage = () => {
 
                 {/* Only show listing preferences if claiming existing profile */}
                 {existingProfile && (
-                  <div style={{ marginTop: 'var(--space-8)', padding: 'var(--space-6)', background: 'var(--gray-50)', borderRadius: 'var(--radius-lg)' }}>
+                  <div style={{ marginTop: 'var(--space-8)', padding: 'var(--space-6)', background: 'var(--neutral-light)', borderRadius: 'var(--radius-xl)' }}>
                     <h3 style={{ marginBottom: 'var(--space-4)' }}>Listing Preferences</h3>
 
                     <div className="form-group">
@@ -633,13 +570,7 @@ const ClaimProfilePage = () => {
               </div>
             )}
 
-            {/* Navigation Buttons */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              marginTop: 'var(--space-8)',
-              gap: 'var(--space-4)'
-            }}>
+            <div className="claim-wizard__button-row">
               {currentStep > 1 ? (
                 <button
                   type="button"
@@ -650,7 +581,7 @@ const ClaimProfilePage = () => {
                   Previous
                 </button>
               ) : (
-                <div></div>
+                <span />
               )}
 
               {currentStep < 3 ? (
@@ -668,48 +599,30 @@ const ClaimProfilePage = () => {
                   className="btn btn-primary"
                   disabled={loading || checkingDuplicate}
                 >
-                  {checkingDuplicate ? 'Checking...' : loading ? 'Submitting...' : 'Submit Profile Claim'}
+                  {checkingDuplicate ? 'Checking…' : loading ? 'Submitting…' : 'Submit Profile Claim'}
                 </button>
               )}
             </div>
           </form>
         </div>
 
-        {/* Benefits Section */}
-        <div style={{ 
-          marginTop: 'var(--space-12)', 
-          background: 'var(--gray-50)', 
-          padding: 'var(--space-8)', 
-          borderRadius: 'var(--radius-xl)',
-          border: '1px solid var(--gray-200)'
-        }}>
-          <h3>Why Join Our Directory?</h3>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-            gap: 'var(--space-6)', 
-            marginTop: 'var(--space-4)' 
-          }}>
+        <section className="claim-wizard__benefits">
+          <h3>Why join our directory?</h3>
+          <div className="claim-wizard__benefits-grid">
             <div>
-              <h4 style={{ color: 'var(--primary)' }}>Targeted Exposure</h4>
-              <p className="text-small text-secondary">
-                Connect with couples actively seeking premarital counseling services.
-              </p>
+              <h4>Targeted exposure</h4>
+              <p>Connect with couples actively searching for premarital counseling.</p>
             </div>
             <div>
-              <h4 style={{ color: 'var(--primary)' }}>Direct Leads</h4>
-              <p className="text-small text-secondary">
-                Receive contact requests directly from interested couples.
-              </p>
+              <h4>Direct leads</h4>
+              <p>Couples email or call you directly—no referral fees or middlemen.</p>
             </div>
             <div>
-              <h4 style={{ color: 'var(--primary)' }}>Professional Credibility</h4>
-              <p className="text-small text-secondary">
-                Verified profiles build trust with potential clients.
-              </p>
+              <h4>Professional credibility</h4>
+              <p>Verified profiles give engaged couples confidence in your services.</p>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   )

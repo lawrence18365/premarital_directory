@@ -63,14 +63,17 @@
       /* Critical CSS for font loading */
       html {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        overscroll-behavior: none;
       }
-      
+
       /* Prevent flash of unstyled content */
       body {
         opacity: 0;
         transition: opacity 0.3s ease;
+        overscroll-behavior: none;
+        background-color: #f9f8f6;
       }
-      
+
       body.loaded {
         opacity: 1;
       }

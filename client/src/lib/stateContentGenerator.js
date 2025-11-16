@@ -27,7 +27,6 @@ class StateContentGenerator {
     }
     
     // Generate content with AI - no fallback
-    console.log(`🤖 Generating AI content for ${stateConfig.name}`)
     return await this.generateAndCacheStateContent(state, stateConfig)
   }
   
