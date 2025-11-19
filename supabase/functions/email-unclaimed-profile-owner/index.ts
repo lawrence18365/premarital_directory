@@ -1,45 +1,50 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
+const SMTP2GO_API_KEY = Deno.env.get('SMTP2GO_API_KEY')
+const FROM_EMAIL = Deno.env.get('SMTP2GO_FROM_EMAIL') || 'info@weddingcounselors.com'
 
 serve(async (req) => {
-    // CORS headers
-    const corsHeaders = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  // CORS headers
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  }
+
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders })
+  }
+
+  try {
+    const {
+      profileEmail,
+      professionalName,
+      coupleName,
+      coupleEmail,
+      coupleLocation,
+      city,
+      state,
+      claimUrl,
+      profileSlug
+    } = await req.json()
+
+    // Validation
+    if (!profileEmail || !professionalName || !coupleName) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
-    // Handle CORS preflight
-    if (req.method === 'OPTIONS') {
-        return new Response(null, { headers: corsHeaders })
+    if (!SMTP2GO_API_KEY) {
+      throw new Error('SMTP2GO_API_KEY not configured')
     }
 
-    try {
-        const {
-            profileEmail,
-            professionalName,
-            coupleName,
-            coupleEmail,
-            coupleLocation,
-            city,
-            state,
-            claimUrl,
-            profileSlug
-        } = await req.json()
+    const firstName = professionalName.split(' ')[0]
+    const locationText = coupleLocation || (city ? `${city}, ${state}` : 'your area')
 
-        // Validation
-        if (!profileEmail || !professionalName || !coupleName) {
-            return new Response(
-                JSON.stringify({ error: 'Missing required fields' }),
-                { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            )
-        }
-
-        const firstName = professionalName.split(' ')[0]
-        const locationText = coupleLocation || (city ? `${city}, ${state}` : 'your area')
-
-        // Email HTML template
-        const emailHtml = `
+    // Email HTML template
+    const emailHtml = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -130,8 +135,7 @@ serve(async (req) => {
               </p>
               <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #999999;">
                 Wedding Counselors – Connecting Couples with Premarital Specialists<br>
-                <a href="https://www.weddingcounselors.com/privacy" style="color: #999999; text-decoration: underline;">Privacy Policy</a> • 
-                <a href="https://www.weddingcounselors.com/unsubscribe?email=${encodeURIComponent(profileEmail)}" style="color: #999999; text-decoration: underline;">Unsubscribe</a>
+                <a href="https://www.weddingcounselors.com/privacy" style="color: #999999; text-decoration: underline;">Privacy Policy</a>
               </p>
             </td>
           </tr>
@@ -144,8 +148,8 @@ serve(async (req) => {
 </html>
     `
 
-        // Plain text version
-        const emailText = `
+    // Plain text version
+    const emailText = `
 Hi ${firstName},
 
 Great news! ${coupleName}${coupleLocation ? ` from ${locationText}` : ''} just tried to reach you through your profile on WeddingCounselors.com.
@@ -157,7 +161,7 @@ ${claimUrl}
 
 Your listing was created to help engaged couples${city ? ` in ${city}` : ''} find premarital counseling. Once you claim it (takes 2 minutes), you'll be able to:
 
-✅ Read ${coupleName}'s full message
+✅ Read ${coupleName}'s full message  
 ✅ Receive future inquiries directly to your inbox
 ✅ Update your bio, specialties, and availability
 ✅ Track profile views and leads
@@ -174,47 +178,49 @@ After claiming your profile, you can reply to them directly.
 Questions? Visit https://www.weddingcounselors.com/support
 
 Wedding Counselors – Connecting Couples with Premarital Specialists
-Unsubscribe: https://www.weddingcounselors.com/unsubscribe?email=${encodeURIComponent(profileEmail)}
     `
 
-        // Send email via Resend
-        const emailResponse = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${RESEND_API_KEY}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                from: 'Wedding Counselors <noreply@weddingcounselors.com>',
-                to: [profileEmail],
-                subject: `A couple just tried to contact you – WeddingCounselors.com`,
-                html: emailHtml,
-                text: emailText,
-                reply_to: 'support@weddingcounselors.com',
-                tags: [
-                    { name: 'type', value: 'claim_notification' },
-                    { name: 'profile_slug', value: profileSlug }
-                ]
-            }),
-        })
+    // Send email via SMTP2GO
+    const emailResponse = await fetch('https://api.smtp2go.com/v3/email/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Smtp2go-Api-Key': SMTP2GO_API_KEY
+      },
+      body: JSON.stringify({
+        api_key: SMTP2GO_API_KEY,
+        to: [profileEmail],
+        sender: FROM_EMAIL,
+        subject: 'A couple just tried to contact you – WeddingCounselors.com',
+        html_body: emailHtml,
+        text_body: emailText,
+        custom_headers: [
+          {
+            header: 'Reply-To',
+            value: 'support@weddingcounselors.com'
+          }
+        ]
+      }),
+    })
 
-        if (!emailResponse.ok) {
-            const errorData = await emailResponse.json()
-            throw new Error(`Resend API error: ${JSON.stringify(errorData)}`)
-        }
-
-        const emailData = await emailResponse.json()
-
-        return new Response(
-            JSON.stringify({ success: true, emailId: emailData.id }),
-            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-
-    } catch (error) {
-        console.error('Error sending claim notification email:', error)
-        return new Response(
-            JSON.stringify({ error: error.message }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
+    if (!emailResponse.ok) {
+      const errorData = await emailResponse.json()
+      throw new Error(`SMTP2GO API error: ${JSON.stringify(errorData)}`)
     }
+
+    const emailData = await emailResponse.json()
+    console.log('Email sent successfully via SMTP2GO:', emailData)
+
+    return new Response(
+      JSON.stringify({ success: true, emailData }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
+  } catch (error) {
+    console.error('Error sending claim notification email:', error)
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
 })
