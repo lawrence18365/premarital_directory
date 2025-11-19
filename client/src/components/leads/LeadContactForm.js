@@ -77,16 +77,19 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
           })
         } else {
           // Trojan horse email for UNCLAIMED profiles
+          // Fallback to hello@ if profile has no email (so you don't lose leads)
+          const targetEmail = profile?.email || 'hello@weddingcounselors.com'
+
           await supabase.functions.invoke('email-unclaimed-profile-owner', {
             body: {
-              profileEmail: profile?.email,
+              profileEmail: targetEmail,
               professionalName: professionalName,
               coupleName: formData.couple_name,
               coupleEmail: formData.couple_email,
               coupleLocation: formData.location,
               city: profile?.city,
               state: profile?.state_province,
-              claimUrl: `${window.location.origin} /claim-profile/${profile?.slug || profileId}?utm_source = email & utm_medium=lead_intercept & utm_campaign=claim_profile`,
+              claimUrl: `${window.location.origin}/claim-profile/${profile?.slug || profileId}?utm_source=email&utm_medium=lead_intercept&utm_campaign=claim_profile`,
               profileSlug: profile?.slug || profileId
             }
           })
