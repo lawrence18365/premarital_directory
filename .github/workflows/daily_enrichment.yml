@@ -1,4 +1,4 @@
-name: Daily Email Hunter
+  name: Daily Email Hunter
   on:
     schedule:
       - cron: '0 8 * * *'
