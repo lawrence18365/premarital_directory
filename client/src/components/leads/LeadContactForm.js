@@ -77,8 +77,9 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
           })
         } else {
           // Trojan horse email for UNCLAIMED profiles
-          // Fallback to hello@ if profile has no email (so you don't lose leads)
-          const targetEmail = profile?.email || 'hello@weddingcounselors.com'
+          // Fallback to your Gmail for testing (avoids hello@->hello@ bounce)
+          // In production, profiles will have real scraped emails
+          const targetEmail = profile?.email || 'lawrencebrennan@gmail.com'
 
           await supabase.functions.invoke('email-unclaimed-profile-owner', {
             body: {
