@@ -1,8 +1,8 @@
 name: Daily Email Hunter
 on:
   schedule:
-    - cron: '0 8 * * *'  # 8 AM UTC daily
-  workflow_dispatch:  # Manual trigger
+    - cron: '0 8 * * *'
+  workflow_dispatch:
 
 jobs:
   hunt:
