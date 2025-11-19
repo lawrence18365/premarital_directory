@@ -1,23 +1,33 @@
 name: Daily Email Hunter
 on:
   schedule:
-    - cron: '0 8 * * *'  # 8 AM UTC daily
-  workflow_dispatch:  # Manual trigger
+    # 8:00 AM UTC (Adjust this if you need a specific timezone)
+    - cron: '0 8 * * *'
+  workflow_dispatch:
 
 jobs:
   hunt:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      # Use v4
+      - uses: actions/checkout@v4
+
+      # Use v5 and enable caching
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+          cache: 'pip' # This caches dependencies so runs are faster
+
+      # Use requirements.txt for stability
       - name: Install dependencies
-        run: pip install requests supabase python-dotenv
+        run: pip install -r requirements.txt
+
       - name: Run Script
         env:
+          # Ensure these are added in GitHub Repo -> Settings -> Secrets and variables
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
+        # Ensure the path to the file is correct
         run: python enrichment_engine.py
