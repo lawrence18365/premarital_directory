@@ -1,0 +1,23 @@
+name: Daily Email Hunter
+  on:
+    schedule:
+      - cron: '0 8 * * *'  # 8 AM UTC daily
+    workflow_dispatch:  # Manual trigger
+
+  jobs:
+    hunt:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.9'
+        - name: Install dependencies
+          run: pip install requests supabase python-dotenv
+        - name: Run Script
+          env:
+            SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+            SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+            SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
+          run: python enrichment_engine.py
