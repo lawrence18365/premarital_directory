@@ -29,18 +29,32 @@ def google_search_website(name, city, state):
     Asks Google: 'Where is this person's website?'
     Excludes directories like Psychology Today so we get the REAL site.
     """
-    query = f"{name} counseling {city} {state} -site:psychologytoday.com -site:healthgrades.com -site:yelp.com -site:facebook.com"
-    
+    # Exclude directory sites to get real counselor websites
+    excluded_sites = [
+        "psychologytoday.com", "healthgrades.com", "yelp.com", "facebook.com",
+        "linkedin.com", "therapyden.com", "zocdoc.com", "goodtherapy.org",
+        "weddingcounselors.com"  # Don't find our own directory!
+    ]
+
+    exclude_params = " ".join([f"-site:{site}" for site in excluded_sites])
+    query = f"{name} counseling {city} {state} {exclude_params}"
+
     url = "https://google.serper.dev/search"
-    payload = json.dumps({"q": query, "num": 3})
+    payload = json.dumps({"q": query, "num": 5})  # Get 5 results to filter through
     headers = {'X-API-KEY': SERPER_API_KEY, 'Content-Type': 'application/json'}
 
     try:
         response = requests.post(url, headers=headers, data=payload)
         results = response.json().get("organic", [])
-        
+
         if results:
-            # Return the first link that looks like a real website
+            # Filter out any directory sites that slipped through
+            for result in results:
+                link = result.get("link", "")
+                # Skip if it's a directory site
+                if not any(excluded in link.lower() for excluded in excluded_sites):
+                    return link
+            # If all results were directories, return first one anyway
             return results[0].get("link")
     except Exception as e:
         print(f"Serper Error: {e}")
@@ -207,11 +221,27 @@ def run_daily_enrichment():
                     print(f"   ✅ FOUND EMAIL: {email}")
                     # 4. UPDATE DB with email and status
                     from datetime import datetime
-                    supabase.table('profiles').update({
-                        "email": email,
-                        "status": "enrichment_success",  # Needs manual review before sending
-                        "enrichment_attempted_at": datetime.now().isoformat()
-                    }).eq("id", profile['id']).execute()
+                    try:
+                        supabase.table('profiles').update({
+                            "email": email,
+                            "status": "enrichment_success",  # Needs manual review before sending
+                            "enrichment_attempted_at": datetime.now().isoformat()
+                        }).eq("id", profile['id']).execute()
+                    except Exception as e:
+                        # Handle duplicate emails gracefully - mark as failed and continue
+                        if "duplicate key" in str(e).lower() or "23505" in str(e):
+                            print(f"   ⚠️  Duplicate email (already exists in DB)")
+                            supabase.table('profiles').update({
+                                "status": "enrichment_failed",
+                                "enrichment_attempted_at": datetime.now().isoformat()
+                            }).eq("id", profile['id']).execute()
+                        else:
+                            print(f"   ⚠️  Database error: {e}")
+                            # Still mark as failed and continue
+                            supabase.table('profiles').update({
+                                "status": "enrichment_failed",
+                                "enrichment_attempted_at": datetime.now().isoformat()
+                            }).eq("id", profile['id']).execute()
                 else:
                     print("   ❌ No email on site.")
                     # Mark as failed so we don't try again
