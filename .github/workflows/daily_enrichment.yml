@@ -23,11 +23,15 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run Script
+      - name: Find Emails
         env:
-          # Ensure these are added in GitHub Repo -> Settings -> Secrets and variables
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
-        # Ensure the path to the file is correct
         run: python enrichment_engine.py
+
+      - name: Send Emails Automatically
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python auto_send_emails.py

@@ -224,7 +224,7 @@ def run_daily_enrichment():
                     try:
                         supabase.table('profiles').update({
                             "email": email,
-                            "status": "enrichment_success",  # Needs manual review before sending
+                            "status": "ready_to_email",  # Auto-approved - ready to send immediately!
                             "enrichment_attempted_at": datetime.now().isoformat()
                         }).eq("id", profile['id']).execute()
                     except Exception as e:
