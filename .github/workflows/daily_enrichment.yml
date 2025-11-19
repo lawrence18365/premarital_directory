@@ -1,11 +1,11 @@
 name: Daily Email Hunter
-  on:
-    schedule:
-      - cron: '0 8 * * *'  # 8 AM UTC daily
-    workflow_dispatch:  # Manual trigger
+on:
+  schedule:
+    - cron: '0 8 * * *'  # 8 AM UTC daily
+  workflow_dispatch:  # Manual trigger
 
-  jobs:
-    hunt:
+jobs:
+  hunt:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
