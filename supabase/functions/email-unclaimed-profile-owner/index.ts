@@ -61,10 +61,10 @@ Once you claim (takes 2 min), you can:
 ---
 COUPLE'S INFO:
 Name: ${coupleName}
-Email: ${coupleEmail}${coupleLocation ? `
+Email: [Claim Profile to View]${coupleLocation ? `
 Location: ${locationText}` : ''}
 
-After claiming, reply to them directly.
+After claiming, you'll see their full contact info and can reply directly.
 
 Questions? Reply to this email.
 
