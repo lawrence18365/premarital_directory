@@ -1,0 +1,21 @@
+﻿2025-11-19T21:08:11.1077041Z ##[group]Run actions/setup-python@v5
+2025-11-19T21:08:11.1078248Z with:
+2025-11-19T21:08:11.1079099Z   python-version: 3.9
+2025-11-19T21:08:11.1080055Z   cache: pip
+2025-11-19T21:08:11.1080933Z   check-latest: false
+2025-11-19T21:08:11.1082165Z   token: ***
+2025-11-19T21:08:11.1083094Z   update-environment: true
+2025-11-19T21:08:11.1084155Z   allow-prereleases: false
+2025-11-19T21:08:11.1085390Z   freethreaded: false
+2025-11-19T21:08:11.1086342Z ##[endgroup]
+2025-11-19T21:08:11.2786739Z ##[group]Installed versions
+2025-11-19T21:08:11.3414452Z Successfully set up CPython (3.9.25)
+2025-11-19T21:08:11.3415858Z ##[endgroup]
+2025-11-19T21:08:11.4197411Z [command]/opt/hostedtoolcache/Python/3.9.25/x64/bin/pip cache dir
+2025-11-19T21:08:12.7302269Z /home/runner/.cache/pip
+2025-11-19T21:08:12.8974366Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.9.25-pip-4945aa66827a368484c305552d1213409ef8ca2c904a53d8a0599473ae7d32d6
+2025-11-19T21:08:13.0763957Z Received 14525907 of 14525907 (100.0%), 93.6 MBs/sec
+2025-11-19T21:08:13.0765311Z Cache Size: ~14 MB (14525907 B)
+2025-11-19T21:08:13.0834774Z [command]/usr/bin/tar -xf /home/runner/work/_temp/d951c3d0-3353-4fce-bde0-53983c1c22f8/cache.tzst -P -C /home/runner/work/premarital_directory/premarital_directory --use-compress-program unzstd
+2025-11-19T21:08:13.1392241Z Cache restored successfully
+2025-11-19T21:08:13.1426064Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.9.25-pip-4945aa66827a368484c305552d1213409ef8ca2c904a53d8a0599473ae7d32d6
