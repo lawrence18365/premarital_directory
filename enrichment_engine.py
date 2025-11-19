@@ -172,13 +172,13 @@ def run_daily_enrichment():
 
     # 1. GET BATCH: Ask DB for 75 profiles that need emails (SCALED UP!)
     # CRITICAL: Only get profiles we haven't tried yet (prevents duplicates!)
-    # Filter: email is NULL AND status is NULL (first-time profiles)
+    # Filter: email is NULL AND status is 'pending' (first-time profiles)
     # 75/day = 2,250/month = Within Serper free tier (2,500/month)
     try:
         response = supabase.table('profiles') \
             .select("*") \
             .is_("email", "null") \
-            .is_("status", "null") \
+            .eq("status", "pending") \
             .limit(75) \
             .execute()
 
