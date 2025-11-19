@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 
-const LeadContactForm = ({ profileId, professionalName, onSuccess }) => {
+const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaimed = true, onSuccess }) => {
   const [formData, setFormData] = useState({
     couple_name: '',
     couple_email: '',
@@ -11,7 +11,7 @@ const LeadContactForm = ({ profileId, professionalName, onSuccess }) => {
     message: '',
     source: 'directory'
   })
-  
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -26,7 +26,7 @@ const LeadContactForm = ({ profileId, professionalName, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!formData.couple_name || !formData.couple_email || !formData.message) {
       setError('Please fill in all required fields')
       return
@@ -36,6 +36,9 @@ const LeadContactForm = ({ profileId, professionalName, onSuccess }) => {
     setError('')
 
     try {
+      // Determine lead status based on profile claim status
+      const leadStatus = isProfileClaimed ? 'new' : 'pending_claim'
+
       // Save lead to database
       const { data: leadData, error: leadError } = await supabase
         .from('profile_leads')
@@ -48,35 +51,53 @@ const LeadContactForm = ({ profileId, professionalName, onSuccess }) => {
           location: formData.location,
           message: formData.message,
           source: formData.source,
-          status: 'new'
+          status: leadStatus
         }])
         .select()
 
       if (leadError) throw leadError
 
-      // Send email notification to professional (via Edge Function)
+      // Send email notification based on claim status
       try {
-        await supabase.functions.invoke('send-lead-notification', {
-          body: {
-            leadId: leadData[0].id,
-            profileId: profileId,
-            coupleData: {
-              name: formData.couple_name,
-              email: formData.couple_email,
-              phone: formData.couple_phone,
-              wedding_date: formData.wedding_date,
-              location: formData.location,
-              message: formData.message
+        if (isProfileClaimed) {
+          // Standard notification for claimed profiles
+          await supabase.functions.invoke('send-lead-notification', {
+            body: {
+              leadId: leadData[0].id,
+              profileId: profileId,
+              coupleData: {
+                name: formData.couple_name,
+                email: formData.couple_email,
+                phone: formData.couple_phone,
+                wedding_date: formData.wedding_date,
+                location: formData.location,
+                message: formData.message
+              }
             }
-          }
-        })
+          })
+        } else {
+          // Trojan horse email for UNCLAIMED profiles
+          await supabase.functions.invoke('email-unclaimed-profile-owner', {
+            body: {
+              profileEmail: profile?.email,
+              professionalName: professionalName,
+              coupleName: formData.couple_name,
+              coupleEmail: formData.couple_email,
+              coupleLocation: formData.location,
+              city: profile?.city,
+              state: profile?.state_province,
+              claimUrl: `${window.location.origin} /claim-profile/${profile?.slug || profileId}?utm_source = email & utm_medium=lead_intercept & utm_campaign=claim_profile`,
+              profileSlug: profile?.slug || profileId
+            }
+          })
+        }
       } catch (emailError) {
         console.warn('Email notification failed:', emailError)
         // Don't fail the whole process if email fails
       }
 
       setSuccess(true)
-      
+
       // Reset form
       setFormData({
         couple_name: '',
@@ -112,7 +133,7 @@ const LeadContactForm = ({ profileId, professionalName, onSuccess }) => {
         </div>
         <h3>Message Sent Successfully!</h3>
         <p>
-          Thank you for reaching out. {professionalName} will receive your message 
+          Thank you for reaching out. {professionalName} will receive your message
           and respond directly to your email address within 24-48 hours.
         </p>
         <div className="next-steps">
@@ -132,7 +153,7 @@ const LeadContactForm = ({ profileId, professionalName, onSuccess }) => {
             </li>
           </ul>
         </div>
-        <button 
+        <button
           className="btn btn-outline"
           onClick={() => setSuccess(false)}
         >
@@ -237,8 +258,8 @@ const LeadContactForm = ({ profileId, professionalName, onSuccess }) => {
         </div>
 
         <div className="form-actions">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn btn-primary btn-full"
             disabled={loading}
           >
