@@ -1,71 +1,71 @@
-﻿2025-11-19T21:08:10.4611198Z ##[group]Run actions/checkout@v4
-2025-11-19T21:08:10.4612061Z with:
-2025-11-19T21:08:10.4612542Z   repository: lawrence18365/premarital_directory
-2025-11-19T21:08:10.4613332Z   token: ***
-2025-11-19T21:08:10.4613805Z   ssh-strict: true
-2025-11-19T21:08:10.4614244Z   ssh-user: git
-2025-11-19T21:08:10.4614854Z   persist-credentials: true
-2025-11-19T21:08:10.4615339Z   clean: true
-2025-11-19T21:08:10.4615782Z   sparse-checkout-cone-mode: true
-2025-11-19T21:08:10.4616343Z   fetch-depth: 1
-2025-11-19T21:08:10.4616800Z   fetch-tags: false
-2025-11-19T21:08:10.4617276Z   show-progress: true
-2025-11-19T21:08:10.4617714Z   lfs: false
-2025-11-19T21:08:10.4618140Z   submodules: false
-2025-11-19T21:08:10.4618581Z   set-safe-directory: true
-2025-11-19T21:08:10.4619277Z ##[endgroup]
-2025-11-19T21:08:10.5721399Z Syncing repository: lawrence18365/premarital_directory
-2025-11-19T21:08:10.5724347Z ##[group]Getting Git version info
-2025-11-19T21:08:10.5725968Z Working directory is '/home/runner/work/premarital_directory/premarital_directory'
-2025-11-19T21:08:10.5727948Z [command]/usr/bin/git version
-2025-11-19T21:08:10.5776329Z git version 2.51.2
-2025-11-19T21:08:10.5803440Z ##[endgroup]
-2025-11-19T21:08:10.5817428Z Temporarily overriding HOME='/home/runner/work/_temp/cb15081b-ed16-42c1-a103-528b68e821ba' before making global git config changes
-2025-11-19T21:08:10.5819857Z Adding repository directory to the temporary git global config as a safe directory
-2025-11-19T21:08:10.5833312Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/premarital_directory/premarital_directory
-2025-11-19T21:08:10.5870511Z Deleting the contents of '/home/runner/work/premarital_directory/premarital_directory'
-2025-11-19T21:08:10.5873536Z ##[group]Initializing the repository
-2025-11-19T21:08:10.5878071Z [command]/usr/bin/git init /home/runner/work/premarital_directory/premarital_directory
-2025-11-19T21:08:10.5996655Z hint: Using 'master' as the name for the initial branch. This default branch name
-2025-11-19T21:08:10.5998883Z hint: is subject to change. To configure the initial branch name to use in all
-2025-11-19T21:08:10.6000451Z hint: of your new repositories, which will suppress this warning, call:
-2025-11-19T21:08:10.6001822Z hint:
-2025-11-19T21:08:10.6002351Z hint: 	git config --global init.defaultBranch <name>
-2025-11-19T21:08:10.6002950Z hint:
-2025-11-19T21:08:10.6003524Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
-2025-11-19T21:08:10.6004437Z hint: 'development'. The just-created branch can be renamed via this command:
-2025-11-19T21:08:10.6005385Z hint:
-2025-11-19T21:08:10.6005850Z hint: 	git branch -m <name>
-2025-11-19T21:08:10.6006325Z hint:
-2025-11-19T21:08:10.6006935Z hint: Disable this message with "git config set advice.defaultBranchName false"
-2025-11-19T21:08:10.6008552Z Initialized empty Git repository in /home/runner/work/premarital_directory/premarital_directory/.git/
-2025-11-19T21:08:10.6013942Z [command]/usr/bin/git remote add origin https://github.com/lawrence18365/premarital_directory
-2025-11-19T21:08:10.6053623Z ##[endgroup]
-2025-11-19T21:08:10.6055158Z ##[group]Disabling automatic garbage collection
-2025-11-19T21:08:10.6059011Z [command]/usr/bin/git config --local gc.auto 0
-2025-11-19T21:08:10.6090542Z ##[endgroup]
-2025-11-19T21:08:10.6091274Z ##[group]Setting up auth
-2025-11-19T21:08:10.6097904Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
-2025-11-19T21:08:10.6128725Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
-2025-11-19T21:08:10.6500354Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
-2025-11-19T21:08:10.6532401Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
-2025-11-19T21:08:10.6750383Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
-2025-11-19T21:08:10.6780310Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
-2025-11-19T21:08:10.7016386Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
-2025-11-19T21:08:10.7050300Z ##[endgroup]
-2025-11-19T21:08:10.7051855Z ##[group]Fetching the repository
-2025-11-19T21:08:10.7060190Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +4329492ca310dd55c8a497782195457249d6e463:refs/remotes/origin/main
-2025-11-19T21:08:11.0255808Z From https://github.com/lawrence18365/premarital_directory
-2025-11-19T21:08:11.0257919Z  * [new ref]         4329492ca310dd55c8a497782195457249d6e463 -> origin/main
-2025-11-19T21:08:11.0290323Z ##[endgroup]
-2025-11-19T21:08:11.0291673Z ##[group]Determining the checkout info
-2025-11-19T21:08:11.0293194Z ##[endgroup]
-2025-11-19T21:08:11.0298823Z [command]/usr/bin/git sparse-checkout disable
-2025-11-19T21:08:11.0340513Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
-2025-11-19T21:08:11.0367957Z ##[group]Checking out the ref
-2025-11-19T21:08:11.0372594Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
-2025-11-19T21:08:11.0710139Z Switched to a new branch 'main'
-2025-11-19T21:08:11.0713108Z branch 'main' set up to track 'origin/main'.
-2025-11-19T21:08:11.0722221Z ##[endgroup]
-2025-11-19T21:08:11.0759927Z [command]/usr/bin/git log -1 --format=%H
-2025-11-19T21:08:11.0782692Z 4329492ca310dd55c8a497782195457249d6e463
+﻿2025-11-19T21:22:31.8033644Z ##[group]Run actions/checkout@v4
+2025-11-19T21:22:31.8034544Z with:
+2025-11-19T21:22:31.8035011Z   repository: lawrence18365/premarital_directory
+2025-11-19T21:22:31.8035760Z   token: ***
+2025-11-19T21:22:31.8036172Z   ssh-strict: true
+2025-11-19T21:22:31.8036581Z   ssh-user: git
+2025-11-19T21:22:31.8036993Z   persist-credentials: true
+2025-11-19T21:22:31.8037453Z   clean: true
+2025-11-19T21:22:31.8037853Z   sparse-checkout-cone-mode: true
+2025-11-19T21:22:31.8038339Z   fetch-depth: 1
+2025-11-19T21:22:31.8038732Z   fetch-tags: false
+2025-11-19T21:22:31.8039141Z   show-progress: true
+2025-11-19T21:22:31.8039552Z   lfs: false
+2025-11-19T21:22:31.8039936Z   submodules: false
+2025-11-19T21:22:31.8040355Z   set-safe-directory: true
+2025-11-19T21:22:31.8041015Z ##[endgroup]
+2025-11-19T21:22:31.9177872Z Syncing repository: lawrence18365/premarital_directory
+2025-11-19T21:22:31.9181551Z ##[group]Getting Git version info
+2025-11-19T21:22:31.9183240Z Working directory is '/home/runner/work/premarital_directory/premarital_directory'
+2025-11-19T21:22:31.9184604Z [command]/usr/bin/git version
+2025-11-19T21:22:31.9257301Z git version 2.51.2
+2025-11-19T21:22:31.9288125Z ##[endgroup]
+2025-11-19T21:22:31.9306890Z Temporarily overriding HOME='/home/runner/work/_temp/b9c1a31a-6d67-4993-b34c-8c8689602926' before making global git config changes
+2025-11-19T21:22:31.9309381Z Adding repository directory to the temporary git global config as a safe directory
+2025-11-19T21:22:31.9324425Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/premarital_directory/premarital_directory
+2025-11-19T21:22:31.9368535Z Deleting the contents of '/home/runner/work/premarital_directory/premarital_directory'
+2025-11-19T21:22:31.9372937Z ##[group]Initializing the repository
+2025-11-19T21:22:31.9378519Z [command]/usr/bin/git init /home/runner/work/premarital_directory/premarital_directory
+2025-11-19T21:22:31.9533918Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-11-19T21:22:31.9535349Z hint: is subject to change. To configure the initial branch name to use in all
+2025-11-19T21:22:31.9536915Z hint: of your new repositories, which will suppress this warning, call:
+2025-11-19T21:22:31.9538236Z hint:
+2025-11-19T21:22:31.9539049Z hint: 	git config --global init.defaultBranch <name>
+2025-11-19T21:22:31.9540154Z hint:
+2025-11-19T21:22:31.9541203Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-11-19T21:22:31.9543107Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-11-19T21:22:31.9544548Z hint:
+2025-11-19T21:22:31.9545336Z hint: 	git branch -m <name>
+2025-11-19T21:22:31.9546288Z hint:
+2025-11-19T21:22:31.9547377Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-11-19T21:22:31.9549342Z Initialized empty Git repository in /home/runner/work/premarital_directory/premarital_directory/.git/
+2025-11-19T21:22:31.9555637Z [command]/usr/bin/git remote add origin https://github.com/lawrence18365/premarital_directory
+2025-11-19T21:22:31.9596892Z ##[endgroup]
+2025-11-19T21:22:31.9598161Z ##[group]Disabling automatic garbage collection
+2025-11-19T21:22:31.9602337Z [command]/usr/bin/git config --local gc.auto 0
+2025-11-19T21:22:31.9636228Z ##[endgroup]
+2025-11-19T21:22:31.9637576Z ##[group]Setting up auth
+2025-11-19T21:22:31.9644620Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-11-19T21:22:31.9679358Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-11-19T21:22:32.0027143Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-11-19T21:22:32.0063569Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-11-19T21:22:32.0289636Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2025-11-19T21:22:32.0320679Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2025-11-19T21:22:32.0569059Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-11-19T21:22:32.0607585Z ##[endgroup]
+2025-11-19T21:22:32.0608927Z ##[group]Fetching the repository
+2025-11-19T21:22:32.0617785Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +c4ed61b50d003f94179a2cdd760620c11442e025:refs/remotes/origin/main
+2025-11-19T21:22:32.6560926Z From https://github.com/lawrence18365/premarital_directory
+2025-11-19T21:22:32.6563572Z  * [new ref]         c4ed61b50d003f94179a2cdd760620c11442e025 -> origin/main
+2025-11-19T21:22:32.6593315Z ##[endgroup]
+2025-11-19T21:22:32.6594777Z ##[group]Determining the checkout info
+2025-11-19T21:22:32.6596367Z ##[endgroup]
+2025-11-19T21:22:32.6600215Z [command]/usr/bin/git sparse-checkout disable
+2025-11-19T21:22:32.6639633Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-11-19T21:22:32.6664695Z ##[group]Checking out the ref
+2025-11-19T21:22:32.6667909Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2025-11-19T21:22:32.7004811Z Switched to a new branch 'main'
+2025-11-19T21:22:32.7006647Z branch 'main' set up to track 'origin/main'.
+2025-11-19T21:22:32.7017671Z ##[endgroup]
+2025-11-19T21:22:32.7053982Z [command]/usr/bin/git log -1 --format=%H
+2025-11-19T21:22:32.7076783Z c4ed61b50d003f94179a2cdd760620c11442e025
