@@ -46,12 +46,12 @@ const ClaimWithTokenPage = () => {
         .single();
 
       if (error || !data) {
-        throw new Error('Invalid or expired claim link. Please contact support at support@weddingcounselors.com.');
+        throw new Error('Invalid or expired claim link. Please contact support at hello@weddingcounselors.com.');
       }
 
       // Check token expiry
       if (data.claim_token_expires_at && new Date(data.claim_token_expires_at) < new Date()) {
-        throw new Error('This claim link has expired. Please contact support@weddingcounselors.com for a new link.');
+        throw new Error('This claim link has expired. Please contact hello@weddingcounselors.com for a new link.');
       }
 
       if (data.is_claimed) {
@@ -188,7 +188,7 @@ const ClaimWithTokenPage = () => {
 
       setStep('success');
     } catch (err) {
-      throw new Error('Failed to claim profile. Please try again or contact support@weddingcounselors.com.');
+      throw new Error('Failed to claim profile. Please try again or contact hello@weddingcounselors.com.');
     }
   };
 
@@ -223,7 +223,7 @@ const ClaimWithTokenPage = () => {
             </h2>
             <p style={{ marginBottom: 'var(--space-6)' }}>{error}</p>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: 'var(--space-4)' }}>
-              Need help? Email us at <a href="mailto:support@weddingcounselors.com">support@weddingcounselors.com</a>
+              Need help? Email us at <a href="mailto:hello@weddingcounselors.com">hello@weddingcounselors.com</a>
             </p>
             <Link to="/claim-profile" className="btn btn-primary">
               Request New Claim Link

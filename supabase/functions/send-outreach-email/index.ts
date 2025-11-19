@@ -101,7 +101,7 @@ serve(async (req) => {
       body: JSON.stringify({
         from: 'Wedding Counselors <outreach@weddingcounselors.com>',
         to: [request.provider_email],
-        reply_to: 'support@weddingcounselors.com',
+        reply_to: 'hello@weddingcounselors.com',
         subject,
         html,
       }),
@@ -196,7 +196,7 @@ function generateOutreachHTML(request: OutreachEmailRequest): string {
         </p>
 
         <p style="margin-bottom: 24px; line-height: 1.6;">
-          If you have questions, reply to this email or contact us at support@weddingcounselors.com.
+          If you have questions, reply to this email or contact us at hello@weddingcounselors.com.
         </p>
 
         <p style="color: #666; font-size: 14px; line-height: 1.5;">

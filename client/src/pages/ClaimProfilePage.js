@@ -228,7 +228,7 @@ const ClaimProfilePage = () => {
       if (err.code === '23505') {
         setError('A claim with this email already exists. Please check your inbox for confirmation.')
       } else if (err.code === '23503') {
-        setError('Profile not found. Please contact support at support@weddingcounselors.com')
+        setError('Profile not found. Please contact support at hello@weddingcounselors.com')
       } else if (err.message?.includes('JWT')) {
         setError('Session expired. Please refresh the page and try again.')
       } else if (err.message) {
@@ -452,22 +452,22 @@ const ClaimProfilePage = () => {
                   <p className="text-small text-muted mb-4">
                     Select all that apply to help couples find the right fit.
                   </p>
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-                    gap: 'var(--space-3)' 
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: 'var(--space-3)'
                   }}>
                     {specialtyOptions.map(specialty => (
-                      <label key={specialty} style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
+                      <label key={specialty} style={{
+                        display: 'flex',
+                        alignItems: 'center',
                         cursor: 'pointer',
                         padding: 'var(--space-2)',
                         borderRadius: 'var(--radius-md)',
                         transition: 'background-color var(--transition-normal)'
                       }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--gray-50)'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--gray-50)'}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                       >
                         <input
                           type="checkbox"

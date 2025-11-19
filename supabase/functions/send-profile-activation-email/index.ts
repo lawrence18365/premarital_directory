@@ -37,7 +37,7 @@ serve(async (req) => {
 
     // Get SMTP2GO configuration from environment
     const apiKey = Deno.env.get('SMTP2GO_API_KEY')
-    const fromEmail = Deno.env.get('SMTP2GO_FROM_EMAIL') || 'info@weddingcounselors.com'
+    const fromEmail = Deno.env.get('SMTP2GO_FROM_EMAIL') || 'hello@weddingcounselors.com'
 
     if (!apiKey) {
       console.error('SMTP2GO_API_KEY not configured')
@@ -56,7 +56,7 @@ serve(async (req) => {
 
     // Create email content
     const subject = `Your WeddingCounselors.com profile has ${viewCount} views this month!`
-    
+
     const htmlBody = `
     <!DOCTYPE html>
     <html>
@@ -133,7 +133,7 @@ serve(async (req) => {
             <div class="footer">
                 <p><strong>WeddingCounselors.com</strong> - The #1 Directory for Premarital Counseling Professionals</p>
                 <p>This email was sent because your professional profile is listed in our directory.<br>
-                <a href="mailto:info@weddingcounselors.com">Contact us</a> if you have questions.</p>
+                <a href="mailto:hello@weddingcounselors.com">Contact us</a> if you have questions.</p>
             </div>
         </div>
     </body>
@@ -174,7 +174,7 @@ The WeddingCounselors.com Team
 
 --
 WeddingCounselors.com - The #1 Directory for Premarital Counseling Professionals
-Contact us: info@weddingcounselors.com
+Contact us: hello@weddingcounselors.com
     `
 
     // Prepare SMTP2GO payload
@@ -207,9 +207,9 @@ Contact us: info@weddingcounselors.com
     if (!response.ok || emailResult.request_id === undefined) {
       console.error('SMTP2GO API error:', emailResult)
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           error: 'Failed to send email',
-          details: emailResult 
+          details: emailResult
         }),
         {
           status: 500,
@@ -225,7 +225,7 @@ Contact us: info@weddingcounselors.com
     })
 
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         success: true,
         message: 'Profile activation email sent successfully',
         requestId: emailResult.request_id
@@ -239,9 +239,9 @@ Contact us: info@weddingcounselors.com
   } catch (error) {
     console.error('Error sending profile activation email:', error)
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: 'Internal server error',
-        message: error.message 
+        message: error.message
       }),
       {
         status: 500,

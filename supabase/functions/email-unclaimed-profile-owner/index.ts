@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const SMTP2GO_API_KEY = Deno.env.get('SMTP2GO_API_KEY')
-const FROM_EMAIL = Deno.env.get('SMTP2GO_FROM_EMAIL') || 'info@weddingcounselors.com'
+const FROM_EMAIL = Deno.env.get('SMTP2GO_FROM_EMAIL') || 'hello@weddingcounselors.com'
 
 serve(async (req) => {
   // CORS headers
@@ -197,7 +197,7 @@ Wedding Counselors – Connecting Couples with Premarital Specialists
         custom_headers: [
           {
             header: 'Reply-To',
-            value: 'support@weddingcounselors.com'
+            value: 'hello@weddingcounselors.com'
           }
         ]
       }),

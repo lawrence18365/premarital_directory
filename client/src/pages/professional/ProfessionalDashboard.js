@@ -120,7 +120,7 @@ const ProfessionalDashboard = () => {
       setRemoveSuccess(true)
     } catch (error) {
       console.error('Error removing profile:', error)
-      alert('Failed to remove profile. Please contact support@weddingcounselors.com')
+      alert('Failed to remove profile. Please contact hello@weddingcounselors.com')
     }
 
     setRemoveLoading(false)
@@ -280,7 +280,7 @@ const ProfessionalDashboard = () => {
               <div className="table-cell">Status</div>
               <div className="table-cell">Action</div>
             </div>
-            
+
             {leads.map(lead => (
               <div key={lead.id} className="table-row">
                 <div className="table-cell">
@@ -291,26 +291,26 @@ const ProfessionalDashboard = () => {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="table-cell">
                   <div className="contact-info">
                     <div>{lead.couple_email}</div>
                     {lead.couple_phone && <small>{lead.couple_phone}</small>}
                   </div>
                 </div>
-                
+
                 <div className="table-cell">
                   <small>{formatDate(lead.created_at)}</small>
                 </div>
-                
+
                 <div className="table-cell">
                   <span className={`badge ${getStatusBadge(lead.status)}`}>
                     {getStatusText(lead.status)}
                   </span>
                 </div>
-                
+
                 <div className="table-cell">
-                  <Link 
+                  <Link
                     to={`/professional/leads/${lead.id}`}
                     className="btn btn-sm btn-outline"
                   >
@@ -375,7 +375,7 @@ const ProfessionalDashboard = () => {
             </h3>
             <p style={{ color: '#064e3b', margin: 0 }}>
               Your profile has been removed from WeddingCounselors. You will no longer appear in search results or receive inquiries.
-              If you change your mind, contact us at support@weddingcounselors.com to restore your listing.
+              If you change your mind, contact us at hello@weddingcounselors.com to restore your listing.
             </p>
           </div>
         ) : (
@@ -446,7 +446,7 @@ const ProfessionalDashboard = () => {
               <li>Prevent future outreach emails from us</li>
             </ul>
             <p style={{ marginBottom: 'var(--space-6)', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              You can contact support@weddingcounselors.com to restore your listing later if you change your mind.
+              You can contact hello@weddingcounselors.com to restore your listing later if you change your mind.
             </p>
 
             <div style={{ display: 'flex', gap: 'var(--space-3)' }}>

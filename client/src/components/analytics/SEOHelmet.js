@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet'
 // Enhanced SEO utilities
 const generateBreadcrumbStructuredData = (breadcrumbs, siteUrl = 'https://www.weddingcounselors.com') => {
   if (!breadcrumbs || breadcrumbs.length === 0) return null
-  
+
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -50,7 +50,7 @@ const generateOrganizationStructuredData = (siteUrl) => {
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "Customer Service",
-      "email": "support@weddingcounselors.com",
+      "email": "hello@weddingcounselors.com",
       "availableLanguage": ["English"]
     },
     "areaServed": {
@@ -117,7 +117,7 @@ const SEOHelmet = ({
   // Fallback to current location path when no url prop provided (prevents duplicate root canonicals)
   const currentPath = (typeof window !== 'undefined' && window.location && window.location.pathname) ? window.location.pathname : ''
   const effectivePath = url || currentPath || '/'
-  
+
   // Normalize URL - remove trailing slashes except for root
   const normalizedPath = effectivePath === '/' ? '/' : effectivePath.replace(/\/+$/, '')
   const fullUrl = `${siteUrl}${normalizedPath}`
@@ -131,13 +131,13 @@ const SEOHelmet = ({
       <meta name="description" content={description || defaultDescription} />
       <meta name="robots" content={noindex ? "noindex, follow" : "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"} />
       <link rel="canonical" href={fullUrl} />
-      
+
       {/* Keywords */}
       {keywords && <meta name="keywords" content={keywords} />}
-      
+
       {/* Author */}
       {author && <meta name="author" content={author} />}
-      
+
       {/* Article meta */}
       {publishedTime && <meta property="article:published_time" content={publishedTime} />}
       {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
@@ -235,7 +235,7 @@ export const generateProfessionalStructuredData = (professional) => {
     "serviceType": professional.specialties || ["Premarital Counseling"],
     "knowsAbout": [
       "Marriage Counseling",
-      "Premarital Counseling", 
+      "Premarital Counseling",
       "Relationship Therapy",
       "Couples Therapy"
     ],
