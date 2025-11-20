@@ -98,7 +98,7 @@ Warm regards,
 Haylee Mandarino
 Founder, Wedding Counselors
 weddingcounselors.com
-haylee@weddingcounselors.com
+hello@weddingcounselors.com
 
 P.S. Your profile is already live and searchable. Claiming it takes just 2 minutes and lets you control exactly how you're presented to potential clients. If you'd prefer to be removed from our directory instead, just reply with "remove" and I'll take care of it immediately."""
 
@@ -114,7 +114,7 @@ def send_email_smtp(profile, from_account):
         msg['From'] = f"Haylee - Wedding Counselors <{account_info['email']}>"
         msg['To'] = profile['email']
         msg['Subject'] = subject
-        msg['Reply-To'] = "haylee@weddingcounselors.com"
+        msg['Reply-To'] = "hello@weddingcounselors.com"
 
         msg.attach(MIMEText(body, 'plain'))
 

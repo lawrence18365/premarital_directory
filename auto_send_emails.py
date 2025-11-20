@@ -136,7 +136,7 @@ Best,
 
 Haylee Mandarino
 Founder, Wedding Counselors
-haylee@weddingcounselors.com
+hello@weddingcounselors.com
 
 ────────────────────────────────────────────────────────────────────
 Need to make changes?
@@ -161,7 +161,7 @@ def send_email_resend(profile, from_email):
             "to": [profile['email']],
             "subject": subject,
             "text": body,
-            "reply_to": "haylee@weddingcounselors.com"
+            "reply_to": "hello@weddingcounselors.com"
         }
 
         result = resend.Emails.send(params)
