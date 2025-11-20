@@ -145,8 +145,8 @@ This is a one-time notification.
 • Remove Profile: Reply "REMOVE" or visit weddingcounselors.com/remove
 
 Wedding Counselors
-[ADD YOUR PHYSICAL ADDRESS HERE]
-[City, State, Zip]
+11 Wanda Road
+Toronto, ON
 ────────────────────────────────────────────────────────────────────"""
 
     return subject, body
