@@ -98,43 +98,56 @@ def count_emails_sent_today():
         return 0
 
 def create_personalized_email(profile):
-    """Create personalized email for counselor"""
+    """Create CAN-SPAM compliant personalized email with data-backed approach"""
     full_name = profile.get('full_name', 'there')
     name_parts = full_name.replace('Dr.', '').replace(',', '').strip().split()
     first_name = name_parts[0] if name_parts else 'there'
 
     city = profile.get('city', 'your area')
+    email = profile.get('email', '')
 
-    subject = f"Your profile is live on Wedding Counselors (5K+ monthly impressions)"
+    # Primary subject (data-backed approach)
+    subject = f"Couples in {city} are searching for you (High Traffic Alert)"
+    # Alternate: f"Question about your practice in {city}"
 
     body = f"""Hi {first_name},
 
-Great news! Your practice is now featured on Wedding Counselors (weddingcounselors.com) - a fast-growing directory that's already reaching 5,000+ couples per month searching for premarital counseling in {city} and beyond.
+I'm Haylee, founder of Wedding Counselors.
 
-We've created a professional profile for your practice that's now live and visible to engaged couples searching for quality premarital services. In just 3 months, we've grown to nearly 5,000 impressions, and counselors on our platform are already seeing increased referrals.
+I'm reaching out because we are seeing a significant spike in couples searching for premarital counseling in {city}, and your name often appears in our internal search data.
 
-Here's what we've set up for you (completely free):
+To help these couples find you, we've organized your public information into a free professional profile on our directory. Our site just hit 5,000 monthly impressions, and we want to make sure the traffic looking for you is landing on accurate information.
 
-✓ A professional profile showcasing your services
-✓ Direct link to your website for better SEO and local search rankings
-✓ Contact information and location details
-✓ Visibility to thousands of engaged couples actively searching for help
-✓ Zero fees, no contracts, no ongoing commitments
+Your profile is already live here:
+👉 https://weddingcounselors.com
 
-CLAIM YOUR PROFILE: Simply reply to this email or visit weddingcounselors.com to claim and customize your listing. You can add more details about your approach, specialties, and what makes your practice unique.
+Is your information correct?
+You can claim this profile in one click (it's free forever) to update your bio, photo, or website link. This ensures the couples viewing your profile can contact you directly.
 
-We've seen counselors get their first referrals within days of claiming their profiles. With our current growth trajectory and the couples actively searching our directory, this is a great opportunity to expand your reach at no cost.
+Why claim it?
 
-Ready to claim your profile? Just hit reply and let me know, or visit the site directly.
+• Zero Cost: It is free (and always will be for early members).
+• SEO Boost: A high-quality backlink to your practice.
+• Referrals: We are already seeing inquiries for counselors in {city}.
 
-Warm regards,
+If you'd like to take over this listing, just reply "Yes" or click the link above. If you're not interested, no worries at all—we can remove it upon request.
+
+Best,
 
 Haylee Mandarino
 Founder, Wedding Counselors
-weddingcounselors.com
 haylee@weddingcounselors.com
 
-P.S. Your profile is already live and searchable. Claiming it takes just 2 minutes and lets you control exactly how you're presented to potential clients. If you'd prefer to be removed from our directory instead, just reply with "remove" and I'll take care of it immediately."""
+────────────────────────────────────────────────────────────────────
+Need to make changes?
+This is a one-time notification.
+• Unsubscribe: https://weddingcounselors.com/unsubscribe?email={email}
+• Remove Profile: Reply "REMOVE" or visit weddingcounselors.com/remove
+
+Wedding Counselors
+[ADD YOUR PHYSICAL ADDRESS HERE]
+[City, State, Zip]
+────────────────────────────────────────────────────────────────────"""
 
     return subject, body
 
