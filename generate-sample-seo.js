@@ -5,15 +5,19 @@
  * Creates high-quality, unique content for major cities to demonstrate the system
  */
 
+
 const { createClient } = require('@supabase/supabase-js')
 
+// Load environment variables
+require('dotenv').config()
+
 // Use your environment variables or provide them directly
-const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || process.env.SUPABASE_URL
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.REACT_APP_SUPABASE_ANON_KEY
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.REACT_APP_SUPABASE_ANON_KEY
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
   console.error('❌ Missing Supabase credentials')
-  console.error('Please set REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY')
+  console.error('Please set SUPABASE_URL and SUPABASE_KEY in your .env file')
   process.exit(1)
 }
 
@@ -31,30 +35,30 @@ const SAMPLE_LOCATIONS = {
 async function generateSampleContent() {
   console.log('🚀 Generating Sample SEO Content')
   console.log('================================')
-  
+
   // First, create the table if it doesn't exist
   await createSEOTable()
-  
+
   let totalGenerated = 0
-  
+
   try {
     // Generate content for each sample location
     for (const [state, cities] of Object.entries(SAMPLE_LOCATIONS)) {
       console.log(`\n📍 Generating content for ${state}...`)
-      
+
       // Generate state page
       const stateContent = await generateStateContent(state)
       await saveContent(stateContent)
       totalGenerated++
       console.log(`   ✅ State page: ${stateContent.title}`)
-      
+
       // Generate city pages
       for (const city of cities) {
         const cityContent = await generateCityContent(city, state)
         await saveContent(cityContent)
         totalGenerated++
         console.log(`   ✅ City page: ${cityContent.title}`)
-        
+
         // Generate blog post for major cities
         const blogContent = await generateBlogContent(city, state)
         await saveContent(blogContent)
@@ -62,17 +66,17 @@ async function generateSampleContent() {
         console.log(`   ✅ Blog post: ${blogContent.title}`)
       }
     }
-    
+
     console.log(`\n🎉 Sample content generation complete!`)
     console.log(`📊 Generated ${totalGenerated} pieces of unique SEO content`)
     console.log(`🔍 Content available at: /seo/[slug]`)
-    
+
     // List some example URLs
     console.log(`\n📄 Example URLs:`)
     console.log(`   /seo/premarital-counseling-california`)
     console.log(`   /seo/premarital-counseling-los-angeles-california`)
     console.log(`   /seo/5-benefits-of-premarital-counseling-for-los-angeles-couples`)
-    
+
   } catch (error) {
     console.error('❌ Error generating content:', error)
     process.exit(1)
@@ -81,7 +85,7 @@ async function generateSampleContent() {
 
 async function createSEOTable() {
   console.log('📋 Creating SEO content table...')
-  
+
   const { error } = await supabase.rpc('exec_sql', {
     sql: `
       CREATE TABLE IF NOT EXISTS public.seo_content (
@@ -106,7 +110,7 @@ async function createSEOTable() {
       CREATE INDEX IF NOT EXISTS idx_seo_content_slug ON public.seo_content(slug);
     `
   })
-  
+
   if (error && !error.message.includes('already exists')) {
     console.error('Error creating table:', error)
   } else {
@@ -116,7 +120,7 @@ async function createSEOTable() {
 
 async function generateStateContent(state) {
   const profileCount = Math.floor(Math.random() * 50) + 25 // 25-75 profiles
-  
+
   const content = `# Premarital Counseling in ${state}: Your Guide to Strong Relationships
 
 Building a strong marriage starts with preparation. Couples across ${state} are discovering the transformative power of premarital counseling to create lasting, fulfilling relationships.
@@ -207,7 +211,7 @@ Ready to strengthen your relationship? Browse our verified professionals across 
 
 async function generateCityContent(city, state) {
   const profileCount = Math.floor(Math.random() * 25) + 10 // 10-35 profiles
-  
+
   const content = `# Premarital Counseling in ${city}, ${state}: Expert Relationship Preparation
 
 Planning your wedding in ${city}? Congratulations! As you prepare for your special day, don't forget the most important element: preparing for your marriage itself.
@@ -345,7 +349,7 @@ Take the first step toward your strongest marriage - your future selves will tha
 
 async function generateBlogContent(city, state) {
   const title = `5 Benefits of Premarital Counseling for ${city} Couples`
-  
+
   const content = `# ${title}
 
 If you're engaged and planning your wedding in ${city}, you're probably focused on venues, flowers, and guest lists. But what about preparing for the marriage itself?

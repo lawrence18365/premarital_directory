@@ -13,13 +13,23 @@
  * 5. Semantic variation and natural language processing
  */
 
+
 const { createClient } = require('@supabase/supabase-js')
 const fs = require('fs')
 const path = require('path')
 
+// Load environment variables from .env file
+require('dotenv').config()
+
 // Configuration
-const SUPABASE_URL = process.env.SUPABASE_URL || 'your-supabase-url'
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'your-service-key'
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.REACT_APP_SUPABASE_ANON_KEY
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+  console.error('❌ Missing Supabase credentials')
+  console.error('Please set SUPABASE_URL and SUPABASE_KEY in your .env file')
+  process.exit(1)
+}
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
@@ -41,16 +51,16 @@ const LOCATIONS = {
 const QUALITY_STRATEGIES = {
   // Strategy 1: Data-driven content
   dataIntegration: true,
-  
+
   // Strategy 2: Local expertise
   localFacts: true,
-  
+
   // Strategy 3: User value focus
   practicalAdvice: true,
-  
+
   // Strategy 4: Semantic variety
   contentVariations: 5,
-  
+
   // Strategy 5: Word count targets
   minWords: 800,
   targetWords: 1200
@@ -59,47 +69,47 @@ const QUALITY_STRATEGIES = {
 async function generateBulkContent() {
   console.log('🚀 Starting bulk SEO content generation...')
   console.log(`📊 Target: ${Object.keys(LOCATIONS).length} states, ${Object.values(LOCATIONS).flat().length} cities`)
-  
+
   let totalGenerated = 0
-  
+
   try {
     // Generate state-level content first
     for (const state of Object.keys(LOCATIONS)) {
       console.log(`\n📍 Generating content for ${state}...`)
-      
+
       const stateContent = await generateStateContent(state)
       await saveContent(stateContent)
       totalGenerated++
-      
+
       // Generate city-level content
       for (const city of LOCATIONS[state]) {
         console.log(`   🏙️  Generating content for ${city}, ${state}...`)
-        
+
         const cityContent = await generateCityContent(city, state)
         await saveContent(cityContent)
         totalGenerated++
-        
+
         // Rate limiting to be respectful
         await sleep(1000)
       }
-      
+
       // Generate blog posts for major cities
       const majorCities = LOCATIONS[state].slice(0, 3)
       for (const city of majorCities) {
         console.log(`   📝 Generating blog post for ${city}, ${state}...`)
-        
+
         const blogContent = await generateBlogContent(city, state)
         await saveContent(blogContent)
         totalGenerated++
-        
+
         await sleep(1000)
       }
     }
-    
+
     console.log(`\n✅ Content generation complete!`)
     console.log(`📈 Total pieces generated: ${totalGenerated}`)
     console.log(`💾 All content saved to database`)
-    
+
   } catch (error) {
     console.error('❌ Error generating content:', error)
   }
@@ -107,7 +117,7 @@ async function generateBulkContent() {
 
 async function generateStateContent(state) {
   const locationData = await getLocationData(null, state)
-  
+
   const templates = [
     {
       title: `Premarital Counseling in ${state} | Find Certified Relationship Experts`,
@@ -115,14 +125,14 @@ async function generateStateContent(state) {
       focus: 'professional-directory'
     },
     {
-      title: `${state} Marriage Preparation Services | Expert Counselors Statewide`, 
+      title: `${state} Marriage Preparation Services | Expert Counselors Statewide`,
       content: generateStateTemplate2(state, locationData),
       focus: 'service-overview'
     }
   ]
-  
+
   const template = templates[Math.floor(Math.random() * templates.length)]
-  
+
   return {
     type: 'state',
     location: state,
@@ -147,7 +157,7 @@ async function generateStateContent(state) {
 async function generateCityContent(city, state) {
   const locationData = await getLocationData(city, state)
   const localFacts = getLocalFacts(city, state)
-  
+
   const templates = [
     {
       title: `Premarital Counseling in ${city}, ${state} | Expert Marriage Preparation`,
@@ -165,9 +175,9 @@ async function generateCityContent(city, state) {
       focus: 'preparation-guide'
     }
   ]
-  
+
   const template = templates[Math.floor(Math.random() * templates.length)]
-  
+
   return {
     type: 'city',
     location: city,
@@ -191,7 +201,7 @@ async function generateCityContent(city, state) {
 
 async function generateBlogContent(city, state) {
   const locationData = await getLocationData(city, state)
-  
+
   const blogTopics = [
     {
       title: `5 Benefits of Premarital Counseling for ${city} Couples`,
@@ -209,9 +219,9 @@ async function generateBlogContent(city, state) {
       focus: 'expectations-guide'
     }
   ]
-  
+
   const template = blogTopics[Math.floor(Math.random() * blogTopics.length)]
-  
+
   return {
     type: 'blog',
     location: city,
@@ -504,18 +514,18 @@ async function getLocationData(city, state) {
   // Simulate getting real data from your database
   try {
     let query = supabase.from('profiles').select('profession, specialties')
-    
+
     if (city) {
       query = query.eq('state_province', state).ilike('city', `%${city}%`)
     } else {
       query = query.eq('state_province', state)
     }
-    
+
     const { data: profiles } = await query.limit(100)
-    
+
     const professions = [...new Set(profiles?.map(p => p.profession) || [])]
     const specialties = [...new Set(profiles?.flatMap(p => p.specialties || []) || [])]
-    
+
     return {
       profileCount: profiles?.length || Math.floor(Math.random() * 25) + 15,
       topProfessions: professions.slice(0, 5),
@@ -527,13 +537,13 @@ async function getLocationData(city, state) {
       profileCount: Math.floor(Math.random() * 25) + 15,
       topProfessions: [
         'Licensed Marriage & Family Therapist',
-        'Licensed Clinical Social Worker', 
+        'Licensed Clinical Social Worker',
         'Licensed Professional Counselor',
         'Certified Relationship Coach'
       ],
       topSpecialties: [
         'Communication Skills',
-        'Conflict Resolution', 
+        'Conflict Resolution',
         'Financial Planning',
         'Gottman Method',
         'Christian Counseling',
@@ -558,7 +568,7 @@ function getLocalFacts(city, state) {
     },
     // Add more cities as needed...
   }
-  
+
   return cityFacts[city] || {
     culturalContext: 'The local community values strong relationships and family connections.',
     demographics: 'growing, diverse population',
@@ -571,12 +581,12 @@ async function saveContent(content) {
     const { error } = await supabase
       .from('seo_content')
       .upsert(content, { onConflict: 'slug' })
-    
+
     if (error) {
       console.error('Error saving content:', error)
       return false
     }
-    
+
     return true
   } catch (error) {
     console.error('Database error:', error)

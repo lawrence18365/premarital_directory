@@ -6,7 +6,7 @@ import ErrorMessage from '../components/common/ErrorMessage';
 import Breadcrumbs, { generateBreadcrumbs } from '../components/common/Breadcrumbs';
 import SEOHelmet from '../components/analytics/SEOHelmet';
 import { trackLocationPageView } from '../components/analytics/GoogleAnalytics';
-import { profileOperations } from '../lib/supabaseClient';
+import { profileOperations, supabase } from '../lib/supabaseClient';
 import { STATE_CONFIG, CITY_CONFIG, isAnchorCity } from '../data/locationConfig';
 import CityContentGenerator from '../lib/cityContentGenerator';
 import LocalContent from '../components/common/LocalContent';
@@ -26,27 +26,48 @@ const CityPage = () => {
   const [cityContent, setCityContent] = useState(null)
   const [contentLoading, setContentLoading] = useState(true)
   const [cityOverride, setCityOverride] = useState(null)
+  const [seoContent, setSeoContent] = useState(null)
 
   const stateConfig = STATE_CONFIG[state]
   const cityConfig = CITY_CONFIG[state]?.[city]
-  
+
   // Fallback if city not in config
-  const cityName = cityConfig?.name || (city ? city.split('-').map(word => 
+  const cityName = cityConfig?.name || (city ? city.split('-').map(word =>
     word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ') : 'Unknown City')
-  
+
   const stateName = stateConfig?.name || state
 
   useEffect(() => {
     loadCityProfiles()
     loadCityContent()
     loadCityOverride()
+    loadSEOContent()
     trackLocationPageView(stateName, cityName)
   }, [state, city])
 
   const loadCityOverride = async () => {
     const { data } = await cityOverridesOperations.getCityOverride(state, city)
     setCityOverride(data)
+  }
+
+  const loadSEOContent = async () => {
+    try {
+      const slug = `premarital-counseling-${city}-${state}`
+      const { data } = await supabase
+        .from('seo_content')
+        .select('*')
+        .eq('slug', slug)
+        .eq('is_published', true)
+        .single()
+
+      if (data) {
+        setSeoContent(data)
+      }
+    } catch (error) {
+      // SEO content is optional, don't show error if not found
+      console.log('No SEO content found for', city, state)
+    }
   }
 
   // Track profile click for conversion analytics
@@ -103,20 +124,20 @@ const CityPage = () => {
 
   const loadCityContent = async () => {
     setContentLoading(true)
-    
+
     try {
       const contentGenerator = new CityContentGenerator()
       const content = await contentGenerator.getOrGenerateCityContent(
-        state, 
+        state,
         cityName
       )
-      
+
       setCityContent(content)
     } catch (error) {
       console.error('AI content generation failed:', error)
       setCityContent(null)
     }
-    
+
     setContentLoading(false)
   }
 
@@ -638,6 +659,36 @@ const CityPage = () => {
                     Free listing • Instant visibility • No commitment required
                   </p>
                 </div>
+
+                {/* Rich SEO Content Section - From Database */}
+                {seoContent && (
+                  <div style={{
+                    marginTop: 'var(--space-12)',
+                    padding: 'var(--space-8)',
+                    background: 'white',
+                    borderRadius: 'var(--radius-lg)',
+                    border: '1px solid var(--gray-200)'
+                  }}>
+                    <div
+                      className="seo-content-body"
+                      style={{
+                        fontSize: '1rem',
+                        lineHeight: '1.7',
+                        color: 'var(--text-primary)'
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: seoContent.content
+                          .replace(/^# (.*$)/gm, '<h2 style="font-size: 1.75rem; margin-top: 2rem; margin-bottom: 1rem; color: var(--text-primary);">$1</h2>')
+                          .replace(/^## (.*$)/gm, '<h3 style="font-size: 1.5rem; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--text-primary);">$1</h3>')
+                          .replace(/^### (.*$)/gm, '<h4 style="font-size: 1.25rem; margin-top: 1.25rem; margin-bottom: 0.5rem; color: var(--text-primary);">$1</h4>')
+                          .replace(/^\*\*(.*?)\*\*/gm, '<strong>$1</strong>')
+                          .replace(/^- (.*$)/gm, '<li style="margin-left: 1.5rem;">$1</li>')
+                          .replace(/\n\n/g, '</p><p style="margin-bottom: 1rem;">')
+                          .replace(/^(?!<[h|l|p])(.*$)/gm, '<p style="margin-bottom: 1rem;">$1</p>')
+                      }}
+                    />
+                  </div>
+                )}
 
                 <LocalContent locationName={cityName} />
               </>
