@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-FULLY AUTOMATED EMAIL SENDER VIA RESEND
-Sends all emails marked as 'ready_to_email' automatically.
-No manual review, no confirmation needed.
+FULLY AUTOMATED EMAIL SENDER VIA RESEND (WITH DAILY LIMITS)
+Sends emails marked as 'ready_to_email' with safe daily limits to avoid spam filters.
+Implements gradual warm-up strategy for optimal deliverability.
 """
 
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import random
 from dotenv import load_dotenv
@@ -29,6 +29,73 @@ FROM_EMAILS = [
     "Lauren - Wedding Counselors <lauren@weddingcounselors.com>",
     "Jessie - Wedding Counselors <jessie@weddingcounselors.com>"
 ]
+
+# Safe daily limits to avoid spam filters (email warm-up schedule)
+# Based on 2025 best practices for cold email outreach
+DAILY_LIMITS_BY_DAY = {
+    1: 20,   # Day 1-2: Start slow
+    2: 20,
+    3: 30,   # Day 3-4: Small increase
+    4: 30,
+    5: 40,   # Day 5-7: Building trust
+    6: 40,
+    7: 40,
+    8: 50,   # Week 2
+    9: 50,
+    10: 50,
+    11: 60,  # Day 11-14
+    12: 60,
+    13: 60,
+    14: 60,
+    15: 70,  # Week 3
+    16: 70,
+    17: 70,
+    18: 80,
+    19: 80,
+    20: 80,
+    21: 80,
+}
+DEFAULT_DAILY_LIMIT = 100  # After day 21, use this limit
+
+def get_daily_limit():
+    """Get today's sending limit based on warm-up schedule"""
+    # Check if we have a campaign start date stored
+    try:
+        # Try to get the first contacted profile to determine campaign start
+        first_contact = supabase.table('profiles') \
+            .select('contacted_at') \
+            .eq('status', 'contacted') \
+            .not_.is_('contacted_at', 'null') \
+            .order('contacted_at') \
+            .limit(1) \
+            .execute()
+
+        if first_contact.data:
+            start_date = datetime.fromisoformat(first_contact.data[0]['contacted_at'].replace('Z', '+00:00'))
+            days_since_start = (datetime.now(start_date.tzinfo) - start_date).days + 1
+            limit = DAILY_LIMITS_BY_DAY.get(days_since_start, DEFAULT_DAILY_LIMIT)
+            return limit, days_since_start
+    except:
+        pass
+
+    # First day of campaign - start with day 1 limit
+    return DAILY_LIMITS_BY_DAY[1], 1
+
+def count_emails_sent_today():
+    """Count how many emails we've already sent today"""
+    try:
+        today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+
+        result = supabase.table('profiles') \
+            .select('id', count='exact') \
+            .eq('status', 'contacted') \
+            .gte('contacted_at', today_start) \
+            .execute()
+
+        return result.count
+    except Exception as e:
+        print(f"⚠️  Error counting today's emails: {e}")
+        return 0
 
 def create_personalized_email(profile):
     """Create personalized email for counselor"""
@@ -92,18 +159,35 @@ def send_email_resend(profile, from_email):
         return False, str(e)
 
 def auto_send_all():
-    """Automatically send to all ready_to_email profiles"""
+    """Automatically send to all ready_to_email profiles (WITH DAILY LIMITS)"""
     print("=" * 70)
-    print("🤖 FULLY AUTOMATED EMAIL SENDER")
+    print("🤖 AUTOMATED EMAIL SENDER (WITH SAFE DAILY LIMITS)")
     print("=" * 70)
     print(f"📅 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-    # Load all profiles ready to email
-    print(f"\n🔍 Loading profiles with status='ready_to_email'...")
+    # Check daily limit and emails sent today
+    daily_limit, campaign_day = get_daily_limit()
+    emails_sent_today = count_emails_sent_today()
+    emails_remaining_today = max(0, daily_limit - emails_sent_today)
+
+    print(f"\n📊 Daily Sending Status:")
+    print(f"   Campaign Day: {campaign_day}")
+    print(f"   Daily Limit: {daily_limit} emails")
+    print(f"   Already Sent Today: {emails_sent_today}")
+    print(f"   Remaining Today: {emails_remaining_today}")
+
+    if emails_remaining_today == 0:
+        print(f"\n✅ Daily limit reached ({daily_limit} emails sent)")
+        print(f"   Come back tomorrow for Day {campaign_day + 1} (limit: {DAILY_LIMITS_BY_DAY.get(campaign_day + 1, DEFAULT_DAILY_LIMIT)} emails)")
+        return 0, 0
+
+    # Load profiles ready to email (limit to remaining capacity)
+    print(f"\n🔍 Loading up to {emails_remaining_today} profiles...")
     response = supabase.table('profiles') \
         .select("*") \
         .eq("status", "ready_to_email") \
         .not_.is_("email", "null") \
+        .limit(emails_remaining_today) \
         .execute()
 
     profiles = response.data
@@ -112,10 +196,10 @@ def auto_send_all():
         print("✅ No emails to send (all caught up!)")
         return 0, 0
 
-    print(f"📧 Found {len(profiles)} emails ready to send")
+    print(f"📧 Sending {len(profiles)} emails today (safe warm-up strategy)")
 
     # Send emails
-    print(f"\n🚀 SENDING EMAILS AUTOMATICALLY...")
+    print(f"\n🚀 SENDING EMAILS...")
     email_index = 0
     sent_count = 0
     failed_count = 0
@@ -161,20 +245,44 @@ def auto_send_all():
 
     # Results
     print(f"\n" + "=" * 70)
-    print("🎉 AUTOMATED SENDING COMPLETE!")
+    print("🎉 DAILY SENDING COMPLETE!")
     print("=" * 70)
     print(f"✅ Successfully sent: {sent_count}")
     print(f"❌ Failed: {failed_count}")
     if sent_count + failed_count > 0:
         print(f"📈 Success rate: {(sent_count/(sent_count+failed_count)*100):.1f}%")
 
+    # Warm-up progress
+    total_sent_to_date = emails_sent_today + sent_count
+    print(f"\n📊 WARM-UP PROGRESS:")
+    print(f"   Campaign Day: {campaign_day}")
+    print(f"   Today's Limit: {daily_limit} emails")
+    print(f"   Total Sent Today: {total_sent_to_date}/{daily_limit}")
+    next_limit = DAILY_LIMITS_BY_DAY.get(campaign_day + 1, DEFAULT_DAILY_LIMIT)
+    print(f"   Tomorrow's Limit: {next_limit} emails")
+
+    # Count remaining profiles
+    try:
+        remaining = supabase.table('profiles').select('id', count='exact').eq('status', 'ready_to_email').execute()
+        print(f"   Remaining Profiles: {remaining.count}")
+        if remaining.count > 0:
+            days_to_complete = (remaining.count // next_limit) + 1
+            print(f"   Est. Days to Complete: {days_to_complete} days")
+    except:
+        pass
+
     # Expected results
     if sent_count > 0:
         expected_responses = max(1, int(sent_count * 0.10))
-        print(f"\n🎯 EXPECTED RESULTS:")
+        print(f"\n🎯 EXPECTED RESULTS (from today's {sent_count} emails):")
         print(f"   Responses expected: {expected_responses}-{expected_responses*2} within 24-48 hours")
         print(f"   Peak response time: 6-24 hours")
         print(f"   Directory signups: {max(1, int(expected_responses * 0.3))}-{max(1, int(expected_responses * 0.5))}")
+
+    print(f"\n💡 DELIVERABILITY NOTE:")
+    print(f"   Using gradual warm-up to avoid spam filters")
+    print(f"   This protects your sender reputation long-term")
+    print(f"   All 133 profiles will be contacted safely over ~7-10 days")
 
     print("=" * 70)
 
