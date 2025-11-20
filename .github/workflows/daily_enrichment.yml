@@ -1,37 +1,51 @@
-name: Daily Email Hunter
+name: Daily Automated Outreach
 on:
   schedule:
-    # 8:00 AM UTC (Adjust this if you need a specific timezone)
-    - cron: '0 8 * * *'
+    # Run every day at 9 AM UTC (4 AM EST / 1 AM PST)
+    # Best time for B2B emails: recipients see it first thing in morning
+    - cron: '0 9 * * *'
   workflow_dispatch:
+    inputs:
+      skip_enrichment:
+        description: 'Skip email finding (only send existing ready_to_email)'
+        required: false
+        default: 'false'
 
 jobs:
-  hunt:
+  automated-outreach:
     runs-on: ubuntu-latest
     steps:
-      # Use v4
       - uses: actions/checkout@v4
 
-      # Use v5 and enable caching
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
-          cache: 'pip' # This caches dependencies so runs are faster
+          python-version: '3.12'
+          cache: 'pip'
 
-      # Use requirements.txt for stability
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Find Emails
+      - name: Find Emails (Enrichment)
+        if: github.event.inputs.skip_enrichment != 'true'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
-        run: python enrichment_engine.py
+        run: |
+          echo "🔍 Finding new emails..."
+          python enrichment_engine.py || echo "⚠️ Enrichment failed, continuing with existing emails..."
 
-      - name: Send Emails Automatically
+      - name: Send Emails Automatically via Resend
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        run: python auto_send_emails.py
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          echo "📧 Sending emails to all ready_to_email profiles..."
+          python auto_send_emails.py
+
+      - name: Summary
+        run: |
+          echo "✅ Daily automated outreach complete!"
+          echo "📊 Check logs above for results"

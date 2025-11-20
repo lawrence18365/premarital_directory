@@ -1,42 +1,34 @@
 #!/usr/bin/env python3
 """
-FULLY AUTOMATED EMAIL SENDER
+FULLY AUTOMATED EMAIL SENDER VIA RESEND
 Sends all emails marked as 'ready_to_email' automatically.
 No manual review, no confirmation needed.
 """
 
 import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import time
 import random
 from dotenv import load_dotenv
 from supabase import create_client
+import resend
 
 load_dotenv()
 
 # Supabase connection
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
 
-# Email accounts (rotating for better deliverability)
-ACCOUNTS = {
-    "lauren": {
-        "email": "lauren@weddingcounselors.com",
-        "password": "1relandS!"
-    },
-    "info": {
-        "email": "info@weddingcounselors.com",
-        "password": "1relandS!"
-    },
-    "jessie": {
-        "email": "jessie@weddingcounselors.com",
-        "password": "1relandS!"
-    }
-}
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+resend.api_key = RESEND_API_KEY
+
+# From email addresses (Resend rotates automatically)
+FROM_EMAILS = [
+    "Haylee - Wedding Counselors <haylee@weddingcounselors.com>",
+    "Lauren - Wedding Counselors <lauren@weddingcounselors.com>",
+    "Jessie - Wedding Counselors <jessie@weddingcounselors.com>"
+]
 
 def create_personalized_email(profile):
     """Create personalized email for counselor"""
@@ -46,26 +38,27 @@ def create_personalized_email(profile):
 
     city = profile.get('city', 'your area')
 
-    subject = f"Free directory listing for {city} premarital counselors"
+    subject = f"Your profile is live on Wedding Counselors (5K+ monthly impressions)"
 
     body = f"""Hi {first_name},
 
-I hope this message finds you well. I came across your practice while researching premarital counseling services in {city}, and I was impressed by your dedication to helping couples prepare for marriage.
+Great news! Your practice is now featured on Wedding Counselors (weddingcounselors.com) - a fast-growing directory that's already reaching 5,000+ couples per month searching for premarital counseling in {city} and beyond.
 
-I'm Haylee, and I run Wedding Counselors (weddingcounselors.com) - a directory dedicated to helping couples find quality premarital counseling, therapy, and clergy services. We're building a comprehensive resource to connect couples with the right professionals during one of the most important times in their lives.
+We've created a professional profile for your practice that's now live and visible to engaged couples searching for quality premarital services. In just 3 months, we've grown to nearly 5,000 impressions, and counselors on our platform are already seeing increased referrals.
 
-I'd love to offer you a completely free listing on our directory, which includes:
+Here's what we've set up for you (completely free):
 
-✓ A professional profile showcasing your expertise and approach
-✓ Direct link to your website (excellent for SEO and local search rankings)
-✓ Contact information and specialty areas highlighted
-✓ No fees, no contracts, and no ongoing commitments required
+✓ A professional profile showcasing your services
+✓ Direct link to your website for better SEO and local search rankings
+✓ Contact information and location details
+✓ Visibility to thousands of engaged couples actively searching for help
+✓ Zero fees, no contracts, no ongoing commitments
 
-Many counselors have told us they've seen an uptick in referrals after joining our directory, and it costs absolutely nothing. We believe quality premarital counseling should be easily accessible to couples who need it most.
+CLAIM YOUR PROFILE: Simply reply to this email or visit weddingcounselors.com to claim and customize your listing. You can add more details about your approach, specialties, and what makes your practice unique.
 
-You can see our directory at: https://weddingcounselors.com
+We've seen counselors get their first referrals within days of claiming their profiles. With our current growth trajectory and the couples actively searching our directory, this is a great opportunity to expand your reach at no cost.
 
-If you're interested, I'd be happy to set up your free listing - it only takes a few minutes. Would you like me to create a profile for your practice?
+Ready to claim your profile? Just hit reply and let me know, or visit the site directly.
 
 Warm regards,
 
@@ -74,32 +67,26 @@ Founder, Wedding Counselors
 weddingcounselors.com
 haylee@weddingcounselors.com
 
-P.S. If you'd prefer not to receive these opportunities in the future, just reply with "no thank you" and I'll make sure to respect that immediately."""
+P.S. Your profile is already live and searchable. Claiming it takes just 2 minutes and lets you control exactly how you're presented to potential clients. If you'd prefer to be removed from our directory instead, just reply with "remove" and I'll take care of it immediately."""
 
     return subject, body
 
-def send_email_smtp(profile, from_account):
-    """Send email via SMTP"""
+def send_email_resend(profile, from_email):
+    """Send email via Resend API"""
     try:
-        account_info = ACCOUNTS[from_account]
         subject, body = create_personalized_email(profile)
 
-        msg = MIMEMultipart()
-        msg['From'] = f"Haylee - Wedding Counselors <{account_info['email']}>"
-        msg['To'] = profile['email']
-        msg['Subject'] = subject
-        msg['Reply-To'] = "haylee@weddingcounselors.com"
+        params = {
+            "from": from_email,
+            "to": [profile['email']],
+            "subject": subject,
+            "text": body,
+            "reply_to": "haylee@weddingcounselors.com"
+        }
 
-        msg.attach(MIMEText(body, 'plain'))
+        result = resend.Emails.send(params)
 
-        # Send via SMTP
-        server = smtplib.SMTP_SSL("mail.spacemail.com", 465)
-        server.login(account_info['email'], account_info['password'])
-        text = msg.as_string()
-        server.sendmail(account_info['email'], profile['email'], text)
-        server.quit()
-
-        return True, subject
+        return True, result.get('id')
 
     except Exception as e:
         return False, str(e)
@@ -129,26 +116,26 @@ def auto_send_all():
 
     # Send emails
     print(f"\n🚀 SENDING EMAILS AUTOMATICALLY...")
-    accounts = list(ACCOUNTS.keys())
-    account_index = 0
+    email_index = 0
     sent_count = 0
     failed_count = 0
 
     for i, profile in enumerate(profiles):
-        account = accounts[account_index]
-        account_index = (account_index + 1) % len(accounts)
+        from_email = FROM_EMAILS[email_index]
+        email_index = (email_index + 1) % len(FROM_EMAILS)
 
         print(f"\n📧 Email {i+1}/{len(profiles)}")
         print(f"   To: {profile.get('full_name')}")
         print(f"   Email: {profile['email']}")
-        print(f"   From: {account}@weddingcounselors.com")
+        print(f"   From: {from_email}")
         print(f"   Sending...", end="")
 
         # Send the email
-        success, result = send_email_smtp(profile, account)
+        success, result = send_email_resend(profile, from_email)
 
         if success:
             print(f" ✅ SENT!")
+            print(f"   📧 Resend ID: {result}")
 
             # Update status in Supabase
             try:
