@@ -1,0 +1,230 @@
+.dynamic-state-stats {
+  background: var(--background, #fff);
+  padding: var(--space-10, 2.5rem) 0;
+  margin: var(--space-8, 2rem) 0;
+}
+
+.state-stats-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto var(--space-8, 2rem);
+}
+
+.state-stats-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: var(--space-4, 1rem);
+  color: var(--text-primary, #1a1a1a);
+}
+
+.state-stats-lead {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--text-secondary, #4b5563);
+}
+
+/* State Stats Grid */
+.state-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-5, 1.25rem);
+  margin-bottom: var(--space-10, 2.5rem);
+}
+
+.state-stat-card {
+  background: var(--background-secondary, #f8f9fa);
+  border: 2px solid var(--border-color, #e1e4e8);
+  border-radius: 12px;
+  padding: var(--space-6, 1.5rem);
+  display: flex;
+  gap: var(--space-4, 1rem);
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.state-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: var(--primary-color, #2563eb);
+}
+
+.state-stat-primary {
+  border-color: var(--primary-color, #2563eb);
+  background: linear-gradient(135deg, #eff6ff 0%, #f8f9fa 100%);
+}
+
+.state-stat-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.state-stat-content {
+  flex: 1;
+}
+
+.state-stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-color, #2563eb);
+  line-height: 1;
+  margin-bottom: var(--space-2, 0.5rem);
+}
+
+.state-stat-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+  margin-bottom: var(--space-1, 0.25rem);
+}
+
+.state-stat-detail {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+/* Top Cities Section */
+.top-cities-section {
+  margin: var(--space-10, 2.5rem) 0;
+  padding: var(--space-8, 2rem);
+  background: var(--background-highlight, #f0f9ff);
+  border-radius: 12px;
+}
+
+.top-cities-section h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: var(--space-3, 0.75rem);
+  color: var(--text-primary, #1a1a1a);
+}
+
+.top-cities-intro {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-secondary, #4b5563);
+  margin-bottom: var(--space-6, 1.5rem);
+}
+
+.top-cities-list {
+  display: grid;
+  gap: var(--space-3, 0.75rem);
+}
+
+.top-city-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4, 1rem);
+  background: var(--background, #fff);
+  border: 2px solid var(--border-color, #e1e4e8);
+  border-radius: 8px;
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+.top-city-card:hover {
+  border-color: var(--primary-color, #2563eb);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+
+.top-city-rank {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color, #2563eb);
+  width: 50px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.top-city-content {
+  flex: 1;
+}
+
+.top-city-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+  margin-bottom: var(--space-1, 0.25rem);
+}
+
+.top-city-count {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+.top-city-arrow {
+  font-size: 1.5rem;
+  color: var(--primary-color, #2563eb);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.top-city-card:hover .top-city-arrow {
+  transform: translateX(4px);
+}
+
+/* Coverage Note */
+.state-coverage-note {
+  margin-top: var(--space-8, 2rem);
+  padding: var(--space-6, 1.5rem);
+  background: var(--background-secondary, #f8f9fa);
+  border-left: 4px solid var(--primary-color, #2563eb);
+  border-radius: 6px;
+}
+
+.state-coverage-note h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: var(--space-3, 0.75rem);
+  color: var(--text-primary, #1a1a1a);
+}
+
+.state-coverage-note p {
+  line-height: 1.7;
+  color: var(--text-secondary, #4b5563);
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.state-coverage-note p:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .state-stats-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .state-stats-lead {
+    font-size: 1rem;
+  }
+
+  .state-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .state-stat-card {
+    padding: var(--space-4, 1rem);
+  }
+
+  .state-stat-number {
+    font-size: 2rem;
+  }
+
+  .top-cities-section {
+    padding: var(--space-5, 1.25rem);
+  }
+
+  .top-city-rank {
+    font-size: 1.25rem;
+    width: 40px;
+  }
+
+  .top-city-name {
+    font-size: 1rem;
+  }
+}

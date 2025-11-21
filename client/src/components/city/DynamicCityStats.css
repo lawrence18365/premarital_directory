@@ -1,0 +1,201 @@
+.dynamic-city-stats {
+  background: var(--background, #fff);
+  padding: var(--space-8, 2rem) 0;
+  margin: var(--space-8, 2rem) 0;
+}
+
+.dynamic-city-stats h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: var(--space-6, 1.5rem);
+  color: var(--text-primary, #1a1a1a);
+}
+
+.dynamic-city-stats h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: var(--space-4, 1rem);
+  color: var(--text-primary, #1a1a1a);
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4, 1rem);
+  margin-bottom: var(--space-8, 2rem);
+}
+
+.stat-card {
+  background: var(--background-secondary, #f8f9fa);
+  border: 1px solid var(--border-color, #e1e4e8);
+  border-radius: 8px;
+  padding: var(--space-5, 1.25rem);
+  display: flex;
+  gap: var(--space-4, 1rem);
+  align-items: flex-start;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color, #2563eb);
+  line-height: 1.2;
+  margin-bottom: var(--space-1, 0.25rem);
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+  margin-bottom: var(--space-2, 0.5rem);
+}
+
+.stat-detail {
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #6b7280);
+  margin-top: var(--space-1, 0.25rem);
+}
+
+/* Stats Details */
+.stats-details {
+  border-top: 2px solid var(--border-color, #e1e4e8);
+  padding-top: var(--space-6, 1.5rem);
+  margin-top: var(--space-6, 1.5rem);
+}
+
+.detail-section {
+  margin-bottom: var(--space-6, 1.5rem);
+}
+
+.detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.detail-section p {
+  line-height: 1.6;
+  color: var(--text-secondary, #4b5563);
+  margin-bottom: var(--space-3, 0.75rem);
+}
+
+.detail-note {
+  font-size: 0.875rem;
+  color: var(--text-tertiary, #9ca3af);
+  font-style: italic;
+  margin-top: var(--space-3, 0.75rem);
+}
+
+/* Credentials List */
+.credentials-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-4, 1rem) 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 0.5rem);
+}
+
+.credential-badge {
+  display: inline-block;
+  background: var(--primary-color-light, #eff6ff);
+  color: var(--primary-color, #2563eb);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1px solid var(--primary-color-border, #bfdbfe);
+}
+
+/* Price Breakdown */
+.price-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+  margin: var(--space-4, 1rem) 0;
+}
+
+.price-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3, 0.75rem);
+  background: var(--background-secondary, #f8f9fa);
+  border-radius: 6px;
+}
+
+.price-range {
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.price-count {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+/* Local Context */
+.local-context {
+  background: var(--background-highlight, #f0f9ff);
+  border-left: 4px solid var(--primary-color, #2563eb);
+  padding: var(--space-5, 1.25rem);
+  border-radius: 6px;
+  margin-top: var(--space-6, 1.5rem);
+}
+
+.local-context h3 {
+  margin-top: 0;
+  color: var(--primary-color-dark, #1e40af);
+}
+
+.local-context p {
+  line-height: 1.7;
+  color: var(--text-secondary, #4b5563);
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.local-context p:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: var(--space-4, 1rem);
+  }
+
+  .stat-number {
+    font-size: 1.75rem;
+  }
+
+  .dynamic-city-stats h2 {
+    font-size: 1.5rem;
+  }
+
+  .price-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2, 0.5rem);
+  }
+}

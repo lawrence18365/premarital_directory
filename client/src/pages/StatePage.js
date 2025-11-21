@@ -8,9 +8,11 @@ import { trackLocationPageView } from '../components/analytics/GoogleAnalytics';
 import { STATE_CONFIG } from '../data/locationConfig';
 import StateContentGenerator from '../lib/stateContentGenerator';
 import StateAIContent from '../components/state/StateAIContent';
+import DynamicStateStats from '../components/state/DynamicStateStats';
 import LeadContactForm from '../components/leads/LeadContactForm';
 import LocalContent from '../components/common/LocalContent';
 import FAQ from '../components/common/FAQ';
+import { profileOperations } from '../lib/supabaseClient';
 import '../assets/css/state-page.css';
 
 const StatePage = () => {
@@ -20,13 +22,15 @@ const StatePage = () => {
   const [stateContent, setStateContent] = useState(null)
   const [contentLoading, setContentLoading] = useState(true)
   const [showGetMatchedForm, setShowGetMatchedForm] = useState(false)
-  
+  const [stateData, setStateData] = useState(null)
+
   const stateConfig = STATE_CONFIG[state]
   
   useEffect(() => {
     if (stateConfig) {
       setLoading(false)
       loadStateContent()
+      loadStateData()
     } else {
       setError('State not found')
       setLoading(false)
@@ -42,21 +46,63 @@ const StatePage = () => {
 
   const loadStateContent = async () => {
     setContentLoading(true)
-    
+
     try {
       const contentGenerator = new StateContentGenerator()
       const content = await contentGenerator.getOrGenerateStateContent(
-        state, 
+        state,
         stateConfig
       )
-      
+
       setStateContent(content)
     } catch (error) {
       console.error('AI state content generation failed:', error)
       setStateContent(null)
     }
-    
+
     setContentLoading(false)
+  }
+
+  const loadStateData = async () => {
+    try {
+      // Get all profiles for this state
+      const { data: profiles, error } = await profileOperations.getProfiles({
+        state: stateConfig.abbr
+      })
+
+      if (error) {
+        console.error('Error loading state profiles:', error)
+        return
+      }
+
+      // Count profiles by city
+      const cityCounts = {}
+      profiles?.forEach(profile => {
+        if (profile.city) {
+          const cityNormalized = profile.city.toLowerCase()
+          cityCounts[cityNormalized] = (cityCounts[cityNormalized] || 0) + 1
+        }
+      })
+
+      // Map to major cities
+      const cities = stateConfig.major_cities.map(cityName => {
+        const citySlug = cityName.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')
+        const cityNameNormalized = cityName.toLowerCase()
+        return {
+          name: cityName,
+          slug: citySlug,
+          count: cityCounts[cityNameNormalized] || 0
+        }
+      })
+
+      setStateData({
+        stateSlug: state,
+        cities,
+        totalProfiles: profiles?.length || 0
+      })
+    } catch (error) {
+      console.error('Error loading state data:', error)
+    }
   }
 
 
@@ -104,8 +150,8 @@ const StatePage = () => {
 
   // Determine if page should be noindexed (thin content detection)
   const shouldNoindex =
-    // State has fewer than 5 cities
-    stateConfig.major_cities.length < 5 ||
+    // State has fewer than 3 cities OR no profiles at all
+    (stateConfig.major_cities.length < 3 || (stateData && stateData.totalProfiles === 0)) &&
     // Content contains placeholder text
     (stateContent?.description && (
       stateContent.description.toLowerCase().includes('placeholder') ||
@@ -197,6 +243,16 @@ const StatePage = () => {
           </div>
         </div>
       </div>
+
+      {/* Dynamic State Stats - Adds unique, valuable content */}
+      {stateData && stateData.totalProfiles > 0 && (
+        <div className="state-container">
+          <DynamicStateStats
+            stateData={stateData}
+            stateName={stateConfig.name}
+          />
+        </div>
+      )}
 
       {/* Cities Grid Section */}
       <div className="state-container state-results">

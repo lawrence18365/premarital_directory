@@ -14,6 +14,7 @@ import LeadContactForm from '../components/leads/LeadContactForm';
 import FAQ from '../components/common/FAQ';
 import HowToChooseSection from '../components/city/HowToChooseSection';
 import MultiProviderInquiryForm from '../components/city/MultiProviderInquiryForm';
+import DynamicCityStats from '../components/city/DynamicCityStats';
 import { clickTrackingOperations, cityOverridesOperations } from '../lib/supabaseClient';
 import '../assets/css/state-page.css';
 
@@ -203,10 +204,11 @@ const CityPage = () => {
 
   const hasProfiles = profiles.length > 0
 
-  // Determine if page should be noindexed (thin content - fewer than 5 profiles now, was 8)
+  // Determine if page should be noindexed (thin content detection)
+  // With dynamic stats blocks added, we can index pages with fewer profiles
   // Anchor cities are always indexable to build SEO authority regardless of profile count
   const isAnchor = isAnchorCity(state, city)
-  const shouldNoindex = !isAnchor && profiles.length < 5
+  const shouldNoindex = !isAnchor && profiles.length < 3  // Lowered from 5 since we now have dynamic content
 
   return (
     <div className="city-page">
@@ -287,6 +289,15 @@ const CityPage = () => {
 
       {/* City Content */}
       <div className="container">
+        {/* Dynamic City Stats - Adds unique, valuable content */}
+        {!loading && profiles.length > 0 && (
+          <DynamicCityStats
+            profiles={profiles}
+            cityName={cityName}
+            stateName={stateName}
+          />
+        )}
+
         <div id="providers-list" className="state-content">
           {/* Left Column - Profiles */}
           <div className="state-main">
