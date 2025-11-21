@@ -14,6 +14,35 @@
 .DS_Store
 .vercel
 
+# Data files (CSV, logs)
+*.csv
+*.log
+/data/*.csv
+/data/*.json
+
+# Temporary analysis files
+analyze_*.js
+page_analysis_results.json
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test files (keep test scripts, ignore outputs)
+test_output/
+coverage/
+
 # Exclude everything outside this directory
 ../
 ../../
