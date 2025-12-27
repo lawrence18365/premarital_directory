@@ -214,8 +214,11 @@ const ProfilePage = () => {
                       onError={() => setImageError(true)}
                     />
                   ) : (
-                    <div className="hero-photo-placeholder">
-                      {getInitials(profile.full_name)}
+                    <div className="hero-photo-placeholder" style={{ background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '50%', height: '50%', color: '#9ca3af' }}>
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
                     </div>
                   )}
                   {(profile.tier === 'local_featured' || profile.tier === 'area_spotlight') && (
