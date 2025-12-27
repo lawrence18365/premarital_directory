@@ -13,7 +13,22 @@ export const STATE_CONFIG = {
   'hawaii': { name: 'Hawaii', abbr: 'HI', major_cities: ['Honolulu', 'Hilo', 'Kailua', 'Kaneohe'] },
   'idaho': { name: 'Idaho', abbr: 'ID', major_cities: ['Boise', 'Meridian', 'Nampa', 'Idaho Falls', 'Pocatello'] },
   'illinois': { name: 'Illinois', abbr: 'IL', major_cities: ['Chicago', 'Aurora', 'Peoria', 'Rockford', 'Joliet', 'Naperville'] },
-  'indiana': { name: 'Indiana', abbr: 'IN', major_cities: ['Indianapolis', 'Fort Wayne', 'Evansville', 'South Bend', 'Carmel'] },
+  'indiana': { 
+    name: 'Indiana', 
+    abbr: 'IN', 
+    major_cities: ['Indianapolis', 'Fort Wayne', 'Evansville', 'South Bend', 'Carmel'],
+    counseling_benefits: {
+      title: 'Save on Your Indiana Marriage License',
+      description: 'Did you know? Indiana couples who complete premarital counseling with a qualified professional are eligible for a discount on their marriage license fee. It pays to prepare for your marriage!',
+      discount_amount: 'License Fee Discount',
+      certificate_url: 'https://www.in.gov/courts/files/form-completion-premarital-counseling.pdf',
+      requirements: [
+        'Complete premarital counseling with a licensed professional or clergy',
+        'Have your counselor sign the Certificate of Completion',
+        'Present the certificate when applying for your marriage license at the clerk\'s office'
+      ]
+    }
+  },
   'iowa': { name: 'Iowa', abbr: 'IA', major_cities: ['Des Moines', 'Cedar Rapids', 'Davenport', 'Sioux City', 'Iowa City'] },
   'kansas': { name: 'Kansas', abbr: 'KS', major_cities: ['Wichita', 'Overland Park', 'Kansas City', 'Olathe', 'Topeka'] },
   'kentucky': { name: 'Kentucky', abbr: 'KY', major_cities: ['Louisville', 'Lexington', 'Bowling Green', 'Owensboro'] },
