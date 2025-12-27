@@ -25,19 +25,8 @@ try {
   console.log('Note: @supabase/supabase-js not available, using default priorities')
 }
 
-// Import location config (we'll inline the anchor cities here for Node.js compatibility)
-const ANCHOR_CITIES = [
-  { stateSlug: 'texas', citySlug: 'austin', cityName: 'Austin', state: 'TX' },
-  { stateSlug: 'texas', citySlug: 'dallas', cityName: 'Dallas', state: 'TX' },
-  { stateSlug: 'texas', citySlug: 'houston', cityName: 'Houston', state: 'TX' },
-  { stateSlug: 'california', citySlug: 'los-angeles', cityName: 'Los Angeles', state: 'CA' },
-  { stateSlug: 'california', citySlug: 'san-francisco', cityName: 'San Francisco', state: 'CA' },
-  { stateSlug: 'new-york', citySlug: 'new-york', cityName: 'New York', state: 'NY' },
-  { stateSlug: 'florida', citySlug: 'miami', cityName: 'Miami', state: 'FL' },
-  { stateSlug: 'illinois', citySlug: 'chicago', cityName: 'Chicago', state: 'IL' },
-  { stateSlug: 'georgia', citySlug: 'atlanta', cityName: 'Atlanta', state: 'GA' },
-  { stateSlug: 'colorado', citySlug: 'denver', cityName: 'Denver', state: 'CO' }
-]
+// Import location config from JSON to ensure we capture ALL cities, not just anchors
+const { STATE_CONFIG, CITY_CONFIG } = require('../src/data/locations.json')
 
 const CORE_PAGES = [
   { url: '/', priority: 1.0, changefreq: 'weekly' },
@@ -99,15 +88,13 @@ function generateSitemapIndex(sitemaps) {
 }
 
 // Calculate priority based on profile count (0.7 to 0.95 range)
-function calculatePriority(profileCount, maxCount) {
-  if (maxCount === 0) return 0.8 // Default if no profiles
+function calculatePriority(profileCount, maxCount, isAnchor) {
+  const base = isAnchor ? 0.8 : 0.6
+  if (maxCount === 0) return base
 
-  // Scale from 0.7 (0 profiles) to 0.95 (max profiles)
-  const baselinePriority = 0.7
-  const maxPriority = 0.95
-  const scaleFactor = (maxPriority - baselinePriority) * (profileCount / maxCount)
-
-  return Math.min(maxPriority, baselinePriority + scaleFactor)
+  // Add boost for profiles
+  const boost = (profileCount / maxCount) * 0.15
+  return Math.min(0.95, base + boost)
 }
 
 async function fetchProfileCounts() {
@@ -143,7 +130,7 @@ async function fetchProfileCounts() {
     const cityCounts = {}
     profiles.forEach(profile => {
       if (profile.city && profile.state_province) {
-        const key = `${profile.city.toLowerCase()}|${profile.state_province}`
+        const key = `${profile.city.toLowerCase()}|${getStateSlug(profile.state_province)}`
         cityCounts[key] = (cityCounts[key] || 0) + 1
       }
     })
@@ -184,7 +171,7 @@ async function main() {
   const publicDir = path.join(__dirname, '..', 'public')
   const today = new Date().toISOString().split('T')[0]
 
-  console.log('🗺️  Generating focused sitemaps...')
+  console.log('🗺️  Generating comprehensive sitemaps...')
 
   // Fetch profile counts and profiles from Supabase
   const { cityCounts: profileCounts, profiles: allProfiles } = await fetchProfileCounts()
@@ -199,44 +186,49 @@ async function main() {
   fs.writeFileSync(path.join(publicDir, 'sitemap-core.xml'), coreSitemap)
   console.log(`✅ Generated sitemap-core.xml (${coreUrls.length} URLs)`)
 
-  // 2. Anchor cities sitemap (ordered by profile count)
+  // 2. All Cities Sitemap (Expanded from just anchor cities)
   const cityUrls = []
-
-  // Calculate profile counts for anchor cities
-  const anchorCitiesWithCounts = ANCHOR_CITIES.map(city => {
-    const key = `${city.cityName.toLowerCase()}|${city.state}`
-    const count = profileCounts ? (profileCounts[key] || 0) : 0
-    return { ...city, profileCount: count }
-  })
-
-  // Sort by profile count (descending)
-  anchorCitiesWithCounts.sort((a, b) => b.profileCount - a.profileCount)
-
-  // Find max count for priority calculation
-  const maxProfileCount = Math.max(...anchorCitiesWithCounts.map(c => c.profileCount), 1)
-
-  // Log profile counts
-  if (profileCounts) {
-    console.log('\n📊 Profile counts per anchor city:')
-    anchorCitiesWithCounts.forEach(city => {
-      console.log(`   ${city.cityName}, ${city.state}: ${city.profileCount} profiles`)
-    })
-  }
-
-  // Add state pages for anchor states
-  const anchorStates = [...new Set(anchorCitiesWithCounts.map(c => c.stateSlug))]
-  anchorStates.forEach(stateSlug => {
+  
+  // Flatten all cities from STATE_CONFIG
+  const allCities = []
+  Object.keys(STATE_CONFIG).forEach(stateSlug => {
+    const stateData = STATE_CONFIG[stateSlug]
+    // Add State Page
     cityUrls.push({
       url: `/premarital-counseling/${stateSlug}`,
       priority: 0.8,
       changefreq: 'weekly',
       lastmod: today
     })
+
+    // Add City Pages
+    stateData.major_cities.forEach(cityName => {
+      allCities.push({
+        stateSlug,
+        stateName: stateData.name,
+        cityName,
+        citySlug: getCitySlug(cityName)
+      })
+    })
   })
 
-  // Add anchor city pages with dynamic priorities based on profile count
-  anchorCitiesWithCounts.forEach(city => {
-    const priority = calculatePriority(city.profileCount, maxProfileCount)
+  // Calculate stats for priorities
+  let maxProfileCount = 1
+  if (profileCounts) {
+    const counts = Object.values(profileCounts)
+    if (counts.length > 0) maxProfileCount = Math.max(...counts)
+  }
+
+  // Generate URLs for all cities
+  allCities.forEach(city => {
+    const key = `${city.cityName.toLowerCase()}|${city.stateSlug}`
+    const profileCount = profileCounts ? (profileCounts[key] || 0) : 0
+    
+    // Check if it's an anchor city in CITY_CONFIG
+    const isAnchor = CITY_CONFIG[city.stateSlug]?.[city.citySlug]?.is_anchor === true
+    
+    const priority = calculatePriority(profileCount, maxProfileCount, isAnchor)
+    
     cityUrls.push({
       url: `/premarital-counseling/${city.stateSlug}/${city.citySlug}`,
       priority: priority,
@@ -247,7 +239,7 @@ async function main() {
 
   const citySitemap = generateSitemapXML(cityUrls)
   fs.writeFileSync(path.join(publicDir, 'sitemap-cities.xml'), citySitemap)
-  console.log(`\n✅ Generated sitemap-cities.xml (${cityUrls.length} URLs - anchor cities only)`)
+  console.log(`\n✅ Generated sitemap-cities.xml (${cityUrls.length} URLs - ALL configured cities)`)
 
   // 3. Blog posts sitemap
   const blogUrls = BLOG_POSTS.map(post => ({
