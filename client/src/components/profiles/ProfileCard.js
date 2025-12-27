@@ -45,7 +45,7 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="profile-photo placeholder" aria-label={`Placeholder for ${profile.full_name}`}>
+            <div className="profile-photo placeholder" aria-label={`Placeholder for ${profile.full_name}`} style={{ background: '#f3f4f6' }}>
                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '40%', height: '40%', color: '#9ca3af' }}>
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
