@@ -1,4 +1,4 @@
-/* Organic, Textured State Page Styles */
+/* Refined State Page Styles - Matching Landing Page Identity */
 
 .state-page {
   min-height: 100vh;
@@ -56,7 +56,7 @@
   color: var(--primary);
   margin-bottom: var(--space-6);
   letter-spacing: -0.02em;
-  text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.5);
+  /* Removed text-shadow for cleaner look consistent with home */
 }
 
 .state-subtitle {
@@ -80,82 +80,88 @@
   flex-wrap: wrap;
 }
 
-/* Organic Buttons Override */
+/* Consistent Buttons */
 .btn-large {
   padding: 1.25rem 2.5rem;
   font-size: 1.1rem;
+  border-radius: var(--radius-full); /* Pill shape like home */
 }
 
-/* Marriage License Discount Section - "Handwritten Note" style */
+/* Marriage License Discount Section - Aligned with pros-cta__shell */
 .state-benefits-box {
-  background: #fff;
+  background: var(--white);
   margin: var(--space-12) auto;
   padding: var(--space-8);
   max-width: 900px;
-  box-shadow: 
-    0 10px 30px -10px rgba(14, 94, 94, 0.1),
-    0 0 0 1px rgba(14, 94, 94, 0.05);
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  box-shadow: var(--shadow-2xl);
+  border-radius: var(--radius-3xl); /* Consistent 2rem radius */
   position: relative;
-  transform: rotate(-0.5deg);
-  transition: transform 0.3s ease;
+  border: 1px solid rgba(14, 94, 94, 0.1);
+  overflow: hidden;
 }
 
-.state-benefits-box:hover {
-  transform: rotate(0deg) scale(1.01);
+/* Subtle accent line */
+.state-benefits-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 6px;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
 }
 
 .benefit-layout {
   display: flex;
-  gap: var(--space-6);
+  gap: var(--space-8);
   align-items: flex-start;
 }
 
 .benefit-icon {
   font-size: 2rem;
   color: var(--primary);
-  background: var(--primary-light); /* Fallback */
-  background: radial-gradient(circle at 30% 30%, var(--secondary-light), var(--sage-light));
+  background: rgba(14, 94, 94, 0.08); /* Consistent with home icon backgrounds */
   width: 80px;
   height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  border-radius: var(--radius-full); /* Circle */
   flex-shrink: 0;
-  box-shadow: inset -2px -2px 5px rgba(0,0,0,0.05);
 }
 
 .benefit-content h3 {
   font-family: var(--font-display);
-  color: var(--primary);
-  font-size: 1.75rem;
+  color: var(--primary-dark);
+  font-size: 2rem;
   margin-bottom: var(--space-3);
+  letter-spacing: -0.015em;
 }
 
 .benefit-content p {
-  color: var(--slate);
-  margin-bottom: var(--space-4);
-  font-size: 1.05rem;
+  color: var(--gray-dark);
+  margin-bottom: var(--space-6);
+  font-size: 1.1rem;
+  line-height: 1.6;
 }
 
 .benefit-requirements {
   list-style: none;
   padding: 0;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
+  display: grid;
+  gap: var(--space-3);
 }
 
 .benefit-requirements li {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  align-items: flex-start;
+  gap: 12px;
   color: var(--charcoal);
   font-weight: 500;
+  font-size: 1rem;
 }
 
 .benefit-requirements i {
-  color: var(--success, #10b981);
+  color: var(--accent); /* Using accent color for checkmarks like home provider list */
+  margin-top: 4px;
 }
 
 .btn-download {
@@ -163,20 +169,26 @@
   color: white;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
-  border-radius: 30px 10px 30px 10px / 10px 30px 10px 30px;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  transition: all var(--transition);
 }
 
 .btn-download:hover {
-  background: black;
+  background: var(--primary-dark);
   color: white;
   transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Featured Professionals */
 .state-featured-section {
-  padding: var(--space-12) 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 20%, rgba(255,255,255,0.6) 80%, rgba(255,255,255,0) 100%);
+  padding: var(--space-16) 0;
+  /* Soft gradient background */
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 20%, rgba(255,255,255,0.8) 80%, rgba(255,255,255,0) 100%);
   margin-bottom: var(--space-12);
 }
 
@@ -184,12 +196,12 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: var(--space-8);
-  margin-top: var(--space-8);
+  margin-top: var(--space-10);
 }
 
 .featured-footer {
   text-align: center;
-  margin-top: var(--space-10);
+  margin-top: var(--space-12);
 }
 
 .featured-footer p {
@@ -199,26 +211,32 @@
 
 .featured-footer a {
   color: var(--primary);
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
-  border-bottom: 2px solid var(--secondary);
+  border-bottom: 2px solid rgba(14, 94, 94, 0.2);
+  transition: border-color var(--transition);
 }
 
-/* Cities Grid - Organic Flow */
+.featured-footer a:hover {
+  border-color: var(--primary);
+}
+
+/* Cities Grid - Aligned with Popular Cities */
 .state-results-title {
   font-family: var(--font-display);
   font-size: 2.5rem;
-  color: var(--charcoal);
-  margin-bottom: var(--space-2);
+  color: var(--primary-dark);
+  margin-bottom: var(--space-3);
   text-align: center;
 }
 
 .state-results-subtitle {
   text-align: center;
   max-width: 700px;
-  margin: 0 auto var(--space-10);
-  color: var(--slate);
+  margin: 0 auto var(--space-12);
+  color: var(--gray-dark);
   font-size: 1.1rem;
+  line-height: 1.6;
 }
 
 .cities-grid {
@@ -228,78 +246,85 @@
 }
 
 .city-card-large {
-  display: block;
+  display: flex;
+  flex-direction: column;
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(14, 94, 94, 0.1);
-  border-radius: 20px;
+  background: var(--white);
+  border: 1px solid rgba(14, 94, 94, 0.08);
+  border-radius: var(--radius-xl);
   padding: var(--space-8);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: transform var(--transition), box-shadow var(--transition);
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
-.city-card-large::before {
+.city-card-large::after {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; height: 100%;
-  background: radial-gradient(circle at 100% 100%, rgba(137, 181, 162, 0.1), transparent 50%);
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(14, 94, 94, 0.08), rgba(255, 107, 107, 0.08));
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity var(--transition);
+  pointer-events: none;
 }
 
 .city-card-large:hover {
-  background: #fff;
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px -10px rgba(14, 94, 94, 0.15);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
   border-color: rgba(14, 94, 94, 0.2);
 }
 
-.city-card-large:hover::before {
+.city-card-large:hover::after {
   opacity: 1;
 }
 
 .city-card-large h3 {
   font-family: var(--font-display);
-  color: var(--primary);
+  color: var(--charcoal);
   font-size: 1.75rem;
   margin-bottom: var(--space-3);
   position: relative;
+  z-index: 1;
 }
 
 .city-card-large p {
-  color: var(--slate);
+  color: var(--gray-dark);
   line-height: 1.6;
   position: relative;
+  z-index: 1;
+  margin-bottom: var(--space-6);
 }
 
 .city-arrow {
-  position: absolute;
-  bottom: var(--space-6);
-  right: var(--space-8);
-  color: var(--secondary);
-  font-size: 1.5rem;
-  transition: transform 0.3s ease;
+  margin-top: auto;
+  align-self: flex-start;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 1.25rem;
+  transition: transform var(--transition);
+  position: relative;
+  z-index: 1;
 }
 
 .city-card-large:hover .city-arrow {
-  transform: translateX(5px);
-  color: var(--primary);
+  transform: translateX(4px);
 }
 
 /* FAQ and SEO Section Modernization */
 .state-seo-section {
-  background: #fff; /* Clean break */
-  padding: var(--space-16) 0;
-  margin-top: var(--space-16);
-  border-top: 1px solid rgba(0,0,0,0.05);
+  background: #fff;
+  padding: var(--space-20) 0;
+  margin-top: var(--space-20);
+  border-top: 1px solid rgba(14, 94, 94, 0.05);
 }
 
 .state-seo-title {
   font-family: var(--font-display);
   font-size: 2.5rem;
-  color: var(--primary);
-  margin-bottom: var(--space-8);
+  color: var(--primary-dark);
+  margin-bottom: var(--space-10);
 }
 
 /* Responsive */
@@ -310,8 +335,9 @@
     align-items: center;
   }
   
-  .benefit-requirements li {
-    justify-content: center;
+  .benefit-requirements {
+    text-align: left;
+    width: 100%;
   }
   
   .state-title {
@@ -320,5 +346,9 @@
   
   .featured-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .state-benefits-box {
+    padding: var(--space-6);
   }
 }
