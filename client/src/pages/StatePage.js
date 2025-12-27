@@ -248,43 +248,20 @@ const StatePage = () => {
 
             {/* Marriage License Discount Section */}
             {stateConfig.counseling_benefits && (
-              <div style={{
-                marginTop: 'var(--space-8)',
-                background: 'white',
-                padding: 'var(--space-6)',
-                borderRadius: 'var(--radius-lg)',
-                boxShadow: 'var(--shadow-md)',
-                borderLeft: '4px solid var(--primary)',
-                textAlign: 'left'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-4)' }}>
-                  <div style={{ 
-                    fontSize: '2rem', 
-                    color: 'var(--primary)',
-                    background: 'var(--primary-light)',
-                    width: '60px',
-                    height: '60px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: '50%',
-                    flexShrink: 0
-                  }}>
+              <div className="state-benefits-box">
+                <div className="benefit-layout">
+                  <div className="benefit-icon">
                     <i className="fa fa-certificate"></i>
                   </div>
-                  <div>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: 'var(--space-2)', color: 'var(--text-dark)' }}>
-                      {stateConfig.counseling_benefits.title}
-                    </h3>
-                    <p style={{ marginBottom: 'var(--space-4)', color: 'var(--text-medium)' }}>
-                      {stateConfig.counseling_benefits.description}
-                    </p>
+                  <div className="benefit-content">
+                    <h3>{stateConfig.counseling_benefits.title}</h3>
+                    <p>{stateConfig.counseling_benefits.description}</p>
                     
                     {stateConfig.counseling_benefits.requirements && (
-                      <ul style={{ marginBottom: 'var(--space-4)', listStyle: 'none', padding: 0 }}>
+                      <ul className="benefit-requirements">
                         {stateConfig.counseling_benefits.requirements.map((req, i) => (
-                          <li key={i} style={{ marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <i className="fa fa-check-circle" style={{ color: 'var(--success)' }}></i> 
+                          <li key={i}>
+                            <i className="fa fa-check-circle"></i> 
                             {req}
                           </li>
                         ))}
@@ -295,14 +272,7 @@ const StatePage = () => {
                       href={stateConfig.counseling_benefits.certificate_url}
                       target="_blank"
                       rel="noopener noreferrer" 
-                      className="btn"
-                      style={{ 
-                        background: 'var(--text-dark)', 
-                        color: 'white',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                      }}
+                      className="btn btn-download"
                     >
                       <i className="fa fa-download"></i> Download State Certificate Form
                     </a>
@@ -318,35 +288,32 @@ const StatePage = () => {
 
       {/* Featured Professionals Section - Immediate Results */}
       {stateData && stateData.featuredProfiles && stateData.featuredProfiles.length > 0 && (
-        <div className="state-container" style={{ marginTop: 'var(--space-12)', marginBottom: 'var(--space-8)' }}>
-          <div className="mb-6">
-            <h2 className="state-results-title">
-              Featured Premarital Counselors in {stateConfig.name}
-            </h2>
-            <p className="state-results-subtitle">
-              Connect with top-rated premarital counselors and marriage coaches serving the entire state of {stateConfig.name}, including online/virtual options.
-            </p>
-          </div>
-          
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: 'var(--space-6)',
-            marginTop: 'var(--space-6)'
-          }}>
-            {stateData.featuredProfiles.map(profile => (
-              <ProfileCard key={profile.id} profile={profile} />
-            ))}
-          </div>
-          
-          <div style={{ textAlign: 'center', marginTop: 'var(--space-8)' }}>
-             <p style={{ color: 'var(--slate)' }}>
-              Not finding what you need? <a href="#cities-grid" onClick={(e) => {
-                e.preventDefault();
-                const el = document.getElementById('cities-grid');
-                if(el) el.scrollIntoView({ behavior: 'smooth' });
-              }} style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Browse by city below</a>
-            </p>
+        <div className="state-featured-section">
+          <div className="state-container">
+            <div className="mb-6">
+              <h2 className="state-results-title">
+                Featured Premarital Counselors in {stateConfig.name}
+              </h2>
+              <p className="state-results-subtitle">
+                Connect with top-rated premarital counselors and marriage coaches serving the entire state of {stateConfig.name}, including online/virtual options.
+              </p>
+            </div>
+            
+            <div className="featured-grid">
+              {stateData.featuredProfiles.map(profile => (
+                <ProfileCard key={profile.id} profile={profile} />
+              ))}
+            </div>
+            
+            <div className="featured-footer">
+               <p>
+                Not finding what you need? <a href="#cities-grid" onClick={(e) => {
+                  e.preventDefault();
+                  const el = document.getElementById('cities-grid');
+                  if(el) el.scrollIntoView({ behavior: 'smooth' });
+                }}>Browse by city below</a>
+              </p>
+            </div>
           </div>
         </div>
       )}
