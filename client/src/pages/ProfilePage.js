@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { generateSlug } from '../lib/utils'
-import { formatLocation, getInitials, formatPhoneNumber, getDisplayUrl } from '../lib/utils'
+import { formatLocation, formatPhoneNumber, getDisplayUrl } from '../lib/utils'
 import LeadContactForm from '../components/leads/LeadContactForm'
 import Breadcrumbs, { generateBreadcrumbs } from '../components/common/Breadcrumbs'
 import SEOHelmet, { generateProfessionalStructuredData } from '../components/analytics/SEOHelmet'

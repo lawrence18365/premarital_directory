@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { generateSlug, formatLocation, getInitials, truncateText, getStateNameFromAbbr } from '../../lib/utils'
+import { generateSlug, formatLocation, truncateText, getStateNameFromAbbr } from '../../lib/utils'
 
 const ProfileCard = ({ profile, type = 'directory' }) => {
   const profileSlug = profile.slug || generateSlug(profile.full_name)
