@@ -8,7 +8,7 @@ import { trackLocationPageView } from '../components/analytics/GoogleAnalytics';
 import { STATE_CONFIG } from '../data/locationConfig';
 import StateContentGenerator from '../lib/stateContentGenerator';
 import StateAIContent from '../components/state/StateAIContent';
-import DynamicStateStats from '../components/state/DynamicStateStats';
+
 import LeadContactForm from '../components/leads/LeadContactForm';
 import LocalContent from '../components/common/LocalContent';
 import FAQ from '../components/common/FAQ';
@@ -211,7 +211,7 @@ const StatePage = () => {
             <p style={{
               marginTop: 'var(--space-4)',
               fontSize: '0.95rem',
-              color: 'rgba(255, 255, 255, 0.9)',
+              color: 'var(--slate)',
               maxWidth: '800px',
               margin: '0 auto',
               marginTop: 'var(--space-4)'
@@ -244,15 +244,7 @@ const StatePage = () => {
         </div>
       </div>
 
-      {/* Dynamic State Stats - Adds unique, valuable content */}
-      {stateData && stateData.totalProfiles > 0 && (
-        <div className="state-container">
-          <DynamicStateStats
-            stateData={stateData}
-            stateName={stateConfig.name}
-          />
-        </div>
-      )}
+
 
       {/* Cities Grid Section */}
       <div className="state-container state-results">
