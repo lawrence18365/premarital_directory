@@ -13,7 +13,7 @@ const CreateProfilePage = () => {
   const [searchParams] = useSearchParams()
   const { user, refreshProfile } = useAuth()
   const [currentStep, setCurrentStep] = useState(1)
-  const totalSteps = 4
+  const totalSteps = 3 // Reduced from 4 for faster completion
 
   const [formData, setFormData] = useState({
     // Step 1: Basic Info
@@ -154,6 +154,7 @@ const CreateProfilePage = () => {
     setError('')
 
     if (step === 1) {
+      // Essential fields - these determine where profile appears
       if (!formData.full_name.trim()) {
         setError('Please enter your full name')
         return false
@@ -171,24 +172,7 @@ const CreateProfilePage = () => {
         setError('Please enter a valid email address')
         return false
       }
-      if (photoError) {
-        setError(photoError)
-        return false
-      }
-    }
-
-    if (step === 2) {
-      if (!formData.years_experience) {
-        setError('Please select your years of experience')
-        return false
-      }
-    }
-
-    if (step === 3) {
-      // Pricing is optional but recommended
-    }
-
-    if (step === 4) {
+      // City/State moved to Step 1 - critical for SEO
       if (!formData.city.trim()) {
         setError('Please enter your city')
         return false
@@ -198,14 +182,17 @@ const CreateProfilePage = () => {
         return false
       }
       if (formData.session_types.length === 0) {
-        setError('Please select at least one session type')
+        setError('Please select at least one session type (in-person, online, or both)')
         return false
       }
-      if (formData.specialties.length === 0) {
-        setError('Please select at least one specialty')
+      if (photoError) {
+        setError(photoError)
         return false
       }
     }
+
+    // Steps 2 and 3 are now optional - can be skipped
+    // Validation only runs if user clicks "Continue" not "Skip"
 
     return true
   }
@@ -214,6 +201,12 @@ const CreateProfilePage = () => {
     if (validateStep(currentStep)) {
       setCurrentStep(prev => Math.min(prev + 1, totalSteps))
     }
+  }
+
+  const handleSkip = () => {
+    // Skip to next step without validation (for optional steps)
+    setError('')
+    setCurrentStep(prev => Math.min(prev + 1, totalSteps))
   }
 
   const handleBack = () => {
@@ -593,10 +586,18 @@ const CreateProfilePage = () => {
             />
           </div>
           <ul>
-            <li className={currentStep >= 1 ? 'active' : ''}>Basic Information</li>
-            <li className={currentStep >= 2 ? 'active' : ''}>Professional Details</li>
-            <li className={currentStep >= 3 ? 'active' : ''}>Services & Pricing</li>
-            <li className={currentStep >= 4 ? 'active' : ''}>Specialties & Location</li>
+            <li className={currentStep >= 1 ? 'active' : ''}>
+              <i className={currentStep > 1 ? 'fa fa-check' : 'fa fa-map-marker'} aria-hidden="true" style={{ marginRight: '8px', fontSize: '0.8em' }}></i>
+              Get Listed
+            </li>
+            <li className={currentStep >= 2 ? 'active' : ''}>
+              <i className={currentStep > 2 ? 'fa fa-check' : 'fa fa-user'} aria-hidden="true" style={{ marginRight: '8px', fontSize: '0.8em' }}></i>
+              Your Profile <span style={{ fontSize: '0.75em', opacity: 0.7 }}>(optional)</span>
+            </li>
+            <li className={currentStep >= 3 ? 'active' : ''}>
+              <i className="fa fa-dollar" aria-hidden="true" style={{ marginRight: '8px', fontSize: '0.8em' }}></i>
+              Pricing <span style={{ fontSize: '0.75em', opacity: 0.7 }}>(optional)</span>
+            </li>
           </ul>
         </div>
       </section>
@@ -611,15 +612,110 @@ const CreateProfilePage = () => {
               </div>
             )}
             <form onSubmit={handleSubmit}>
-              {/* Step 1: Basic Information */}
+              {/* Step 1: Essentials - Get Listed Fast */}
               {currentStep === 1 && (
                 <div className="professional-signup__fieldset">
                   <div className="professional-signup__fieldset-header">
-                    <h3>Basic Information</h3>
-                    <p>Your public contact and professional identity.</p>
+                    <h3>Get Listed in 60 Seconds</h3>
+                    <p>Enter the essentials to publish your free profile. You can add more details later.</p>
                   </div>
+
+                  {/* Name and Profession - The basics */}
+                  <div className="professional-signup__grid professional-signup__grid--2">
+                    <div className="form-group">
+                      <label htmlFor="full_name">Your Name *</label>
+                      <input
+                        type="text"
+                        id="full_name"
+                        className="form-control"
+                        required
+                        value={formData.full_name}
+                        onChange={(e) => handleInputChange('full_name', e.target.value)}
+                        placeholder="Dr. Jane Smith, LMFT"
+                      />
+                      <small>Include credentials (PhD, LMFT, LPC)</small>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="profession">I am a... *</label>
+                      <select
+                        id="profession"
+                        className="form-control"
+                        required
+                        value={formData.profession}
+                        onChange={(e) => handleInputChange('profession', e.target.value)}
+                      >
+                        <option value="">Select your role</option>
+                        {professionOptions.map(option => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Location - Critical for SEO, moved to Step 1 */}
+                  <div className="professional-signup__grid professional-signup__grid--2">
+                    <div className="form-group">
+                      <label htmlFor="city">City *</label>
+                      <input
+                        type="text"
+                        id="city"
+                        className="form-control"
+                        required
+                        value={formData.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        placeholder="Austin"
+                      />
+                      <small>Where should couples find you?</small>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="state_province">State *</label>
+                      <input
+                        type="text"
+                        id="state_province"
+                        className="form-control"
+                        required
+                        value={formData.state_province}
+                        onChange={(e) => handleInputChange('state_province', e.target.value)}
+                        placeholder="Texas"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Session Types - Important for filtering */}
                   <div className="form-group">
-                    <label>Profile Photo</label>
+                    <label>How do you meet with clients? *</label>
+                    <div className="professional-signup__pill-group">
+                      {sessionTypeOptions.map((option) => (
+                        <button
+                          type="button"
+                          key={option.value}
+                          className={`professional-signup__pill ${formData.session_types.includes(option.value) ? 'is-selected' : ''}`}
+                          onClick={() => handleArrayToggle('session_types', option.value)}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Email - Pre-filled from auth */}
+                  <div className="form-group">
+                    <label htmlFor="email">Contact Email *</label>
+                    <input
+                      type="email"
+                      id="email"
+                      className="form-control"
+                      required
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      placeholder="you@practice.com"
+                    />
+                    <small>Couples will contact you here</small>
+                  </div>
+
+                  {/* Photo - Encouraged but not blocking */}
+                  <div className="form-group">
+                    <label>Profile Photo <span style={{color: 'var(--slate)', fontWeight: 'normal'}}>(recommended)</span></label>
                     <div className={`photo-upload ${photoPreview ? 'has-photo' : ''}`}>
                       <div className="photo-preview">
                         {photoPreview ? (
@@ -635,7 +731,7 @@ const CreateProfilePage = () => {
                         <p>
                           {photoPreview
                             ? 'Couples can now see who they\'ll be working with.'
-                            : 'Profiles with photos get 3x more inquiries from couples.'}
+                            : 'Profiles with photos get 3x more inquiries.'}
                         </p>
                         <label className="btn-upload">
                           <i className="fa fa-cloud-upload" aria-hidden="true"></i>
@@ -657,342 +753,42 @@ const CreateProfilePage = () => {
                             Remove
                           </button>
                         )}
-                        {!photoPreview && (
-                          <div className="photo-tips">
-                            <span><i className="fa fa-check" aria-hidden="true"></i> Professional headshot</span>
-                            <span><i className="fa fa-check" aria-hidden="true"></i> Good lighting</span>
-                            <span><i className="fa fa-check" aria-hidden="true"></i> JPG/PNG, max 5MB</span>
-                          </div>
-                        )}
                       </div>
                     </div>
                     {photoError && (
                       <div className="field-error">{photoError}</div>
                     )}
                   </div>
-                  <div className="professional-signup__grid professional-signup__grid--2">
-                    <div className="form-group">
-                      <label htmlFor="full_name">Full Name with Credentials *</label>
-                      <input
-                        type="text"
-                        id="full_name"
-                        className="form-control"
-                        required
-                        value={formData.full_name}
-                        onChange={(e) => handleInputChange('full_name', e.target.value)}
-                        placeholder="Dr. Jane Smith, LMFT"
-                      />
-                      <small>Include titles and credentials (e.g., PhD, LMFT, LPC)</small>
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="pronouns">Pronouns (optional)</label>
-                      <select
-                        id="pronouns"
-                        className="form-control"
-                        value={formData.pronouns}
-                        onChange={(e) => handleInputChange('pronouns', e.target.value)}
-                      >
-                        {pronounOptions.map(option => (
-                          <option key={option.value} value={option.value}>{option.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="profession">Professional Type *</label>
-                    <select
-                      id="profession"
-                      className="form-control"
-                      required
-                      value={formData.profession}
-                      onChange={(e) => handleInputChange('profession', e.target.value)}
-                    >
-                      <option value="">Select your role</option>
-                      {professionOptions.map(option => (
-                        <option key={option} value={option}>{option}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="professional-signup__grid professional-signup__grid--2">
-                    <div className="form-group">
-                      <label htmlFor="email">Email *</label>
-                      <input
-                        type="email"
-                        id="email"
-                        className="form-control"
-                        required
-                        value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        placeholder="you@practice.com"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="phone">Phone</label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        className="form-control"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        placeholder="(555) 123-4567"
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="website">Website</label>
-                    <input
-                      type="url"
-                      id="website"
-                      className="form-control"
-                      value={formData.website}
-                      onChange={(e) => handleInputChange('website', e.target.value)}
-                      placeholder="https://yourpractice.com"
-                    />
-                  </div>
                 </div>
               )}
 
-              {/* Step 2: Professional Details */}
+              {/* Step 2: Make Your Profile Stand Out (Optional) */}
               {currentStep === 2 && (
                 <div className="professional-signup__fieldset">
                   <div className="professional-signup__fieldset-header">
-                    <h3>Professional Details</h3>
-                    <p>Help couples understand your qualifications and experience.</p>
+                    <h3>Make Your Profile Stand Out</h3>
+                    <p>These details help couples choose you over others. <strong>You can skip this and add later.</strong></p>
                   </div>
+
+                  {/* Bio - Most important for conversions */}
                   <div className="form-group">
-                    <label htmlFor="years_experience">Years of Experience *</label>
-                    <select
-                      id="years_experience"
-                      className="form-control"
-                      required
-                      value={formData.years_experience}
-                      onChange={(e) => handleInputChange('years_experience', e.target.value)}
-                    >
-                      <option value="">Select experience level</option>
-                      {yearsExperienceOptions.map(option => (
-                        <option key={option.value} value={option.value}>{option.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Credentials & Certifications</label>
-                    <div className="professional-signup__checkbox-grid">
-                      {credentialOptions.map(credential => (
-                        <label key={credential} className="professional-signup__checkbox-label">
-                          <input
-                            type="checkbox"
-                            checked={formData.credentials.includes(credential)}
-                            onChange={() => handleArrayToggle('credentials', credential)}
-                          />
-                          <span>{credential}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="education">Education (School & Degree)</label>
-                    <input
-                      type="text"
-                      id="education"
-                      className="form-control"
-                      value={formData.education}
-                      onChange={(e) => handleInputChange('education', e.target.value)}
-                      placeholder="e.g., MA in Marriage & Family Therapy, Azusa Pacific University"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="profile_intro">Profile Intro (Short Hook) *</label>
-                    <input
-                      type="text"
-                      id="profile_intro"
-                      className="form-control"
-                      maxLength={200}
-                      value={formData.profile_intro}
-                      onChange={(e) => handleInputChange('profile_intro', e.target.value)}
-                      placeholder="I help engaged couples build strong foundations and navigate pre-wedding conflicts with confidence."
-                    />
-                    <small>
-                      {formData.profile_intro.length}/200 characters. This is your elevator pitch - the first thing couples see.
-                      Formula: "I help [ideal client] [desired outcome]"
-                    </small>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="bio">Professional Bio</label>
+                    <label htmlFor="bio">Tell couples about yourself</label>
                     <textarea
                       id="bio"
                       className="form-control"
-                      rows="6"
+                      rows="4"
                       value={formData.bio}
                       onChange={(e) => handleInputChange('bio', e.target.value)}
-                      placeholder="Describe your approach to premarital counseling, what clients can expect, and what makes your practice unique..."
+                      placeholder="What's your approach to premarital counseling? What can couples expect working with you?"
                     />
-                    <small>This appears on your public profile. Aim for 150-300 words.</small>
+                    <small>Profiles with bios get 2x more inquiries. Even 2-3 sentences helps.</small>
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="intro_video_url">Video Introduction (Optional)</label>
-                    <input
-                      type="url"
-                      id="intro_video_url"
-                      className="form-control"
-                      value={formData.intro_video_url}
-                      onChange={(e) => handleInputChange('intro_video_url', e.target.value)}
-                      placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
-                    />
-                    <small>
-                      Profiles with videos get 4x more inquiries! Share a 1-2 minute intro about your approach.
-                    </small>
-                  </div>
-                  <div className="form-group">
-                    <label>Languages Spoken</label>
-                    <div className="professional-signup__checkbox-grid">
-                      {languageOptions.map(language => (
-                        <label key={language} className="professional-signup__checkbox-label">
-                          <input
-                            type="checkbox"
-                            checked={formData.languages.includes(language)}
-                            onChange={() => handleArrayToggle('languages', language)}
-                          />
-                          <span>{language}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
 
-              {/* Step 3: Services & Pricing */}
-              {currentStep === 3 && (
-                <div className="professional-signup__fieldset">
-                  <div className="professional-signup__fieldset-header">
-                    <h3>Services & Pricing</h3>
-                    <p>Help couples understand your fees and payment options.</p>
-                  </div>
+                  {/* Specialties - Simplified, top options only */}
                   <div className="form-group">
-                    <label className="professional-signup__toggle-label">
-                      <input
-                        type="checkbox"
-                        checked={formData.offers_free_consultation}
-                        onChange={(e) => handleInputChange('offers_free_consultation', e.target.checked)}
-                      />
-                      <span>I offer free initial consultations</span>
-                    </label>
-                    <small>Professionals offering free consultations receive 40% more inquiries</small>
-                  </div>
-                  <div className="professional-signup__grid professional-signup__grid--2">
-                    <div className="form-group">
-                      <label htmlFor="session_fee_min">Session Fee - Minimum ($)</label>
-                      <input
-                        type="number"
-                        id="session_fee_min"
-                        className="form-control"
-                        min="0"
-                        step="10"
-                        value={formData.session_fee_min}
-                        onChange={(e) => handleInputChange('session_fee_min', e.target.value)}
-                        placeholder="100"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="session_fee_max">Session Fee - Maximum ($)</label>
-                      <input
-                        type="number"
-                        id="session_fee_max"
-                        className="form-control"
-                        min="0"
-                        step="10"
-                        value={formData.session_fee_max}
-                        onChange={(e) => handleInputChange('session_fee_max', e.target.value)}
-                        placeholder="200"
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label>Payment Methods Accepted</label>
-                    <div className="professional-signup__checkbox-grid">
-                      {paymentMethodOptions.map(method => (
-                        <label key={method} className="professional-signup__checkbox-label">
-                          <input
-                            type="checkbox"
-                            checked={formData.payment_methods.includes(method)}
-                            onChange={() => handleArrayToggle('payment_methods', method)}
-                          />
-                          <span>{method}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label>Insurance Accepted</label>
-                    <div className="professional-signup__checkbox-grid">
-                      {insuranceOptions.map(insurance => (
-                        <label key={insurance} className="professional-signup__checkbox-label">
-                          <input
-                            type="checkbox"
-                            checked={formData.insurance_accepted.includes(insurance)}
-                            onChange={() => handleArrayToggle('insurance_accepted', insurance)}
-                          />
-                          <span>{insurance}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="booking_url">Online Booking URL (Optional)</label>
-                    <input
-                      type="url"
-                      id="booking_url"
-                      className="form-control"
-                      value={formData.booking_url}
-                      onChange={(e) => handleInputChange('booking_url', e.target.value)}
-                      placeholder="https://calendly.com/yourname or https://acuityscheduling.com/..."
-                    />
-                    <small>Direct scheduling link reduces friction and increases bookings</small>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="typical_sessions">Typical Program Length</label>
-                    <select
-                      id="typical_sessions"
-                      className="form-control"
-                      value={formData.typical_sessions}
-                      onChange={(e) => handleInputChange('typical_sessions', e.target.value)}
-                    >
-                      <option value="">Select typical session count</option>
-                      {typicalSessionsOptions.map(option => (
-                        <option key={option.value} value={option.value}>{option.label}</option>
-                      ))}
-                    </select>
-                    <small>How many sessions do you typically recommend for premarital couples?</small>
-                  </div>
-                  <div className="form-group">
-                    <label>Assessment Tools Used</label>
-                    <div className="professional-signup__checkbox-grid">
-                      {assessmentToolOptions.map(tool => (
-                        <label key={tool} className="professional-signup__checkbox-label">
-                          <input
-                            type="checkbox"
-                            checked={formData.assessment_tools.includes(tool)}
-                            onChange={() => handleArrayToggle('assessment_tools', tool)}
-                          />
-                          <span>{tool}</span>
-                        </label>
-                      ))}
-                    </div>
-                    <small>Couples often look for specific assessment methodologies</small>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 4: Specialties & Location */}
-              {currentStep === 4 && (
-                <div className="professional-signup__fieldset">
-                  <div className="professional-signup__fieldset-header">
-                    <h3>Specialties & Location</h3>
-                    <p>Help couples find you based on their specific needs.</p>
-                  </div>
-                  <div className="form-group">
-                    <label>Specialties * (Select at least one)</label>
+                    <label>What do you specialize in?</label>
                     <div className="professional-signup__pill-group">
-                      {specialtyOptions.map(specialty => (
+                      {['Premarital Counseling', 'Communication Skills', 'Conflict Resolution', 'Faith-Based Counseling', 'Blended Families', 'LGBTQ+ Affirming'].map(specialty => (
                         <button
                           type="button"
                           key={specialty}
@@ -1003,103 +799,136 @@ const CreateProfilePage = () => {
                         </button>
                       ))}
                     </div>
+                    <small>Select all that apply. You can add more from your dashboard.</small>
                   </div>
+
+                  {/* Experience - Quick select */}
                   <div className="form-group">
-                    <label>Treatment Approaches</label>
-                    <div className="professional-signup__checkbox-grid">
-                      {treatmentApproachOptions.map(approach => (
-                        <label key={approach} className="professional-signup__checkbox-label">
-                          <input
-                            type="checkbox"
-                            checked={formData.treatment_approaches.includes(approach)}
-                            onChange={() => handleArrayToggle('treatment_approaches', approach)}
-                          />
-                          <span>{approach}</span>
-                        </label>
+                    <label htmlFor="years_experience">Years of experience</label>
+                    <select
+                      id="years_experience"
+                      className="form-control"
+                      value={formData.years_experience}
+                      onChange={(e) => handleInputChange('years_experience', e.target.value)}
+                    >
+                      <option value="">Select (optional)</option>
+                      {yearsExperienceOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
                       ))}
+                    </select>
+                  </div>
+
+                  {/* Website/Phone - Optional contact methods */}
+                  <div className="professional-signup__grid professional-signup__grid--2">
+                    <div className="form-group">
+                      <label htmlFor="phone">Phone (optional)</label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        className="form-control"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        placeholder="(555) 123-4567"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="website">Website (optional)</label>
+                      <input
+                        type="url"
+                        id="website"
+                        className="form-control"
+                        value={formData.website}
+                        onChange={(e) => handleInputChange('website', e.target.value)}
+                        placeholder="https://yourpractice.com"
+                      />
                     </div>
                   </div>
-                  <div className="form-group">
-                    <label>Client Focus</label>
-                    <div className="professional-signup__checkbox-grid">
-                      {clientFocusOptions.map(focus => (
-                        <label key={focus} className="professional-signup__checkbox-label">
-                          <input
-                            type="checkbox"
-                            checked={formData.client_focus.includes(focus)}
-                            onChange={() => handleArrayToggle('client_focus', focus)}
-                          />
-                          <span>{focus}</span>
-                        </label>
-                      ))}
-                    </div>
+                </div>
+              )}
+
+              {/* Step 3: Pricing & Final Details (Optional - Last Step) */}
+              {currentStep === 3 && (
+                <div className="professional-signup__fieldset">
+                  <div className="professional-signup__fieldset-header">
+                    <h3>Almost Done! Add Pricing</h3>
+                    <p>Pricing info helps couples budget. <strong>Skip to publish now, or add these details.</strong></p>
                   </div>
+
+                  {/* Free Consultation - High impact toggle */}
+                  <div className="form-group" style={{ background: 'var(--ivory)', padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', marginBottom: 'var(--space-6)' }}>
+                    <label className="professional-signup__toggle-label" style={{ margin: 0 }}>
+                      <input
+                        type="checkbox"
+                        checked={formData.offers_free_consultation}
+                        onChange={(e) => handleInputChange('offers_free_consultation', e.target.checked)}
+                      />
+                      <span><strong>I offer free consultations</strong></span>
+                    </label>
+                    <small style={{ display: 'block', marginTop: 'var(--space-2)' }}>Providers with free consultations get 40% more inquiries</small>
+                  </div>
+
+                  {/* Session Fee Range - Simplified */}
                   <div className="form-group">
-                    <label>Session Formats * (Select at least one)</label>
+                    <label>Session fee range (optional)</label>
+                    <div className="professional-signup__grid professional-signup__grid--2">
+                      <div>
+                        <input
+                          type="number"
+                          id="session_fee_min"
+                          className="form-control"
+                          min="0"
+                          step="10"
+                          value={formData.session_fee_min}
+                          onChange={(e) => handleInputChange('session_fee_min', e.target.value)}
+                          placeholder="Min ($)"
+                        />
+                      </div>
+                      <div>
+                        <input
+                          type="number"
+                          id="session_fee_max"
+                          className="form-control"
+                          min="0"
+                          step="10"
+                          value={formData.session_fee_max}
+                          onChange={(e) => handleInputChange('session_fee_max', e.target.value)}
+                          placeholder="Max ($)"
+                        />
+                      </div>
+                    </div>
+                    <small>Example: $100 - $175 per session</small>
+                  </div>
+
+                  {/* Booking URL - High value for conversions */}
+                  <div className="form-group">
+                    <label htmlFor="booking_url">Booking link (optional)</label>
+                    <input
+                      type="url"
+                      id="booking_url"
+                      className="form-control"
+                      value={formData.booking_url}
+                      onChange={(e) => handleInputChange('booking_url', e.target.value)}
+                      placeholder="https://calendly.com/yourname"
+                    />
+                    <small>Calendly, Acuity, or your booking page. Makes scheduling easy for couples.</small>
+                  </div>
+
+                  {/* Quick credential check - Top 4 only */}
+                  <div className="form-group">
+                    <label>Credentials (select if applicable)</label>
                     <div className="professional-signup__pill-group">
-                      {sessionTypeOptions.map((option) => (
+                      {['Licensed Marriage and Family Therapist (LMFT)', 'Licensed Professional Counselor (LPC)', 'Certified Gottman Therapist', 'Ordained Minister'].map(credential => (
                         <button
                           type="button"
-                          key={option.value}
-                          className={`professional-signup__pill ${formData.session_types.includes(option.value) ? 'is-selected' : ''}`}
-                          onClick={() => handleArrayToggle('session_types', option.value)}
+                          key={credential}
+                          className={`professional-signup__pill ${formData.credentials.includes(credential) ? 'is-selected' : ''}`}
+                          onClick={() => handleArrayToggle('credentials', credential)}
                         >
-                          {option.label}
+                          {credential.replace('Licensed ', '').replace('Certified ', '').replace(' (LMFT)', '').replace(' (LPC)', '')}
                         </button>
                       ))}
                     </div>
-                  </div>
-                  <div className="form-group">
-                    <label className="professional-signup__toggle-label">
-                      <input
-                        type="checkbox"
-                        checked={formData.accepting_new_clients}
-                        onChange={(e) => handleInputChange('accepting_new_clients', e.target.checked)}
-                      />
-                      <span>Currently accepting new clients</span>
-                    </label>
-                  </div>
-                  <div className="professional-signup__grid professional-signup__grid--2">
-                    <div className="form-group">
-                      <label htmlFor="city">City *</label>
-                      <input
-                        type="text"
-                        id="city"
-                        className="form-control"
-                        required
-                        value={formData.city}
-                        onChange={(e) => handleInputChange('city', e.target.value)}
-                        placeholder="Austin"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="state_province">State/Province *</label>
-                      <input
-                        type="text"
-                        id="state_province"
-                        className="form-control"
-                        required
-                        value={formData.state_province}
-                        onChange={(e) => handleInputChange('state_province', e.target.value)}
-                        placeholder="Texas"
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="country">Country</label>
-                    <select
-                      id="country"
-                      className="form-control"
-                      value={formData.country}
-                      onChange={(e) => handleInputChange('country', e.target.value)}
-                    >
-                      <option value="United States">United States</option>
-                      <option value="Canada">Canada</option>
-                      <option value="United Kingdom">United Kingdom</option>
-                      <option value="Australia">Australia</option>
-                      <option value="Ireland">Ireland</option>
-                      <option value="New Zealand">New Zealand</option>
-                    </select>
+                    <small>Add more credentials from your dashboard after signup.</small>
                   </div>
                 </div>
               )}
@@ -1115,22 +944,46 @@ const CreateProfilePage = () => {
                     Back
                   </button>
                 )}
+
+                {/* Steps 2 and 3 are skippable */}
+                {currentStep > 1 && currentStep < totalSteps && (
+                  <button
+                    type="button"
+                    className="professional-signup__button professional-signup__button--ghost"
+                    onClick={handleSkip}
+                    style={{ color: 'var(--slate)' }}
+                  >
+                    Skip for now →
+                  </button>
+                )}
+
                 {currentStep < totalSteps ? (
                   <button
                     type="button"
                     className="professional-signup__button professional-signup__button--primary"
                     onClick={handleNext}
                   >
-                    Continue
+                    {currentStep === 1 ? 'Continue' : 'Save & Continue'}
                   </button>
                 ) : (
-                  <button
-                    type="submit"
-                    className="professional-signup__submit"
-                    disabled={loading}
-                  >
-                    {loading ? 'Creating Your Profile...' : 'Publish My Free Profile'}
-                  </button>
+                  <>
+                    {/* On final step, offer both Skip to Publish and Save & Publish */}
+                    <button
+                      type="submit"
+                      className="professional-signup__button professional-signup__button--ghost"
+                      disabled={loading}
+                      style={{ color: 'var(--slate)' }}
+                    >
+                      Skip & Publish
+                    </button>
+                    <button
+                      type="submit"
+                      className="professional-signup__submit"
+                      disabled={loading}
+                    >
+                      {loading ? 'Creating Profile...' : 'Publish My Profile'}
+                    </button>
+                  </>
                 )}
               </div>
               {currentStep === totalSteps && (
