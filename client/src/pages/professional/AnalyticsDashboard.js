@@ -22,6 +22,7 @@ const AnalyticsDashboard = () => {
     if (profile) {
       loadAnalytics();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile]);
 
   const loadAnalytics = async () => {

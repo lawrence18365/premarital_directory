@@ -1,5 +1,5 @@
 // AI Content Generator using Supabase Edge Function (secure)
-// Cost: FREE using DeepSeek R1 model
+// Cost: FREE using Google Gemini 2.0 Flash model
 
 class AIContentGenerator {
   constructor() {
@@ -7,10 +7,8 @@ class AIContentGenerator {
     this.functionURL = `${process.env.REACT_APP_SUPABASE_URL}/functions/v1/generate-city-content`
     this.maxRetries = 3
   }
-  
+
   async generateCityContent(cityData) {
-    const { city, state, stateAbbr, demographicData, venueData } = cityData
-    
     try {
       const response = await this.callSupabaseFunction(cityData)
       return response
@@ -19,7 +17,7 @@ class AIContentGenerator {
       throw error
     }
   }
-  
+
   async callSupabaseFunction(cityData, retryCount = 0) {
     try {
       const response = await fetch(this.functionURL, {
@@ -30,18 +28,18 @@ class AIContentGenerator {
         },
         body: JSON.stringify(cityData)
       })
-      
+
       if (!response.ok) {
         const error = await response.text()
         throw new Error(`Supabase Function error: ${response.status} - ${error}`)
       }
-      
+
       const data = await response.json()
-      
+
       if (data.error) {
         throw new Error(`Function error: ${data.error}`)
       }
-      
+
       return data
     } catch (error) {
       if (retryCount < this.maxRetries) {
@@ -52,11 +50,11 @@ class AIContentGenerator {
       throw error
     }
   }
-  
+
   delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
-  
+
   // Estimate cost for a generation request
   estimateCost(prompt) {
     const estimatedTokens = Math.ceil(prompt.length / 4) + 2000 // Input + output

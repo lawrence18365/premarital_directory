@@ -38,7 +38,7 @@ const ClaimReviewDashboard = () => {
       const { data: { user } } = await supabase.auth.getUser()
 
       // Approve the claim
-      const { data: approvedClaim, error: approveError } = await profileOperations.approveProfileClaim(
+      const { error: approveError } = await profileOperations.approveProfileClaim(
         claim.id,
         user.id
       )

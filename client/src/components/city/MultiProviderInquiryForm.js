@@ -61,7 +61,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
       const providerIds = matchingProviders.map(p => p.id);
 
       // Insert inquiry record
-      const { data: inquiry, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('city_inquiries')
         .insert({
           couple_name: formData.name || null,

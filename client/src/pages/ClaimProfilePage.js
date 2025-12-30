@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import '../assets/css/claim-wizard.css'
 
@@ -8,7 +8,6 @@ import { sendClaimSubmittedEmail } from '../lib/emailNotifications'
 
 const ClaimProfilePage = () => {
   const { id } = useParams() // Optional - for claiming specific profile
-  const navigate = useNavigate()
   const [existingProfile, setExistingProfile] = useState(null)
   const [formData, setFormData] = useState({
     full_name: '',
@@ -35,6 +34,7 @@ const ClaimProfilePage = () => {
     if (id) {
       loadExistingProfile()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
   const loadExistingProfile = async () => {
@@ -183,7 +183,7 @@ const ClaimProfilePage = () => {
           status: 'pending',
         };
 
-        const { data, error } = await profileOperations.createProfileClaim(claimData);
+        const { error } = await profileOperations.createProfileClaim(claimData);
 
         if (error) {
           throw error;
@@ -201,7 +201,7 @@ const ClaimProfilePage = () => {
           status: 'pending'
         };
 
-        const { data, error } = await profileOperations.createProfileClaim(claimData);
+        const { error } = await profileOperations.createProfileClaim(claimData);
 
         if (error) {
           throw error;

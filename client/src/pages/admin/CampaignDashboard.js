@@ -14,6 +14,7 @@ const CampaignDashboard = () => {
 
   useEffect(() => {
     loadCampaignStats()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadCampaignStats = async () => {
@@ -106,7 +107,7 @@ const CampaignDashboard = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1>📧 Profile Activation Campaign Dashboard</h1>
+      <h1>Profile Activation Campaign Dashboard</h1>
       
       {/* Stats Overview */}
       {campaignStats && (
@@ -300,7 +301,7 @@ const CampaignDashboard = () => {
               opacity: loading ? 0.6 : 1
             }}
           >
-            {loading ? '🔄 Sending...' : '📤 Send Batch Now'}
+            {loading ? 'Sending...' : 'Send Batch Now'}
           </button>
 
           <button
@@ -314,7 +315,7 @@ const CampaignDashboard = () => {
               cursor: 'pointer'
             }}
           >
-            ⚙️ Setup Automation
+            Setup Automation
           </button>
 
           <button
@@ -328,7 +329,7 @@ const CampaignDashboard = () => {
               cursor: 'pointer'
             }}
           >
-            🔄 Refresh Stats
+            Refresh Stats
           </button>
         </div>
       </div>
@@ -340,7 +341,7 @@ const CampaignDashboard = () => {
         borderRadius: '8px', 
         border: '1px solid #f59e0b' 
       }}>
-        <h3 style={{ color: '#92400e', marginTop: 0 }}>🚀 Quick Setup Instructions</h3>
+        <h3 style={{ color: '#92400e', marginTop: 0 }}>Quick Setup Instructions</h3>
         <ol style={{ color: '#92400e' }}>
           <li>Deploy the campaign functions to Supabase</li>
           <li>Run the database migration to create campaign_logs table</li>

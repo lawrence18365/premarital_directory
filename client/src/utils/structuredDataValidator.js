@@ -70,7 +70,7 @@ const validatePersonSchema = (data, errors, warnings) => {
     warnings.push('Address should have @type: "PostalAddress"')
   }
   
-  if (data.telephone && !/^[\+]?[\d\s\-\(\)]+$/.test(data.telephone)) {
+  if (data.telephone && !/^[+]?[\d\s\-()]+$/.test(data.telephone)) {
     warnings.push('Telephone format may not be optimal for structured data')
   }
 }
@@ -242,7 +242,7 @@ export const logStructuredDataReport = () => {
   
   const report = generateStructuredDataReport()
   
-  console.group('🔍 Structured Data Validation Report')
+  console.group('Structured Data Validation Report')
   console.log(`Total schemas found: ${report.totalSchemas}`)
   console.log(`Valid schemas: ${report.validSchemas}/${report.totalSchemas}`)
   console.log(`Total errors: ${report.errors}`)
@@ -262,9 +262,9 @@ export const logStructuredDataReport = () => {
     }
     
     if (validation.isValid) {
-      console.log('✅ Valid')
+      console.log('Valid')
     } else {
-      console.log('❌ Invalid')
+      console.log('Invalid')
     }
     
     console.groupEnd()

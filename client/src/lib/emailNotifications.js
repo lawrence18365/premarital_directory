@@ -57,11 +57,11 @@ const sendViaResend = async (to, subject, html) => {
  * @private
  */
 const logEmail = (to, subject, body) => {
-  console.log('📧 EMAIL (Development Mode)')
+  console.log('EMAIL (Development Mode)')
   console.log('To:', to)
   console.log('Subject:', subject)
   console.log('Body:', body)
-  console.log('\n💡 To enable real emails, set REACT_APP_RESEND_API_KEY in .env')
+  console.log('\nTo enable real emails, set REACT_APP_RESEND_API_KEY in .env')
 }
 
 /**
@@ -103,13 +103,13 @@ export const sendClaimSubmittedEmail = async (email, claimData) => {
   try {
     if (EMAIL_CONFIG.useResend) {
       await sendViaResend(email, subject, html)
-      console.log('✅ Claim submitted email sent to:', email)
+      console.log('Claim submitted email sent to:', email)
     } else {
       logEmail(email, subject, html)
     }
     return { success: true }
   } catch (error) {
-    console.error('❌ Failed to send claim submitted email:', error)
+    console.error('Failed to send claim submitted email:', error)
     // Don't throw - we don't want email failures to block claim submission
     return { success: false, error: error.message }
   }
@@ -122,11 +122,11 @@ export const sendClaimSubmittedEmail = async (email, claimData) => {
  * @param {string} profileUrl - URL to the approved profile
  */
 export const sendClaimApprovedEmail = async (email, claimData, profileUrl) => {
-  const subject = '🎉 Your Profile Claim Has Been Approved!'
+  const subject = 'Your Profile Claim Has Been Approved'
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <div style="background-color: #10b981; color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
-        <h2 style="margin: 0;">✅ Claim Approved!</h2>
+        <h2 style="margin: 0;">Claim Approved</h2>
       </div>
 
       <div style="padding: 20px; background-color: #f9fafb; border-radius: 0 0 8px 8px;">
@@ -155,7 +155,7 @@ export const sendClaimApprovedEmail = async (email, claimData, profileUrl) => {
 
         <p>If you need any help getting started, feel free to reply to this email.</p>
 
-        <p style="color: #10b981; font-weight: bold; margin-top: 30px;">Welcome to the directory! 🎊</p>
+        <p style="color: #10b981; font-weight: bold; margin-top: 30px;">Welcome to the directory!</p>
 
         <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
           Best regards,<br>
@@ -168,13 +168,13 @@ export const sendClaimApprovedEmail = async (email, claimData, profileUrl) => {
   try {
     if (EMAIL_CONFIG.useResend) {
       await sendViaResend(email, subject, html)
-      console.log('✅ Claim approved email sent to:', email)
+      console.log('Claim approved email sent to:', email)
     } else {
       logEmail(email, subject, html)
     }
     return { success: true }
   } catch (error) {
-    console.error('❌ Failed to send claim approved email:', error)
+    console.error('Failed to send claim approved email:', error)
     return { success: false, error: error.message }
   }
 }
@@ -215,13 +215,13 @@ export const sendClaimRejectedEmail = async (email, claimData, reason) => {
   try {
     if (EMAIL_CONFIG.useResend) {
       await sendViaResend(email, subject, html)
-      console.log('✅ Claim rejected email sent to:', email)
+      console.log('Claim rejected email sent to:', email)
     } else {
       logEmail(email, subject, html)
     }
     return { success: true }
   } catch (error) {
-    console.error('❌ Failed to send claim rejected email:', error)
+    console.error('Failed to send claim rejected email:', error)
     return { success: false, error: error.message }
   }
 }
@@ -234,11 +234,11 @@ export const sendClaimRejectedEmail = async (email, claimData, reason) => {
  */
 export const notifyAdminNewClaim = async (adminEmail, claimData, claimUrl) => {
   const recipient = adminEmail || EMAIL_CONFIG.adminEmail
-  const subject = '🔔 New Profile Claim Requires Review'
+  const subject = 'New Profile Claim Requires Review'
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <div style="background-color: #fbbf24; color: #78350f; padding: 20px; border-radius: 8px 8px 0 0;">
-        <h2 style="margin: 0;">🔔 New Profile Claim</h2>
+        <h2 style="margin: 0;">New Profile Claim</h2>
       </div>
 
       <div style="padding: 20px; background-color: #f9fafb; border-radius: 0 0 8px 8px;">
@@ -284,13 +284,13 @@ export const notifyAdminNewClaim = async (adminEmail, claimData, claimUrl) => {
   try {
     if (EMAIL_CONFIG.useResend) {
       await sendViaResend(recipient, subject, html)
-      console.log('✅ Admin notification sent to:', recipient)
+      console.log('Admin notification sent to:', recipient)
     } else {
       logEmail(recipient, subject, html)
     }
     return { success: true }
   } catch (error) {
-    console.error('❌ Failed to send admin notification:', error)
+    console.error('Failed to send admin notification:', error)
     return { success: false, error: error.message }
   }
 }
@@ -434,21 +434,23 @@ export const sendProfileCreatedEmail = async (email, profileData, profileUrl, da
   try {
     if (EMAIL_CONFIG.useResend) {
       await sendViaResend(email, subject, html)
-      console.log('✅ Profile created welcome email sent to:', email)
+      console.log('Profile created welcome email sent to:', email)
     } else {
       logEmail(email, subject, html)
     }
     return { success: true }
   } catch (error) {
-    console.error('❌ Failed to send profile created email:', error)
+    console.error('Failed to send profile created email:', error)
     return { success: false, error: error.message }
   }
 }
 
-export default {
+const emailNotifications = {
   sendClaimSubmittedEmail,
   sendClaimApprovedEmail,
   sendClaimRejectedEmail,
   notifyAdminNewClaim,
   sendProfileCreatedEmail
 }
+
+export default emailNotifications

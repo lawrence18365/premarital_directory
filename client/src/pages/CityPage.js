@@ -14,7 +14,6 @@ import LeadContactForm from '../components/leads/LeadContactForm';
 import FAQ from '../components/common/FAQ';
 import HowToChooseSection from '../components/city/HowToChooseSection';
 import MultiProviderInquiryForm from '../components/city/MultiProviderInquiryForm';
-import DynamicCityStats from '../components/city/DynamicCityStats';
 import { clickTrackingOperations, cityOverridesOperations } from '../lib/supabaseClient';
 import '../assets/css/state-page.css';
 
@@ -45,6 +44,7 @@ const CityPage = () => {
     loadCityOverride()
     loadSEOContent()
     trackLocationPageView(stateName, cityName)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, city])
 
   const loadCityOverride = async () => {
@@ -60,7 +60,7 @@ const CityPage = () => {
         .select('*')
         .eq('slug', slug)
         .eq('is_published', true)
-        .single()
+        .maybeSingle()
 
       if (data) {
         setSeoContent(data)
@@ -144,10 +144,6 @@ const CityPage = () => {
 
   const breadcrumbData = generateBreadcrumbs.cityPage(stateName, cityName, `/premarital-counseling/${state}`)
 
-  const nearbyStates = Object.entries(STATE_CONFIG)
-    .filter(([key]) => key !== state)
-    .slice(0, 6)
-
   // Generate ItemList structured data for provider directory (SEO-critical for rankings)
   const structuredData = profiles.length > 0 ? {
     '@context': 'https://schema.org',
@@ -201,8 +197,6 @@ const CityPage = () => {
     { label: 'Faith-based programs', detail: 'Christian, Catholic, interfaith' },
     { label: 'Online & local options', detail: 'Telehealth + in-person' }
   ]
-
-  const hasProfiles = profiles.length > 0
 
   // Determine if page should be noindexed (thin content detection)
   // With dynamic stats blocks added, we can index pages with fewer profiles
@@ -289,15 +283,6 @@ const CityPage = () => {
 
       {/* City Content */}
       <div className="container">
-        {/* Dynamic City Stats - Adds unique, valuable content */}
-        {!loading && profiles.length > 0 && (
-          <DynamicCityStats
-            profiles={profiles}
-            cityName={cityName}
-            stateName={stateName}
-          />
-        )}
-
         <div id="providers-list" className="state-content">
           {/* Left Column - Profiles */}
           <div className="state-main">
@@ -377,14 +362,14 @@ const CityPage = () => {
                     p.profession?.toLowerCase().includes('lmft') ||
                     p.profession?.toLowerCase().includes('lpc') ||
                     p.profession?.toLowerCase().includes('lcsw') ||
-                    p.profession?.toLowerCase().includes('counselor') && !p.profession?.toLowerCase().includes('clergy')
+                    (p.profession?.toLowerCase().includes('counselor') && !p.profession?.toLowerCase().includes('clergy'))
                   )
                   const clergy = profiles.filter(p =>
                     p.profession?.toLowerCase().includes('clergy') ||
                     p.profession?.toLowerCase().includes('pastor') ||
                     p.profession?.toLowerCase().includes('priest') ||
                     p.profession?.toLowerCase().includes('minister') ||
-                    p.profession?.toLowerCase().includes('reverend')
+                    (p.profession?.toLowerCase().includes('reverend'))
                   )
                   const others = profiles.filter(p => !therapists.includes(p) && !clergy.includes(p))
 
@@ -796,7 +781,7 @@ const CityPage = () => {
                 {/* Marriage Statistics */}
                 {cityContent.sections?.marriageStats && (
                   <div className="sidebar-section">
-                    <h3>💒 Marriage Statistics</h3>
+                    <h3>Marriage Statistics</h3>
                     <div className="marriage-stats">
                       {cityContent.sections.marriageStats.avgAge && (
                         <p><strong>Average Age:</strong> {cityContent.sections.marriageStats.avgAge}</p>

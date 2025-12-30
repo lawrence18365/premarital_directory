@@ -15,10 +15,12 @@ const LeadsPage = () => {
     if (profile) {
       loadLeads()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile])
 
   useEffect(() => {
     applyFilters()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leads, statusFilter, searchTerm])
 
   const loadLeads = async () => {

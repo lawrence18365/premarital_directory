@@ -13,6 +13,7 @@ const CityOrProfilePage = () => {
 
   useEffect(() => {
     determinePageType()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, cityOrSlug])
 
   const determinePageType = async () => {

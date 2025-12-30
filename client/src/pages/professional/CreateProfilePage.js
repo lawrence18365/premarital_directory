@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
-import { profileOperations } from '../../lib/supabaseClient'
+import { profileOperations, supabase } from '../../lib/supabaseClient'
 import { trackProfileClaim } from '../../components/analytics/GoogleAnalytics'
 import SEOHelmet from '../../components/analytics/SEOHelmet'
 import { STATE_CONFIG } from '../../data/locationConfig'
@@ -58,6 +58,9 @@ const CreateProfilePage = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [utmParams, setUtmParams] = useState({})
+  const [photoFile, setPhotoFile] = useState(null)
+  const [photoPreview, setPhotoPreview] = useState('')
+  const [photoError, setPhotoError] = useState('')
 
   // Capture UTM parameters on load
   useEffect(() => {
@@ -79,6 +82,38 @@ const CreateProfilePage = () => {
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+    setError('')
+  }
+
+  const handlePhotoChange = (event) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      setPhotoError('Please select a valid image file')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoError('Image file must be smaller than 5MB')
+      return
+    }
+
+    setPhotoFile(file)
+    setPhotoError('')
+    setError('')
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setPhotoPreview(e.target.result)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handlePhotoRemove = () => {
+    setPhotoFile(null)
+    setPhotoPreview('')
+    setPhotoError('')
     setError('')
   }
 
@@ -136,6 +171,10 @@ const CreateProfilePage = () => {
         setError('Please enter a valid email address')
         return false
       }
+      if (photoError) {
+        setError(photoError)
+        return false
+      }
     }
 
     if (step === 2) {
@@ -184,6 +223,11 @@ const CreateProfilePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    if (photoError) {
+      setError(photoError)
+      return
+    }
 
     if (!validateStep(currentStep)) return
 
@@ -245,6 +289,29 @@ const CreateProfilePage = () => {
         throw createError
       }
 
+      let photoUploadError = null
+      if (photoFile) {
+        const { data: uploadData, error: uploadError } = await profileOperations.uploadPhoto(
+          photoFile,
+          profile.id
+        )
+
+        if (uploadError) {
+          console.error('Photo upload failed:', uploadError)
+          photoUploadError = 'We created your profile, but the photo upload failed.'
+        } else {
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ photo_url: uploadData.publicUrl })
+            .eq('id', profile.id)
+
+          if (updateError) {
+            console.error('Photo URL update failed:', updateError)
+            photoUploadError = 'We uploaded your photo, but could not attach it to your profile yet.'
+          }
+        }
+      }
+
       trackProfileClaim(profile.id, 'self_service')
       await refreshProfile()
 
@@ -270,7 +337,8 @@ const CreateProfilePage = () => {
         state: {
           profileUrl,
           profileId: profile.id,
-          profileName: formData.full_name
+          profileName: formData.full_name,
+          photoUploadError
         }
       })
 
@@ -447,14 +515,6 @@ const CreateProfilePage = () => {
     { value: 'customized', label: 'Customized to couple needs' }
   ]
 
-  // NEW: Approach type (faith-based vs secular)
-  const approachTypeOptions = [
-    { value: 'secular', label: 'Secular/Non-Religious' },
-    { value: 'faith-based', label: 'Faith-Based/Christian' },
-    { value: 'faith-flexible', label: 'Faith-Informed (flexible)' },
-    { value: 'interfaith', label: 'Interfaith Specialist' }
-  ]
-
   const heroStats = [
     { value: '12+', label: 'Active city directories' },
     { value: '0%', label: 'Commission or lead fees' },
@@ -557,6 +617,45 @@ const CreateProfilePage = () => {
                   <div className="professional-signup__fieldset-header">
                     <h3>Basic Information</h3>
                     <p>Your public contact and professional identity.</p>
+                  </div>
+                  <div className="form-group">
+                    <label>Profile Photo (optional)</label>
+                    <div className="photo-upload">
+                      <div className="photo-preview">
+                        {photoPreview ? (
+                          <img src={photoPreview} alt="Profile preview" />
+                        ) : (
+                          <div className="photo-placeholder">
+                            <i className="fa fa-user" aria-hidden="true"></i>
+                          </div>
+                        )}
+                      </div>
+                      <div className="photo-controls">
+                        <label className="btn btn-outline">
+                          <i className="fa fa-upload" aria-hidden="true"></i>
+                          Choose Photo
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handlePhotoChange}
+                            style={{ display: 'none' }}
+                          />
+                        </label>
+                        {photoPreview && (
+                          <button
+                            type="button"
+                            className="btn btn-ghost"
+                            onClick={handlePhotoRemove}
+                          >
+                            Remove Photo
+                          </button>
+                        )}
+                        <small>JPG or PNG up to 5MB.</small>
+                      </div>
+                    </div>
+                    {photoError && (
+                      <div className="field-error">{photoError}</div>
+                    )}
                   </div>
                   <div className="professional-signup__grid professional-signup__grid--2">
                     <div className="form-group">
@@ -1048,6 +1147,7 @@ const CreateProfilePage = () => {
                   style={{
                     width: `${Math.min(100,
                       (formData.full_name ? 10 : 0) +
+                      (photoPreview ? 10 : 0) +
                       (formData.email ? 10 : 0) +
                       (formData.profession ? 10 : 0) +
                       (formData.years_experience ? 10 : 0) +

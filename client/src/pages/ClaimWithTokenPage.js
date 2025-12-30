@@ -31,6 +31,7 @@ const ClaimWithTokenPage = () => {
 
   useEffect(() => {
     verifyToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const verifyToken = async () => {
@@ -265,7 +266,7 @@ const ClaimWithTokenPage = () => {
               margin: '0 auto var(--space-6)',
               fontSize: '2rem'
             }}>
-              ✓
+              <i className="fa fa-check" aria-hidden="true"></i>
             </div>
             <h2 style={{ color: 'var(--success)', marginBottom: 'var(--space-3)' }}>
               Profile Claimed Successfully!

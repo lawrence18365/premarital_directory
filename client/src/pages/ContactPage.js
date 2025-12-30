@@ -22,7 +22,7 @@ const ContactPage = () => {
 
     try {
       // Call the SMTP2GO contact email function
-      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+      const { error } = await supabase.functions.invoke('send-contact-email', {
         body: {
           name: contactForm.name,
           email: contactForm.email,

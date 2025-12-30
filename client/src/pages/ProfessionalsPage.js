@@ -39,6 +39,7 @@ const ProfessionalsPage = () => {
   useEffect(() => {
     applyFiltersAndSort()
     updateURLParams()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profiles, searchTerm, filters, sortBy])
 
   const loadAllProfiles = async () => {

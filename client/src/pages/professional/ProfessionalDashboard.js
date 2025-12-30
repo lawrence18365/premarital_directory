@@ -21,6 +21,7 @@ const ProfessionalDashboard = () => {
     if (profile) {
       loadDashboardData()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile])
 
   const loadDashboardData = async () => {
@@ -183,10 +184,6 @@ const ProfessionalDashboard = () => {
             <i className="fa fa-edit" aria-hidden="true"></i>
             Edit Profile
           </Link>
-          <Link to="/professional/subscription" className="btn btn-outline">
-            <i className="fa fa-crown" aria-hidden="true"></i>
-            Upgrade Plan
-          </Link>
           <button onClick={handleSignOut} className="btn btn-ghost">
             <i className="fa fa-sign-out" aria-hidden="true"></i>
             Sign Out
@@ -343,12 +340,6 @@ const ProfessionalDashboard = () => {
             <i className="fa fa-envelope" aria-hidden="true"></i>
             <h4>View All Leads</h4>
             <p>See all couples who have contacted you</p>
-          </Link>
-
-          <Link to="/professional/subscription" className="action-card">
-            <i className="fa fa-star" aria-hidden="true"></i>
-            <h4>Upgrade Plan</h4>
-            <p>Get featured placement and more leads</p>
           </Link>
 
           <Link to={`/profile/${profile?.slug || profile?.id}`} className="action-card">

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { profileOperations } from '../../lib/supabaseClient'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const ProfileEditor = () => {
   const { profile, updateProfile } = useAuth()
-  const navigate = useNavigate()
   
   const [formData, setFormData] = useState({
     full_name: '',

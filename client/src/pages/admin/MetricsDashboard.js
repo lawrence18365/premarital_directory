@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import SEOHelmet from '../../components/analytics/SEOHelmet'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
 const MetricsDashboard = () => {
   const [loading, setLoading] = useState(true)
@@ -20,6 +20,7 @@ const MetricsDashboard = () => {
 
   useEffect(() => {
     loadMetrics()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadMetrics = async () => {

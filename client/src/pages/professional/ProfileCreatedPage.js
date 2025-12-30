@@ -4,7 +4,7 @@ import SEOHelmet from '../../components/analytics/SEOHelmet'
 
 const ProfileCreatedPage = () => {
   const location = useLocation()
-  const { profileUrl, profileId, profileName } = location.state || {}
+  const { profileUrl, photoUploadError } = location.state || {}
   const [copiedBadge, setCopiedBadge] = useState(false)
 
   // Redirect if accessed directly without profile data
@@ -36,6 +36,19 @@ const ProfileCreatedPage = () => {
       />
 
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        {photoUploadError && (
+          <div style={{
+            background: 'linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%)',
+            padding: 'var(--space-6)',
+            borderRadius: 'var(--radius-xl)',
+            marginBottom: 'var(--space-6)',
+            border: '1px solid #ffecb5',
+            color: '#856404'
+          }}>
+            <strong>Photo upload notice:</strong> {photoUploadError} You can add it from your profile editor.
+          </div>
+        )}
+
         {/* Success Header */}
         <div style={{
           textAlign: 'center',

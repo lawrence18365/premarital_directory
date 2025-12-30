@@ -36,6 +36,7 @@ const StatePage = () => {
       setError('State not found')
       setLoading(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, stateConfig])
 
   // Track page view
@@ -214,12 +215,10 @@ const StatePage = () => {
             </p>
 
             <p style={{
-              marginTop: 'var(--space-4)',
               fontSize: '0.95rem',
               color: 'var(--slate)',
               maxWidth: '800px',
-              margin: '0 auto',
-              marginTop: 'var(--space-4)'
+              margin: 'var(--space-4) auto 0'
             }}>
               Many people search for "marriage counseling {stateConfig.name.toLowerCase()}" when planning a wedding.
               We specialize in <strong>premarital and marriage preparation</strong> — connecting engaged couples with

@@ -71,7 +71,7 @@ const SignupForm = () => {
     setLoading(true)
     setError('')
 
-    const { data, error } = await signUp(formData.email, formData.password, {
+    const { error } = await signUp(formData.email, formData.password, {
       full_name: formData.fullName,
       profession: formData.profession,
       phone: formData.phone

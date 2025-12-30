@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { generateSlug } from '../lib/utils'
-import { formatLocation, formatPhoneNumber, getDisplayUrl } from '../lib/utils'
+import { formatLocation, formatPhoneNumber } from '../lib/utils'
 import LeadContactForm from '../components/leads/LeadContactForm'
 import Breadcrumbs, { generateBreadcrumbs } from '../components/common/Breadcrumbs'
 import SEOHelmet, { generateProfessionalStructuredData } from '../components/analytics/SEOHelmet'
@@ -19,7 +19,6 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [showContactForm, setShowContactForm] = useState(true)
   const [phoneRevealed, setPhoneRevealed] = useState(false)
   const [emailRevealed, setEmailRevealed] = useState(false)
   const [imageError, setImageError] = useState(false)
@@ -27,10 +26,10 @@ const ProfilePage = () => {
 
   // Determine if contact info should be visible based on tier
   const canShowDirectContact = profile?.tier === 'local_featured' || profile?.tier === 'area_spotlight'
-  const isCommunityTier = profile?.tier === 'community' || !profile?.tier
 
   useEffect(() => {
     loadProfile()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSlug])
 
   useEffect(() => {
@@ -590,7 +589,7 @@ const ProfilePage = () => {
                         fontSize: '0.875rem',
                         fontWeight: 'bold'
                       }}>
-                        ✓ Accepting New Clients
+                        <i className="fa fa-check" aria-hidden="true"></i> Accepting New Clients
                       </div>
                     )}
                     {profile.booking_url ? (

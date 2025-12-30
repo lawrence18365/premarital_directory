@@ -83,8 +83,6 @@ const PROVIDER_FEATURES = [
 const HomePage = () => {
   const [profiles, setProfiles] = useState([])
   const [filteredProfiles, setFilteredProfiles] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [latestPosts, setLatestPosts] = useState([]);
   const [filters, setFilters] = useState({
@@ -200,13 +198,9 @@ const HomePage = () => {
 
   const loadProfiles = async () => {
     try {
-      setLoading(true)
-      setError(null)
-      const { data, error } = await profileOperations.getProfiles()
+      const { data } = await profileOperations.getProfiles()
 
-      if (error) {
-        setError(error.message)
-      } else {
+      if (data) {
         // Filter to only show profiles that mention premarital in their bio or specialties
         const premaritalFocused = (data || []).filter(profile =>
           profile.bio?.toLowerCase().includes('premarital') ||
@@ -221,9 +215,7 @@ const HomePage = () => {
         setProfiles(premaritalFocused.length > 0 ? premaritalFocused : data || [])
       }
     } catch (err) {
-      setError('Failed to load profiles')
-    } finally {
-      setLoading(false)
+      console.error('Failed to load profiles:', err)
     }
   }
 
@@ -576,7 +568,9 @@ const HomePage = () => {
                   <ul className="pros-cta__list">
                     {PROVIDER_FEATURES.map((feature) => (
                       <li key={feature.title}>
-                        <span className="pros-cta__list-icon" aria-hidden="true">✓</span>
+                        <span className="pros-cta__list-icon" aria-hidden="true">
+                          <i className="fa fa-check"></i>
+                        </span>
                         <div>
                           <p className="pros-cta__list-heading">{feature.title}</p>
                           <p className="pros-cta__list-copy">{feature.description}</p>
