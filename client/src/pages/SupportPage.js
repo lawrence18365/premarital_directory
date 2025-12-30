@@ -23,7 +23,9 @@ const SupportPage = () => {
           <div className="support-options">
             <div className="support-grid">
               <div className="support-card">
-                <div className="support-icon">📧</div>
+                <div className="support-icon" aria-hidden="true">
+                  <i className="fa fa-envelope"></i>
+                </div>
                 <h3>Email Support</h3>
                 <p>
                   Get detailed help with your questions. We typically respond within 24 hours 
@@ -35,7 +37,9 @@ const SupportPage = () => {
               </div>
               
               <div className="support-card">
-                <div className="support-icon">💬</div>
+                <div className="support-icon" aria-hidden="true">
+                  <i className="fa fa-comment-dots"></i>
+                </div>
                 <h3>Contact Form</h3>
                 <p>
                   Send us a message with your specific questions or concerns. We'll get back 
@@ -47,7 +51,9 @@ const SupportPage = () => {
               </div>
               
               <div className="support-card">
-                <div className="support-icon">📞</div>
+                <div className="support-icon" aria-hidden="true">
+                  <i className="fa fa-phone"></i>
+                </div>
                 <h3>Phone Support</h3>
                 <p>
                   Speak with our support team directly for urgent issues or complex questions.
@@ -178,7 +184,7 @@ const SupportPage = () => {
             <h2>Additional Resources</h2>
             <div className="resources-grid">
               <div className="resource-item">
-                <h3>📚 Getting Started Guide</h3>
+                <h3><i className="fa fa-book" aria-hidden="true"></i> Getting Started Guide</h3>
                 <p>
                   New to the platform? Our comprehensive guide walks you through all the 
                   features and how to make the most of your directory experience.
@@ -194,7 +200,7 @@ const SupportPage = () => {
               </div>
               
               <div className="resource-item">
-                <h3>🔐 Privacy & Security</h3>
+                <h3><i className="fa fa-lock" aria-hidden="true"></i> Privacy & Security</h3>
                 <p>
                   Learn about how we protect your data and maintain privacy for both 
                   couples and professionals using our platform.

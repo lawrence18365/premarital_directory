@@ -33,7 +33,9 @@ const GuidelinesPage = () => {
             
             <div className="guidelines-grid">
               <div className="guideline-card">
-                <div className="guideline-icon">🎓</div>
+                <div className="guideline-icon" aria-hidden="true">
+                  <i className="fa fa-graduation-cap"></i>
+                </div>
                 <h3>Required Credentials</h3>
                 <ul>
                   <li>Licensed Marriage and Family Therapists (LMFT)</li>
@@ -45,7 +47,9 @@ const GuidelinesPage = () => {
               </div>
               
               <div className="guideline-card">
-                <div className="guideline-icon">📋</div>
+                <div className="guideline-icon" aria-hidden="true">
+                  <i className="fa fa-clipboard-list"></i>
+                </div>
                 <h3>Profile Requirements</h3>
                 <ul>
                   <li>Accurate contact information</li>
@@ -57,7 +61,9 @@ const GuidelinesPage = () => {
               </div>
               
               <div className="guideline-card">
-                <div className="guideline-icon">🤝</div>
+                <div className="guideline-icon" aria-hidden="true">
+                  <i className="fa fa-handshake"></i>
+                </div>
                 <h3>Ethical Standards</h3>
                 <ul>
                   <li>Maintain client confidentiality</li>

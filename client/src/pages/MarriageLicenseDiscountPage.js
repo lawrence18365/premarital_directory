@@ -10,7 +10,6 @@ import '../assets/css/discount-page.css'
 
 const MarriageLicenseDiscountPage = () => {
   const [showGetMatchedForm, setShowGetMatchedForm] = useState(false)
-  const [selectedState, setSelectedState] = useState(null)
 
   const discountStates = getStatesWithDiscounts()
 

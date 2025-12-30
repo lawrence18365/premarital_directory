@@ -165,12 +165,6 @@ const Navbar = () => {
             
             {/* Additional mobile-specific links */}
             <li>
-              <Link to="/pricing" onClick={() => setMobileMenuOpen(false)}>
-                <i className="fa fa-dollar-sign" aria-hidden="true"></i>
-                Pricing
-              </Link>
-            </li>
-            <li>
               <Link to="/features" onClick={() => setMobileMenuOpen(false)}>
                 <i className="fa fa-star" aria-hidden="true"></i>
                 Features

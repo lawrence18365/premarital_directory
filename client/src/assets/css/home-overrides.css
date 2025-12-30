@@ -311,11 +311,12 @@
 }
 
 .provider-cta__list li::before {
-  content: '✓';
+  content: "\f00c";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
   position: absolute;
   left: 0;
   color: var(--accent-light);
-  font-weight: var(--weight-semibold);
 }
 
 .provider-cta__actions {

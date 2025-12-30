@@ -4,7 +4,7 @@ import CityContentCache from './cityContentCache'
 
 // Test function to be called from browser console
 export async function testAISystem() {
-  console.log('🤖 Testing AI System in Browser...')
+  console.log('Testing AI System in Browser...')
   
   try {
     // Test 1: Cache functionality
@@ -30,9 +30,9 @@ export async function testAISystem() {
     const cached = await CityContentCache.getCachedContent('test-browser', 'test-city')
     
     if (cached) {
-      console.log('✅ Cache working!')
+      console.log('Cache working!')
     } else {
-      console.log('❌ Cache failed')
+      console.log('Cache failed')
       return false
     }
     
@@ -47,12 +47,12 @@ export async function testAISystem() {
     )
     
     if (content && content.title) {
-      console.log('✅ AI Generation working!')
+      console.log('AI generation working!')
       console.log('Title:', content.title)
       console.log('Has sections:', !!content.sections)
       console.log('Provider:', content.provider)
     } else {
-      console.log('❌ AI Generation failed')
+      console.log('AI generation failed')
       return false
     }
     
@@ -60,12 +60,12 @@ export async function testAISystem() {
     console.log('\n3. Cleanup...')
     // Note: Would need delete method in cache class
     
-    console.log('\n🎉 ALL TESTS PASSED!')
-    console.log('✨ System ready for production!')
+    console.log('\nALL TESTS PASSED!')
+    console.log('System ready for production!')
     return true
     
   } catch (error) {
-    console.error('❌ Test failed:', error)
+    console.error('Test failed:', error)
     return false
   }
 }
@@ -79,7 +79,7 @@ export function testBotDetection() {
     'facebookexternalhit/1.1'
   ]
   
-  console.log('🤖 Testing Bot Detection...')
+  console.log('Testing Bot Detection...')
   
   userAgents.forEach(ua => {
     const isBot = CityContentGenerator.detectBot(ua)
@@ -87,7 +87,7 @@ export function testBotDetection() {
                      ua.includes('bingbot') ? 'Bingbot' :
                      ua.includes('facebook') ? 'Facebook' : 'Regular Browser'
     
-    console.log(`${isBot ? '🤖' : '👤'} ${agentName}: ${isBot ? 'BOT' : 'HUMAN'}`)
+    console.log(`${agentName}: ${isBot ? 'BOT' : 'HUMAN'}`)
   })
 }
 
@@ -96,7 +96,7 @@ if (typeof window !== 'undefined') {
   window.testAISystem = testAISystem
   window.testBotDetection = testBotDetection
   
-  console.log('🔧 Test functions loaded! Available commands:')
+  console.log('Test functions loaded! Available commands:')
   console.log('   testAISystem() - Test complete AI system')
   console.log('   testBotDetection() - Test bot detection logic')
 }

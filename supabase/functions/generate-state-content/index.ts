@@ -22,12 +22,12 @@ serve(async (req) => {
 
   try {
     const { state, stateName, stateAbbr, majorCities, population, characteristics }: StateContentRequest = await req.json()
-    
+
     if (!state || !stateName || !stateAbbr || !majorCities) {
       return new Response(
         JSON.stringify({ error: 'Missing required parameters: state, stateName, stateAbbr, majorCities' }),
-        { 
-          status: 400, 
+        {
+          status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       )
@@ -35,7 +35,7 @@ serve(async (req) => {
 
     // Fetch additional state data server-side
     const stateData = await fetchStateData(stateName, stateAbbr)
-    
+
     // Fetch real-time web research for SEO domination
     const webResearch = await fetchWebResearch(stateName, stateAbbr, majorCities)
 
@@ -47,11 +47,11 @@ serve(async (req) => {
 
     // Build the prompt for state content with web research
     const prompt = buildStatePrompt(stateName, stateAbbr, majorCities, stateData, webResearch, population, characteristics)
-    
-    console.log(`🧠 Feeding DeepSeek for ${stateName}:`)
-    console.log(`   📊 State data: ${JSON.stringify(stateData)}`)
-    console.log(`   🌐 Web research: ${webResearch.searchResults?.length || 0} searches, ${webResearch.competitorAnalysis?.length || 0} competitors, ${webResearch.pricingInsights?.length || 0} pricing insights`)
-    console.log(`🤖 Generating state content for ${stateName} with DeepSeek R1`)
+
+    console.log(`Feeding DeepSeek for ${stateName}:`)
+    console.log(`   State data: ${JSON.stringify(stateData)}`)
+    console.log(`   Web research: ${webResearch.searchResults?.length || 0} searches, ${webResearch.competitorAnalysis?.length || 0} competitors, ${webResearch.pricingInsights?.length || 0} pricing insights`)
+    console.log(`Generating state content for ${stateName} with DeepSeek R1`)
 
     // Call OpenRouter API with DeepSeek R1 free model
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -63,14 +63,14 @@ serve(async (req) => {
         'X-Title': 'Premarital Counseling Directory'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-r1-0528:free',
+        model: 'google/gemini-2.0-flash-exp:free',
         messages: [
           {
             role: 'system',
             content: 'You are a professional content writer specializing in local business directories and SEO content for premarital counseling services. Always return valid JSON with comprehensive, factual content.'
           },
           {
-            role: 'user', 
+            role: 'user',
             content: prompt
           }
         ],
@@ -86,34 +86,34 @@ serve(async (req) => {
     }
 
     const data = await response.json()
-    
+
     if (data.error) {
       throw new Error(`OpenRouter error: ${data.error.message}`)
     }
 
     // Parse and validate the response
     const rawContent = data.choices[0].message.content
-    console.log(`📋 Raw DeepSeek response for ${stateName}:`, rawContent)
-    
+    console.log(`Raw DeepSeek response for ${stateName}:`, rawContent)
+
     const content = JSON.parse(rawContent)
-    console.log(`📊 Parsed DeepSeek JSON for ${stateName}:`, JSON.stringify(content, null, 2))
-    
+    console.log(`Parsed DeepSeek JSON for ${stateName}:`, JSON.stringify(content, null, 2))
+
     // Validate accuracy against web research
     const validatedContent = validateContentAccuracy(content, webResearch, stateName)
-    console.log(`✅ Content validation completed for ${stateName}`)
-    
+    console.log(`Content validation completed for ${stateName}`)
+
     // Validate required fields
     const required = ['description', 'h1', 'intro', 'stateOverview', 'marriageStats', 'legalRequirements']
     const missing = []
     for (const field of required) {
       if (!content[field]) {
         missing.push(field)
-        console.warn(`⚠️ Missing field: ${field}`)
+        console.warn(`Missing field: ${field}`)
       }
     }
-    
+
     if (missing.length > 0) {
-      console.warn(`📋 Available fields in response:`, Object.keys(content))
+      console.warn(`Available fields in response:`, Object.keys(content))
     }
 
     // Return the generated content with fallback field mapping using validated content
@@ -154,21 +154,21 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify(result),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
 
   } catch (error) {
     console.error('Error generating state content:', error)
-    
+
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: error.message,
         fallback: true
       }),
-      { 
-        status: 500, 
+      {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
@@ -226,7 +226,7 @@ async function fetchStateData(stateName: string, stateAbbr: string) {
   try {
     // Get Census API key from environment
     const CENSUS_API_KEY = Deno.env.get('CENSUS_API_KEY')
-    
+
     // State FIPS codes mapping
     const stateFipsCodes: { [key: string]: string } = {
       'AL': '01', 'AK': '02', 'AZ': '04', 'AR': '05', 'CA': '06', 'CO': '08',
@@ -239,17 +239,17 @@ async function fetchStateData(stateName: string, stateAbbr: string) {
       'TX': '48', 'UT': '49', 'VT': '50', 'VA': '51', 'WA': '53', 'WV': '54',
       'WI': '55', 'WY': '56'
     }
-    
+
     const stateFips = stateFipsCodes[stateAbbr.toUpperCase()]
-    
+
     if (stateFips && CENSUS_API_KEY) {
       // Get state-level demographic data
       const variables = ['B01003_001E', 'B19013_001E', 'B12001_001E'] // Population, Median Income, Marital Status
       const url = `https://api.census.gov/data/2022/acs/acs1?get=${variables.join(',')}&for=state:${stateFips}&key=${CENSUS_API_KEY}`
-      
+
       const response = await fetch(url)
       const data = await response.json()
-      
+
       if (data && data.length > 1) {
         return {
           population: parseInt(data[1][0]) || 1000000,
@@ -259,7 +259,7 @@ async function fetchStateData(stateName: string, stateAbbr: string) {
         }
       }
     }
-    
+
     // Fallback data
     return {
       population: 1000000,
@@ -282,22 +282,22 @@ async function fetchStateData(stateName: string, stateAbbr: string) {
 async function fetchWebResearch(stateName: string, stateAbbr: string, majorCities: string[]) {
   try {
     const JINA_API_KEY = Deno.env.get('JINA_API_KEY')
-    
+
     if (!JINA_API_KEY) {
       console.log('Jina AI API key not found, using fallback research')
       return getFallbackResearch(stateName, majorCities)
     }
 
-    console.log(`🔍 Starting web research for ${stateName}...`)
+    console.log(`Starting web research for ${stateName}...`)
 
     // Timeout the entire web research after 15 seconds (reduced for faster response)
     const webResearchPromise = performWebResearch(stateName, JINA_API_KEY, majorCities)
-    const timeoutPromise = new Promise((_, reject) => 
+    const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error('Web research timeout')), 15000)
     )
-    
+
     return await Promise.race([webResearchPromise, timeoutPromise])
-    
+
   } catch (error) {
     console.error('Web research fetch error:', error)
     return getFallbackResearch(stateName, majorCities)
@@ -305,113 +305,113 @@ async function fetchWebResearch(stateName: string, stateAbbr: string, majorCitie
 }
 
 async function performWebResearch(stateName: string, JINA_API_KEY: string, majorCities: string[]) {
-    // Gov-first pass for legal facts with strict .gov queries
-    const govSearches = [
-      `site:*.gov ${stateName} marriage license waiting period`,
-      `site:${getCountyDomain(stateName)} marriage license fees`,
-      `site:*.gov ${stateName} marriage blood test requirements`
-    ]
-    
-    // General searches for pricing and counseling info
-    const generalSearches = [
-      `${stateName} premarital counseling average cost pricing 2024 therapists`,
-      `${stateName} marriage license requirements official`
-    ]
-    
-    const allSearches = [...govSearches, ...generalSearches]
-    const searchResults = []
-    let govSearchTimeout = false
-    
-    // Process searches with different timeouts for gov vs general
-    for (let i = 0; i < allSearches.length; i++) {
-      const query = allSearches[i]
-      const isGovSearch = i < govSearches.length
-      
-      try {
-        // Gov searches get longer timeout, general searches get shorter
-        const controller = new AbortController()
-        const timeout = isGovSearch ? 12000 : 8000
-        const timeoutId = setTimeout(() => {
-          controller.abort()
-          if (isGovSearch) {
-            govSearchTimeout = true
-            console.warn(`⏰ Gov search timeout for: ${query}`)
-          }
-        }, timeout)
-        
-        const url = `https://s.jina.ai/search?q=${encodeURIComponent(query)}&size=3`
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${JINA_API_KEY}`,
-            'Accept': 'application/json'
-          },
-          signal: controller.signal
-        })
-        
-        clearTimeout(timeoutId)
+  // Gov-first pass for legal facts with strict .gov queries
+  const govSearches = [
+    `site:*.gov ${stateName} marriage license waiting period`,
+    `site:${getCountyDomain(stateName)} marriage license fees`,
+    `site:*.gov ${stateName} marriage blood test requirements`
+  ]
 
-        if (response.ok) {
-          const data = await response.json()
-          // Log the raw response to see what Jina returns
-          console.log(`📊 Raw Jina response for "${query}":`, JSON.stringify(data, null, 2))
-          
-          // Jina AI returns results in an array under `data` or top-level depending on version
-          const results = Array.isArray(data) ? data : (Array.isArray((data as any).data) ? (data as any).data : [])
-          searchResults.push({
-            query: query,
-            results: results,
-            isGovSearch: isGovSearch
-          })
-          
-          console.log(`✅ Search completed for: ${query} (${results.length} results)`)
-          
-          // Log key info from each result
-          results.forEach((result, index) => {
-            console.log(`   Result ${index + 1}: ${result.title || result.url || 'No title'} - ${(result.content || result.snippet || '').substring(0, 100)}...`)
-          })
-          
-        } else {
-          const errorText = await response.text()
-          console.warn(`❌ Search failed with status ${response.status} for: ${query} - ${errorText}`)
+  // General searches for pricing and counseling info
+  const generalSearches = [
+    `${stateName} premarital counseling average cost pricing 2024 therapists`,
+    `${stateName} marriage license requirements official`
+  ]
+
+  const allSearches = [...govSearches, ...generalSearches]
+  const searchResults = []
+  let govSearchTimeout = false
+
+  // Process searches with different timeouts for gov vs general
+  for (let i = 0; i < allSearches.length; i++) {
+    const query = allSearches[i]
+    const isGovSearch = i < govSearches.length
+
+    try {
+      // Gov searches get longer timeout, general searches get shorter
+      const controller = new AbortController()
+      const timeout = isGovSearch ? 12000 : 8000
+      const timeoutId = setTimeout(() => {
+        controller.abort()
+        if (isGovSearch) {
+          govSearchTimeout = true
+          console.warn(`⏰ Gov search timeout for: ${query}`)
         }
-        
-        // Longer delay between requests to be nice to free API
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-      } catch (error) {
-        if (error.name === 'AbortError') {
-          console.warn(`Search timeout for: ${query}`)
-        } else {
-          console.warn(`Search failed for: ${query}`, error)
-        }
+      }, timeout)
+
+      const url = `https://s.jina.ai/search?q=${encodeURIComponent(query)}&size=3`
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${JINA_API_KEY}`,
+          'Accept': 'application/json'
+        },
+        signal: controller.signal
+      })
+
+      clearTimeout(timeoutId)
+
+      if (response.ok) {
+        const data = await response.json()
+        // Log the raw response to see what Jina returns
+        console.log(`Raw Jina response for "${query}":`, JSON.stringify(data, null, 2))
+
+        // Jina AI returns results in an array under `data` or top-level depending on version
+        const results = Array.isArray(data) ? data : (Array.isArray((data as any).data) ? (data as any).data : [])
+        searchResults.push({
+          query: query,
+          results: results,
+          isGovSearch: isGovSearch
+        })
+
+        console.log(`Search completed for: ${query} (${results.length} results)`)
+
+        // Log key info from each result
+        results.forEach((result, index) => {
+          console.log(`   Result ${index + 1}: ${result.title || result.url || 'No title'} - ${(result.content || result.snippet || '').substring(0, 100)}...`)
+        })
+
+      } else {
+        const errorText = await response.text()
+        console.warn(`Search failed with status ${response.status} for: ${query} - ${errorText}`)
+      }
+
+      // Longer delay between requests to be nice to free API
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.warn(`Search timeout for: ${query}`)
+      } else {
+        console.warn(`Search failed for: ${query}`, error)
       }
     }
+  }
 
-    console.log(`✅ Web research completed for ${stateName} with ${searchResults.length} search results`)
-    
-    const analysisResult = {
-      searchResults: searchResults,
-      competitorAnalysis: extractCompetitorInfo(searchResults),
-      trendingTopics: extractTrends(searchResults),
-      pricingInsights: extractPricing(searchResults),
-      legalUpdates: extractLegalInfo(searchResults),
-      timestamp: new Date().toISOString()
-    }
-    
-    // Log the processed analysis
-    console.log(`🔍 Extracted competitor analysis: ${analysisResult.competitorAnalysis.length} items`)
-    console.log(`📈 Extracted trending topics: ${analysisResult.trendingTopics.length} items`)
-    console.log(`💰 Extracted pricing insights: ${analysisResult.pricingInsights.length} items`)
-    console.log(`⚖️ Extracted legal updates: ${analysisResult.legalUpdates.length} items`)
-    
-    return analysisResult
+  console.log(`Web research completed for ${stateName} with ${searchResults.length} search results`)
+
+  const analysisResult = {
+    searchResults: searchResults,
+    competitorAnalysis: extractCompetitorInfo(searchResults),
+    trendingTopics: extractTrends(searchResults),
+    pricingInsights: extractPricing(searchResults),
+    legalUpdates: extractLegalInfo(searchResults),
+    timestamp: new Date().toISOString()
+  }
+
+  // Log the processed analysis
+  console.log(`Extracted competitor analysis: ${analysisResult.competitorAnalysis.length} items`)
+  console.log(`Extracted trending topics: ${analysisResult.trendingTopics.length} items`)
+  console.log(`Extracted pricing insights: ${analysisResult.pricingInsights.length} items`)
+  console.log(`Extracted legal updates: ${analysisResult.legalUpdates.length} items`)
+
+  return analysisResult
 }
 
 // Extract competitor information from search results
 function extractCompetitorInfo(searchResults: any[]) {
   const competitors = []
-  
+
   for (const search of searchResults) {
     for (const result of search.results || []) {
       if (result.title && result.url) {
@@ -423,14 +423,14 @@ function extractCompetitorInfo(searchResults: any[]) {
       }
     }
   }
-  
+
   return competitors.slice(0, 5) // Top 5 competitors
 }
 
 // Extract trending topics and keywords
 function extractTrends(searchResults: any[]) {
   const trends = []
-  
+
   for (const search of searchResults) {
     if (search.query.includes('trends') || search.query.includes('2024')) {
       for (const result of search.results || []) {
@@ -443,14 +443,14 @@ function extractTrends(searchResults: any[]) {
       }
     }
   }
-  
+
   return trends.slice(0, 3)
 }
 
 // Extract pricing information
 function extractPricing(searchResults: any[]) {
   const pricing = []
-  
+
   for (const search of searchResults) {
     if (search.query.includes('pricing') || search.query.includes('costs')) {
       for (const result of search.results || []) {
@@ -463,14 +463,14 @@ function extractPricing(searchResults: any[]) {
       }
     }
   }
-  
+
   return pricing.slice(0, 2)
 }
 
 // Extract legal/requirements information
 function extractLegalInfo(searchResults: any[]) {
   const legal = []
-  
+
   for (const search of searchResults) {
     if (search.query.includes('requirements') || search.query.includes('laws')) {
       for (const result of search.results || []) {
@@ -483,35 +483,35 @@ function extractLegalInfo(searchResults: any[]) {
       }
     }
   }
-  
+
   return legal.slice(0, 2)
 }
 
 // Validate content accuracy against web research to prevent false claims
 function validateContentAccuracy(content: any, webResearch: any, stateName: string) {
   const validatedContent = { ...content }
-  
+
   // Load baseline state rules for known safe facts
   const stateRules = getBaselineStateRules(stateName)
-  
+
   // Check for common false claims and flag them
   if (content.legalRequirements) {
     const legalText = JSON.stringify(content.legalRequirements).toLowerCase()
-    
+
     // Flag potential false discount claims
     if (legalText.includes('discount') || legalText.includes('reduce') || legalText.includes('lower')) {
-      console.warn(`⚠️ Potential false discount claim detected for ${stateName}`)
-      
+      console.warn(`Potential false discount claim detected for ${stateName}`)
+
       // Remove discount claims unless supported by web research
-      const hasDiscountEvidence = webResearch?.searchResults?.some((search: any) => 
-        search.results?.some((result: any) => 
+      const hasDiscountEvidence = webResearch?.searchResults?.some((search: any) =>
+        search.results?.some((result: any) =>
           (result.content || result.snippet || '').toLowerCase().includes('discount') &&
           (result.content || result.snippet || '').toLowerCase().includes('premarital')
         )
       )
-      
+
       if (!hasDiscountEvidence) {
-        console.log(`🔧 Removing unverified discount claims for ${stateName}`)
+        console.log(`Removing unverified discount claims for ${stateName}`)
         validatedContent.legalRequirements = {
           ...content.legalRequirements,
           fees: content.legalRequirements.fees?.replace(/discount|reduce|lower/gi, '') || 'Varies by county',
@@ -519,19 +519,19 @@ function validateContentAccuracy(content: any, webResearch: any, stateName: stri
         }
       }
     }
-    
+
     // Validate specific fee amounts against web research
     const feeMatch = legalText.match(/\$(\d+)/g)
     if (feeMatch && feeMatch.length > 0) {
-      const hasValidFeeData = webResearch?.searchResults?.some((search: any) => 
-        search.results?.some((result: any) => 
+      const hasValidFeeData = webResearch?.searchResults?.some((search: any) =>
+        search.results?.some((result: any) =>
           (result.content || result.snippet || '').toLowerCase().includes('fee') ||
           (result.content || result.snippet || '').toLowerCase().includes('cost')
         )
       )
-      
+
       if (!hasValidFeeData) {
-        console.log(`🔧 Generalizing unverified fee amounts for ${stateName}`)
+        console.log(`Generalizing unverified fee amounts for ${stateName}`)
         validatedContent.legalRequirements = {
           ...validatedContent.legalRequirements,
           fees: 'Fees vary by county - contact your local clerk'
@@ -551,7 +551,7 @@ function validateContentAccuracy(content: any, webResearch: any, stateName: stri
       )
 
       if (!hasWaitingEvidence) {
-        console.log(`🔧 Generalizing unverified waiting period claim for ${stateName}`)
+        console.log(`Generalizing unverified waiting period claim for ${stateName}`)
         const existing = validatedContent.legalRequirements || {}
         const processText = typeof existing.process === 'string' && existing.process.length > 0
           ? existing.process.replace(/waiting period.*?(\.|$)/gi, '').trim()
@@ -565,34 +565,34 @@ function validateContentAccuracy(content: any, webResearch: any, stateName: stri
       }
     }
   }
-  
+
   // Validate pricing claims in other sections
   if (content.stateOverview?.uniqueAspects) {
     const overviewText = content.stateOverview.uniqueAspects.toLowerCase()
     if (overviewText.includes('discount') || overviewText.includes('cheaper') || overviewText.includes('lower cost')) {
-      console.warn(`⚠️ Potential false pricing claim in overview for ${stateName}`)
+      console.warn(`Potential false pricing claim in overview for ${stateName}`)
       validatedContent.stateOverview = {
         ...content.stateOverview,
         uniqueAspects: content.stateOverview.uniqueAspects.replace(/discount|cheaper|lower cost/gi, 'competitive pricing')
       }
     }
   }
-  
+
   // Validate marriage statistics - sanitize numeric stats without official sources
   if (content.marriageStats) {
-    const hasOfficialStats = webResearch?.searchResults?.some((search: any) => 
+    const hasOfficialStats = webResearch?.searchResults?.some((search: any) =>
       search.results?.some((result: any) => {
         const url = (result.url || result.link || result.uri || result.open_url || result.source_url || '').toLowerCase()
         const text = (result.content || result.snippet || '').toLowerCase()
         return (url.includes('.gov') || url.includes('cdc.gov') || url.includes('census.gov')) &&
-               (text.includes('marriage') || text.includes('statistic') || text.includes('demographic'))
+          (text.includes('marriage') || text.includes('statistic') || text.includes('demographic'))
       })
     )
-    
+
     const hasNumericValues = content.marriageStats.avgMarriageAge || content.marriageStats.annualMarriages || content.marriageStats.divorceRate
-    
+
     if (!hasOfficialStats && hasNumericValues) {
-      console.log(`🔧 Sanitizing numeric marriage stats without official sources for ${stateName}`)
+      console.log(`Sanitizing numeric marriage stats without official sources for ${stateName}`)
       validatedContent.marriageStats = {
         trends: content.marriageStats.trends || `Growing interest in premarital counseling supports couples in ${stateName}`,
         // Remove specific numeric values, use general language
@@ -602,15 +602,15 @@ function validateContentAccuracy(content: any, webResearch: any, stateName: stri
         note: 'Contact local vital records for current statistics'
       }
     } else if (hasOfficialStats) {
-      console.log(`✅ Official statistics sources found for ${stateName}, keeping numeric values`)
+      console.log(`Official statistics sources found for ${stateName}, keeping numeric values`)
     }
   }
-  
+
   // Validate blood test claims
   if (content.legalRequirements?.bloodTest) {
     const bloodTestText = content.legalRequirements.bloodTest.toLowerCase()
     const mentionsBloodTest = bloodTestText.includes('not required') || bloodTestText.includes('no blood test')
-    
+
     if (mentionsBloodTest) {
       const hasGovSource = webResearch?.searchResults?.some((search: any) =>
         search.results?.some((result: any) => {
@@ -619,30 +619,30 @@ function validateContentAccuracy(content: any, webResearch: any, stateName: stri
           return url.includes('.gov') && (text.includes('blood test') || text.includes('medical exam'))
         })
       )
-      
+
       const hasBaselineRule = stateRules?.legalRequirements?.bloodTest
-      
+
       if (!hasGovSource && !hasBaselineRule) {
-        console.log(`🔧 Removing unverified blood test claim for ${stateName}`)
+        console.log(`Removing unverified blood test claim for ${stateName}`)
         validatedContent.legalRequirements = {
           ...validatedContent.legalRequirements,
           bloodTest: 'Confirm blood test requirements with local county clerk'
         }
       } else {
-        console.log(`✅ Blood test claim verified for ${stateName}`)
+        console.log(`Blood test claim verified for ${stateName}`)
       }
     }
   }
-  
+
   // Apply baseline state rules if available
   if (stateRules && validatedContent.legalRequirements) {
-    console.log(`🏛️ Applying baseline rules for ${stateName}`)
+    console.log(`Applying baseline rules for ${stateName}`)
     validatedContent.legalRequirements = {
       ...validatedContent.legalRequirements,
       ...stateRules.legalRequirements
     }
   }
-  
+
   return validatedContent
 }
 
@@ -698,7 +698,7 @@ function getBaselineStateRules(stateName: string): any {
       }
     }
   }
-  
+
   return stateRules[stateName] || null
 }
 
@@ -710,33 +710,33 @@ function getCountyDomain(stateName: string): string {
     'Texas': 'harriscountytx.gov',
     'California': 'lacounty.gov'
   }
-  
+
   return countyDomains[stateName] || '*.gov'
 }
 
 // Extract sources from web research with expanded field mapping
-function extractSources(webResearch: any): Array<{title: string, url: string}> {
+function extractSources(webResearch: any): Array<{ title: string, url: string }> {
   if (!webResearch?.searchResults) return []
-  
-  const sources: Array<{title: string, url: string}> = []
-  
+
+  const sources: Array<{ title: string, url: string }> = []
+
   for (const search of webResearch.searchResults) {
     for (const result of (search.results || [])) {
       // Try multiple URL field variations that Jina might return
       const url = result.url || result.link || result.uri || result.open_url || result.source_url
       const title = result.title || result.name || url
-      
+
       if (url && title) {
         sources.push({ title, url })
       }
     }
   }
-  
+
   // Remove duplicates and limit to top 5
-  const uniqueSources = sources.filter((source, index, self) => 
+  const uniqueSources = sources.filter((source, index, self) =>
     index === self.findIndex(s => s.url === source.url)
   )
-  
+
   return uniqueSources.slice(0, 5)
 }
 

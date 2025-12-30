@@ -14,7 +14,7 @@ const LaunchTracker = () => {
       localStorage.setItem('directory_launch_tracked', 'true')
       localStorage.setItem('launch_date', new Date().toISOString())
       
-      console.log('🚀 Wedding Counselors Directory Launch Tracked!')
+      console.log('Wedding Counselors directory launch tracked.')
     }
   }, [])
 

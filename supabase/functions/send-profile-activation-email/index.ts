@@ -82,13 +82,13 @@ serve(async (req) => {
     <body>
         <div class="container">
             <div class="header">
-                <h1>🎉 Great News, ${name}!</h1>
+                <h1>Great News, ${name}!</h1>
                 <p>Your profile is getting attention from couples planning their marriage</p>
             </div>
             
             <div class="content">
                 <div class="stats">
-                    <h3 class="blue">📊 Your Profile Performance This Month</h3>
+                    <h3 class="blue">Your Profile Performance This Month</h3>
                     <ul>
                         <li><strong>${viewCount} profile views</strong> from engaged couples</li>
                         <li><strong>Listed in ${city}, ${state}</strong> - prime location!</li>
@@ -101,22 +101,22 @@ serve(async (req) => {
                     <p><strong>${name}</strong><br>
                     ${profession}<br>
                     ${city}, ${state}</p>
-                    <p class="urgent">⚠️ Currently showing as "Unverified Professional"</p>
+                    <p class="urgent">Currently showing as "Unverified Professional"</p>
                 </div>
 
                 <h3>Claim your profile in 60 seconds to:</h3>
                 <div class="benefits">
                     <ul>
-                        <li class="green">✅ Add your photo & complete bio</li>
-                        <li class="green">✅ Show "Verified Professional" badge</li>
-                        <li class="green">✅ Receive direct client inquiries</li>
-                        <li class="green">✅ Control your listing details</li>
-                        <li class="green">✅ Start appearing in search results immediately</li>
+                        <li class="green">Add your photo & complete bio</li>
+                        <li class="green">Show "Verified Professional" badge</li>
+                        <li class="green">Receive direct client inquiries</li>
+                        <li class="green">Control your listing details</li>
+                        <li class="green">Start appearing in search results immediately</li>
                     </ul>
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="${claimUrl}" class="cta-button">🚀 Claim Your Profile NOW (Free!)</a>
+                    <a href="${claimUrl}" class="cta-button">Claim Your Profile Now (Free)</a>
                 </div>
 
                 <p><strong>Why This Matters:</strong> Couples search for premarital counselors every day on WeddingCounselors.com. Verified profiles get 3x more inquiries than unverified ones.</p>
@@ -124,7 +124,7 @@ serve(async (req) => {
                 <p>Don't let potential clients pass you by. Your colleagues are already claiming their profiles and getting more leads.</p>
 
                 <div style="text-align: center; margin: 20px 0;">
-                    <a href="${searchUrl}" style="color: #0ea5e9; text-decoration: none;">👀 View Your Current Profile</a>
+                    <a href="${searchUrl}" style="color: #0ea5e9; text-decoration: none;">View Your Current Profile</a>
                 </div>
 
                 <p><em>This will only take 60 seconds, and it's completely free with no hidden fees or subscription requirements.</em></p>
@@ -155,11 +155,11 @@ ${profession}
 ${city}, ${state}
 
 Claim your profile in 60 seconds to:
-✅ Add your photo & complete bio
-✅ Show "Verified Professional" badge  
-✅ Receive direct client inquiries
-✅ Control your listing details
-✅ Start appearing in search results immediately
+- Add your photo & complete bio
+- Show "Verified Professional" badge  
+- Receive direct client inquiries
+- Control your listing details
+- Start appearing in search results immediately
 
 Claim your profile now (FREE): ${claimUrl}
 

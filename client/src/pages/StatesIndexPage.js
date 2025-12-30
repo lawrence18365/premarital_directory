@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import CompactSearch from '../components/common/CompactSearch'
-import { getAllSpecialties, getStatesWithDiscounts } from '../data/specialtyConfig'
+import { getAllSpecialties } from '../data/specialtyConfig'
 import '../assets/css/states-page.css'
 
 const STATES = [

@@ -41,7 +41,7 @@ export async function analyzePageData() {
   console.log(`Fetched ${allProfiles?.length || 0} total profiles\n`);
 
   // 2. Analyze State Pages
-  console.log('📊 Analyzing State Pages...\n');
+  console.log('Analyzing State Pages...\n');
 
   for (const [stateSlug, stateData] of Object.entries(STATE_CONFIG)) {
     const stateProfiles = allProfiles.filter(
@@ -67,11 +67,11 @@ export async function analyzePageData() {
     if (profileCount > 0) results.summary.statesWithProfiles++;
     else results.summary.statesWithoutProfiles++;
 
-    const indexStatus = profileCount >= 5 ? '✅' : '❌';
+    const indexStatus = profileCount >= 5 ? 'INDEX' : 'NOINDEX';
     console.log(`${indexStatus} ${stateData.name.padEnd(20)} | Profiles: ${profileCount.toString().padStart(3)} | Should Index: ${profileCount >= 5}`);
   }
 
-  console.log('\n📊 Analyzing City Pages...\n');
+  console.log('\nAnalyzing City Pages...\n');
 
   // 3. Analyze City Pages
   for (const [stateSlug, stateData] of Object.entries(STATE_CONFIG)) {
@@ -104,7 +104,7 @@ export async function analyzePageData() {
       if (profileCount > 0) results.summary.citiesWithProfiles++;
       else results.summary.citiesWithoutProfiles++;
 
-      const indexStatus = profileCount >= 3 ? '✅' : '❌';
+      const indexStatus = profileCount >= 3 ? 'INDEX' : 'NOINDEX';
       if (profileCount === 0) {
         console.log(`${indexStatus} ${cityName}, ${stateData.abbr}`.padEnd(40) + ' - NO PROFILES');
       } else {
@@ -121,21 +121,21 @@ export async function analyzePageData() {
   results.summary.profilesWithoutBio = allProfiles.filter(p => !p.bio || p.bio.length <= 100).length;
 
   console.log('\n\n=== SUMMARY REPORT ===\n');
-  console.log(`📍 States:`);
+  console.log('States:');
   console.log(`   Total: ${results.summary.totalStates}`);
   console.log(`   With Profiles: ${results.summary.statesWithProfiles}`);
   console.log(`   Without Profiles: ${results.summary.statesWithoutProfiles}`);
   console.log(`   Should Index: ${results.states.filter(s => s.shouldIndex).length}`);
   console.log(`   Should Noindex: ${results.states.filter(s => !s.shouldIndex).length}`);
 
-  console.log(`\n🏙️  Cities:`);
+  console.log('\nCities:');
   console.log(`   Total: ${results.summary.totalCities}`);
   console.log(`   With Profiles: ${results.summary.citiesWithProfiles}`);
   console.log(`   Without Profiles: ${results.summary.citiesWithoutProfiles}`);
   console.log(`   Should Index: ${results.cities.filter(c => c.shouldIndex).length}`);
   console.log(`   Should Noindex: ${results.cities.filter(c => !c.shouldIndex).length}`);
 
-  console.log(`\n👤 Profiles:`);
+  console.log('\nProfiles:');
   console.log(`   Total: ${results.summary.totalProfiles}`);
   console.log(`   With Bio: ${results.summary.profilesWithBio}`);
   console.log(`   Without Bio: ${results.summary.profilesWithoutBio}`);
@@ -148,12 +148,12 @@ export async function analyzePageData() {
   const statesToNoindex = results.states.filter(s => !s.shouldIndex);
   const citiesToNoindex = results.cities.filter(c => !c.shouldIndex);
 
-  console.log(`🚫 States to Noindex (${statesToNoindex.length}):`);
+  console.log(`States to Noindex (${statesToNoindex.length}):`);
   statesToNoindex.forEach(s => {
     console.log(`   - ${s.name} (${s.profileCount} profiles)`);
   });
 
-  console.log(`\n🚫 Cities to Noindex (${citiesToNoindex.length}):`);
+  console.log(`\nCities to Noindex (${citiesToNoindex.length}):`);
   console.log(`   (First 20 shown)`);
   citiesToNoindex.slice(0, 20).forEach(c => {
     console.log(`   - ${c.cityName}, ${c.stateAbbr} (${c.profileCount} profiles)`);
@@ -165,7 +165,7 @@ export async function analyzePageData() {
 // If running in Node.js context
 if (typeof window === 'undefined') {
   analyzePageData().then(results => {
-    console.log('\n✅ Analysis complete!');
+    console.log('\nAnalysis complete!');
     // Save to file if in Node
     const fs = require('fs');
     fs.writeFileSync(

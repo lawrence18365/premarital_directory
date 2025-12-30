@@ -86,10 +86,10 @@ const logToConsole = (metric) => {
   const rating = getPerformanceRating(metric.name, metric.value)
   const formattedValue = formatMetricValue(metric.name, metric.value)
   
-  const emoji = rating === 'good' ? '✅' : rating === 'needs-improvement' ? '⚠️' : '❌'
+  const status = rating === 'good' ? 'OK' : rating === 'needs-improvement' ? 'WARN' : 'FAIL'
   
   console.log(
-    `${emoji} ${metric.name}: ${formattedValue} (${rating})`,
+    `${status} ${metric.name}: ${formattedValue} (${rating})`,
     {
       value: metric.value,
       rating,
@@ -157,7 +157,7 @@ export const initWebVitalsMonitoring = () => {
     getTTFB(handleMetric)
     
     if (WEB_VITALS_CONFIG.enableLogging) {
-      console.log('🚀 Web Vitals monitoring initialized')
+      console.log('Web Vitals monitoring initialized')
     }
   } catch (error) {
     console.error('Failed to initialize Web Vitals monitoring:', error)
@@ -304,7 +304,7 @@ if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
   window.addEventListener('load', () => {
     setTimeout(() => {
       const button = document.createElement('button')
-      button.textContent = '📊 Web Vitals'
+      button.textContent = 'Web Vitals'
       button.style.cssText = `
         position: fixed;
         bottom: 20px;

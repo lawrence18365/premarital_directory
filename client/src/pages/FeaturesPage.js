@@ -128,7 +128,9 @@ const FeaturesPage = () => {
               </div>
               
               <div className="feature-card">
-                <div className="feature-icon">🏆</div>
+                <div className="feature-icon">
+                  <i className="fas fa-trophy"></i>
+                </div>
                 <h3>Professional Credibility</h3>
                 <p>
                   Showcase your credentials, experience, and specialties. Build trust with 
@@ -167,7 +169,7 @@ const FeaturesPage = () => {
             <h2>Technical Features</h2>
             <div className="tech-features">
               <div className="tech-feature">
-                <h3>🔐 Secure & Private</h3>
+                <h3><i className="fas fa-lock"></i> Secure & Private</h3>
                 <p>
                   Enterprise-grade security protects your data. Contact forms are encrypted, 
                   and we never share personal information without consent.
@@ -185,7 +187,7 @@ const FeaturesPage = () => {
               </div>
               
               <div className="tech-feature">
-                <h3>📱 Responsive Design</h3>
+                <h3><i className="fas fa-mobile-alt"></i> Responsive Design</h3>
                 <p>
                   Perfect experience on any device. Whether on smartphone, tablet, or desktop, 
                   the directory works seamlessly.

@@ -279,22 +279,45 @@ export const profileOperations = {
     return { data, error }
   },
 
-  // Upload profile photo
+  // Upload profile photo (Cloudflare R2)
   async uploadPhoto(file, profileId) {
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${profileId}.${fileExt}`
+    try {
+      // 1. Get Presigned URL from our backend
+      const { data: uploadConfig, error: configError } = await supabase.functions.invoke('generate-upload-url', {
+        body: {
+          profileId,
+          fileType: file.type
+        }
+      })
 
-    const { data, error } = await supabase.storage
-      .from('profile_photos')
-      .upload(fileName, file, { upsert: true })
+      if (configError) throw configError
+      if (!uploadConfig?.uploadUrl) throw new Error('Failed to generate upload URL')
 
-    if (error) return { data: null, error }
+      // 2. Upload directly to Cloudflare R2
+      const uploadResponse = await fetch(uploadConfig.uploadUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': file.type
+        },
+        body: file
+      })
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('profile_photos')
-      .getPublicUrl(fileName)
+      if (!uploadResponse.ok) {
+        throw new Error('Upload to storage failed')
+      }
 
-    return { data: { publicUrl }, error: null }
+      // 3. Return the public URL
+      return { 
+        data: { 
+          publicUrl: uploadConfig.publicUrl 
+        }, 
+        error: null 
+      }
+
+    } catch (error) {
+      console.error('Photo upload error:', error)
+      return { data: null, error }
+    }
   },
 
   // Log contact reveal for analytics (with city tracking)

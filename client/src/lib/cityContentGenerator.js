@@ -20,7 +20,7 @@ class CityContentGenerator {
     if (!forceRegenerate) {
       const cached = await CityContentCache.getCachedContent(state, city)
       if (cached) {
-        console.log(`✅ Using cached content for ${city}, ${state}`)
+        console.log(`Using cached content for ${city}, ${state}`)
         return this.formatContentForDisplay(cached)
       }
     }
@@ -37,7 +37,7 @@ class CityContentGenerator {
       throw new Error(`Unknown state: ${state}`)
     }
     
-    console.log(`📊 Preparing data for ${city}, ${stateAbbr}`)
+    console.log(`Preparing data for ${city}, ${stateAbbr}`)
     
     // Prepare basic city data
     const cityData = {
@@ -53,7 +53,7 @@ class CityContentGenerator {
       throw new Error(`Estimated cost $${estimatedCost.toFixed(4)} exceeds limit $${this.costLimit}`)
     }
     
-    console.log(`🤖 Generating AI content (estimated cost: $${estimatedCost.toFixed(4)})`)
+    console.log(`Generating AI content (estimated cost: $${estimatedCost.toFixed(4)})`)
     
     // Generate content with AI
     const generatedContent = await this.aiGenerator.generateCityContent(cityData)
@@ -61,8 +61,8 @@ class CityContentGenerator {
     // Cache the generated content
     await CityContentCache.setCachedContent(state, city, stateAbbr, generatedContent)
     
-    console.log(`✅ Generated and cached content for ${city}, ${state}`)
-    console.log(`💰 Actual tokens used: ${generatedContent.generation_cost_tokens}`)
+    console.log(`Generated and cached content for ${city}, ${state}`)
+    console.log(`Actual tokens used: ${generatedContent.generation_cost_tokens}`)
     
     return this.formatContentForDisplay(generatedContent)
   }

@@ -85,11 +85,12 @@
 }
 
 .professional-auth__hero-panel li::before {
-  content: '✓';
+  content: "\f00c";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
   position: absolute;
   left: 0;
   color: var(--accent-light);
-  font-weight: var(--weight-semibold);
 }
 
 .professional-auth__content {
@@ -248,11 +249,12 @@
 }
 
 .professional-auth__aside li::before {
-  content: '✓';
+  content: "\f00c";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
   position: absolute;
   left: 0;
   color: var(--primary);
-  font-weight: var(--weight-bold);
 }
 
 .professional-auth--success {

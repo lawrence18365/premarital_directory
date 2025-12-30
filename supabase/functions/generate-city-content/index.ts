@@ -21,12 +21,12 @@ serve(async (req) => {
 
   try {
     const { state, city, stateAbbr }: CityContentRequest = await req.json()
-    
+
     if (!state || !city || !stateAbbr) {
       return new Response(
         JSON.stringify({ error: 'Missing required parameters: state, city, stateAbbr' }),
-        { 
-          status: 400, 
+        {
+          status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       )
@@ -35,7 +35,7 @@ serve(async (req) => {
     // Fetch demographic data server-side to avoid CORS issues
     const demographicData = await fetchCensusData(city, stateAbbr)
     const venueData = await fetchVenueData(city, state)
-    
+
     // Fetch real-time web research for SEO domination
     const webResearch = await fetchCityWebResearch(city, state)
 
@@ -47,7 +47,7 @@ serve(async (req) => {
 
     // Build the prompt with web research
     const prompt = buildPrompt(city, state, stateAbbr, demographicData, venueData, webResearch)
-    
+
     console.log(`Generating content for ${city}, ${state}`)
 
     // Call OpenRouter API
@@ -60,14 +60,14 @@ serve(async (req) => {
         'X-Title': 'Premarital Counseling Directory'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-r1-0528:free',
+        model: 'google/gemini-2.0-flash-exp:free',
         messages: [
           {
             role: 'system',
             content: 'You are a professional content writer specializing in local business directories and SEO content. Always return valid JSON.'
           },
           {
-            role: 'user', 
+            role: 'user',
             content: prompt
           }
         ],
@@ -83,14 +83,14 @@ serve(async (req) => {
     }
 
     const data = await response.json()
-    
+
     if (data.error) {
       throw new Error(`OpenRouter error: ${data.error.message}`)
     }
 
     // Parse and validate the response
     const content = JSON.parse(data.choices[0].message.content)
-    
+
     // Validate required fields
     const required = ['description', 'h1', 'intro', 'marriageStats', 'venues', 'pricing']
     for (const field of required) {
@@ -117,21 +117,21 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify(result),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
 
   } catch (error) {
     console.error('Error generating city content:', error)
-    
+
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: error.message,
         fallback: true
       }),
-      { 
-        status: 500, 
+      {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
@@ -193,7 +193,7 @@ async function fetchCensusData(city: string, stateAbbr: string) {
   try {
     // Get Census API key from environment
     const CENSUS_API_KEY = Deno.env.get('CENSUS_API_KEY')
-    
+
     // Simple city to county mapping for major cities
     const cityMappings: { [key: string]: { state: string, county: string } } = {
       'anchorage_AK': { state: '02', county: '020' },
@@ -204,17 +204,17 @@ async function fetchCensusData(city: string, stateAbbr: string) {
       'montgomery_AL': { state: '01', county: '101' },
       // Add more as needed
     }
-    
+
     const geoKey = `${city.toLowerCase()}_${stateAbbr.toUpperCase()}`
     const geoData = cityMappings[geoKey]
-    
+
     if (geoData && CENSUS_API_KEY) {
       const variables = ['B01003_001E', 'B19013_001E'] // Population, Median Income
       const url = `https://api.census.gov/data/2022/acs/acs1?get=${variables.join(',')}&for=county:${geoData.county}&in=state:${geoData.state}&key=${CENSUS_API_KEY}`
-      
+
       const response = await fetch(url)
       const data = await response.json()
-      
+
       if (data && data.length > 1) {
         return {
           population: parseInt(data[1][0]) || 50000,
@@ -223,7 +223,7 @@ async function fetchCensusData(city: string, stateAbbr: string) {
         }
       }
     }
-    
+
     // Fallback data
     return {
       population: 50000,
@@ -253,7 +253,7 @@ async function fetchVenueData(city: string, state: string) {
 async function fetchCityWebResearch(city: string, state: string) {
   try {
     const JINA_API_KEY = Deno.env.get('JINA_API_KEY')
-    
+
     if (!JINA_API_KEY) {
       console.log('Jina AI API key not found, using fallback research')
       return {
@@ -273,7 +273,7 @@ async function fetchCityWebResearch(city: string, state: string) {
     ]
 
     const searchResults = []
-    
+
     for (const query of searches) {
       try {
         const response = await fetch('https://s.jina.ai/', {
@@ -296,9 +296,9 @@ async function fetchCityWebResearch(city: string, state: string) {
             results: Array.isArray(data) ? data : (data.data || [])
           })
         }
-        
+
         await new Promise(resolve => setTimeout(resolve, 300))
-        
+
       } catch (error) {
         console.warn(`City search failed for: ${query}`, error)
       }
@@ -311,7 +311,7 @@ async function fetchCityWebResearch(city: string, state: string) {
       pricingInsights: extractCityPricing(searchResults),
       timestamp: new Date().toISOString()
     }
-    
+
   } catch (error) {
     console.error('City web research error:', error)
     return { source: 'fallback-data' }

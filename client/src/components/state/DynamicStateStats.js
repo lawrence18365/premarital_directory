@@ -39,7 +39,9 @@ const DynamicStateStats = ({ stateData, stateName }) => {
 
       <div className="state-stats-grid">
         <div className="state-stat-card state-stat-primary">
-          <div className="state-stat-icon">🗺️</div>
+          <div className="state-stat-icon" aria-hidden="true">
+            <i className="fa fa-map"></i>
+          </div>
           <div className="state-stat-content">
             <div className="state-stat-number">{stats.citiesWithProfessionals}</div>
             <div className="state-stat-label">Cities Covered</div>
@@ -50,7 +52,9 @@ const DynamicStateStats = ({ stateData, stateName }) => {
         </div>
 
         <div className="state-stat-card">
-          <div className="state-stat-icon">👥</div>
+          <div className="state-stat-icon" aria-hidden="true">
+            <i className="fa fa-users"></i>
+          </div>
           <div className="state-stat-content">
             <div className="state-stat-number">{stats.totalProfessionals}</div>
             <div className="state-stat-label">Total Professionals</div>
@@ -61,7 +65,9 @@ const DynamicStateStats = ({ stateData, stateName }) => {
         </div>
 
         <div className="state-stat-card">
-          <div className="state-stat-icon">📍</div>
+          <div className="state-stat-icon" aria-hidden="true">
+            <i className="fa fa-map-marker-alt"></i>
+          </div>
           <div className="state-stat-content">
             <div className="state-stat-number">{stats.coveragePercent}%</div>
             <div className="state-stat-label">State Coverage</div>

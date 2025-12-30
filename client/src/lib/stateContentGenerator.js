@@ -21,7 +21,7 @@ class StateContentGenerator {
     if (!forceRegenerate) {
       const cached = await this.getCachedStateContent(state)
       if (cached) {
-        console.log(`✅ Using cached content for ${stateConfig.name}`)
+    console.log(`Using cached content for ${stateConfig.name}`)
         return this.formatContentForDisplay(cached)
       }
     }
@@ -32,7 +32,7 @@ class StateContentGenerator {
   
   // Generate new state content and cache it
   async generateAndCacheStateContent(state, stateConfig) {
-    console.log(`📊 Preparing data for ${stateConfig.name}`)
+    console.log(`Preparing data for ${stateConfig.name}`)
     
     // Prepare state data for AI generation
     const stateData = {
@@ -51,7 +51,7 @@ class StateContentGenerator {
       throw new Error(`Estimated cost $${estimatedCost.toFixed(4)} exceeds limit $${this.costLimit}`)
     }
     
-    console.log(`🤖 Generating AI content (estimated cost: $${estimatedCost.toFixed(4)})`)
+    console.log(`Generating AI content (estimated cost: $${estimatedCost.toFixed(4)})`)
     
     // Call the state content generation function - NO FALLBACKS
     // Add client-side timeout to prevent infinite loading
@@ -85,12 +85,12 @@ class StateContentGenerator {
       // Cache the generated content
       await this.setCachedStateContent(state, stateConfig.abbr, generatedContent)
       
-      console.log(`✅ Generated and cached content for ${stateConfig.name}`)
-      console.log(`💰 Actual tokens used: ${generatedContent.generation_cost_tokens}`)
-      console.log(`📊 Content source: ${generatedContent.api_provider}`)
+      console.log(`Generated and cached content for ${stateConfig.name}`)
+      console.log(`Actual tokens used: ${generatedContent.generation_cost_tokens}`)
+      console.log(`Content source: ${generatedContent.api_provider}`)
       
       const formattedContent = this.formatContentForDisplay(generatedContent)
-      console.log(`🔍 Data includes Jina research: ${formattedContent.jinaDataUsed ? 'YES - Real web data used!' : 'NO - Pure AI generation only'}`)
+      console.log(`Data includes Jina research: ${formattedContent.jinaDataUsed ? 'YES - Real web data used!' : 'NO - Pure AI generation only'}`)
       
       return formattedContent
       
@@ -127,7 +127,7 @@ class StateContentGenerator {
       isGenerated: true,
       webResearchUsed: content.web_research_used || false,
       sources: content.sources || [],
-      dataSource: (content.sources && content.sources.length > 0) ? '🌐 Real web data' : '🤖 AI-generated content only',
+      dataSource: (content.sources && content.sources.length > 0) ? 'Real web data' : 'AI-generated content only',
       jinaDataUsed: (content.sources && content.sources.length > 0) || false
     }
   }
@@ -150,10 +150,10 @@ class StateContentGenerator {
         const maxAge = 24 * 60 * 60 * 1000 // 24 hours
         
         if (cacheAge < maxAge) {
-          console.log(`📦 Using cached content for ${state} (age: ${Math.round(cacheAge / (60 * 60 * 1000))}h)`)
+          console.log(`Using cached content for ${state} (age: ${Math.round(cacheAge / (60 * 60 * 1000))}h)`)
           return parsed.content
         } else {
-          console.log(`🗑️ Cache expired for ${state}, generating fresh content`)
+          console.log(`Cache expired for ${state}, generating fresh content`)
         }
       }
       
@@ -176,7 +176,7 @@ class StateContentGenerator {
       }
       
       localStorage.setItem(cacheKey, JSON.stringify(cacheData))
-      console.log(`📦 Cached content for ${state}`)
+      console.log(`Cached content for ${state}`)
     } catch (error) {
       console.error('Cache storage error:', error)
     }
@@ -198,7 +198,7 @@ class StateContentGenerator {
   static clearAllStateCache() {
     const keys = Object.keys(localStorage).filter(key => key.startsWith('state_content_'))
     keys.forEach(key => localStorage.removeItem(key))
-    console.log(`🧹 Cleared ${keys.length} state content cache entries:`, keys)
+    console.log(`Cleared ${keys.length} state content cache entries:`, keys)
     return keys.length
   }
   
@@ -206,7 +206,7 @@ class StateContentGenerator {
   static clearStateCache(state) {
     const keys = Object.keys(localStorage).filter(key => key.startsWith(`state_content_${state}`))
     keys.forEach(key => localStorage.removeItem(key))
-    console.log(`🧹 Cleared ${keys.length} cache entries for ${state}:`, keys)
+    console.log(`Cleared ${keys.length} cache entries for ${state}:`, keys)
     return keys.length
   }
 }
@@ -221,7 +221,7 @@ if (typeof window !== 'undefined') {
     clearAllStateCaches: StateContentGenerator.clearAllStateCache,
     listCachedStates: () => {
       const keys = Object.keys(localStorage).filter(key => key.startsWith('state_content_'))
-      console.log(`📦 Found ${keys.length} cached state entries:`, keys)
+      console.log(`Found ${keys.length} cached state entries:`, keys)
       return keys
     }
   }

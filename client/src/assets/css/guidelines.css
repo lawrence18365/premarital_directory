@@ -121,9 +121,10 @@
 }
 
 .guideline-card li::before {
-  content: "✓";
+  content: "\f00c";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
   color: var(--teal);
-  font-weight: var(--weight-bold);
   margin-right: var(--space-2);
 }
 

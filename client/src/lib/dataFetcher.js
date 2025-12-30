@@ -22,7 +22,7 @@ class DataFetcher {
   }
   
   async getCityData(city, state, stateAbbr) {
-    console.log(`🔍 Fetching premium data for ${city}, ${state}`)
+    console.log(`Fetching premium data for ${city}, ${state}`)
     
     // Run all data sources in parallel for maximum speed
     const [
@@ -452,7 +452,7 @@ class DataFetcher {
   // Get local insights using web search
   async getLocalInsights(city, state) {
     try {
-      console.log(`🔍 Searching web for ${city}, ${state} insights...`)
+      console.log(`Searching web for ${city}, ${state} insights...`)
       
       // Search for marriage and wedding information for this city
       const searchQueries = [

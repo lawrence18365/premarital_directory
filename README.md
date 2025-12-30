@@ -18,3 +18,6 @@ npm start
 - `/docs` - Documentation
 
 See `/docs/SOFT_404_FIX_IMPLEMENTATION.md` for recent SEO fixes.
+
+## Headshot Storage (Cloudflare R2)
+See `docs/R2_HEADSHOTS_SETUP.md` for bucket setup and required environment variables.

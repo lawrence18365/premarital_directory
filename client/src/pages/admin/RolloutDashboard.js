@@ -187,14 +187,14 @@ const RolloutDashboard = () => {
           onClick={triggerWeeklyGeneration}
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >
-          🔄 Regenerate Sitemaps Now
+          Regenerate Sitemaps Now
         </button>
         
         <button 
           onClick={approveQueuedProfiles}
           className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700"
         >
-          ✅ Approve Next 50 Profiles
+          Approve Next 50 Profiles
         </button>
       </div>
 

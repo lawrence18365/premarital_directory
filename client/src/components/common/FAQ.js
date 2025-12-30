@@ -68,7 +68,9 @@ const FAQ = ({
               <ul className="faq-highlights" aria-label="Key things to know">
                 {highlights.map((highlight, index) => (
                   <li key={index}>
-                    <span className="faq-highlight-icon" aria-hidden="true">★</span>
+                    <span className="faq-highlight-icon" aria-hidden="true">
+                      <i className="fa fa-star"></i>
+                    </span>
                     <span className="faq-highlight-text">{highlight}</span>
                   </li>
                 ))}
