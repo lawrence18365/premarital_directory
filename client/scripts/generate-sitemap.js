@@ -32,14 +32,25 @@ const CORE_PAGES = [
   { url: '/', priority: 1.0, changefreq: 'weekly' },
   { url: '/premarital-counseling', priority: 0.9, changefreq: 'daily' },
   { url: '/blog', priority: 0.8, changefreq: 'daily' },
-  { url: '/pricing', priority: 0.7, changefreq: 'monthly' },
   { url: '/features', priority: 0.7, changefreq: 'monthly' },
   { url: '/about', priority: 0.6, changefreq: 'monthly' },
   { url: '/contact', priority: 0.6, changefreq: 'monthly' },
   { url: '/support', priority: 0.6, changefreq: 'monthly' },
   { url: '/guidelines', priority: 0.5, changefreq: 'monthly' },
   { url: '/professional/signup', priority: 0.8, changefreq: 'monthly' },
-  { url: '/professional/login', priority: 0.6, changefreq: 'monthly' }
+  { url: '/professional/login', priority: 0.6, changefreq: 'monthly' },
+  // Money keyword specialty pages (high priority)
+  { url: '/premarital-counseling/marriage-license-discount', priority: 0.9, changefreq: 'monthly' },
+  { url: '/premarital-counseling/christian', priority: 0.85, changefreq: 'weekly' },
+  { url: '/premarital-counseling/catholic', priority: 0.85, changefreq: 'weekly' },
+  { url: '/premarital-counseling/lgbtq', priority: 0.85, changefreq: 'weekly' },
+  { url: '/premarital-counseling/online', priority: 0.85, changefreq: 'weekly' },
+  { url: '/premarital-counseling/gottman', priority: 0.85, changefreq: 'weekly' },
+  { url: '/premarital-counseling/prepare-enrich', priority: 0.85, changefreq: 'weekly' },
+  { url: '/premarital-counseling/interfaith', priority: 0.8, changefreq: 'weekly' },
+  { url: '/premarital-counseling/second-marriages', priority: 0.8, changefreq: 'weekly' },
+  { url: '/premarital-counseling/military', priority: 0.8, changefreq: 'weekly' },
+  { url: '/premarital-counseling/affordable', priority: 0.85, changefreq: 'weekly' }
 ]
 
 // Known blog posts (add more as they're created)
