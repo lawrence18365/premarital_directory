@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabaseClient'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 
 const ProfessionalDashboard = () => {
-  const { user, profile, signOut } = useAuth()
+  const { user, profile, loading: authLoading, signOut } = useAuth()
   const [leads, setLeads] = useState([])
   const [stats, setStats] = useState({
     totalLeads: 0,
@@ -156,6 +156,21 @@ const ProfessionalDashboard = () => {
       converted: 'Converted'
     }
     return texts[status] || status
+  }
+
+  // Wait for auth to load
+  if (authLoading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
+      </div>
+    )
+  }
+
+  // Redirect users without profiles to create profile
+  if (user && !profile) {
+    return <Navigate to="/professional/create" replace />
   }
 
   if (loading) {
