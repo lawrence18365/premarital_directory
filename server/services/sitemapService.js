@@ -3,6 +3,7 @@ const fs = require('fs').promises
 const path = require('path')
 const cron = require('node-cron')
 const { STATE_CONFIG } = require('../../client/src/data/locationConfig')
+const { getAllSpecialties } = require('../../client/src/data/specialtyConfig')
 
 class SitemapService {
   constructor() {
@@ -17,7 +18,7 @@ class SitemapService {
   initializeScheduler() {
     // Every Sunday at 2 AM
     cron.schedule('0 2 * * 0', async () => {
-      console.log('🔄 Weekly sitemap regeneration starting...')
+      console.log('Weekly sitemap regeneration starting...')
       await this.regenerateAllSitemaps()
       await this.submitToSearchConsole()
     })
@@ -28,8 +29,40 @@ class SitemapService {
       this.generateProfileSitemap(),
       this.generateStateSitemap(),
       this.generateCitySitemap(),
+      this.generateSpecialtySitemap(),
       this.updateMainSitemap()
     ])
+  }
+
+  async generateSpecialtySitemap() {
+    const specialties = getAllSpecialties()
+
+    // Specialty pages
+    const specialtyUrls = specialties.map(specialty => ({
+      url: `https://weddingcounselors.com/premarital-counseling/${specialty.slug}`,
+      lastmod: new Date().toISOString().split('T')[0],
+      changefreq: 'weekly',
+      priority: '0.8' // High priority for money keyword pages
+    }))
+
+    // Marriage license discount page (high-value conversion page)
+    const discountUrl = {
+      url: 'https://weddingcounselors.com/premarital-counseling/marriage-license-discount',
+      lastmod: new Date().toISOString().split('T')[0],
+      changefreq: 'monthly',
+      priority: '0.9' // Very high priority - conversion page
+    }
+
+    const allUrls = [discountUrl, ...specialtyUrls]
+    const sitemapContent = this.buildXmlSitemap(allUrls)
+
+    await fs.writeFile(
+      path.join(__dirname, this.sitemapDir, 'sitemap-specialties.xml'),
+      sitemapContent
+    )
+
+    console.log(`Generated specialty sitemap with ${allUrls.length} URLs (${specialties.length} specialties + discount page)`)
+    return allUrls.length
   }
 
   async generateProfileSitemap() {
@@ -58,7 +91,7 @@ class SitemapService {
       sitemapContent
     )
 
-    console.log(`✅ Generated profile sitemap with ${profiles.length} profiles`)
+    console.log(`Generated profile sitemap with ${profiles.length} profiles`)
     return profiles.length
   }
 
@@ -141,17 +174,18 @@ class SitemapService {
   async updateMainSitemap() {
     // Check current phase and update accordingly
     const phase = await this.getCurrentPhase()
-    
+
     let sitemapRefs = [
       '<loc>https://weddingcounselors.com/sitemap-phase1.xml</loc>',
-      '<loc>https://weddingcounselors.com/sitemap-blog.xml</loc>'
+      '<loc>https://weddingcounselors.com/sitemap-blog.xml</loc>',
+      '<loc>https://weddingcounselors.com/sitemap-specialties.xml</loc>' // Always include specialties (money keywords)
     ]
 
     if (phase >= 2) {
       sitemapRefs.push('<loc>https://weddingcounselors.com/sitemap-states.xml</loc>')
     }
     if (phase >= 3) {
-      sitemapRefs.push('<loc>https://weddingcounselors.com/sitemap-cities.xml</loc>')  
+      sitemapRefs.push('<loc>https://weddingcounselors.com/sitemap-cities.xml</loc>')
     }
     if (phase >= 4) {
       sitemapRefs.push('<loc>https://weddingcounselors.com/sitemap-profiles.xml</loc>')
@@ -193,7 +227,7 @@ class SitemapService {
       .eq('status', 'approved')
 
     if (!error) {
-      console.log(`📝 Profile ${profileId} queued for next sitemap generation`)
+      console.log(`Profile ${profileId} queued for next sitemap generation`)
     }
   }
 
@@ -202,7 +236,7 @@ class SitemapService {
     try {
       // This would use Google Search Console API
       // For now, just log the action
-      console.log('🚀 Sitemap submitted to Google Search Console')
+      console.log('Sitemap submitted to Google Search Console')
       
       // Track submission
       await this.supabase.from('sitemap_submissions').insert({
@@ -211,7 +245,7 @@ class SitemapService {
         status: 'success'
       })
     } catch (error) {
-      console.error('❌ Search Console submission failed:', error)
+      console.error('Search Console submission failed:', error)
     }
   }
 }

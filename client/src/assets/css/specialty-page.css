@@ -1,0 +1,399 @@
+/* Specialty Page Styles */
+
+.specialty-page {
+  min-height: 100vh;
+  background: var(--gray-50);
+}
+
+/* Hero Section */
+.specialty-hero {
+  background: linear-gradient(135deg, var(--specialty-color, var(--primary)) 0%, color-mix(in srgb, var(--specialty-color, var(--primary)) 80%, black) 100%);
+  color: white;
+  padding: var(--space-12) 0 var(--space-16);
+  position: relative;
+  overflow: hidden;
+}
+
+.specialty-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.specialty-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  position: relative;
+  z-index: 1;
+}
+
+.specialty-hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: var(--space-6);
+}
+
+.specialty-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-6);
+}
+
+.specialty-icon i {
+  font-size: 2.5rem;
+  color: white;
+}
+
+.specialty-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+  line-height: 1.2;
+}
+
+.specialty-subtitle {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  margin-bottom: var(--space-6);
+  font-weight: 400;
+}
+
+.specialty-intro {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-8);
+  text-align: left;
+}
+
+.specialty-intro p {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0;
+  opacity: 0.95;
+}
+
+.specialty-cta {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.specialty-cta .btn {
+  min-width: 220px;
+}
+
+.specialty-cta .btn-primary {
+  background: white;
+  color: var(--specialty-color, var(--primary));
+}
+
+.specialty-cta .btn-primary:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+.specialty-cta .btn-secondary {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: white;
+}
+
+.specialty-cta .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+}
+
+/* Benefits Section */
+.specialty-benefits-section {
+  background: white;
+  padding: var(--space-12) 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  color: var(--gray-600);
+  text-align: center;
+  max-width: 700px;
+  margin: -0.5rem auto var(--space-8);
+  line-height: 1.6;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.benefit-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.benefit-card:hover {
+  background: var(--gray-100);
+  transform: translateX(4px);
+}
+
+.benefit-card i {
+  color: var(--success);
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.benefit-card span {
+  font-size: 0.95rem;
+  color: var(--gray-700);
+  font-weight: 500;
+}
+
+/* Profiles Section */
+.specialty-profiles-section {
+  padding: var(--space-12) 0;
+}
+
+.profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.load-more-section {
+  text-align: center;
+  margin-top: var(--space-8);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* States with specialty */
+.states-with-specialty {
+  margin-top: var(--space-12);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--gray-200);
+}
+
+.states-with-specialty h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: var(--space-4);
+  text-align: center;
+}
+
+.state-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+.state-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  background: white;
+  border: 1px solid var(--gray-300);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  color: var(--gray-700);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.state-pill:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+/* No profiles CTA */
+.no-profiles-cta {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 2px dashed var(--gray-300);
+}
+
+.no-profiles-cta p {
+  font-size: 1.1rem;
+  color: var(--gray-600);
+  margin-bottom: var(--space-6);
+}
+
+/* FAQ Section */
+.specialty-faq-section {
+  background: white;
+  padding: var(--space-12) 0;
+  border-top: 1px solid var(--gray-200);
+}
+
+/* Related Specialties */
+.specialty-related-section {
+  padding: var(--space-12) 0;
+  background: var(--gray-100);
+}
+
+.related-specialties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-6);
+}
+
+.related-specialty-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.related-specialty-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--card-color, var(--primary));
+}
+
+.related-specialty-card i {
+  width: 48px;
+  height: 48px;
+  background: color-mix(in srgb, var(--card-color, var(--primary)) 15%, white);
+  color: var(--card-color, var(--primary));
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  margin-bottom: var(--space-4);
+}
+
+.related-specialty-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: var(--space-2);
+}
+
+.related-specialty-card p {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .specialty-hero {
+    padding: var(--space-8) 0 var(--space-12);
+  }
+
+  .specialty-title {
+    font-size: 1.875rem;
+  }
+
+  .specialty-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .specialty-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .specialty-icon i {
+    font-size: 2rem;
+  }
+
+  .specialty-cta {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .specialty-cta .btn {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .profiles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .related-specialties-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Breadcrumbs on hero */
+.specialty-hero .breadcrumbs {
+  margin-bottom: var(--space-4);
+}
+
+.specialty-hero .breadcrumbs a,
+.specialty-hero .breadcrumbs span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.specialty-hero .breadcrumbs a:hover {
+  color: white;
+}
+
+.specialty-hero .breadcrumbs .breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.5);
+}

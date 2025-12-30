@@ -66,7 +66,7 @@
         overscroll-behavior: none;
       }
 
-      /* Prevent flash of unstyled content */
+      /* Prevent flash of unstyled content - but show immediately if pre-rendered */
       body {
         opacity: 0;
         transition: opacity 0.3s ease;
@@ -74,7 +74,7 @@
         background-color: #f9f8f6;
       }
 
-      body.loaded {
+      body.loaded, body.prerendered {
         opacity: 1;
       }
 
@@ -101,7 +101,15 @@
     </style>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      <style>body { opacity: 1 !important; } #wc-preloader { display: none !important; }</style>
+      <div style="padding: 40px; max-width: 800px; margin: 0 auto; font-family: system-ui, sans-serif;">
+        <h1 style="color: #0e5e5e;">Wedding Counselors - Premarital Counseling Directory</h1>
+        <p>Find qualified premarital counselors, therapists, and coaches near you.</p>
+        <p>Browse counselors by state: <a href="/premarital-counseling">View All States</a></p>
+        <p>For the best experience, please enable JavaScript in your browser.</p>
+      </div>
+    </noscript>
     <div id="wc-preloader" aria-hidden="true">
       <div class="inner">
         <div class="ring"><span class="spark"></span></div>
@@ -110,7 +118,19 @@
       </div>
     </div>
     <div id="root"></div>
-    
+
+    <script>
+      // If page has pre-rendered content, show it immediately (hide preloader too)
+      (function() {
+        var root = document.getElementById('root');
+        if (root && root.hasChildNodes() && root.children.length > 0) {
+          document.body.classList.add('prerendered', 'loaded');
+          var p = document.getElementById('wc-preloader');
+          if (p) p.style.display = 'none';
+        }
+      })();
+    </script>
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",

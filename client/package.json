@@ -18,10 +18,14 @@
     "recharts": "^2.8.0",
     "web-vitals": "^3.5.0"
   },
+  "devDependencies": {
+    "react-snap": "^1.23.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "prebuild": "node scripts/generate-sitemap.js",
     "build": "react-scripts build",
+    "postbuild": "react-snap",
     "build:sitemap": "node scripts/generate-sitemap.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -30,6 +34,52 @@
     "deploy:vercel": "vercel --prod",
     "deploy:netlify": "netlify deploy --prod",
     "analyze": "npm run build && npx source-map-explorer 'build/static/js/*.js'"
+  },
+  "reactSnap": {
+    "source": "build",
+    "minifyHtml": {
+      "collapseWhitespace": false,
+      "removeComments": false
+    },
+    "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
+    "puppeteerExecutablePath": null,
+    "inlineCss": true,
+    "include": [
+      "/",
+      "/premarital-counseling",
+      "/premarital-counseling/christian",
+      "/premarital-counseling/catholic",
+      "/premarital-counseling/lgbtq",
+      "/premarital-counseling/online",
+      "/premarital-counseling/gottman",
+      "/premarital-counseling/prepare-enrich",
+      "/premarital-counseling/interfaith",
+      "/premarital-counseling/second-marriages",
+      "/premarital-counseling/military",
+      "/premarital-counseling/affordable",
+      "/premarital-counseling/marriage-license-discount",
+      "/premarital-counseling/california",
+      "/premarital-counseling/texas",
+      "/premarital-counseling/florida",
+      "/premarital-counseling/new-york",
+      "/premarital-counseling/georgia",
+      "/premarital-counseling/north-carolina",
+      "/premarital-counseling/illinois",
+      "/premarital-counseling/pennsylvania",
+      "/premarital-counseling/ohio",
+      "/premarital-counseling/michigan",
+      "/premarital-counseling/arizona",
+      "/premarital-counseling/colorado",
+      "/premarital-counseling/washington",
+      "/premarital-counseling/tennessee",
+      "/premarital-counseling/minnesota",
+      "/about",
+      "/features",
+      "/blog",
+      "/contact",
+      "/professional/login",
+      "/professional/signup"
+    ]
   },
   "eslintConfig": {
     "extends": [

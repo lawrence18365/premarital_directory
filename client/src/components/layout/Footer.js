@@ -47,21 +47,36 @@ const Footer = () => {
           </div>
 
           <div className="footer-section">
-            <h4>For Couples</h4>
+            <h4>Find Counselors</h4>
             <ul>
-              <li><Link to="/premarital-counseling">Find Counselors</Link></li>
-              <li><Link to="/therapists">Therapists</Link></li>
-              <li><Link to="/coaches">Coaches</Link></li>
-              <li><Link to="/clergy">Clergy</Link></li>
+              <li><Link to="/premarital-counseling">Browse by State</Link></li>
+              <li><Link to="/premarital-counseling/christian">Christian Counseling</Link></li>
+              <li><Link to="/premarital-counseling/catholic">Catholic Pre-Cana</Link></li>
+              <li><Link to="/premarital-counseling/lgbtq">LGBTQ+ Affirming</Link></li>
+              <li><Link to="/premarital-counseling/online">Online Counseling</Link></li>
+              <li><Link to="/premarital-counseling/gottman">Gottman Method</Link></li>
+              <li><Link to="/premarital-counseling/marriage-license-discount">Marriage License Discounts</Link></li>
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h4>Popular States</h4>
+            <ul>
+              <li><Link to="/premarital-counseling/california">California</Link></li>
+              <li><Link to="/premarital-counseling/texas">Texas</Link></li>
+              <li><Link to="/premarital-counseling/florida">Florida</Link></li>
+              <li><Link to="/premarital-counseling/new-york">New York</Link></li>
+              <li><Link to="/premarital-counseling/georgia">Georgia</Link></li>
+              <li><Link to="/premarital-counseling/north-carolina">North Carolina</Link></li>
             </ul>
           </div>
 
           <div className="footer-section">
             <h4>For Professionals</h4>
             <ul>
+              <li><Link to="/professional/signup">List Your Practice</Link></li>
               <li><Link to="/claim-profile">Claim Profile</Link></li>
               <li><Link to="/features">Features</Link></li>
-              <li><Link to="/support">Support</Link></li>
               <li><Link to="/guidelines">Guidelines</Link></li>
             </ul>
           </div>
@@ -70,6 +85,7 @@ const Footer = () => {
             <h4>Company</h4>
             <ul>
               <li><Link to="/about">About Us</Link></li>
+              <li><Link to="/blog">Blog</Link></li>
               <li><Link to="/contact">Contact</Link></li>
               <li><Link to="/privacy">Privacy Policy</Link></li>
               <li><Link to="/terms">Terms of Service</Link></li>

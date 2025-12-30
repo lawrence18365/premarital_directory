@@ -8,6 +8,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute'
 import PremiumLoader from './components/common/PremiumLoader'
 import PageTransitionLoader from './components/common/PageTransitionLoader'
 import { StateRedirect, CityRedirect, ProfileRedirect } from './components/routing/StateRedirect'
+import SpecialtyOrStatePage from './components/routing/SpecialtyOrStatePage'
 
 // CSS
 import './assets/css/main.css'
@@ -68,6 +69,7 @@ const GuidelinesPage = React.lazy(() => import('./pages/GuidelinesPage'))
 const StatePage = React.lazy(() => import('./pages/StatePage'))
 const StatesIndexPage = React.lazy(() => import('./pages/StatesIndexPage'))
 const CityOrProfilePage = React.lazy(() => import('./components/routing/CityOrProfilePage'))
+const MarriageLicenseDiscountPage = React.lazy(() => import('./pages/MarriageLicenseDiscountPage'))
 
 // Blog pages
 const BlogIndex = React.lazy(() => import('./pages/blog/BlogIndex'))
@@ -131,7 +133,8 @@ function AppInner() {
                 <Route path="/" element={<HomeOrDashboard />} />
                 {/* Premarital Counseling Directory - SEO-optimized URLs */}
                 <Route path="/premarital-counseling" element={<StatesIndexPage />} />
-                <Route path="/premarital-counseling/:state" element={<StatePage />} />
+                <Route path="/premarital-counseling/marriage-license-discount" element={<MarriageLicenseDiscountPage />} />
+                <Route path="/premarital-counseling/:state" element={<SpecialtyOrStatePage />} />
                 <Route path="/premarital-counseling/:state/:cityOrSlug" element={<CityOrProfilePage />} />
                 <Route path="/premarital-counseling/:state/:city/:profileSlug" element={<ProfilePage />} />
                 {/* 301 Redirects: old URL patterns to new SEO-optimized structure */}

@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import CompactSearch from '../components/common/CompactSearch'
+import { getAllSpecialties, getStatesWithDiscounts } from '../data/specialtyConfig'
 import '../assets/css/states-page.css'
 
 const STATES = [
@@ -123,6 +124,18 @@ const StatesIndexPage = () => {
         {/* Quick Search */}
         <CompactSearch />
 
+        {/* Marriage License Discount Banner */}
+        <Link to="/premarital-counseling/marriage-license-discount" className="discount-banner">
+          <div className="discount-banner-icon">
+            <i className="fa fa-piggy-bank"></i>
+          </div>
+          <div className="discount-banner-content">
+            <h3>Save $25-$75 on Your Marriage License</h3>
+            <p>8 states offer discounts for couples who complete premarital counseling. See if your state qualifies.</p>
+          </div>
+          <span className="discount-banner-arrow">→</span>
+        </Link>
+
         <div className="mb-8 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             All 50 States + Washington, DC
@@ -147,6 +160,40 @@ const StatesIndexPage = () => {
               </div>
             </Link>
           ))}
+        </div>
+      </div>
+
+      {/* Browse by Specialty */}
+      <div className="specialty-browse-section">
+        <div className="states-grid">
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Browse by Specialty
+            </h2>
+            <p className="text-gray-600">
+              Find premarital counselors specializing in your specific needs and preferences.
+            </p>
+          </div>
+
+          <div className="specialty-cards-grid">
+            {getAllSpecialties().map(specialty => (
+              <Link
+                key={specialty.slug}
+                to={`/premarital-counseling/${specialty.slug}`}
+                className="specialty-browse-card"
+                style={{ '--specialty-color': specialty.color }}
+              >
+                <div className="specialty-browse-icon">
+                  <i className={`fa ${specialty.icon}`}></i>
+                </div>
+                <div className="specialty-browse-content">
+                  <h3>{specialty.name}</h3>
+                  <p>{specialty.subtitle}</p>
+                </div>
+                <span className="specialty-browse-arrow">→</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
