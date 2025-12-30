@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { AuthProvider } from './contexts/AuthContext'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import ScrollToTop from './components/common/ScrollToTop'
@@ -31,6 +31,29 @@ import LaunchTracker from './components/analytics/LaunchTracker'
 // Critical pages - loaded immediately
 import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/NotFoundPage'
+
+// Smart home route - redirects logged-in professionals to dashboard
+const HomeOrDashboard = () => {
+  const { user, profile, loading } = useAuth()
+
+  // Show homepage while loading auth state
+  if (loading) {
+    return <HomePage />
+  }
+
+  // If user is logged in with a profile, redirect to dashboard
+  if (user && profile) {
+    return <Navigate to="/professional/dashboard" replace />
+  }
+
+  // If user is logged in but no profile yet, redirect to create profile
+  if (user && !profile) {
+    return <Navigate to="/professional/create" replace />
+  }
+
+  // Not logged in - show homepage
+  return <HomePage />
+}
 
 // Lazy-loaded pages for better performance
 const ProfilePage = React.lazy(() => import('./pages/ProfilePage'))
@@ -105,7 +128,7 @@ function AppInner() {
               <Suspense fallback={<PremiumLoader />}>
               <Routes>
                 {/* Public Routes */}
-                <Route path="/" element={<HomePage />} />
+                <Route path="/" element={<HomeOrDashboard />} />
                 {/* Premarital Counseling Directory - SEO-optimized URLs */}
                 <Route path="/premarital-counseling" element={<StatesIndexPage />} />
                 <Route path="/premarital-counseling/:state" element={<StatePage />} />
