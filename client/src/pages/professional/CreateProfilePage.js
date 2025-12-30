@@ -619,21 +619,27 @@ const CreateProfilePage = () => {
                     <p>Your public contact and professional identity.</p>
                   </div>
                   <div className="form-group">
-                    <label>Profile Photo (optional)</label>
-                    <div className="photo-upload">
+                    <label>Profile Photo</label>
+                    <div className={`photo-upload ${photoPreview ? 'has-photo' : ''}`}>
                       <div className="photo-preview">
                         {photoPreview ? (
                           <img src={photoPreview} alt="Profile preview" />
                         ) : (
                           <div className="photo-placeholder">
-                            <i className="fa fa-user" aria-hidden="true"></i>
+                            <i className="fa fa-camera" aria-hidden="true"></i>
                           </div>
                         )}
                       </div>
                       <div className="photo-controls">
-                        <label className="btn btn-outline">
-                          <i className="fa fa-upload" aria-hidden="true"></i>
-                          Choose Photo
+                        <h4>{photoPreview ? 'Looking great!' : 'Add your headshot'}</h4>
+                        <p>
+                          {photoPreview
+                            ? 'Couples can now see who they\'ll be working with.'
+                            : 'Profiles with photos get 3x more inquiries from couples.'}
+                        </p>
+                        <label className="btn-upload">
+                          <i className="fa fa-cloud-upload" aria-hidden="true"></i>
+                          {photoPreview ? 'Change Photo' : 'Upload Photo'}
                           <input
                             type="file"
                             accept="image/*"
@@ -644,13 +650,20 @@ const CreateProfilePage = () => {
                         {photoPreview && (
                           <button
                             type="button"
-                            className="btn btn-ghost"
+                            className="btn-remove"
                             onClick={handlePhotoRemove}
                           >
-                            Remove Photo
+                            <i className="fa fa-trash" aria-hidden="true"></i>
+                            Remove
                           </button>
                         )}
-                        <small>JPG or PNG up to 5MB.</small>
+                        {!photoPreview && (
+                          <div className="photo-tips">
+                            <span><i className="fa fa-check" aria-hidden="true"></i> Professional headshot</span>
+                            <span><i className="fa fa-check" aria-hidden="true"></i> Good lighting</span>
+                            <span><i className="fa fa-check" aria-hidden="true"></i> JPG/PNG, max 5MB</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                     {photoError && (
