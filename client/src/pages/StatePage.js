@@ -189,10 +189,10 @@ const StatePage = () => {
   return (
     <>
       <SEOHelmet
-        title={stateContent?.title || `Premarital Counseling & Marriage Prep in ${stateConfig.name} — Therapists & Clergy`}
-        description={stateContent?.description || `Find premarital counseling and marriage preparation in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples. See prices, specialties, and availability across ${stateConfig.major_cities.length}+ cities.`}
+        title={stateContent?.title || `Premarital Counseling in ${stateConfig.name} | ${stateData?.totalProfiles || 'Find'} Marriage Counselors (2025)`}
+        description={stateContent?.description || `Find the best premarital counseling in ${stateConfig.name}. Compare ${stateData?.totalProfiles || 'local'} licensed therapists, Christian counselors & marriage prep programs in ${stateConfig.major_cities.length}+ cities. Prices, reviews & direct contact.`}
         url={`/premarital-counseling/${state}`}
-        keywords={`premarital counseling ${stateConfig.name}, marriage counseling ${stateConfig.name}, marriage prep ${stateConfig.name}, premarital therapy ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, pre cana ${stateConfig.name}, clergy premarital counseling ${stateConfig.name}, ${stateConfig.major_cities.join(', ')}`}
+        keywords={`premarital counseling ${stateConfig.name}, marriage counseling ${stateConfig.name}, premarital counseling near me ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, marriage therapist ${stateConfig.name}`}
         breadcrumbs={breadcrumbItems}
         structuredData={citiesItemList}
         faqs={stateFAQs}

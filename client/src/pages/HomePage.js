@@ -43,18 +43,27 @@ const TRUST_HIGHLIGHTS = [
 ]
 
 const POPULAR_CITIES = [
-  { city: 'Austin', state: 'Texas', slug: 'austin', stateSlug: 'texas' },
-  { city: 'Dallas', state: 'Texas', slug: 'dallas', stateSlug: 'texas' },
-  { city: 'Houston', state: 'Texas', slug: 'houston', stateSlug: 'texas' },
-  { city: 'Los Angeles', state: 'California', slug: 'los-angeles', stateSlug: 'california' },
-  { city: 'San Francisco', state: 'California', slug: 'san-francisco', stateSlug: 'california' },
+  // Top metro areas by wedding volume
   { city: 'New York', state: 'New York', slug: 'new-york', stateSlug: 'new-york' },
-  { city: 'Miami', state: 'Florida', slug: 'miami', stateSlug: 'florida' },
+  { city: 'Los Angeles', state: 'California', slug: 'los-angeles', stateSlug: 'california' },
   { city: 'Chicago', state: 'Illinois', slug: 'chicago', stateSlug: 'illinois' },
-  { city: 'Atlanta', state: 'Georgia', slug: 'atlanta', stateSlug: 'georgia' },
-  { city: 'Denver', state: 'Colorado', slug: 'denver', stateSlug: 'colorado' },
+  { city: 'Houston', state: 'Texas', slug: 'houston', stateSlug: 'texas' },
+  { city: 'Phoenix', state: 'Arizona', slug: 'phoenix', stateSlug: 'arizona' },
+  { city: 'San Antonio', state: 'Texas', slug: 'san-antonio', stateSlug: 'texas' },
+  { city: 'San Diego', state: 'California', slug: 'san-diego', stateSlug: 'california' },
+  { city: 'Dallas', state: 'Texas', slug: 'dallas', stateSlug: 'texas' },
+  { city: 'Austin', state: 'Texas', slug: 'austin', stateSlug: 'texas' },
+  { city: 'San Francisco', state: 'California', slug: 'san-francisco', stateSlug: 'california' },
   { city: 'Seattle', state: 'Washington', slug: 'seattle', stateSlug: 'washington' },
-  { city: 'Phoenix', state: 'Arizona', slug: 'phoenix', stateSlug: 'arizona' }
+  { city: 'Denver', state: 'Colorado', slug: 'denver', stateSlug: 'colorado' },
+  { city: 'Atlanta', state: 'Georgia', slug: 'atlanta', stateSlug: 'georgia' },
+  { city: 'Miami', state: 'Florida', slug: 'miami', stateSlug: 'florida' },
+  { city: 'Nashville', state: 'Tennessee', slug: 'nashville', stateSlug: 'tennessee' },
+  { city: 'Charlotte', state: 'North Carolina', slug: 'charlotte', stateSlug: 'north-carolina' },
+  { city: 'Portland', state: 'Oregon', slug: 'portland', stateSlug: 'oregon' },
+  { city: 'Las Vegas', state: 'Nevada', slug: 'las-vegas', stateSlug: 'nevada' },
+  { city: 'Orlando', state: 'Florida', slug: 'orlando', stateSlug: 'florida' },
+  { city: 'Indianapolis', state: 'Indiana', slug: 'indianapolis', stateSlug: 'indiana' }
 ]
 
 const PROVIDER_FEATURES = [
@@ -239,10 +248,10 @@ const HomePage = () => {
   return (
     <>
       <SEOHelmet
-        title="Find Premarital Counselors Near You | Pre-Marriage Therapy for Engaged Couples"
-        description="Connect with premarital counselors helping engaged couples prepare for marriage. Find licensed therapists, Christian counselors, and online programs in your area."
+        title="Premarital Counseling Near Me | Find Marriage Counselors in Your City (2025)"
+        description="Find premarital counselors near you. Compare 150+ licensed therapists, Christian counselors, and online marriage prep programs. Free directory - contact providers directly."
         url="/"
-        keywords="premarital counseling, pre-marriage therapy, engaged couples counseling, marriage preparation, premarital therapy, pre-wedding counseling, relationship preparation"
+        keywords="premarital counseling near me, premarital counseling, marriage counseling near me, pre marriage counseling, premarital therapy, christian premarital counseling, online premarital counseling, marriage prep courses"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "WebSite",
@@ -272,8 +281,8 @@ const HomePage = () => {
           <div className="hero-layers" aria-hidden="true" />
           <div className="container">
             <div className="hero-immersive-content">
-              <h1 className="hero-title">Premarital Counseling Near You — Therapists, Faith-Based & Online Options</h1>
-              <p className="hero-subtitle">Licensed therapists (LMFT, LPC), Christian counselors, and online programs. Compare approaches, read bios, and contact counselors directly.</p>
+              <h1 className="hero-title">Find Premarital Counseling Near You</h1>
+              <p className="hero-subtitle">Compare licensed marriage therapists (LMFT, LPC), Christian counselors, and online premarital programs in your city. Browse profiles, see pricing, and contact providers directly — no middleman fees.</p>
 
               <form
                 className="hero-form hero-form--minimal"

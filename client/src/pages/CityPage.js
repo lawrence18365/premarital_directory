@@ -207,9 +207,9 @@ const CityPage = () => {
   return (
     <div className="city-page">
       <SEOHelmet
-        title={cityContent?.title || `Premarital Counseling & Marriage Prep in ${cityName}, ${stateConfig?.abbr || stateName} – Therapists & Clergy`}
-        description={cityContent?.description || `Find premarital counseling and marriage prep in ${cityName}, ${stateName}. Compare ${profiles.length} licensed therapists (LMFT, LPC, LCSW), Christian counselors, clergy, and online options for engaged couples preparing for marriage. See prices, specialties, and availability.`}
-        keywords={`premarital counseling ${cityName}, premarital counselling ${cityName}, marriage counseling ${cityName}, marriage prep ${cityName}, premarital therapy ${cityName}, pre marriage counseling ${cityName} ${stateName}, pre-marital counseling ${cityName}, christian premarital counseling ${cityName}, pre cana ${cityName}, clergy premarital counseling ${cityName}, marriage counseling ${cityName} ${stateName}`}
+        title={cityContent?.title || `${profiles.length > 0 ? profiles.length : 'Top'} Premarital Counselors in ${cityName}, ${stateConfig?.abbr || stateName} (2025)`}
+        description={cityContent?.description || `Find the best premarital counseling in ${cityName}, ${stateName}. Compare ${profiles.length || 'local'} licensed therapists, Christian counselors & marriage prep programs. Prices from $100/session. Contact directly - no fees.`}
+        keywords={`premarital counseling ${cityName}, marriage counseling ${cityName}, premarital counseling ${cityName} ${stateName}, pre marriage counseling ${cityName}, premarital therapy ${cityName} ${stateConfig?.abbr || ''}, christian premarital counseling ${cityName}, marriage therapist ${cityName}, couples counseling ${cityName}, pre cana ${cityName}`}
         structuredData={structuredData}
         faqs={cityFAQs}
         noindex={shouldNoindex}
