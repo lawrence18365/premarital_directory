@@ -4,19 +4,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import '../../assets/css/professional-auth.css'
 
 const featureList = [
-  'City + statewide listing with SEO support',
-  'Direct inquiries (email + phone — no middleman)',
-  'Update profile, availability, and pricing anytime',
-  'Optional upgrades for featured placement'
-]
-
-const professionOptions = [
-  'Licensed Therapist',
-  'Marriage & Family Therapist',
-  'Certified Coach',
-  'Clergy/Pastor',
-  'Licensed Clinical Social Worker',
-  'Licensed Psychologist'
+  'Get listed in city + statewide directories',
+  'Couples contact you directly — no middleman fees',
+  'Full control over your profile and availability',
+  'Free forever, with optional upgrades'
 ]
 
 const SignupForm = () => {
@@ -24,9 +15,6 @@ const SignupForm = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    fullName: '',
-    profession: professionOptions[0],
-    phone: '',
     agreeToTerms: false
   })
   const [loading, setLoading] = useState(false)
@@ -48,8 +36,8 @@ const SignupForm = () => {
     e.preventDefault()
     
     // Validation
-    if (!formData.email || !formData.password || !formData.fullName) {
-      setError('Please fill in all required fields')
+    if (!formData.email || !formData.password) {
+      setError('Please enter your email and password')
       return
     }
 
@@ -71,11 +59,7 @@ const SignupForm = () => {
     setLoading(true)
     setError('')
 
-    const { error } = await signUp(formData.email, formData.password, {
-      full_name: formData.fullName,
-      profession: formData.profession,
-      phone: formData.phone
-    })
+    const { error } = await signUp(formData.email, formData.password)
 
     if (error) {
       setError(error.message)
@@ -153,35 +137,6 @@ const SignupForm = () => {
           )}
 
           <form onSubmit={handleSubmit} className="professional-auth__form">
-            <div className="professional-auth__grid professional-auth__grid--2">
-              <div className="form-group">
-                <label htmlFor="fullName">Full Name *</label>
-                <input
-                  type="text"
-                  id="fullName"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  placeholder="Dr. Sarah Mitchell"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="profession">Professional Type *</label>
-                <select
-                  id="profession"
-                  name="profession"
-                  value={formData.profession}
-                  onChange={handleChange}
-                  required
-                >
-                  {professionOptions.map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
             <div className="form-group">
               <label htmlFor="email">Email Address *</label>
               <input
@@ -197,45 +152,31 @@ const SignupForm = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone">Phone Number (optional)</label>
+              <label htmlFor="password">Password *</label>
               <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
                 onChange={handleChange}
-                placeholder="(555) 123-4567"
-                autoComplete="tel"
+                placeholder="At least 6 characters"
+                required
+                autoComplete="new-password"
               />
             </div>
 
-            <div className="professional-auth__grid professional-auth__grid--2">
-              <div className="form-group">
-                <label htmlFor="password">Password *</label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Create a secure password"
-                  required
-                  autoComplete="new-password"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="confirmPassword">Confirm Password *</label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm your password"
-                  required
-                  autoComplete="new-password"
-                />
-              </div>
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm Password *</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirm your password"
+                required
+                autoComplete="new-password"
+              />
             </div>
 
             <label className="professional-auth__checkbox">
@@ -256,14 +197,16 @@ const SignupForm = () => {
         </div>
 
         <aside className="professional-auth__aside">
-          <h3>Included with your account</h3>
+          <h3>What happens next?</h3>
           <ul>
-            <li>Profile visible on city + statewide directories</li>
-            <li>Direct inquiries sent straight to your inbox</li>
-            <li>Analytics dashboard for profile views & contacts</li>
-            <li>Edit availability, pricing, and session types anytime</li>
-            <li>Upgrade later for featured placement when you're ready</li>
+            <li><strong>Step 1:</strong> Create your account (you're here)</li>
+            <li><strong>Step 2:</strong> Verify your email</li>
+            <li><strong>Step 3:</strong> Complete your profile in under 2 minutes</li>
+            <li><strong>Step 4:</strong> Start receiving inquiries from couples</li>
           </ul>
+          <p style={{marginTop: '1rem', fontSize: '0.9rem', color: 'var(--slate)'}}>
+            Your profile will be visible on city + statewide directories. No fees, no commissions.
+          </p>
         </aside>
       </section>
     </div>
