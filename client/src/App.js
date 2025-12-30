@@ -1,7 +1,6 @@
 import React, { Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
-import { StripeProvider } from './contexts/StripeContext'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import ScrollToTop from './components/common/ScrollToTop'
@@ -17,7 +16,6 @@ import './assets/css/home-overrides.css'
 import './assets/css/auth.css'
 import './assets/css/professional.css'
 import './assets/css/admin.css'
-import './assets/css/pricing.css'
 import './assets/css/features.css'
 import './assets/css/support.css'
 import './assets/css/guidelines.css'
@@ -41,7 +39,6 @@ const AboutPage = React.lazy(() => import('./pages/AboutPage'))
 const ContactPage = React.lazy(() => import('./pages/ContactPage'))
 const PrivacyPage = React.lazy(() => import('./pages/PrivacyPage'))
 const TermsPage = React.lazy(() => import('./pages/TermsPage'))
-const PricingPage = React.lazy(() => import('./pages/PricingPage'))
 const FeaturesPage = React.lazy(() => import('./pages/FeaturesPage'))
 const SupportPage = React.lazy(() => import('./pages/SupportPage'))
 const GuidelinesPage = React.lazy(() => import('./pages/GuidelinesPage'))
@@ -61,7 +58,6 @@ const SignupForm = React.lazy(() => import('./components/auth/SignupForm'))
 const ProfessionalDashboard = React.lazy(() => import('./pages/professional/ProfessionalDashboard'))
 const ProfileEditor = React.lazy(() => import('./pages/professional/ProfileEditor'))
 const LeadsPage = React.lazy(() => import('./pages/professional/LeadsPage'))
-const SubscriptionPage = React.lazy(() => import('./pages/professional/SubscriptionPage'))
 const CreateProfilePage = React.lazy(() => import('./pages/professional/CreateProfilePage'))
 const ProfileCreatedPage = React.lazy(() => import('./pages/professional/ProfileCreatedPage'))
 const AnalyticsDashboard = React.lazy(() => import('./pages/professional/AnalyticsDashboard'))
@@ -79,6 +75,7 @@ const SitemapPage = React.lazy(() => import('./pages/SitemapPage'))
 const ThankYouPage = React.lazy(() => import('./pages/ThankYouPage'))
 const ProfessionalsPage = React.lazy(() => import('./pages/ProfessionalsPage'))
 const ConfirmEmailPage = React.lazy(() => import('./pages/ConfirmEmailPage'))
+const EmailVerifiedPage = React.lazy(() => import('./pages/EmailVerifiedPage'))
 const SEOContentPage = React.lazy(() => import('./pages/SEOContentPage'))
 const ClaimWithTokenPage = React.lazy(() => import('./pages/ClaimWithTokenPage'))
 
@@ -136,7 +133,6 @@ function AppInner() {
                 <Route path="/therapists" element={<HomePage />} />
                 <Route path="/coaches" element={<HomePage />} />
                 <Route path="/clergy" element={<HomePage />} />
-                <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/features" element={<FeaturesPage />} />
                 <Route path="/support" element={<SupportPage />} />
                 <Route path="/guidelines" element={<GuidelinesPage />} />
@@ -153,6 +149,7 @@ function AppInner() {
                 <Route path="/professional/login" element={<LoginForm />} />
                 <Route path="/professional/signup" element={<SignupForm />} />
                 <Route path="/professional/confirm-email" element={<ConfirmEmailPage />} />
+                <Route path="/professional/email-verified" element={<EmailVerifiedPage />} />
                 <Route
                   path="/professional/create"
                   element={
@@ -194,14 +191,6 @@ function AppInner() {
                       <LeadsPage />
                     </ProtectedRoute>
                   } 
-                />
-                <Route
-                  path="/professional/subscription"
-                  element={
-                    <ProtectedRoute>
-                      <SubscriptionPage />
-                    </ProtectedRoute>
-                  }
                 />
                 <Route
                   path="/professional/analytics"
@@ -275,11 +264,9 @@ function AppInner() {
 function App() {
   return (
     <AuthProvider>
-      <StripeProvider>
-        <Router>
-          <AppInner />
-        </Router>
-      </StripeProvider>
+      <Router>
+        <AppInner />
+      </Router>
     </AuthProvider>
   )
 }
