@@ -363,13 +363,6 @@ const CreateProfilePage = () => {
     'Counselor'
   ]
 
-  const pronounOptions = [
-    { value: '', label: 'Prefer not to say' },
-    { value: 'he/him', label: 'He/Him' },
-    { value: 'she/her', label: 'She/Her' },
-    { value: 'they/them', label: 'They/Them' }
-  ]
-
   const yearsExperienceOptions = [
     { value: '1', label: 'Less than 1 year' },
     { value: '2', label: '1-3 years' },
@@ -379,133 +372,10 @@ const CreateProfilePage = () => {
     { value: '20', label: '15+ years' }
   ]
 
-  const credentialOptions = [
-    'Licensed Marriage and Family Therapist (LMFT)',
-    'Licensed Clinical Social Worker (LCSW)',
-    'Licensed Professional Counselor (LPC)',
-    'Licensed Psychologist (PhD/PsyD)',
-    'Certified Gottman Therapist',
-    'Prepare/Enrich Facilitator',
-    'Certified Relationship Coach',
-    'Ordained Minister',
-    'Board Certified Chaplain'
-  ]
-
-  const paymentMethodOptions = [
-    'Cash',
-    'Check',
-    'Credit Card',
-    'Debit Card',
-    'HSA/FSA',
-    'PayPal',
-    'Venmo',
-    'Zelle'
-  ]
-
-  const insuranceOptions = [
-    'Aetna',
-    'Anthem',
-    'Blue Cross Blue Shield',
-    'Cigna',
-    'Humana',
-    'Kaiser Permanente',
-    'Medicare',
-    'Medicaid',
-    'United Healthcare',
-    'Out of Network',
-    'Sliding Scale Available',
-    'No Insurance Accepted'
-  ]
-
-  const specialtyOptions = [
-    'Premarital Counseling',
-    'Communication Skills',
-    'Conflict Resolution',
-    'Financial Planning',
-    'Intimacy & Sexuality',
-    'Blended Families',
-    'Interfaith Marriage',
-    'Cultural Differences',
-    'Trust Building',
-    'Relationship Anxiety',
-    'Family of Origin Issues',
-    'Life Transitions',
-    'Parenting Planning',
-    'Faith-Based Counseling',
-    'LGBTQ+ Affirming',
-    'Military Couples'
-  ]
-
-  const treatmentApproachOptions = [
-    'Gottman Method',
-    'Emotionally Focused Therapy (EFT)',
-    'Cognitive Behavioral Therapy (CBT)',
-    'Prepare/Enrich',
-    'Solution-Focused',
-    'Narrative Therapy',
-    'Attachment-Based',
-    'Faith-Based Approach',
-    'Psychodynamic',
-    'Integrative'
-  ]
-
-  const clientFocusOptions = [
-    'Engaged Couples',
-    'Newlyweds (0-2 years)',
-    'Young Adults (20s-30s)',
-    'Established Adults (30s-40s)',
-    'Second Marriages',
-    'Blended Families',
-    'LGBTQ+ Couples',
-    'Military Couples',
-    'Interfaith Couples',
-    'Long-Distance Couples'
-  ]
-
   const sessionTypeOptions = [
     { value: 'in-person', label: 'In-Person' },
     { value: 'online', label: 'Online/Virtual' },
     { value: 'hybrid', label: 'Hybrid (Both)' }
-  ]
-
-  // NEW: Languages spoken options
-  const languageOptions = [
-    'English',
-    'Spanish',
-    'Mandarin',
-    'Cantonese',
-    'French',
-    'Vietnamese',
-    'Korean',
-    'Tagalog',
-    'Arabic',
-    'Hindi',
-    'Portuguese',
-    'Russian',
-    'Japanese',
-    'German',
-    'American Sign Language (ASL)'
-  ]
-
-  // NEW: Assessment tools for premarital counseling
-  const assessmentToolOptions = [
-    'Prepare/Enrich',
-    'SYMBIS (Saving Your Marriage Before It Starts)',
-    'FOCCUS (Facilitating Open Couple Communication)',
-    'Taylor-Johnson Temperament Analysis',
-    'Gottman Relationship Checkup',
-    'Myers-Briggs for Couples',
-    'Enneagram Assessment',
-    'Custom Assessment'
-  ]
-
-  // NEW: Typical session count options
-  const typicalSessionsOptions = [
-    { value: '3-5', label: '3-5 sessions (brief)' },
-    { value: '6-8', label: '6-8 sessions (standard)' },
-    { value: '8-12', label: '8-12 sessions (comprehensive)' },
-    { value: '12+', label: '12+ sessions (intensive)' },
-    { value: 'customized', label: 'Customized to couple needs' }
   ]
 
   const heroStats = [
