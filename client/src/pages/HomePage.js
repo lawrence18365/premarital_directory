@@ -94,6 +94,7 @@ const HomePage = () => {
   const [filteredProfiles, setFilteredProfiles] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [latestPosts, setLatestPosts] = useState([]);
+  const [user, setUser] = useState(null)
   const [filters, setFilters] = useState({
     profession: '',
     city: '',
@@ -103,6 +104,27 @@ const HomePage = () => {
 
   const location = useLocation()
   const navigate = useNavigate()
+
+  // Check auth and redirect logged-in professionals to dashboard
+  useEffect(() => {
+    const checkAuthAndRedirect = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUser(user)
+        // Check if user has a profile (is a professional)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .single()
+
+        if (profile) {
+          navigate('/professional/dashboard', { replace: true })
+        }
+      }
+    }
+    checkAuthAndRedirect()
+  }, [navigate])
 
   // Set initial profession based on route
   useEffect(() => {
@@ -249,7 +271,7 @@ const HomePage = () => {
     <>
       <SEOHelmet
         title="Premarital Counseling Near Me | Find Marriage Counselors in Your City (2025)"
-        description="Find premarital counselors near you. Compare 150+ licensed therapists, Christian counselors, and online marriage prep programs. Free directory - contact providers directly."
+        description="Find premarital counselors near you. Compare licensed therapists, Christian counselors, and online marriage prep programs. Free directory - contact providers directly."
         url="/"
         keywords="premarital counseling near me, premarital counseling, marriage counseling near me, pre marriage counseling, premarital therapy, christian premarital counseling, online premarital counseling, marriage prep courses"
         structuredData={{
@@ -310,6 +332,11 @@ const HomePage = () => {
               </form>
               <div className="hero-sub-cta">
                 <Link to="/premarital-counseling">Browse all states</Link>
+                {user && (
+                  <Link to="/professional/dashboard" className="btn btn-secondary" style={{ marginLeft: '1rem' }}>
+                    Go to Dashboard
+                  </Link>
+                )}
               </div>
             </div>
           </div>
@@ -473,16 +500,16 @@ const HomePage = () => {
 
                   <div className="profiles-highlight__stats">
                     <div className="profiles-highlight__stat">
-                      <span className="profiles-highlight__stat-value">150+</span>
-                      <span className="profiles-highlight__stat-label">Premarital specialists</span>
+                      <span className="profiles-highlight__stat-value">$0</span>
+                      <span className="profiles-highlight__stat-label">No fees or commissions</span>
                     </div>
                     <div className="profiles-highlight__stat">
-                      <span className="profiles-highlight__stat-value">38</span>
-                      <span className="profiles-highlight__stat-label">States represented</span>
+                      <span className="profiles-highlight__stat-value">Direct</span>
+                      <span className="profiles-highlight__stat-label">Contact counselors directly</span>
                     </div>
                     <div className="profiles-highlight__stat">
-                      <span className="profiles-highlight__stat-value">72%</span>
-                      <span className="profiles-highlight__stat-label">Offer virtual sessions</span>
+                      <span className="profiles-highlight__stat-value">Free</span>
+                      <span className="profiles-highlight__stat-label">Browse & compare</span>
                     </div>
                   </div>
 
