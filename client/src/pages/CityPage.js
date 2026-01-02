@@ -28,7 +28,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   const [error, setError] = useState(null)
   const [cityContent, setCityContent] = useState(null)
   const [contentLoading, setContentLoading] = useState(true)
-  const [cityOverride, setCityOverride] = useState(null)
+  const [cityOverrideData, setCityOverrideData] = useState(null)
   const [seoContent, setSeoContent] = useState(null)
 
   const stateConfig = STATE_CONFIG[state]
@@ -52,7 +52,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
 
   const loadCityOverride = async () => {
     const { data } = await cityOverridesOperations.getCityOverride(state, city)
-    setCityOverride(data)
+    setCityOverrideData(data)
   }
 
   const loadSEOContent = async () => {
@@ -238,7 +238,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
             </div>
 
             {/* Use custom intro if available, otherwise show short default */}
-            {cityOverride?.custom_intro && (
+            {cityOverrideData?.custom_intro && (
               <p style={{
                 marginTop: 'var(--space-2)',
                 fontSize: '0.95rem',
@@ -246,7 +246,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                 maxWidth: '800px',
                 lineHeight: '1.6'
               }}>
-                {cityOverride.custom_intro}
+                {cityOverrideData.custom_intro}
               </p>
             )}
 
