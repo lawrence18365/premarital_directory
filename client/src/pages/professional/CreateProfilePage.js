@@ -205,8 +205,22 @@ const CreateProfilePage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  // Prevent form submission on Enter key (only submit on final step button click)
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && currentStep < totalSteps) {
+      e.preventDefault()
+      handleNext()
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Only allow submission on final step
+    if (currentStep < totalSteps) {
+      handleNext()
+      return
+    }
 
     if (!user) {
       setError('You must be logged in to create a profile')
@@ -588,7 +602,7 @@ const CreateProfilePage = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
             {/* Step 1: Who are you? */}
             {currentStep === 1 && (
               <div className="quiz-step">
