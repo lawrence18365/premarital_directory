@@ -12,9 +12,16 @@ import '../../assets/css/professional-signup.css'
 const CreateProfilePage = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { user, refreshProfile } = useAuth()
+  const { user, profile, loading: authLoading, refreshProfile } = useAuth()
   const [currentStep, setCurrentStep] = useState(1)
   const totalSteps = 4
+
+  // Redirect if user already has a profile
+  useEffect(() => {
+    if (!authLoading && profile) {
+      navigate('/professional/dashboard', { replace: true })
+    }
+  }, [authLoading, profile, navigate])
 
   const [formData, setFormData] = useState({
     // Step 1: Who are you?
@@ -483,6 +490,30 @@ const CreateProfilePage = () => {
     'About you',
     'Pricing'
   ]
+
+  // Loading state - wait for auth to initialize
+  if (authLoading) {
+    return (
+      <div className="professional-signup" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <i className="fa fa-spinner fa-spin fa-2x" style={{ color: 'var(--primary)' }}></i>
+          <p style={{ marginTop: '1rem', color: 'var(--slate)' }}>Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Already has profile - redirect to dashboard (handled by useEffect, but show loading while redirecting)
+  if (profile) {
+    return (
+      <div className="professional-signup" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <i className="fa fa-spinner fa-spin fa-2x" style={{ color: 'var(--primary)' }}></i>
+          <p style={{ marginTop: '1rem', color: 'var(--slate)' }}>Redirecting to dashboard...</p>
+        </div>
+      </div>
+    )
+  }
 
   // Not logged in state
   if (!user) {
