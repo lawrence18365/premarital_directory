@@ -26,9 +26,11 @@ const CreateProfilePage = () => {
     state_province: '',
     session_types: [],
 
-    // Step 3: About you (optional)
+    // Step 3: About you (optional) - Enhanced for premarital niche
     bio: '',
     specialties: [],
+    certifications: [],        // NEW: SYMBIS, PREPARE/ENRICH, etc.
+    faith_tradition: '',       // NEW: Important for couples choosing
     years_experience: '',
     treatment_approaches: [],
     client_focus: [],
@@ -226,7 +228,9 @@ const CreateProfilePage = () => {
           : null,
         specialties: formData.specialties.length > 0 ? formData.specialties : null,
         session_types: formData.session_types,
-        // New PT-style fields
+        // Premarital counseling niche-specific fields
+        certifications: formData.certifications.length > 0 ? formData.certifications : null,
+        faith_tradition: formData.faith_tradition || null,
         treatment_approaches: formData.treatment_approaches.length > 0 ? formData.treatment_approaches : null,
         client_focus: formData.client_focus.length > 0 ? formData.client_focus : null,
         insurance_accepted: formData.insurance_accepted.length > 0 ? formData.insurance_accepted : null,
@@ -321,17 +325,24 @@ const CreateProfilePage = () => {
     }
   }
 
-  // Options
+  // Options - Optimized for premarital counseling niche
   const professionOptions = [
-    'Licensed Therapist',
-    'Marriage & Family Therapist',
-    'Licensed Clinical Social Worker',
-    'Psychologist',
-    'Relationship Coach',
-    'Life Coach',
-    'Clergy/Pastor',
-    'Chaplain',
-    'Counselor'
+    // Licensed Professionals
+    { value: 'Marriage & Family Therapist', label: 'Marriage & Family Therapist (LMFT)', category: 'licensed' },
+    { value: 'Licensed Professional Counselor', label: 'Licensed Professional Counselor (LPC)', category: 'licensed' },
+    { value: 'Licensed Clinical Social Worker', label: 'Licensed Clinical Social Worker (LCSW)', category: 'licensed' },
+    { value: 'Psychologist', label: 'Psychologist (PhD/PsyD)', category: 'licensed' },
+    // Coaches & Facilitators
+    { value: 'Premarital Coach', label: 'Premarital/Relationship Coach', category: 'coach' },
+    { value: 'SYMBIS Facilitator', label: 'SYMBIS Facilitator', category: 'coach' },
+    // Faith-Based
+    { value: 'Pastor', label: 'Pastor/Minister', category: 'clergy' },
+    { value: 'Priest', label: 'Priest/Deacon', category: 'clergy' },
+    { value: 'Rabbi', label: 'Rabbi', category: 'clergy' },
+    { value: 'Chaplain', label: 'Chaplain', category: 'clergy' },
+    { value: 'Pre-Cana Instructor', label: 'Pre-Cana Instructor', category: 'clergy' },
+    // Other
+    { value: 'Wedding Officiant', label: 'Wedding Officiant (w/ Counseling)', category: 'other' }
   ]
 
   const sessionTypeOptions = [
@@ -341,14 +352,53 @@ const CreateProfilePage = () => {
   ]
 
   const specialtyOptions = [
-    'Premarital Counseling',
+    // Core premarital topics
     'Communication Skills',
     'Conflict Resolution',
-    'Faith-Based Counseling',
+    'Financial Planning',
+    'Intimacy & Sexuality',
+    'Family Planning',
+    // Relationship types
     'Blended Families',
-    'LGBTQ+ Affirming',
+    'Second Marriages',
     'Interfaith Couples',
-    'Second Marriages'
+    'Intercultural Couples',
+    'Long-Distance Relationships',
+    'Military Couples',
+    'LGBTQ+ Affirming',
+    // Special circumstances
+    'Anxiety About Marriage',
+    'In-Law Relationships',
+    'Career/Work-Life Balance',
+    'Trauma-Informed',
+    // Faith-specific
+    'Faith-Based Counseling',
+    'Natural Family Planning (NFP)',
+    'Catholic Marriage Prep'
+  ]
+
+  // Certifications specific to premarital counseling
+  const certificationOptions = [
+    'SYMBIS Certified',
+    'PREPARE/ENRICH Certified',
+    'Gottman Certified Therapist',
+    'FOCCUS Trained',
+    'Emotionally Focused (EFT) Certified',
+    'Twogether in Texas Provider',
+    'Pre-Cana Certified',
+    'Marriage License Discount Provider'
+  ]
+
+  // Faith tradition - important for couples choosing counselors
+  const faithTraditionOptions = [
+    { value: 'secular', label: 'Secular/Non-religious' },
+    { value: 'christian', label: 'Christian (Non-denominational)' },
+    { value: 'catholic', label: 'Catholic' },
+    { value: 'protestant', label: 'Protestant' },
+    { value: 'jewish', label: 'Jewish' },
+    { value: 'muslim', label: 'Muslim' },
+    { value: 'interfaith', label: 'Interfaith Specialist' },
+    { value: 'all-faiths', label: 'All Faiths Welcome' }
   ]
 
   const yearsOptions = [
@@ -360,28 +410,40 @@ const CreateProfilePage = () => {
     { value: '20', label: '15+ years' }
   ]
 
-  // PT-style treatment approaches
+  // Treatment approaches - premarital counseling specific
   const treatmentApproachOptions = [
+    // Evidence-based assessments
+    'SYMBIS Assessment',
+    'PREPARE/ENRICH',
+    'FOCCUS Inventory',
+    // Therapeutic approaches
     'Gottman Method',
     'Emotionally Focused (EFT)',
     'Cognitive Behavioral (CBT)',
-    'Prepare/Enrich',
     'Solution-Focused',
-    'Faith-Based',
     'Attachment-Based',
-    'Psychodynamic'
+    // Faith-based programs
+    'Catholic Pre-Cana',
+    'Faith-Based Counseling',
+    'Twogether in Texas'
   ]
 
-  // Who they work with
+  // Who they work with - expanded for premarital niche
   const clientFocusOptions = [
     'Engaged Couples',
-    'Newlyweds',
-    'Adults (20s-30s)',
-    'Adults (40s+)',
+    'Newly Engaged',
+    'Planning Wedding Soon',
+    'Newlyweds (First Year)',
+    'Young Adults (20s)',
+    'Adults (30s-40s)',
     'Second Marriages',
+    'Previously Divorced',
     'Blended Families',
     'LGBTQ+ Couples',
-    'Military Couples'
+    'Interfaith Couples',
+    'Intercultural Couples',
+    'Military/First Responders',
+    'Long-Distance Couples'
   ]
 
   // Insurance options
@@ -520,15 +582,62 @@ const CreateProfilePage = () => {
 
                 <div className="quiz-field">
                   <label>I am a...</label>
+
+                  {/* Licensed Professionals */}
+                  <p className="quiz-category-label">Licensed Professionals</p>
                   <div className="quiz-options quiz-options--grid">
-                    {professionOptions.map(option => (
+                    {professionOptions.filter(o => o.category === 'licensed').map(option => (
                       <button
                         type="button"
-                        key={option}
-                        className={`quiz-option ${formData.profession === option ? 'is-selected' : ''}`}
-                        onClick={() => handleInputChange('profession', option)}
+                        key={option.value}
+                        className={`quiz-option ${formData.profession === option.value ? 'is-selected' : ''}`}
+                        onClick={() => handleInputChange('profession', option.value)}
                       >
-                        {option}
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Coaches & Facilitators */}
+                  <p className="quiz-category-label">Coaches & Facilitators</p>
+                  <div className="quiz-options quiz-options--grid">
+                    {professionOptions.filter(o => o.category === 'coach').map(option => (
+                      <button
+                        type="button"
+                        key={option.value}
+                        className={`quiz-option ${formData.profession === option.value ? 'is-selected' : ''}`}
+                        onClick={() => handleInputChange('profession', option.value)}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Faith-Based */}
+                  <p className="quiz-category-label">Faith-Based Counselors</p>
+                  <div className="quiz-options quiz-options--grid">
+                    {professionOptions.filter(o => o.category === 'clergy').map(option => (
+                      <button
+                        type="button"
+                        key={option.value}
+                        className={`quiz-option ${formData.profession === option.value ? 'is-selected' : ''}`}
+                        onClick={() => handleInputChange('profession', option.value)}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Other */}
+                  <div className="quiz-options quiz-options--grid" style={{ marginTop: '0.5rem' }}>
+                    {professionOptions.filter(o => o.category === 'other').map(option => (
+                      <button
+                        type="button"
+                        key={option.value}
+                        className={`quiz-option ${formData.profession === option.value ? 'is-selected' : ''}`}
+                        onClick={() => handleInputChange('profession', option.value)}
+                      >
+                        {option.label}
                       </button>
                     ))}
                   </div>
@@ -631,6 +740,46 @@ const CreateProfilePage = () => {
                     placeholder="What's your approach to premarital counseling? What can couples expect working with you?"
                   />
                   <small>Even 2-3 sentences helps couples connect with you</small>
+                </div>
+
+                {/* Faith Tradition - Key differentiator for couples */}
+                <div className="quiz-field">
+                  <label>Faith tradition <span className="optional">(optional but helpful)</span></label>
+                  <small style={{ display: 'block', marginBottom: '0.75rem', color: 'var(--slate)' }}>
+                    Many couples look for counselors who share their faith background
+                  </small>
+                  <div className="quiz-options quiz-options--grid">
+                    {faithTraditionOptions.map(option => (
+                      <button
+                        type="button"
+                        key={option.value}
+                        className={`quiz-option ${formData.faith_tradition === option.value ? 'is-selected' : ''}`}
+                        onClick={() => handleInputChange('faith_tradition', option.value)}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Certifications - Important for credibility */}
+                <div className="quiz-field">
+                  <label>Certifications <span className="optional">(optional)</span></label>
+                  <small style={{ display: 'block', marginBottom: '0.75rem', color: 'var(--slate)' }}>
+                    Highlight your specialized training in premarital counseling
+                  </small>
+                  <div className="quiz-pills">
+                    {certificationOptions.map(cert => (
+                      <button
+                        type="button"
+                        key={cert}
+                        className={`quiz-pill ${formData.certifications.includes(cert) ? 'is-selected' : ''}`}
+                        onClick={() => handleArrayToggle('certifications', cert)}
+                      >
+                        {cert}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="quiz-field">
