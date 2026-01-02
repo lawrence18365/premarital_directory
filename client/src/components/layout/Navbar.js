@@ -95,9 +95,14 @@ const Navbar = () => {
           {/* Right login / logout */}
           <div className="navbar-actions">
             {user ? (
-              <button onClick={signOut} className="btn btn-outline">
-                Logout
-              </button>
+              <>
+                <Link to="/professional/dashboard" className="btn btn-primary">
+                  <i className="fa fa-dashboard" aria-hidden="true"></i> Dashboard
+                </Link>
+                <button onClick={signOut} className="btn btn-outline">
+                  Logout
+                </button>
+              </>
             ) : (
               <>
                 <Link to="/professional/signup" className="btn btn-primary">
