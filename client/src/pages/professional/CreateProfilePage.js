@@ -708,6 +708,26 @@ const CreateProfilePage = () => {
 
                 <div className="quiz-field-row">
                   <div className="quiz-field">
+                    <label htmlFor="state">State</label>
+                    <select
+                      id="state"
+                      className="quiz-select"
+                      value={formData.state_province}
+                      onChange={(e) => handleInputChange('state_province', e.target.value)}
+                      autoFocus
+                    >
+                      <option value="">Select your state...</option>
+                      {Object.entries(STATE_CONFIG)
+                        .sort((a, b) => a[1].name.localeCompare(b[1].name))
+                        .map(([slug, config]) => (
+                          <option key={slug} value={config.abbr}>
+                            {config.name}
+                          </option>
+                        ))
+                      }
+                    </select>
+                  </div>
+                  <div className="quiz-field">
                     <label htmlFor="city">City</label>
                     <input
                       type="text"
@@ -716,18 +736,6 @@ const CreateProfilePage = () => {
                       value={formData.city}
                       onChange={(e) => handleInputChange('city', e.target.value)}
                       placeholder="Austin"
-                      autoFocus
-                    />
-                  </div>
-                  <div className="quiz-field">
-                    <label htmlFor="state">State</label>
-                    <input
-                      type="text"
-                      id="state"
-                      className="quiz-input"
-                      value={formData.state_province}
-                      onChange={(e) => handleInputChange('state_province', e.target.value)}
-                      placeholder="Texas"
                     />
                   </div>
                 </div>
