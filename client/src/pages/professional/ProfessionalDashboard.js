@@ -13,6 +13,7 @@ const ProfessionalDashboard = () => {
     responseRate: 0
   })
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false)
   const [removeLoading, setRemoveLoading] = useState(false)
   const [removeSuccess, setRemoveSuccess] = useState(false)
@@ -20,9 +21,16 @@ const ProfessionalDashboard = () => {
   useEffect(() => {
     if (profile) {
       loadDashboardData()
+    } else if (!authLoading && user && !profile) {
+      // Auth finished loading, user exists but no profile - stop loading
+      setLoading(false)
+      setError('No profile found. Please create your profile first.')
+    } else if (!authLoading && !user) {
+      // Not logged in
+      setLoading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile])
+  }, [profile, authLoading, user])
 
   const loadDashboardData = async () => {
     if (!profile) return
@@ -69,8 +77,9 @@ const ProfessionalDashboard = () => {
         responseRate
       })
 
-    } catch (error) {
-      console.error('Error loading dashboard data:', error)
+    } catch (err) {
+      console.error('Error loading dashboard data:', err)
+      setError('Failed to load dashboard data. Please try refreshing.')
     }
 
     setLoading(false)
@@ -178,6 +187,42 @@ const ProfessionalDashboard = () => {
       <div className="loading-container">
         <div className="loading-spinner"></div>
         <p>Loading dashboard...</p>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="dashboard-container">
+        <div className="dashboard-header">
+          <div className="dashboard-title">
+            <h1>Dashboard</h1>
+          </div>
+        </div>
+        <div className="alert alert-error" style={{
+          background: '#fee',
+          border: '1px solid #fcc',
+          padding: 'var(--space-6)',
+          borderRadius: 'var(--radius-lg)',
+          marginTop: 'var(--space-6)'
+        }}>
+          <h3 style={{ color: '#c00', marginBottom: 'var(--space-2)' }}>
+            <i className="fa fa-exclamation-circle" aria-hidden="true"></i> {error}
+          </h3>
+          <p>Try one of these options:</p>
+          <div style={{ display: 'flex', gap: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
+            <Link to="/professional/create" className="btn btn-primary">
+              Create Profile
+            </Link>
+            <button onClick={() => window.location.reload()} className="btn btn-outline">
+              Refresh Page
+            </button>
+            <button onClick={signOut} className="btn btn-ghost">
+              Sign Out
+            </button>
+          </div>
+        </div>
       </div>
     )
   }

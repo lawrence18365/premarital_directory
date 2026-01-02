@@ -48,21 +48,20 @@ export const AuthProvider = ({ children }) => {
 
   const loadUserProfile = async (userId) => {
     try {
+      // Simple query first - avoid complex joins that might fail
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          subscription_plan:subscription_plans(*),
-          professional_subscription:professional_subscriptions(
-            *,
-            plan:subscription_plans(*)
-          )
-        `)
+        .select('*')
         .eq('user_id', userId)
         .single()
 
-      if (profileError && profileError.code !== 'PGRST116') {
-        console.error('Error loading profile:', profileError)
+      if (profileError) {
+        if (profileError.code === 'PGRST116') {
+          // No profile found - this is expected for new users
+          console.log('No profile found for user:', userId)
+        } else {
+          console.error('Error loading profile:', profileError)
+        }
         return
       }
 
