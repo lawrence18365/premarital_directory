@@ -1,31 +1,17 @@
-import React, { useState } from 'react'
-import { useLocation, Navigate } from 'react-router-dom'
+import React from 'react'
+import { useLocation, Navigate, Link } from 'react-router-dom'
 import SEOHelmet from '../../components/analytics/SEOHelmet'
 
 const ProfileCreatedPage = () => {
   const location = useLocation()
-  const { profileUrl, photoUploadError } = location.state || {}
-  const [copiedBadge, setCopiedBadge] = useState(false)
+  const { profileUrl, profileName } = location.state || {}
 
   // Redirect if accessed directly without profile data
   if (!profileUrl) {
-    return <Navigate to="/professional/create" replace />
+    return <Navigate to="/professional/dashboard" replace />
   }
 
   const fullProfileUrl = `https://www.weddingcounselors.com${profileUrl}`
-
-  const badgeSnippet = `<a href="https://www.weddingcounselors.com" target="_blank" rel="noopener">
-  <img src="https://www.weddingcounselors.com/badges/featured-premarital-directory.svg"
-       alt="Featured on WeddingCounselors.com"
-       style="width: 200px; height: auto;">
-</a>`
-
-  const handleCopyBadge = () => {
-    navigator.clipboard.writeText(badgeSnippet).then(() => {
-      setCopiedBadge(true)
-      setTimeout(() => setCopiedBadge(false), 3000)
-    })
-  }
 
   return (
     <div className="container" style={{ padding: 'var(--space-20) 0' }}>
@@ -33,58 +19,30 @@ const ProfileCreatedPage = () => {
         title="Profile Created Successfully"
         description="Your professional profile is now live on Wedding Counselors directory."
         url="/professional/profile-created"
+        noIndex={true}
       />
 
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        {photoUploadError && (
-          <div style={{
-            background: 'linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%)',
-            padding: 'var(--space-6)',
-            borderRadius: 'var(--radius-xl)',
-            marginBottom: 'var(--space-6)',
-            border: '1px solid #ffecb5',
-            color: '#856404'
-          }}>
-            <strong>Photo upload notice:</strong> {photoUploadError} You can add it from your profile editor.
-          </div>
-        )}
-
+      <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
         {/* Success Header */}
         <div style={{
-          textAlign: 'center',
           background: 'linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%)',
           padding: 'var(--space-12)',
           borderRadius: 'var(--radius-2xl)',
-          marginBottom: 'var(--space-10)',
+          marginBottom: 'var(--space-8)',
           border: '2px solid #28a745'
         }}>
           <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>
             <i className="fa fa-check-circle" style={{ color: '#28a745' }} aria-hidden="true"></i>
           </div>
           <h1 style={{ color: '#155724', marginBottom: 'var(--space-4)' }}>
-            Your Profile is Live!
+            You're All Set!
           </h1>
-          <p style={{ fontSize: 'var(--text-xl)', color: '#155724', marginBottom: 'var(--space-6)' }}>
-            Congratulations! Couples can now find you in the directory.
+          <p style={{ fontSize: 'var(--text-lg)', color: '#155724', marginBottom: 'var(--space-6)' }}>
+            Your profile is now live. Couples in your area can find you in the directory.
           </p>
-          <a
-            href={profileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-primary btn-large"
-            style={{ marginRight: 'var(--space-4)' }}
-          >
-            <i className="fa fa-external-link" aria-hidden="true"></i> View Your Profile
-          </a>
-          <a
-            href="/professional/profile/edit"
-            className="btn btn-outline btn-large"
-          >
-            <i className="fa fa-edit" aria-hidden="true"></i> Edit Profile
-          </a>
         </div>
 
-        {/* Profile Link */}
+        {/* Profile URL */}
         <div style={{
           background: 'var(--white)',
           padding: 'var(--space-6)',
@@ -101,273 +59,71 @@ const ProfileCreatedPage = () => {
             fontFamily: 'monospace',
             fontSize: 'var(--text-sm)',
             wordBreak: 'break-all',
-            color: 'var(--primary)'
+            color: 'var(--primary)',
+            marginBottom: 'var(--space-4)'
           }}>
             {fullProfileUrl}
           </div>
-          <p className="text-small text-muted mt-2">
-            Share this link with clients or add it to your website.
-          </p>
+          <button
+            onClick={() => navigator.clipboard.writeText(fullProfileUrl)}
+            className="btn btn-outline btn-small"
+          >
+            <i className="fa fa-copy" aria-hidden="true"></i> Copy Link
+          </button>
         </div>
 
-        {/* Next Steps Checklist */}
-        <div style={{
-          background: 'var(--white)',
-          padding: 'var(--space-8)',
-          borderRadius: 'var(--radius-xl)',
-          marginBottom: 'var(--space-8)',
-          border: '1px solid var(--gray-200)',
-          boxShadow: 'var(--shadow-md)'
-        }}>
-          <h2 style={{ marginBottom: 'var(--space-6)', color: 'var(--primary)' }}>
-            Make Your Profile Stand Out
-          </h2>
-          <p className="text-secondary mb-6">
-            Complete these steps to attract more couples:
-          </p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            <ChecklistItem
-              icon="fa-camera"
-              title="Add a professional photo"
-              description="Help couples connect with you"
-              link="/professional/profile/edit"
-              linkText="Upload Photo"
-            />
-            <ChecklistItem
-              icon="fa-file-text"
-              title="Write your bio"
-              description="Tell couples about your approach and experience"
-              link="/professional/profile/edit"
-              linkText="Add Bio"
-            />
-            <ChecklistItem
-              icon="fa-dollar"
-              title="Add pricing information"
-              description="Help couples know what to expect"
-              link="/professional/profile/edit"
-              linkText="Set Pricing"
-            />
-            <ChecklistItem
-              icon="fa-calendar"
-              title="Add booking link"
-              description="Make it easy for couples to schedule with you"
-              link="/professional/profile/edit"
-              linkText="Add Link"
-            />
-            <ChecklistItem
-              icon="fa-star"
-              title="List your specialties"
-              description="Help couples find the right fit"
-              link="/professional/profile/edit"
-              linkText="Add Specialties"
-            />
-          </div>
-
-          <div style={{ marginTop: 'var(--space-8)', textAlign: 'center' }}>
-            <a href="/professional/profile/edit" className="btn btn-primary">
-              Complete Your Profile
-            </a>
-          </div>
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          <Link
+            to={profileUrl}
+            className="btn btn-primary btn-large"
+            style={{ width: '100%' }}
+          >
+            <i className="fa fa-eye" aria-hidden="true"></i> View Your Profile
+          </Link>
+          <Link
+            to="/professional/dashboard"
+            className="btn btn-outline btn-large"
+            style={{ width: '100%' }}
+          >
+            <i className="fa fa-dashboard" aria-hidden="true"></i> Go to Dashboard
+          </Link>
         </div>
 
-        {/* Badge Section */}
+        {/* What's Next */}
         <div style={{
-          background: 'linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%)',
-          padding: 'var(--space-8)',
-          borderRadius: 'var(--radius-xl)',
-          marginBottom: 'var(--space-8)',
-          border: '2px solid #ffc107'
-        }}>
-          <h2 style={{ marginBottom: 'var(--space-4)', color: '#856404' }}>
-            <i className="fa fa-trophy" aria-hidden="true"></i> Add a Badge to Your Website
-          </h2>
-          <p style={{ color: '#856404', marginBottom: 'var(--space-6)' }}>
-            Show visitors you're a verified premarital counselor. Add this badge to your website to build credibility and get backlinks.
-          </p>
-
-          <div style={{
-            background: 'var(--white)',
-            padding: 'var(--space-4)',
-            borderRadius: 'var(--radius-lg)',
-            marginBottom: 'var(--space-4)',
-            textAlign: 'center'
-          }}>
-            <p className="text-small text-muted mb-2">Preview:</p>
-            <div style={{
-              background: 'var(--gray-100)',
-              padding: 'var(--space-6)',
-              borderRadius: 'var(--radius-md)',
-              display: 'inline-block'
-            }}>
-              <img
-                src="/badges/featured-premarital-directory.svg"
-                alt="Featured on WeddingCounselors.com"
-                style={{ width: '200px', height: 'auto' }}
-                onError={(e) => {
-                  e.target.style.display = 'none'
-                  e.target.parentElement.innerHTML = '<div style="padding: 20px; border: 2px dashed #ccc; border-radius: 8px;"><strong>Featured on WeddingCounselors.com</strong><br/><small>Badge image will appear here</small></div>'
-                }}
-              />
-            </div>
-          </div>
-
-          <div style={{
-            background: 'var(--gray-800)',
-            padding: 'var(--space-4)',
-            borderRadius: 'var(--radius-md)',
-            marginBottom: 'var(--space-4)',
-            position: 'relative'
-          }}>
-            <pre style={{
-              margin: 0,
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-all',
-              color: '#a3e635',
-              fontSize: 'var(--text-xs)',
-              fontFamily: 'monospace'
-            }}>
-              {badgeSnippet}
-            </pre>
-            <button
-              onClick={handleCopyBadge}
-              style={{
-                position: 'absolute',
-                top: 'var(--space-2)',
-                right: 'var(--space-2)',
-                background: copiedBadge ? '#28a745' : 'var(--white)',
-                color: copiedBadge ? 'var(--white)' : 'var(--gray-800)',
-                border: 'none',
-                padding: 'var(--space-2) var(--space-3)',
-                borderRadius: 'var(--radius-sm)',
-                cursor: 'pointer',
-                fontSize: 'var(--text-xs)',
-                fontWeight: 'var(--font-weight-semibold)'
-              }}
-            >
-              {copiedBadge ? 'Copied!' : 'Copy Code'}
-            </button>
-          </div>
-
-          <p className="text-small" style={{ color: '#856404' }}>
-            Paste this HTML code into your website's footer or sidebar.
-          </p>
-        </div>
-
-        {/* Quick Links */}
-        <div style={{
-          background: 'var(--gray-50)',
+          marginTop: 'var(--space-10)',
           padding: 'var(--space-6)',
+          background: 'var(--gray-50)',
           borderRadius: 'var(--radius-xl)',
-          border: '1px solid var(--gray-200)'
+          textAlign: 'left'
         }}>
-          <h3 style={{ marginBottom: 'var(--space-4)' }}>Quick Links</h3>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: 'var(--space-4)'
+          <h3 style={{ marginBottom: 'var(--space-4)', textAlign: 'center' }}>What Happens Next?</h3>
+          <ul style={{
+            listStyle: 'none',
+            padding: 0,
+            margin: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-3)'
           }}>
-            <QuickLink
-              href="/professional/dashboard"
-              icon="fa-dashboard"
-              title="Dashboard"
-              description="View your profile stats"
-            />
-            <QuickLink
-              href="/professional/leads"
-              icon="fa-users"
-              title="Leads"
-              description="See couple inquiries"
-            />
-            <QuickLink
-              href="/professional/subscription"
-              icon="fa-star"
-              title="Upgrade"
-              description="Get featured placement"
-            />
-            <QuickLink
-              href="/support"
-              icon="fa-question-circle"
-              title="Support"
-              description="Get help & resources"
-            />
-          </div>
+            <li style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)' }}>
+              <i className="fa fa-search" style={{ color: 'var(--primary)', marginTop: '4px' }} aria-hidden="true"></i>
+              <span>Couples searching in your city will see your profile</span>
+            </li>
+            <li style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)' }}>
+              <i className="fa fa-envelope" style={{ color: 'var(--primary)', marginTop: '4px' }} aria-hidden="true"></i>
+              <span>You'll receive email notifications when couples reach out</span>
+            </li>
+            <li style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)' }}>
+              <i className="fa fa-line-chart" style={{ color: 'var(--primary)', marginTop: '4px' }} aria-hidden="true"></i>
+              <span>Track your profile views in the dashboard</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
   )
 }
-
-const ChecklistItem = ({ icon, title, description, link, linkText }) => (
-  <div style={{
-    display: 'flex',
-    alignItems: 'center',
-    padding: 'var(--space-4)',
-    background: 'var(--gray-50)',
-    borderRadius: 'var(--radius-lg)',
-    border: '1px solid var(--gray-200)'
-  }}>
-    <div style={{
-      width: '40px',
-      height: '40px',
-      borderRadius: 'var(--radius-full)',
-      background: 'var(--primary-light)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginRight: 'var(--space-4)',
-      flexShrink: 0
-    }}>
-      <i className={`fa ${icon}`} style={{ color: 'var(--primary)' }} aria-hidden="true"></i>
-    </div>
-    <div style={{ flex: 1 }}>
-      <div style={{ fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-1)' }}>
-        {title}
-      </div>
-      <div className="text-small text-muted">{description}</div>
-    </div>
-    <a
-      href={link}
-      className="btn btn-outline btn-small"
-      style={{ flexShrink: 0 }}
-    >
-      {linkText}
-    </a>
-  </div>
-)
-
-const QuickLink = ({ href, icon, title, description }) => (
-  <a
-    href={href}
-    style={{
-      display: 'block',
-      padding: 'var(--space-4)',
-      background: 'var(--white)',
-      borderRadius: 'var(--radius-lg)',
-      border: '1px solid var(--gray-200)',
-      textDecoration: 'none',
-      color: 'inherit',
-      transition: 'all var(--transition-normal)'
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.borderColor = 'var(--primary)'
-      e.currentTarget.style.boxShadow = 'var(--shadow-md)'
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.borderColor = 'var(--gray-200)'
-      e.currentTarget.style.boxShadow = 'none'
-    }}
-  >
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      marginBottom: 'var(--space-2)'
-    }}>
-      <i className={`fa ${icon}`} style={{ color: 'var(--primary)', marginRight: 'var(--space-2)' }} aria-hidden="true"></i>
-      <strong>{title}</strong>
-    </div>
-    <div className="text-small text-muted">{description}</div>
-  </a>
-)
 
 export default ProfileCreatedPage

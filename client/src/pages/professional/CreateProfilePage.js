@@ -14,7 +14,7 @@ const CreateProfilePage = () => {
   const [searchParams] = useSearchParams()
   const { user, profile, loading: authLoading, refreshProfile } = useAuth()
   const [currentStep, setCurrentStep] = useState(1)
-  const totalSteps = 4
+  const totalSteps = 3
 
   // Redirect if user already has a profile
   useEffect(() => {
@@ -127,15 +127,16 @@ const CreateProfilePage = () => {
     }))
   }
 
-  const generateSlug = (name, city, state) => {
-    const baseSlug = `${name}-${city}-${state}`
+  const generateSlug = (name) => {
+    // Clean slug: just the name, lowercase, no special chars
+    // e.g., "Dr. Sarah Mitchell, LMFT" -> "dr-sarah-mitchell-lmft"
+    return name
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
       .trim()
-    const timestamp = Date.now().toString(36)
-    return `${baseSlug}-${timestamp}`
   }
 
   const getStateSlug = (stateName) => {
@@ -216,7 +217,7 @@ const CreateProfilePage = () => {
     setError('')
 
     try {
-      const slug = generateSlug(formData.full_name, formData.city, formData.state_province)
+      const slug = generateSlug(formData.full_name)
 
       const profileData = {
         user_id: user.id,
@@ -487,8 +488,7 @@ const CreateProfilePage = () => {
   const stepLabels = [
     'Who are you?',
     'Where do you practice?',
-    'About you',
-    'Pricing'
+    'About you'
   ]
 
   // Loading state - wait for auth to initialize
@@ -874,135 +874,6 @@ const CreateProfilePage = () => {
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
-                </div>
-              </div>
-            )}
-
-            {/* Step 4: Pricing & Details (optional) */}
-            {currentStep === 4 && (
-              <div className="quiz-step">
-                <div className="quiz-step__header">
-                  <h1>Final details</h1>
-                  <p>Help couples understand your practice. <strong>All optional - skip or edit later.</strong></p>
-                </div>
-
-                <div className="quiz-field quiz-field--highlight">
-                  <label className="quiz-toggle">
-                    <input
-                      type="checkbox"
-                      checked={formData.offers_free_consultation}
-                      onChange={(e) => handleInputChange('offers_free_consultation', e.target.checked)}
-                    />
-                    <span className="quiz-toggle__switch"></span>
-                    <span className="quiz-toggle__label">
-                      <strong>I offer free consultations</strong>
-                      <small>Providers with free consults get 40% more inquiries</small>
-                    </span>
-                  </label>
-                </div>
-
-                <div className="quiz-field">
-                  <label>Session fee range <span className="optional">(optional)</span></label>
-                  <div className="quiz-field-row">
-                    <div className="quiz-input-group">
-                      <span className="quiz-input-prefix">$</span>
-                      <input
-                        type="number"
-                        className="quiz-input"
-                        min="0"
-                        step="10"
-                        value={formData.session_fee_min}
-                        onChange={(e) => handleInputChange('session_fee_min', e.target.value)}
-                        placeholder="100"
-                      />
-                    </div>
-                    <span className="quiz-field-sep">to</span>
-                    <div className="quiz-input-group">
-                      <span className="quiz-input-prefix">$</span>
-                      <input
-                        type="number"
-                        className="quiz-input"
-                        min="0"
-                        step="10"
-                        value={formData.session_fee_max}
-                        onChange={(e) => handleInputChange('session_fee_max', e.target.value)}
-                        placeholder="175"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="quiz-field">
-                  <label>Insurance & Payment <span className="optional">(optional)</span></label>
-                  <div className="quiz-pills">
-                    {insuranceOptions.map(ins => (
-                      <button
-                        type="button"
-                        key={ins}
-                        className={`quiz-pill ${formData.insurance_accepted.includes(ins) ? 'is-selected' : ''}`}
-                        onClick={() => handleArrayToggle('insurance_accepted', ins)}
-                      >
-                        {ins}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="quiz-field">
-                  <label>Payment methods <span className="optional">(optional)</span></label>
-                  <div className="quiz-pills">
-                    {paymentMethodOptions.map(method => (
-                      <button
-                        type="button"
-                        key={method}
-                        className={`quiz-pill ${formData.payment_methods.includes(method) ? 'is-selected' : ''}`}
-                        onClick={() => handleArrayToggle('payment_methods', method)}
-                      >
-                        {method}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="quiz-field">
-                  <label>Languages spoken <span className="optional">(optional)</span></label>
-                  <div className="quiz-pills">
-                    {languageOptions.map(lang => (
-                      <button
-                        type="button"
-                        key={lang}
-                        className={`quiz-pill ${formData.languages.includes(lang) ? 'is-selected' : ''}`}
-                        onClick={() => handleArrayToggle('languages', lang)}
-                      >
-                        {lang}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="quiz-field-row">
-                  <div className="quiz-field">
-                    <label htmlFor="phone">Phone <span className="optional">(optional)</span></label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      className="quiz-input"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      placeholder="(555) 123-4567"
-                    />
-                  </div>
-                  <div className="quiz-field">
-                    <label htmlFor="website">Website <span className="optional">(optional)</span></label>
-                    <input
-                      type="url"
-                      id="website"
-                      className="quiz-input"
-                      value={formData.website}
-                      onChange={(e) => handleInputChange('website', e.target.value)}
-                      placeholder="https://yoursite.com"
-                    />
-                  </div>
                 </div>
               </div>
             )}
