@@ -19,9 +19,10 @@ import MultiProviderInquiryForm from '../components/city/MultiProviderInquiryFor
 import { clickTrackingOperations, cityOverridesOperations } from '../lib/supabaseClient';
 import '../assets/css/state-page.css';
 
-const CityPage = () => {
-  const { state, cityOrSlug } = useParams()
-  const city = cityOrSlug
+const CityPage = ({ stateOverride, cityOverride }) => {
+  const params = useParams()
+  const state = stateOverride || params.state
+  const city = cityOverride || params.cityOrSlug
   const [profiles, setProfiles] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)

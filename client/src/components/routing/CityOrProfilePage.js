@@ -82,11 +82,11 @@ const CityOrProfilePage = ({ stateOverride, cityOrSlugOverride }) => {
     )
   }
 
-  // Render appropriate page
+  // Render appropriate page with props
   if (isCity) {
-    return <CityPage />
+    return <CityPage stateOverride={state} cityOverride={cityOrSlug} />
   } else {
-    return <ProfilePage />
+    return <ProfilePage stateOverride={state} cityOverride={cityOrSlug} />
   }
 }
 
