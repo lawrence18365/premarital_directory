@@ -9,6 +9,8 @@ import { STATE_CONFIG } from '../data/locationConfig';
 import StateContentGenerator from '../lib/stateContentGenerator';
 import StateAIContent from '../components/state/StateAIContent';
 import ProfileCard from '../components/profiles/ProfileCard';
+import SpecialtiesList from '../components/common/SpecialtiesList';
+import LocationInsights from '../components/common/LocationInsights';
 
 import LeadContactForm from '../components/leads/LeadContactForm';
 import LocalContent from '../components/common/LocalContent';
@@ -289,6 +291,9 @@ const StatePage = () => {
       {stateData && stateData.featuredProfiles && stateData.featuredProfiles.length > 0 && (
         <div className="state-featured-section">
           <div className="state-container">
+            {/* Money SERP Insights Box */}
+            <LocationInsights stateSlug={state} />
+
             <div className="mb-6">
               <h2 className="state-results-title">
                 Featured Premarital Counselors in {stateConfig.name}
@@ -316,6 +321,11 @@ const StatePage = () => {
           </div>
         </div>
       )}
+      
+      {/* Browse by Specialty Section - Interlinking Strategy */}
+      <div className="state-container">
+        <SpecialtiesList stateSlug={state} />
+      </div>
 
       {/* Cities Grid Section */}
       <div id="cities-grid" className="state-container state-results">

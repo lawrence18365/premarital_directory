@@ -130,7 +130,7 @@ const ProfileCreatedPage = () => {
             <ChecklistItem
               icon="fa-camera"
               title="Add a professional photo"
-              description="Profiles with photos get 3x more views"
+              description="Help couples connect with you"
               link="/professional/profile/edit"
               linkText="Upload Photo"
             />

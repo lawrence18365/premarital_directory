@@ -10,6 +10,8 @@ import { profileOperations, supabase } from '../lib/supabaseClient';
 import { STATE_CONFIG, CITY_CONFIG, isAnchorCity } from '../data/locationConfig';
 import CityContentGenerator from '../lib/cityContentGenerator';
 import LocalContent from '../components/common/LocalContent';
+import SpecialtiesList from '../components/common/SpecialtiesList';
+import LocationInsights from '../components/common/LocationInsights';
 import LeadContactForm from '../components/leads/LeadContactForm';
 import FAQ from '../components/common/FAQ';
 import HowToChooseSection from '../components/city/HowToChooseSection';
@@ -283,6 +285,9 @@ const CityPage = () => {
 
       {/* City Content */}
       <div className="container">
+        {/* Money SERP Insights Box */}
+        <LocationInsights stateSlug={state} citySlug={city} />
+
         <div id="providers-list" className="state-content">
           {/* Left Column - Profiles */}
           <div className="state-main">
@@ -443,6 +448,9 @@ const CityPage = () => {
                     </>
                   )
                 })()}
+                
+                {/* Browse by Specialty Section - Interlinking Strategy */}
+                <SpecialtiesList stateSlug={state} citySlug={city} />
 
                 {/* Nearby Cities - Critical for internal linking & SEO */}
                 {stateConfig?.major_cities && stateConfig.major_cities.length > 1 && (

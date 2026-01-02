@@ -31,7 +31,7 @@ const SupportPage = () => {
                   Get detailed help with your questions. We typically respond within 24 hours 
                   during business days.
                 </p>
-                <a href="mailto:support@premaritalcounselingdirectory.com" className="btn btn-outline">
+                <a href="mailto:hello@weddingcounselors.com" className="btn btn-outline">
                   Email Us
                 </a>
               </div>
@@ -52,14 +52,14 @@ const SupportPage = () => {
               
               <div className="support-card">
                 <div className="support-icon" aria-hidden="true">
-                  <i className="fa fa-phone"></i>
+                  <i className="fa fa-clock"></i>
                 </div>
-                <h3>Phone Support</h3>
+                <h3>Response Time</h3>
                 <p>
-                  Speak with our support team directly for urgent issues or complex questions.
+                  We respond to all inquiries within 24 hours during business days.
                 </p>
                 <div className="phone-info">
-                  <p><strong>Phone:</strong> (555) 123-4567</p>
+                  <p><strong>Email:</strong> hello@weddingcounselors.com</p>
                   <p><strong>Hours:</strong> Mon-Fri, 9 AM - 5 PM EST</p>
                 </div>
               </div>
@@ -166,7 +166,7 @@ const SupportPage = () => {
                 <h4>I'm not receiving emails from the platform</h4>
                 <p>
                   Check your spam folder first. If you still don't see our emails, add 
-                  support@premaritalcounselingdirectory.com to your contacts and contact us.
+                  hello@weddingcounselors.com to your contacts and contact us.
                 </p>
               </div>
               

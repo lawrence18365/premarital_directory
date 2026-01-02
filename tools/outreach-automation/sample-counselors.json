@@ -1,0 +1,28 @@
+[
+  {
+    "full_name": "Dr. Sarah Johnson, LMFT",
+    "email": "",
+    "phone": "(512) 555-0101",
+    "website": "https://example.com",
+    "city": "Austin",
+    "state_province": "TX",
+    "profession": "Licensed Marriage & Family Therapist",
+    "bio": "Specializing in premarital counseling and relationship preparation for over 10 years.",
+    "specialties": ["Premarital Counseling", "Communication Skills", "Conflict Resolution"],
+    "source": "psychology_today",
+    "source_url": "https://psychologytoday.com/example"
+  },
+  {
+    "full_name": "Michael Chen, LPC",
+    "email": "",
+    "phone": "(512) 555-0102",
+    "website": "",
+    "city": "Austin",
+    "state_province": "TX",
+    "profession": "Licensed Professional Counselor",
+    "bio": "Helping couples build strong foundations before marriage through evidence-based approaches.",
+    "specialties": ["Premarital Counseling", "Couples Therapy"],
+    "source": "google",
+    "source_url": ""
+  }
+]

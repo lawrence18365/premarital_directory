@@ -6,8 +6,11 @@ import LoadingSpinner from '../common/LoadingSpinner'
 import { STATE_CONFIG } from '../../data/locationConfig'
 import { profileOperations } from '../../lib/supabaseClient'
 
-const CityOrProfilePage = () => {
-  const { state, cityOrSlug } = useParams()
+const CityOrProfilePage = ({ stateOverride, cityOrSlugOverride }) => {
+  const params = useParams()
+  const state = stateOverride || params.state
+  const cityOrSlug = cityOrSlugOverride || params.cityOrSlug
+  
   const [isCity, setIsCity] = useState(null) // null = loading, true = city, false = profile
   const [loading, setLoading] = useState(true)
 

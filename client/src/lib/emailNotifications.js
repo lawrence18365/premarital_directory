@@ -339,7 +339,7 @@ export const sendProfileCreatedEmail = async (email, profileData, profileUrl, da
         <!-- Quick Actions -->
         <div style="background-color: white; padding: 25px; border-radius: 8px; margin: 25px 0; border: 1px solid #e5e7eb;">
           <h3 style="margin-top: 0; color: #1f2937;">Complete Your Profile to Get More Leads</h3>
-          <p style="color: #4b5563; margin-bottom: 20px;">Profiles with photos and complete information get 3x more inquiries:</p>
+          <p style="color: #4b5563; margin-bottom: 20px;">Complete profiles help couples connect with you:</p>
 
           <table style="width: 100%; border-collapse: collapse;">
             <tr>

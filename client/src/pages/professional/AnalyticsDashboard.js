@@ -368,7 +368,7 @@ const AnalyticsDashboard = () => {
             Want More Visibility?
           </h3>
           <p style={{ marginBottom: 'var(--space-4)', opacity: 0.9 }}>
-            Featured profiles appear at the top of search results and get 3-5x more views on average.
+            Featured profiles appear at the top of search results for more visibility.
           </p>
           <Link
             to="/professional/subscription"

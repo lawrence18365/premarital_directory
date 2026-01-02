@@ -87,10 +87,10 @@ export const trackSearch = (searchTerm, filters) => {
 }
 
 // Track directory launch milestone
-export const trackDirectoryLaunch = () => {
+export const trackDirectoryLaunch = (profileCount = 0) => {
   trackEvent('directory_launch', {
     launch_date: new Date().toISOString(),
-    total_profiles: 1500, // Update this with actual count
+    total_profiles: profileCount,
     event_category: 'milestone'
   })
 }

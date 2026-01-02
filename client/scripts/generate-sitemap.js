@@ -60,6 +60,20 @@ const BLOG_POSTS = [
   { slug: 'inlaw-boundaries', priority: 0.8 }
 ]
 
+// Specialty slugs from specialtyConfig.js
+const SPECIALTY_SLUGS = [
+  'christian',
+  'catholic',
+  'lgbtq',
+  'online',
+  'gottman',
+  'prepare-enrich',
+  'interfaith',
+  'second-marriages',
+  'military',
+  'affordable'
+]
+
 const DOMAIN = 'https://www.weddingcounselors.com'
 
 function generateSitemapXML(urls) {
@@ -252,6 +266,43 @@ async function main() {
   fs.writeFileSync(path.join(publicDir, 'sitemap-cities.xml'), citySitemap)
   console.log(`\n✅ Generated sitemap-cities.xml (${cityUrls.length} URLs - ALL configured cities)`)
 
+  // 2.5 Programmatic Specialty Sitemap (New)
+  const specialtyUrls = []
+  
+  // For each specialty
+  SPECIALTY_SLUGS.forEach(specialty => {
+    // Add Specialty Landing Page (already in core, but good to ensure coverage)
+    // Note: sitemap-core already adds these, so skip root specialty pages here
+    
+    // Iterate all states
+    Object.keys(STATE_CONFIG).forEach(stateSlug => {
+      // Add Specialty + State Page (e.g., /premarital-counseling/christian/texas)
+      specialtyUrls.push({
+        url: `/premarital-counseling/${specialty}/${stateSlug}`,
+        priority: 0.8,
+        changefreq: 'weekly',
+        lastmod: today
+      })
+      
+      // Add Specialty + State + City Page (e.g., /premarital-counseling/christian/texas/austin)
+      // Only for major cities to avoid exploding the sitemap size too much initially
+      const stateData = STATE_CONFIG[stateSlug]
+      stateData.major_cities.forEach(cityName => {
+        const citySlug = getCitySlug(cityName)
+        specialtyUrls.push({
+          url: `/premarital-counseling/${specialty}/${stateSlug}/${citySlug}`,
+          priority: 0.7, // Slightly lower than state/specialty
+          changefreq: 'weekly',
+          lastmod: today
+        })
+      })
+    })
+  })
+
+  const specialtySitemap = generateSitemapXML(specialtyUrls)
+  fs.writeFileSync(path.join(publicDir, 'sitemap-specialties.xml'), specialtySitemap)
+  console.log(`✅ Generated sitemap-specialties.xml (${specialtyUrls.length} URLs - Programmatic SEO)`)
+
   // 3. Blog posts sitemap
   const blogUrls = BLOG_POSTS.map(post => ({
     url: `/blog/${post.slug}`,
@@ -295,6 +346,7 @@ async function main() {
   const sitemapFiles = [
     'sitemap-core.xml',
     'sitemap-cities.xml',
+    'sitemap-specialties.xml',
     'sitemap-blog.xml'
   ]
   if (profileUrls.length > 0) {
@@ -306,10 +358,11 @@ async function main() {
   console.log(`✅ Generated sitemap.xml (index file)`)
 
   // Summary
-  const totalUrls = coreUrls.length + cityUrls.length + blogUrls.length + profileUrls.length
+  const totalUrls = coreUrls.length + cityUrls.length + specialtyUrls.length + blogUrls.length + profileUrls.length
   console.log(`\n📊 Total URLs in sitemap: ${totalUrls}`)
   console.log('   - Core pages:', coreUrls.length)
   console.log('   - Anchor city pages:', cityUrls.length)
+  console.log('   - Specialty pages:', specialtyUrls.length)
   console.log('   - Blog posts:', blogUrls.length)
   console.log('   - Individual profiles:', profileUrls.length)
   console.log('\n🎯 Focused on anchor cities for SEO authority building')

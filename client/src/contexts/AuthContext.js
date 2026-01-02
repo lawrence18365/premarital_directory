@@ -105,10 +105,11 @@ export const AuthProvider = ({ children }) => {
       email,
       password,
       options: {
-        data: profileData
+        data: profileData,
+        emailRedirectTo: `${window.location.origin}/professional/email-verified`
       }
     })
-    
+
     return { data, error }
   }
 

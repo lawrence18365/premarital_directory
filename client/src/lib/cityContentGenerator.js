@@ -1,12 +1,9 @@
-import AIContentGenerator from './aiContentGenerator'
-import DataFetcher from './dataFetcher' 
 import CityContentCache from './cityContentCache'
+import { supabase } from './supabaseClient'
 
 // Main orchestrator for city content generation
 class CityContentGenerator {
   constructor() {
-    this.aiGenerator = new AIContentGenerator()
-    this.dataFetcher = new DataFetcher()
     this.costLimit = 0.50 // Max $0.50 per generation
   }
   
@@ -29,42 +26,20 @@ class CityContentGenerator {
     return await this.generateAndCacheContent(state, city)
   }
   
-  // Generate new content and cache it - no fallback, either works or throws
+  // Generate new content via Supabase Edge Function
   async generateAndCacheContent(state, city) {
-    // Get state abbreviation
-    const stateAbbr = this.getStateAbbr(state)
-    if (!stateAbbr) {
-      throw new Error(`Unknown state: ${state}`)
+    console.log(`Calling Edge Function for ${city}, ${state}`)
+    
+    const { data, error } = await supabase.functions.invoke('generate-city-content', {
+      body: { state, city }
+    })
+
+    if (error) {
+      console.error('Edge Function Error:', error)
+      throw error
     }
-    
-    console.log(`Preparing data for ${city}, ${stateAbbr}`)
-    
-    // Prepare basic city data
-    const cityData = {
-      city,
-      state,
-      stateAbbr
-    }
-    
-    // Estimate cost before generation
-    const estimatedCost = this.aiGenerator.estimateCost(JSON.stringify(cityData))
-    
-    if (estimatedCost > this.costLimit) {
-      throw new Error(`Estimated cost $${estimatedCost.toFixed(4)} exceeds limit $${this.costLimit}`)
-    }
-    
-    console.log(`Generating AI content (estimated cost: $${estimatedCost.toFixed(4)})`)
-    
-    // Generate content with AI
-    const generatedContent = await this.aiGenerator.generateCityContent(cityData)
-    
-    // Cache the generated content
-    await CityContentCache.setCachedContent(state, city, stateAbbr, generatedContent)
-    
-    console.log(`Generated and cached content for ${city}, ${state}`)
-    console.log(`Actual tokens used: ${generatedContent.generation_cost_tokens}`)
-    
-    return this.formatContentForDisplay(generatedContent)
+
+    return this.formatContentForDisplay(data)
   }
   
   

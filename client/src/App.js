@@ -64,10 +64,13 @@ const ContactPage = React.lazy(() => import('./pages/ContactPage'))
 const PrivacyPage = React.lazy(() => import('./pages/PrivacyPage'))
 const TermsPage = React.lazy(() => import('./pages/TermsPage'))
 const FeaturesPage = React.lazy(() => import('./pages/FeaturesPage'))
+const PricingPage = React.lazy(() => import('./pages/PricingPage'))
 const SupportPage = React.lazy(() => import('./pages/SupportPage'))
 const GuidelinesPage = React.lazy(() => import('./pages/GuidelinesPage'))
 const StatesIndexPage = React.lazy(() => import('./pages/StatesIndexPage'))
 const CityOrProfilePage = React.lazy(() => import('./components/routing/CityOrProfilePage'))
+const Segment2Route = React.lazy(() => import('./components/routing/Segment2Route'))
+const Segment3Route = React.lazy(() => import('./components/routing/Segment3Route'))
 const MarriageLicenseDiscountPage = React.lazy(() => import('./pages/MarriageLicenseDiscountPage'))
 
 // Blog pages
@@ -85,6 +88,7 @@ const LeadsPage = React.lazy(() => import('./pages/professional/LeadsPage'))
 const CreateProfilePage = React.lazy(() => import('./pages/professional/CreateProfilePage'))
 const ProfileCreatedPage = React.lazy(() => import('./pages/professional/ProfileCreatedPage'))
 const AnalyticsDashboard = React.lazy(() => import('./pages/professional/AnalyticsDashboard'))
+const SubscriptionPage = React.lazy(() => import('./pages/professional/SubscriptionPage'))
 
 // Admin Pages
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'))
@@ -133,9 +137,16 @@ function AppInner() {
                 {/* Premarital Counseling Directory - SEO-optimized URLs */}
                 <Route path="/premarital-counseling" element={<StatesIndexPage />} />
                 <Route path="/premarital-counseling/marriage-license-discount" element={<MarriageLicenseDiscountPage />} />
+                
+                {/* Level 1: State OR Specialty */}
                 <Route path="/premarital-counseling/:state" element={<SpecialtyOrStatePage />} />
-                <Route path="/premarital-counseling/:state/:cityOrSlug" element={<CityOrProfilePage />} />
-                <Route path="/premarital-counseling/:state/:city/:profileSlug" element={<ProfilePage />} />
+                
+                {/* Level 2: State/City OR Specialty/State */}
+                <Route path="/premarital-counseling/:param1/:param2" element={<Segment2Route />} />
+                
+                {/* Level 3: State/City/Profile OR Specialty/State/City */}
+                <Route path="/premarital-counseling/:param1/:param2/:param3" element={<Segment3Route />} />
+
                 {/* 301 Redirects: old URL patterns to new SEO-optimized structure */}
                 <Route path="/states" element={<Navigate to="/premarital-counseling" replace />} />
                 <Route path="/states/:state/:city/:profileSlug" element={<ProfileRedirect />} />
@@ -159,6 +170,7 @@ function AppInner() {
                 <Route path="/coaches" element={<HomePage />} />
                 <Route path="/clergy" element={<HomePage />} />
                 <Route path="/features" element={<FeaturesPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/support" element={<SupportPage />} />
                 <Route path="/guidelines" element={<GuidelinesPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
@@ -222,6 +234,14 @@ function AppInner() {
                   element={
                     <ProtectedRoute>
                       <AnalyticsDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/professional/subscription"
+                  element={
+                    <ProtectedRoute>
+                      <SubscriptionPage />
                     </ProtectedRoute>
                   }
                 />

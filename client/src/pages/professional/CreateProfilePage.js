@@ -552,7 +552,7 @@ const CreateProfilePage = () => {
                         <input type="file" accept="image/*" onChange={handlePhotoChange} />
                       </label>
                     )}
-                    <small>Profiles with photos get 3x more inquiries</small>
+                    <small>A photo helps couples connect with you</small>
                   </div>
                 </div>
               </div>

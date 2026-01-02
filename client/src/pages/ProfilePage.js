@@ -12,8 +12,14 @@ import { profileOperations } from '../lib/supabaseClient'
 import UnclaimedProfileBanner from '../components/profiles/UnclaimedProfileBanner'
 import '../assets/css/profile-page-enhanced.css'
 
-const ProfilePage = () => {
-  const { slugOrId, state, city, profileSlug } = useParams()
+const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
+  const params = useParams()
+  // Use overrides if provided (for Segment3Route), otherwise use params
+  const state = stateOverride || params.state
+  const city = cityOverride || params.city
+  const profileSlug = profileSlugOverride || params.profileSlug
+  const slugOrId = params.slugOrId
+  
   // Use profileSlug if available (new URL structure), otherwise use slugOrId (old structure)
   const currentSlug = profileSlug || slugOrId
   const [profile, setProfile] = useState(null)
