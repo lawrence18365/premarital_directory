@@ -87,6 +87,7 @@ const ProfileEditor = React.lazy(() => import('./pages/professional/ProfileEdito
 const LeadsPage = React.lazy(() => import('./pages/professional/LeadsPage'))
 const CreateProfilePage = React.lazy(() => import('./pages/professional/CreateProfilePage'))
 const ProfileCreatedPage = React.lazy(() => import('./pages/professional/ProfileCreatedPage'))
+const ProfilePendingPage = React.lazy(() => import('./pages/professional/ProfilePendingPage'))
 const AnalyticsDashboard = React.lazy(() => import('./pages/professional/AnalyticsDashboard'))
 const SubscriptionPage = React.lazy(() => import('./pages/professional/SubscriptionPage'))
 
@@ -94,6 +95,7 @@ const SubscriptionPage = React.lazy(() => import('./pages/professional/Subscript
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'))
 const CampaignDashboard = React.lazy(() => import('./pages/admin/CampaignDashboard'))
 const ClaimReviewDashboard = React.lazy(() => import('./pages/admin/ClaimReviewDashboard'))
+const ProfileModerationDashboard = React.lazy(() => import('./pages/admin/ProfileModerationDashboard'))
 const MetricsDashboard = React.lazy(() => import('./pages/admin/MetricsDashboard'))
 const CityHealthDashboard = React.lazy(() => import('./pages/admin/CityHealthDashboard'))
 const SitemapGenerator = React.lazy(() => import('./pages/SitemapGenerator'))
@@ -203,7 +205,15 @@ function AppInner() {
                     </ProtectedRoute>
                   }
                 />
-                
+                <Route
+                  path="/professional/profile-pending"
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePendingPage />
+                    </ProtectedRoute>
+                  }
+                />
+
                 {/* Protected Professional Routes */}
                 <Route 
                   path="/professional/dashboard" 
@@ -268,6 +278,14 @@ function AppInner() {
                   element={
                     <ProtectedRoute requireAdmin={true}>
                       <ClaimReviewDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/moderation"
+                  element={
+                    <ProtectedRoute requireAdmin={true}>
+                      <ProfileModerationDashboard />
                     </ProtectedRoute>
                   }
                 />

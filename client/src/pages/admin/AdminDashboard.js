@@ -186,7 +186,11 @@ const AdminDashboard = () => {
           <p>Directory Management & Analytics</p>
         </div>
         <div className="dashboard-actions">
-          <a href="/admin/claims" className="btn btn-primary">
+          <a href="/admin/moderation" className="btn btn-primary">
+            <i className="fa fa-check-circle" aria-hidden="true"></i>
+            Approve Profiles
+          </a>
+          <a href="/admin/claims" className="btn btn-outline">
             <i className="fa fa-user-check" aria-hidden="true"></i>
             Review Claims
           </a>

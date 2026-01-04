@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
+import { profileOperations } from '../../lib/supabaseClient'
 import '../../assets/css/professional-auth.css'
 
 const featureList = [
@@ -58,6 +59,18 @@ const SignupForm = () => {
 
     setLoading(true)
     setError('')
+
+    // Check if a profile with this email already exists BEFORE creating auth account
+    const { exists, error: checkError } = await profileOperations.checkEmailExists(formData.email)
+
+    if (checkError) {
+      console.error('Error checking email:', checkError)
+      // Continue with signup if check fails (don't block on this)
+    } else if (exists) {
+      setError('A profile with this email already exists. Please try logging in instead.')
+      setLoading(false)
+      return
+    }
 
     const { error } = await signUp(formData.email, formData.password)
 

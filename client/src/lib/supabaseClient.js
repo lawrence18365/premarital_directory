@@ -18,6 +18,7 @@ export const profileOperations = {
       .from('profiles')
       .select('*')
       .eq('is_hidden', false)  // Filter out hidden profiles
+      .or('moderation_status.eq.approved,moderation_status.is.null')  // Only show approved or legacy profiles
       .order('sponsored_rank', { ascending: false })
       .order('is_sponsored', { ascending: false })
       .order('created_at', { ascending: false })
@@ -52,16 +53,17 @@ export const profileOperations = {
 
   // Fallback method: Get all profiles using pagination
   async getAllProfilesPaginated(filters = {}) {
-    
+
     let allProfiles = []
     let page = 0
     const pageSize = 1000
-    
+
     while (true) {
       let query = supabase
         .from('profiles')
         .select('*')
         .eq('is_hidden', false)  // Filter out hidden profiles
+        .or('moderation_status.eq.approved,moderation_status.is.null')  // Only show approved or legacy profiles
         .order('sponsored_rank', { ascending: false })
         .order('is_sponsored', { ascending: false })
         .order('created_at', { ascending: false })
@@ -134,6 +136,7 @@ export const profileOperations = {
       .select('*')
       .eq('state_province', stateAbbr)
       .eq('is_hidden', false)  // Filter out hidden profiles
+      .or('moderation_status.eq.approved,moderation_status.is.null')  // Only show approved or legacy profiles
       .order('sponsored_rank', { ascending: false })
       .order('is_sponsored', { ascending: false })
       .order('created_at', { ascending: false })
@@ -149,10 +152,11 @@ export const profileOperations = {
       .eq('state_province', stateAbbr)
       .ilike('city', `%${city}%`)
       .eq('is_hidden', false)  // Filter out hidden profiles
+      .or('moderation_status.eq.approved,moderation_status.is.null')  // Only show approved or legacy profiles
       .order('sponsored_rank', { ascending: false })
       .order('is_sponsored', { ascending: false })
       .order('created_at', { ascending: false })
-    
+
     return { data, error }
   },
 
@@ -161,10 +165,12 @@ export const profileOperations = {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
+      .eq('is_hidden', false)
+      .or('moderation_status.eq.approved,moderation_status.is.null')
       .or(`full_name.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%`)
       .order('sponsored_rank', { ascending: false })
       .order('is_sponsored', { ascending: false })
-    
+
     return { data, error }
   },
 
@@ -188,6 +194,17 @@ export const profileOperations = {
     return { data: stateCounts, error: null }
   },
 
+  // Check if a profile already exists with this email
+  async checkEmailExists(email) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, full_name')
+      .eq('email', email.toLowerCase().trim())
+      .maybeSingle()
+
+    return { exists: !!data, profile: data, error }
+  },
+
   // Create new profile
   async createProfile(profileData) {
     const { data, error } = await supabase
@@ -195,7 +212,7 @@ export const profileOperations = {
       .insert(profileData)
       .select()
       .single()
-    
+
     return { data, error }
   },
 
@@ -232,6 +249,48 @@ export const profileOperations = {
       `)
       .eq('status', 'pending')
       .order('submitted_at', { ascending: false })
+
+    return { data, error }
+  },
+
+  // Get profiles pending moderation (admin only)
+  async getPendingProfiles() {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('moderation_status', 'pending')
+      .order('created_at', { ascending: false })
+
+    return { data, error }
+  },
+
+  // Approve a profile (admin only)
+  async approveProfile(profileId) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        moderation_status: 'approved',
+        moderation_reviewed_at: new Date().toISOString()
+      })
+      .eq('id', profileId)
+      .select()
+      .single()
+
+    return { data, error }
+  },
+
+  // Reject a profile (admin only)
+  async rejectProfile(profileId, reason) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        moderation_status: 'rejected',
+        moderation_reviewed_at: new Date().toISOString(),
+        moderation_notes: reason
+      })
+      .eq('id', profileId)
+      .select()
+      .single()
 
     return { data, error }
   },

@@ -59,6 +59,7 @@ const CreateProfilePage = () => {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [emailExistsError, setEmailExistsError] = useState(false)
   const [utmParams, setUtmParams] = useState({})
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState('')
@@ -74,10 +75,20 @@ const CreateProfilePage = () => {
     setUtmParams(params)
   }, [searchParams])
 
-  // Pre-fill email from auth
+  // Pre-fill email from auth and check if profile already exists
   useEffect(() => {
     if (user?.email) {
       setFormData(prev => ({ ...prev, email: user.email }))
+
+      // Check if a profile already exists with this email
+      const checkExistingProfile = async () => {
+        const { exists } = await profileOperations.checkEmailExists(user.email)
+        if (exists) {
+          setEmailExistsError(true)
+          setError('A profile with this email already exists. Please log in to access your dashboard.')
+        }
+      }
+      checkExistingProfile()
     }
     // Pre-fill from user metadata if available (from previous signup)
     if (user?.user_metadata) {
@@ -272,7 +283,9 @@ const CreateProfilePage = () => {
         signup_source: utmParams.signup_source || 'organic',
         utm_source: utmParams.utm_source || null,
         utm_medium: utmParams.utm_medium || null,
-        utm_campaign: utmParams.utm_campaign || null
+        utm_campaign: utmParams.utm_campaign || null,
+        // Moderation - profile needs admin approval before appearing in directory
+        moderation_status: 'pending'
       }
 
       const { data: profile, error: createError } = await profileOperations.createProfile(profileData)
@@ -326,11 +339,12 @@ const CreateProfilePage = () => {
         console.error('Welcome email failed:', emailError)
       }
 
-      navigate('/professional/profile-created', {
+      navigate('/professional/profile-pending', {
         state: {
           profileUrl,
           profileId: profile.id,
-          profileName: formData.full_name
+          profileName: formData.full_name,
+          profileEmail: formData.email.trim() || user.email
         }
       })
 
@@ -525,6 +539,42 @@ const CreateProfilePage = () => {
           <i className="fa fa-spinner fa-spin fa-2x" style={{ color: 'var(--primary)' }}></i>
           <p style={{ marginTop: '1rem', color: 'var(--slate)' }}>Redirecting to dashboard...</p>
         </div>
+      </div>
+    )
+  }
+
+  // Email already has a profile - show blocking message
+  if (emailExistsError) {
+    return (
+      <div className="professional-signup">
+        <SEOHelmet
+          title="Profile Already Exists - Wedding Counselors"
+          description="A profile with this email already exists."
+          url="/professional/create"
+          noIndex={true}
+        />
+        <section className="professional-signup__hero" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center' }}>
+          <div className="professional-signup__hero-content" style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>
+              <i className="fa fa-user-circle" style={{ color: 'var(--primary)' }}></i>
+            </div>
+            <h1>You already have a profile!</h1>
+            <p className="professional-signup__hero-subtitle" style={{ maxWidth: '500px', margin: '0 auto 2rem' }}>
+              A profile with the email <strong>{user?.email}</strong> already exists in our directory.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <a href="/professional/dashboard" className="professional-signup__button professional-signup__button--primary">
+                Go to Dashboard
+              </a>
+              <a href="/professional/login" className="professional-signup__button professional-signup__button--secondary" style={{ background: 'white', border: '2px solid var(--primary)', color: 'var(--primary)' }}>
+                Sign In
+              </a>
+            </div>
+            <p style={{ marginTop: '2rem', color: 'var(--slate)', fontSize: '0.9rem' }}>
+              Think this is a mistake? <a href="mailto:support@weddingcounselors.com">Contact support</a>
+            </p>
+          </div>
+        </section>
       </div>
     )
   }
