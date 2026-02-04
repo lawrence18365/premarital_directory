@@ -1,5 +1,6 @@
 import AIContentGenerator from './aiContentGenerator'
 import DataFetcher from './dataFetcher' 
+import { supabase } from './supabaseClient'
 
 // State content generator for AI-powered state page content
 class StateContentGenerator {
@@ -59,11 +60,17 @@ class StateContentGenerator {
     const timeoutId = setTimeout(() => controller.abort(), 45000) // 45 second timeout - Jina research takes time
     
     try {
+      const { data: sessionData } = await supabase.auth.getSession()
+      const accessToken = sessionData?.session?.access_token
+      if (!accessToken) {
+        throw new Error('Admin authentication required')
+      }
+
       const response = await fetch(this.functionURL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`
+          'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify(stateData),
         signal: controller.signal

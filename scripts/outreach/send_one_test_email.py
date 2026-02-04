@@ -11,6 +11,7 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from dotenv import load_dotenv
 from supabase import create_client
+from outreach_accounts import load_outreach_accounts
 
 load_dotenv()
 
@@ -20,10 +21,9 @@ SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Email account
-ACCOUNT = {
-    "email": "lauren@weddingcounselors.com",
-    "password": "1relandS!"
-}
+ACCOUNT = load_outreach_accounts().get('lauren')
+if not ACCOUNT:
+    raise ValueError('Missing lauren account in outreach config')
 
 def create_personalized_email(profile):
     """Create personalized email for counselor"""

@@ -39,31 +39,19 @@ const ClaimWithTokenPage = () => {
     setError(null);
 
     try {
-      // Find profile with this claim token AND check expiry
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('claim_token', token)
-        .single();
+      const { data, error } = await supabase.functions.invoke('verify-claim-token', {
+        body: { token }
+      })
 
-      if (error || !data) {
-        throw new Error('Invalid or expired claim link. Please contact support at hello@weddingcounselors.com.');
+      if (error || !data?.success) {
+        throw new Error(data?.error || 'Invalid or expired claim link. Please contact support at hello@weddingcounselors.com.');
       }
 
-      // Check token expiry
-      if (data.claim_token_expires_at && new Date(data.claim_token_expires_at) < new Date()) {
-        throw new Error('This claim link has expired. Please contact hello@weddingcounselors.com for a new link.');
-      }
-
-      if (data.is_claimed) {
-        throw new Error('This profile has already been claimed. Please sign in to your account.');
-      }
-
-      setProfile(data);
+      setProfile(data.profile);
 
       // Pre-fill email if we have it
-      if (data.email) {
-        setFormData(prev => ({ ...prev, email: data.email }));
+      if (data.profile?.email) {
+        setFormData(prev => ({ ...prev, email: data.profile.email }));
       }
 
       // If user is already logged in, show warning instead of auto-claiming
@@ -99,14 +87,14 @@ const ClaimWithTokenPage = () => {
 
         // After signup, proceed to claim
         setStep('claiming');
-        await claimProfile(formData.email);
+        await claimProfile();
       } else {
         const { error } = await signIn(formData.email, formData.password);
         if (error) throw error;
 
         // After signin, proceed to claim
         setStep('claiming');
-        await claimProfile(formData.email);
+        await claimProfile();
       }
     } catch (err) {
       setError(err.message);
@@ -122,7 +110,7 @@ const ClaimWithTokenPage = () => {
     setStep('claiming');
 
     try {
-      await claimProfile(user.email);
+      await claimProfile();
     } catch (err) {
       setError(err.message);
       setStep('logged_in_warning');
@@ -136,56 +124,17 @@ const ClaimWithTokenPage = () => {
     setStep('auth');
   };
 
-  const claimProfile = async (userEmail) => {
+  const claimProfile = async () => {
     if (!profile) return;
 
     try {
-      // Get the current user (may have just signed up/in)
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      const { data, error } = await supabase.functions.invoke('claim-profile', {
+        body: { token }
+      })
 
-      if (!currentUser) {
-        throw new Error('Authentication failed. Please try again.');
+      if (error || !data?.success) {
+        throw new Error(data?.error || 'Failed to claim profile')
       }
-
-      // Update profile to mark as claimed
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({
-          user_id: currentUser.id,
-          is_claimed: true,
-          claimed_at: new Date().toISOString(),
-          claim_token: null, // Invalidate token after use
-          claim_token_expires_at: null,
-          moderation_status: 'approved' // Auto-approve claimed profiles
-        })
-        .eq('id', profile.id)
-        .eq('claim_token', token); // Double-check token for safety
-
-      if (updateError) throw updateError;
-
-      // Log the claim event for audit trail
-      await supabase.from('provider_events').insert({
-        provider_email: profile.email,
-        profile_id: profile.id,
-        event_type: 'claimed',
-        event_data: {
-          claimed_by_email: userEmail,
-          claimed_by_user_id: currentUser.id,
-          claim_token_used: token
-        }
-      });
-
-      // Update outreach record if exists
-      await supabase.from('provider_outreach').upsert({
-        provider_email: profile.email,
-        provider_name: profile.full_name,
-        city: profile.city,
-        state: profile.state_province,
-        status: 'claimed',
-        claimed_at: new Date().toISOString()
-      }, {
-        onConflict: 'provider_email'
-      });
 
       setStep('success');
     } catch (err) {

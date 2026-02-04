@@ -38,6 +38,10 @@ echo "4️⃣  RESEND_API_KEY ⭐ REQUIRED FOR EMAILS"
 echo "   Value: ${RESEND_API_KEY:-NOT SET}"
 echo ""
 
+echo "5️⃣  INTERNAL_API_KEY ⭐ REQUIRED FOR INTERNAL FUNCTIONS"
+echo "   Value: ${INTERNAL_API_KEY:-NOT SET}"
+echo ""
+
 echo "======================================================================"
 echo "HOW TO ADD THESE SECRETS:"
 echo "======================================================================"

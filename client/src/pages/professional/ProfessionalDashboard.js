@@ -251,6 +251,90 @@ const ProfessionalDashboard = () => {
         </div>
       </div>
 
+      {/* Moderation Status Alert - Pending */}
+      {profile && profile.moderation_status === 'pending' && (
+        <div style={{
+          background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+          border: '1px solid #f59e0b',
+          borderRadius: '12px',
+          padding: '1.25rem 1.5rem',
+          marginBottom: '1.5rem',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '1rem'
+        }}>
+          <div style={{
+            background: '#f59e0b',
+            borderRadius: '50%',
+            width: '40px',
+            height: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <i className="fa fa-clock-o" style={{ color: 'white', fontSize: '1.25rem' }} aria-hidden="true"></i>
+          </div>
+          <div>
+            <strong style={{ color: '#92400e', fontSize: '1.1rem', display: 'block', marginBottom: '0.25rem' }}>
+              Profile Under Review
+            </strong>
+            <p style={{ color: '#78350f', margin: '0 0 0.5rem', fontSize: '0.95rem' }}>
+              Your profile is being reviewed by our team. This typically takes 24-48 hours.
+              Once approved, you'll appear in directory listings and can start receiving inquiries from couples.
+            </p>
+            <p style={{ color: '#92400e', margin: 0, fontSize: '0.85rem' }}>
+              <i className="fa fa-envelope-o" aria-hidden="true" style={{ marginRight: '0.5rem' }}></i>
+              We'll email you at <strong>{profile.email}</strong> when your profile is approved.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Moderation Status Alert - Rejected */}
+      {profile && profile.moderation_status === 'rejected' && (
+        <div style={{
+          background: 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)',
+          border: '1px solid #ef4444',
+          borderRadius: '12px',
+          padding: '1.25rem 1.5rem',
+          marginBottom: '1.5rem',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '1rem'
+        }}>
+          <div style={{
+            background: '#ef4444',
+            borderRadius: '50%',
+            width: '40px',
+            height: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <i className="fa fa-exclamation" style={{ color: 'white', fontSize: '1.25rem' }} aria-hidden="true"></i>
+          </div>
+          <div>
+            <strong style={{ color: '#991b1b', fontSize: '1.1rem', display: 'block', marginBottom: '0.25rem' }}>
+              Profile Not Approved
+            </strong>
+            <p style={{ color: '#7f1d1d', margin: '0 0 0.5rem', fontSize: '0.95rem' }}>
+              Unfortunately, your profile was not approved for our directory.
+              {profile.moderation_notes && (
+                <span style={{ display: 'block', marginTop: '0.5rem' }}>
+                  <strong>Reason:</strong> {profile.moderation_notes}
+                </span>
+              )}
+            </p>
+            <p style={{ color: '#991b1b', margin: 0, fontSize: '0.85rem' }}>
+              If you believe this was a mistake, please contact us at{' '}
+              <a href="mailto:support@weddingcounselors.com" style={{ color: '#991b1b' }}>support@weddingcounselors.com</a>
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Profile Status Alert */}
       {profile && !profile.is_claimed && (
         <div className="alert alert-warning">
@@ -323,10 +407,16 @@ const ProfessionalDashboard = () => {
               <i className="fa fa-heart" aria-hidden="true"></i>
             </div>
             <h3>No leads yet</h3>
-            <p>Once couples start contacting you through the directory, you'll see their information here.</p>
-            <Link to={(profile?.state_province && profile?.city ? `/premarital-counseling/${String(profile.state_province).toLowerCase().replace(/\s+/g, '-')}/${String(profile.city).toLowerCase().replace(/\s+/g, '-')}/${profile?.slug || profile?.id}` : `/profile/${profile?.slug || profile?.id}`)} className="btn btn-primary">
-              View Your Public Profile
-            </Link>
+            {profile?.moderation_status === 'pending' ? (
+              <p>Your profile is under review. Once approved, couples will be able to find you and send inquiries.</p>
+            ) : (
+              <>
+                <p>Once couples start contacting you through the directory, you'll see their information here.</p>
+                <Link to={(profile?.state_province && profile?.city ? `/premarital-counseling/${String(profile.state_province).toLowerCase().replace(/\s+/g, '-')}/${String(profile.city).toLowerCase().replace(/\s+/g, '-')}/${profile?.slug || profile?.id}` : `/profile/${profile?.slug || profile?.id}`)} className="btn btn-primary">
+                  View Your Public Profile
+                </Link>
+              </>
+            )}
           </div>
         ) : (
           <div className="leads-table">
@@ -404,8 +494,12 @@ const ProfessionalDashboard = () => {
 
           <Link to={`/profile/${profile?.slug || profile?.id}`} className="action-card">
             <i className="fa fa-eye" aria-hidden="true"></i>
-            <h4>View Public Profile</h4>
-            <p>See how couples see your profile</p>
+            <h4>Preview Profile</h4>
+            <p>
+              {profile?.moderation_status === 'pending'
+                ? 'Preview your profile (not yet visible to couples)'
+                : 'See how couples see your profile'}
+            </p>
           </Link>
         </div>
       </div>

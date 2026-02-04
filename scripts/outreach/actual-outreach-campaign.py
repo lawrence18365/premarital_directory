@@ -11,13 +11,10 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
 import time
 import random
+from outreach_accounts import load_outreach_accounts
 
 # Working email accounts
-ACCOUNTS = {
-    "lauren": {"email": "lauren@weddingcounselors.com", "password": "1relandS!"},
-    "info": {"email": "info@weddingcounselors.com", "password": "1relandS!"},
-    "jessie": {"email": "jessie@weddingcounselors.com", "password": "1relandS!"}
-}
+ACCOUNTS = load_outreach_accounts()
 
 def load_ready_prospects():
     """Load prospects that are ready for outreach"""

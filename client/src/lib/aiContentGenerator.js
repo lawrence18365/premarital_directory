@@ -1,10 +1,11 @@
 // AI Content Generator using Supabase Edge Function (secure)
 // Cost: FREE using Google Gemini 2.0 Flash model
 
+import { supabase } from './supabaseClient'
+
 class AIContentGenerator {
   constructor() {
     // Use Supabase Edge Function instead of direct API calls for security
-    this.functionURL = `${process.env.REACT_APP_SUPABASE_URL}/functions/v1/generate-city-content`
     this.maxRetries = 3
   }
 
@@ -20,23 +21,15 @@ class AIContentGenerator {
 
   async callSupabaseFunction(cityData, retryCount = 0) {
     try {
-      const response = await fetch(this.functionURL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`
-        },
-        body: JSON.stringify(cityData)
+      const { data, error } = await supabase.functions.invoke('generate-city-content', {
+        body: cityData
       })
 
-      if (!response.ok) {
-        const error = await response.text()
-        throw new Error(`Supabase Function error: ${response.status} - ${error}`)
+      if (error) {
+        throw new Error(error.message || 'Supabase Function error')
       }
 
-      const data = await response.json()
-
-      if (data.error) {
+      if (data?.error) {
         throw new Error(`Function error: ${data.error}`)
       }
 

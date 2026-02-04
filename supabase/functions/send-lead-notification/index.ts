@@ -1,10 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { getAllowedOrigins, getCorsHeaders, getRequestIp, isOriginAllowed } from "../_shared/auth.ts"
+import { enforceRateLimit } from "../_shared/rateLimit.ts"
 
 interface LeadNotificationRequest {
   leadId: string
@@ -22,17 +19,67 @@ interface LeadNotificationRequest {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: getCorsHeaders(req.headers.get('origin')) })
   }
 
   try {
+    const origin = req.headers.get('origin')
+    const allowedOrigins = getAllowedOrigins()
+    if (!isOriginAllowed(origin, allowedOrigins)) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Origin not allowed' }),
+        { status: 403, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
+    const rateLimit = await enforceRateLimit({
+      supabaseUrl: Deno.env.get('SUPABASE_URL') ?? '',
+      serviceKey: Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      endpoint: 'send-lead-notification',
+      ipAddress: getRequestIp(req),
+      windowSeconds: 3600,
+      maxRequests: 10
+    })
+    if (!rateLimit.ok) {
+      return rateLimit.response
+        ? new Response(await rateLimit.response.text(), {
+            status: rateLimit.response.status,
+            headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' }
+          })
+        : new Response(JSON.stringify({ success: false, error: 'Too many requests' }), {
+            status: 429,
+            headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' }
+          })
+    }
+
     const { leadId, profileId, coupleData }: LeadNotificationRequest = await req.json()
+
+    // Verify lead exists and matches profile
+    const { data: leadRecord, error: leadError } = await supabaseClient
+      .from('profile_leads')
+      .select('id, profile_id, professional_notified')
+      .eq('id', leadId)
+      .single()
+
+    if (leadError || !leadRecord || leadRecord.profile_id !== profileId) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid lead reference' }),
+        { status: 400, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
+      )
+    }
+
+    if (leadRecord.professional_notified) {
+      return new Response(
+        JSON.stringify({ success: true, message: 'Lead already notified' }),
+        { headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
+      )
+    }
 
     // Get professional profile details
     const { data: profile, error: profileError } = await supabaseClient
@@ -51,7 +98,7 @@ serve(async (req) => {
       console.log('No email found for professional:', profileId)
       return new Response(
         JSON.stringify({ success: false, error: 'No email address for professional' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
       )
     }
 
@@ -184,14 +231,14 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true, message: 'Lead notification sent' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
     )
 
   } catch (error) {
     console.error('Error in send-lead-notification:', error)
     return new Response(
       JSON.stringify({ success: false, error: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
     )
   }
 })

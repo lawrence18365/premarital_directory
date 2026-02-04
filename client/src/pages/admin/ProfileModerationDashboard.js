@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { profileOperations } from '../../lib/supabaseClient'
+import { sendProfileApprovedEmail, sendProfileRejectedEmail } from '../../lib/emailNotifications'
 import { Link } from 'react-router-dom'
 
 const ProfileModerationDashboard = () => {
@@ -36,6 +37,15 @@ const ProfileModerationDashboard = () => {
       const { error } = await profileOperations.approveProfile(profile.id)
       if (error) throw error
 
+      // Send approval email notification
+      try {
+        await sendProfileApprovedEmail(profile.email, profile)
+        console.log('Approval email sent to:', profile.email)
+      } catch (emailError) {
+        console.error('Failed to send approval email:', emailError)
+        // Don't block the approval if email fails
+      }
+
       alert('Profile approved! It will now appear in the directory.')
       loadPendingProfiles()
       setSelectedProfile(null)
@@ -58,6 +68,15 @@ const ProfileModerationDashboard = () => {
     try {
       const { error } = await profileOperations.rejectProfile(profile.id, rejectReason)
       if (error) throw error
+
+      // Send rejection email notification
+      try {
+        await sendProfileRejectedEmail(profile.email, profile, rejectReason)
+        console.log('Rejection email sent to:', profile.email)
+      } catch (emailError) {
+        console.error('Failed to send rejection email:', emailError)
+        // Don't block the rejection if email fails
+      }
 
       alert('Profile rejected.')
       loadPendingProfiles()

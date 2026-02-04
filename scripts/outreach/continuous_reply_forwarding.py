@@ -12,17 +12,12 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import time
 import json
+from outreach_accounts import load_outreach_accounts
 
 FORWARD_TO = "lawrencebrennan@gmail.com"
 CHECK_INTERVAL = 1800  # 30 minutes
 
-ACCOUNTS = {
-    "haylee": {"email": "haylee@weddingcounselors.com", "password": "1relandS!"},
-    "lauren": {"email": "lauren@weddingcounselors.com", "password": "1relandS!"},
-    "info": {"email": "info@weddingcounselors.com", "password": "1relandS!"},
-    "jessie": {"email": "jessie@weddingcounselors.com", "password": "1relandS!"},
-    "samantha": {"email": "samantha@weddingcounselors.com", "password": "1relandS!"}
-}
+ACCOUNTS = load_outreach_accounts()
 
 def forward_reply(original_email, from_account, to_address=FORWARD_TO):
     """Forward reply to specified address"""

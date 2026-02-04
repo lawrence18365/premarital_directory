@@ -1,10 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { getAllowedOrigins, getCorsHeaders, isOriginAllowed, requireAdmin } from "../_shared/auth.ts"
 
 interface ContentRequest {
   type: 'city' | 'state' | 'blog'
@@ -26,12 +22,37 @@ const AI_MODELS = {
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: getCorsHeaders(req.headers.get('origin')) })
   }
 
   try {
+    const origin = req.headers.get('origin')
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+
+    const internalKey = Deno.env.get('INTERNAL_API_KEY')
+    const providedInternalKey = req.headers.get('x-internal-api-key')
+    const isInternal = internalKey && providedInternalKey === internalKey
+
+    if (!isInternal) {
+      const allowedOrigins = getAllowedOrigins()
+      if (!isOriginAllowed(origin, allowedOrigins)) {
+        return new Response(
+          JSON.stringify({ error: 'Origin not allowed' }),
+          { status: 403, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
+        )
+      }
+
+      const adminResult = await requireAdmin(req, supabaseUrl, supabaseAnonKey, supabaseServiceKey)
+      if (!adminResult.ok) {
+        return new Response(
+          JSON.stringify({ error: 'Forbidden' }),
+          { status: 403, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
+        )
+      }
+    }
+
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     const { type, location, state, batch = false, count = 1 }: ContentRequest = await req.json()
@@ -39,7 +60,7 @@ serve(async (req) => {
     if (!type || !location) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields: type, location' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
       )
     }
 
@@ -74,14 +95,14 @@ serve(async (req) => {
         contentGenerated: generatedContent.length,
         content: generatedContent
       }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 200, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
     )
 
   } catch (error) {
     console.error('Error generating SEO content:', error)
     return new Response(
       JSON.stringify({ error: 'Internal server error', message: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
     )
   }
 })

@@ -973,9 +973,9 @@ const CreateProfilePage = () => {
                 ) : (
                   <button type="submit" className="quiz-btn quiz-btn--submit" disabled={loading}>
                     {loading ? (
-                      <>Creating profile...</>
+                      <>Submitting...</>
                     ) : (
-                      <>Publish My Profile <i className="fa fa-check" aria-hidden="true"></i></>
+                      <>Submit for Review <i className="fa fa-check" aria-hidden="true"></i></>
                     )}
                   </button>
                 )}
@@ -994,6 +994,10 @@ const CreateProfilePage = () => {
               <li><i className="fa fa-check" aria-hidden="true"></i> Profile views analytics</li>
               <li><i className="fa fa-check" aria-hidden="true"></i> Edit anytime from your dashboard</li>
             </ul>
+            <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--slate)', borderTop: '1px solid var(--gray-200)', paddingTop: '1rem' }}>
+              <i className="fa fa-clock-o" aria-hidden="true" style={{ marginRight: '0.5rem' }}></i>
+              New profiles are reviewed within 24 hours to maintain directory quality.
+            </p>
           </div>
         </aside>
       </main>

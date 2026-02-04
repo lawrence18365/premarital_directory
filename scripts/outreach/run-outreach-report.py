@@ -11,6 +11,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
 import os
+from outreach_accounts import load_outreach_accounts
 
 def get_prospect_stats():
     """Get current prospect database statistics"""
@@ -108,8 +109,11 @@ def send_status_email(report_content, recipient="lawrencebrennan@gmail.com"):
         # Use haylee@weddingcounselors.com to send report
         smtp_server = "mail.spacemail.com"
         smtp_port = 465
-        sender_email = "haylee@weddingcounselors.com"
-        sender_password = "1relandS!"
+        sender_account = load_outreach_accounts().get('haylee')
+        if not sender_account:
+            raise ValueError('Missing haylee account in outreach config')
+        sender_email = sender_account['email']
+        sender_password = sender_account['password']
         
         msg = MIMEMultipart()
         msg['From'] = f"Wedding Counselors Outreach <{sender_email}>"

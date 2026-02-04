@@ -10,37 +10,12 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
 import os
+from outreach_accounts import load_outreach_accounts
 
 # Email Configuration
 SMTP_SERVER = "mail.spacemail.com"
 SMTP_PORT = 465  # SSL port
-EMAIL_ACCOUNTS = {
-    "haylee": {
-        "email": "haylee@weddingcounselors.com",
-        "password": "1relandS!",
-        "daily_limit": 20
-    },
-    "lauren": {
-        "email": "lauren@weddingcounselors.com", 
-        "password": "1relandS!",
-        "daily_limit": 20
-    },
-    "info": {
-        "email": "info@weddingcounselors.com",
-        "password": "1relandS!", 
-        "daily_limit": 15
-    },
-    "jessie": {
-        "email": "jessie@weddingcounselors.com",
-        "password": "1relandS!",
-        "daily_limit": 15
-    },
-    "samantha": {
-        "email": "samantha@weddingcounselors.com",
-        "password": "1relandS!",
-        "daily_limit": 10
-    }
-}
+EMAIL_ACCOUNTS = load_outreach_accounts()
 
 # Email Templates
 TEMPLATES = {

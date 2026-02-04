@@ -67,24 +67,33 @@ const SignupForm = () => {
       console.error('Error checking email:', checkError)
       // Continue with signup if check fails (don't block on this)
     } else if (exists) {
-      setError('A profile with this email already exists. Please try logging in instead.')
+      setError('EXISTING_PROFILE')
       setLoading(false)
       return
     }
 
-    const { error } = await signUp(formData.email, formData.password)
+    const { data, error } = await signUp(formData.email, formData.password)
 
     if (error) {
       setError(error.message)
       setLoading(false)
-    } else {
-      setSuccess(true)
-      setLoading(false)
-      // Navigate to confirmation page after a delay
-      setTimeout(() => {
-        navigate('/professional/confirm-email')
-      }, 3000)
+      return
     }
+
+    // Detect existing account: Supabase returns user with empty identities array
+    // for existing confirmed accounts (security feature to prevent email enumeration)
+    if (data?.user && (!data.user.identities || data.user.identities.length === 0)) {
+      setError('EXISTING_ACCOUNT')
+      setLoading(false)
+      return
+    }
+
+    // Success - new account created, confirmation email sent
+    setSuccess(true)
+    setLoading(false)
+    setTimeout(() => {
+      navigate('/professional/confirm-email', { state: { email: formData.email } })
+    }, 3000)
   }
 
   if (success) {
@@ -97,12 +106,12 @@ const SignupForm = () => {
           <p className="section-eyebrow">Email on its way</p>
           <h1>Confirm your email to finish setup</h1>
           <p className="professional-auth__success-lead">
-            We’ve sent a confirmation link to <strong>{formData.email}</strong>. Click it to activate your account and publish your profile.
+            We've sent a confirmation link to <strong>{formData.email}</strong>. Click it to activate your account.
           </p>
           <ol className="professional-auth__success-steps">
             <li>Check your inbox (and spam folder just in case).</li>
             <li>Click the verification link to secure your account.</li>
-            <li>Complete your profile details and go live.</li>
+            <li>Complete your profile and submit for review.</li>
           </ol>
           <Link to="/professional/login" className="professional-auth__button professional-auth__button--primary">
             Go to Login
@@ -145,7 +154,16 @@ const SignupForm = () => {
           {error && (
             <div className="professional-auth__alert" role="alert">
               <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-              <span>{error}</span>
+              {error === 'EXISTING_ACCOUNT' || error === 'EXISTING_PROFILE' ? (
+                <span>
+                  An account with this email already exists.{' '}
+                  <Link to="/professional/login" style={{ color: 'inherit', fontWeight: '600' }}>
+                    Sign in here
+                  </Link>
+                </span>
+              ) : (
+                <span>{error}</span>
+              )}
             </div>
           )}
 
@@ -214,11 +232,11 @@ const SignupForm = () => {
           <ul>
             <li><strong>Step 1:</strong> Create your account (you're here)</li>
             <li><strong>Step 2:</strong> Verify your email</li>
-            <li><strong>Step 3:</strong> Complete your profile in under 2 minutes</li>
-            <li><strong>Step 4:</strong> Start receiving inquiries from couples</li>
+            <li><strong>Step 3:</strong> Complete your profile</li>
+            <li><strong>Step 4:</strong> Quick review, then you're live</li>
           </ul>
           <p style={{marginTop: '1rem', fontSize: '0.9rem', color: 'var(--slate)'}}>
-            Your profile will be visible on city + statewide directories. No fees, no commissions.
+            We review new profiles to maintain directory quality. Most profiles are approved within 24 hours.
           </p>
         </aside>
       </section>

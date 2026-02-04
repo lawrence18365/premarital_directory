@@ -1,9 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { getAllowedOrigins, getCorsHeaders, getRequestIp, isOriginAllowed } from "../_shared/auth.ts"
+import { enforceRateLimit } from "../_shared/rateLimit.ts"
 
 interface ContactEmailRequest {
   name: string
@@ -16,17 +13,49 @@ interface ContactEmailRequest {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: getCorsHeaders(req.headers.get('origin')) })
   }
 
   try {
+    const origin = req.headers.get('origin')
+    const allowedOrigins = getAllowedOrigins()
+    if (!isOriginAllowed(origin, allowedOrigins)) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Origin not allowed' }),
+        { status: 403, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+
+    const rateLimit = await enforceRateLimit({
+      supabaseUrl,
+      serviceKey: supabaseServiceKey,
+      endpoint: 'send-contact-email',
+      ipAddress: getRequestIp(req),
+      windowSeconds: 3600,
+      maxRequests: 5
+    })
+    if (!rateLimit.ok) {
+      return rateLimit.response
+        ? new Response(await rateLimit.response.text(), {
+            status: rateLimit.response.status,
+            headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' }
+          })
+        : new Response(JSON.stringify({ success: false, error: 'Too many requests' }), {
+            status: 429,
+            headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' }
+          })
+    }
+
     const { name, email, subject, message, type }: ContactEmailRequest = await req.json()
 
     // Validate required fields
     if (!name || !email || !subject || !message) {
       return new Response(
         JSON.stringify({ success: false, error: 'Missing required fields' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
       )
     }
 
@@ -130,14 +159,14 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true, message: 'Contact form submitted successfully' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
     )
 
   } catch (error) {
     console.error('Error in send-contact-email:', error)
     return new Response(
       JSON.stringify({ success: false, error: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
     )
   }
 })

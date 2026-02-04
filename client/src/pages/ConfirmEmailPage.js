@@ -1,9 +1,49 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { supabase } from '../lib/supabaseClient'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import '../assets/css/confirm-email.css'
 
 const ConfirmEmailPage = () => {
+  const location = useLocation()
+  const emailFromState = location.state?.email || ''
+
+  const [resendEmail, setResendEmail] = useState(emailFromState)
+  const [resendStatus, setResendStatus] = useState(null) // 'sending', 'success', 'error'
+  const [resendMessage, setResendMessage] = useState('')
+  const [showResendForm, setShowResendForm] = useState(!emailFromState)
+
+  const handleResend = async (e) => {
+    e.preventDefault()
+
+    if (!resendEmail.trim()) {
+      setResendStatus('error')
+      setResendMessage('Please enter your email address')
+      return
+    }
+
+    setResendStatus('sending')
+    setResendMessage('')
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: resendEmail.trim()
+      })
+
+      if (error) {
+        setResendStatus('error')
+        setResendMessage(error.message)
+      } else {
+        setResendStatus('success')
+        setResendMessage('Confirmation email sent! Check your inbox.')
+      }
+    } catch (err) {
+      setResendStatus('error')
+      setResendMessage('Failed to resend. Please try again.')
+    }
+  }
+
   return (
     <>
       <SEOHelmet
@@ -29,7 +69,11 @@ const ConfirmEmailPage = () => {
 
               <h1 className="confirm-email__title">Check Your Email</h1>
               <p className="confirm-email__subtitle">
-                We've sent a confirmation link to complete your account setup
+                {emailFromState ? (
+                  <>We've sent a confirmation link to <strong>{emailFromState}</strong></>
+                ) : (
+                  <>We've sent a confirmation link to complete your account setup</>
+                )}
               </p>
             </div>
 
@@ -61,7 +105,7 @@ const ConfirmEmailPage = () => {
                 <div className="confirm-email__step-number">3</div>
                 <div className="confirm-email__step-content">
                   <h3>Complete Your Profile</h3>
-                  <p>Add your credentials and start connecting with couples</p>
+                  <p>Add your credentials and submit for review</p>
                 </div>
                 <div className="confirm-email__step-icon">
                   <i className="fa fa-heart" aria-hidden="true"></i>
@@ -78,7 +122,7 @@ const ConfirmEmailPage = () => {
             </div>
           </div>
 
-          {/* Help Card */}
+          {/* Help Card with Resend */}
           <div className="confirm-email__help">
             <div className="confirm-email__help-icon">
               <i className="fa fa-question-circle" aria-hidden="true"></i>
@@ -91,18 +135,105 @@ const ConfirmEmailPage = () => {
                   Check your spam or junk folder
                 </li>
                 <li>
-                  <i className="fa fa-at" aria-hidden="true"></i>
-                  Make sure you entered your email correctly
-                </li>
-                <li>
                   <i className="fa fa-clock" aria-hidden="true"></i>
                   The email may take a few minutes to arrive
                 </li>
               </ul>
-              <Link to="/support" className="confirm-email__help-link">
-                Still need help? Contact support
-                <i className="fa fa-arrow-right" aria-hidden="true"></i>
-              </Link>
+
+              {/* Resend Section */}
+              <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' }}>
+                {!showResendForm && emailFromState ? (
+                  <button
+                    onClick={() => handleResend({ preventDefault: () => {} })}
+                    disabled={resendStatus === 'sending'}
+                    style={{
+                      background: 'none',
+                      border: '1px solid var(--primary)',
+                      color: 'var(--primary)',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      cursor: resendStatus === 'sending' ? 'not-allowed' : 'pointer',
+                      fontSize: '0.9rem',
+                      fontWeight: '500',
+                      width: '100%'
+                    }}
+                  >
+                    {resendStatus === 'sending' ? 'Sending...' : 'Resend Confirmation Email'}
+                  </button>
+                ) : (
+                  <form onSubmit={handleResend}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: '500' }}>
+                      Resend to:
+                    </label>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <input
+                        type="email"
+                        value={resendEmail}
+                        onChange={(e) => setResendEmail(e.target.value)}
+                        placeholder="your@email.com"
+                        style={{
+                          flex: 1,
+                          padding: '0.5rem 0.75rem',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '6px',
+                          fontSize: '0.9rem'
+                        }}
+                      />
+                      <button
+                        type="submit"
+                        disabled={resendStatus === 'sending'}
+                        style={{
+                          background: 'var(--primary)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.5rem 1rem',
+                          borderRadius: '6px',
+                          cursor: resendStatus === 'sending' ? 'not-allowed' : 'pointer',
+                          fontSize: '0.9rem',
+                          fontWeight: '500'
+                        }}
+                      >
+                        {resendStatus === 'sending' ? '...' : 'Send'}
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {resendStatus === 'success' && (
+                  <p style={{ color: '#059669', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                    <i className="fa fa-check-circle" aria-hidden="true"></i> {resendMessage}
+                  </p>
+                )}
+                {resendStatus === 'error' && (
+                  <p style={{ color: '#dc2626', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                    <i className="fa fa-exclamation-circle" aria-hidden="true"></i> {resendMessage}
+                  </p>
+                )}
+
+                {emailFromState && !showResendForm && (
+                  <button
+                    onClick={() => setShowResendForm(true)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--slate)',
+                      fontSize: '0.8rem',
+                      marginTop: '0.5rem',
+                      cursor: 'pointer',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Wrong email? Enter a different one
+                  </button>
+                )}
+              </div>
+
+              <div style={{ marginTop: '1rem' }}>
+                <Link to="/professional/signup" className="confirm-email__help-link">
+                  Start over with a different email
+                  <i className="fa fa-arrow-right" aria-hidden="true"></i>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

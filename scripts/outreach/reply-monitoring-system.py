@@ -10,18 +10,13 @@ import csv
 from datetime import datetime
 import time
 import re
+from outreach_accounts import load_outreach_accounts
 
 # Email Account Configuration
 IMAP_SERVER = "mail.spacemail.com"
 IMAP_PORT = 993
 
-ACCOUNTS = {
-    "haylee": {"email": "haylee@weddingcounselors.com", "password": "1relandS!"},
-    "lauren": {"email": "lauren@weddingcounselors.com", "password": "1relandS!"},
-    "info": {"email": "info@weddingcounselors.com", "password": "1relandS!"},
-    "jessie": {"email": "jessie@weddingcounselors.com", "password": "1relandS!"},
-    "samantha": {"email": "samantha@weddingcounselors.com", "password": "1relandS!"}
-}
+ACCOUNTS = load_outreach_accounts()
 
 class ReplyMonitor:
     def __init__(self):

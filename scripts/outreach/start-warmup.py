@@ -10,13 +10,10 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import time
 import random
+from outreach_accounts import load_outreach_accounts
 
-# Working accounts (haylee@ had auth issues, using others)
-WORKING_ACCOUNTS = {
-    "lauren": {"email": "lauren@weddingcounselors.com", "password": "1relandS!"},
-    "info": {"email": "info@weddingcounselors.com", "password": "1relandS!"},
-    "jessie": {"email": "jessie@weddingcounselors.com", "password": "1relandS!"}
-}
+# Working accounts (filtered from configured accounts if needed)
+WORKING_ACCOUNTS = load_outreach_accounts()
 
 def send_warmup_email(from_account, to_email, subject, body):
     """Send a warm-up email"""

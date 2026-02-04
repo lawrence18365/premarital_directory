@@ -16,6 +16,7 @@ import random
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from outreach_accounts import load_outreach_accounts
 
 try:
     from daily_outreach_script import OutreachManager, ACCOUNTS
@@ -24,11 +25,7 @@ try:
 except ImportError as e:
     print(f"Import error: {e}")
     print("Running in standalone mode...")
-    ACCOUNTS = {
-        "haylee": {"email": "haylee@weddingcounselors.com", "password": "1relandS!", "daily_limit": 20},
-        "lauren": {"email": "lauren@weddingcounselors.com", "password": "1relandS!", "daily_limit": 20},
-        "info": {"email": "info@weddingcounselors.com", "password": "1relandS!", "daily_limit": 15}
-    }
+    ACCOUNTS = load_outreach_accounts()
 
 class DailyWorkflow:
     def __init__(self):

@@ -16,6 +16,7 @@ import time
 import random
 from dotenv import load_dotenv
 from supabase import create_client
+from outreach_accounts import load_outreach_accounts
 
 load_dotenv()
 
@@ -24,21 +25,8 @@ SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Email accounts (from .env for security)
-ACCOUNTS = {
-    "lauren": {
-        "email": "lauren@weddingcounselors.com",
-        "password": "1relandS!"
-    },
-    "info": {
-        "email": "info@weddingcounselors.com",
-        "password": "1relandS!"
-    },
-    "jessie": {
-        "email": "jessie@weddingcounselors.com",
-        "password": "1relandS!"
-    }
-}
+# Email accounts (from env)
+ACCOUNTS = load_outreach_accounts()
 
 def load_ready_prospects(limit=10):
     """

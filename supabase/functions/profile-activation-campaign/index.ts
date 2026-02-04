@@ -1,10 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { getCorsHeaders, requireInternalKey } from "../_shared/auth.ts"
 
 interface CampaignConfig {
   emailsPerHour?: number
@@ -16,10 +12,18 @@ interface CampaignConfig {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: getCorsHeaders(req.headers.get('origin')) })
   }
 
   try {
+    const internal = requireInternalKey(req)
+    if (!internal.ok) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: internal.response?.status || 401, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
+      )
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     
@@ -68,7 +72,7 @@ serve(async (req) => {
         }),
         {
           status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
         }
       )
     }
@@ -92,7 +96,7 @@ serve(async (req) => {
         }),
         {
           status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
         }
       )
     }
@@ -118,7 +122,7 @@ serve(async (req) => {
         }),
         {
           status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
         }
       )
     }
@@ -145,8 +149,8 @@ serve(async (req) => {
           {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${supabaseServiceKey}`,
               'Content-Type': 'application/json',
+              'x-internal-api-key': Deno.env.get('INTERNAL_API_KEY') ?? '',
             },
             body: JSON.stringify({
               profileId: profile.id,
@@ -226,7 +230,7 @@ serve(async (req) => {
       JSON.stringify(summary),
       {
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
       }
     )
 
@@ -239,7 +243,7 @@ serve(async (req) => {
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
       }
     )
   }

@@ -1,9 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { getCorsHeaders, requireInternalKey } from "../_shared/auth.ts"
 
 interface EmailRequest {
   profileId: string
@@ -18,10 +14,18 @@ interface EmailRequest {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: getCorsHeaders(req.headers.get('origin')) })
   }
 
   try {
+    const internal = requireInternalKey(req)
+    if (!internal.ok) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: internal.response?.status || 401, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
+      )
+    }
+
     const { profileId, email, name, profession, city, state, viewCount = 47 }: EmailRequest = await req.json()
 
     // Validate required fields
@@ -30,7 +34,7 @@ serve(async (req) => {
         JSON.stringify({ error: 'Missing required fields: profileId, email, name' }),
         {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
         }
       )
     }
@@ -45,7 +49,7 @@ serve(async (req) => {
         JSON.stringify({ error: 'Email service not configured' }),
         {
           status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
         }
       )
     }
@@ -213,7 +217,7 @@ Contact us: hello@weddingcounselors.com
         }),
         {
           status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
         }
       )
     }
@@ -232,7 +236,7 @@ Contact us: hello@weddingcounselors.com
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
       }
     )
 
@@ -245,7 +249,7 @@ Contact us: hello@weddingcounselors.com
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
       }
     )
   }

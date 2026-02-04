@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { getCorsHeaders, requireInternalKey } from "../_shared/auth.ts"
 
 /**
  * Outreach Email Function - FOR COLD OUTREACH ONLY
@@ -9,11 +10,6 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
  * - Event logging for audit trail
  * - Uses monitored inbox for replies
  */
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 interface OutreachEmailRequest {
   provider_email: string
@@ -25,10 +21,18 @@ interface OutreachEmailRequest {
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: getCorsHeaders(req.headers.get('origin')) })
   }
 
   try {
+    const internal = requireInternalKey(req)
+    if (!internal.ok) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: internal.response?.status || 401, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
+      )
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
@@ -54,7 +58,7 @@ serve(async (req) => {
           error: 'Email is on do_not_contact list',
           reason: 'do_not_contact'
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
       )
     }
 
@@ -81,7 +85,7 @@ serve(async (req) => {
           error: `Daily outreach limit reached (${count}/${dailyLimit})`,
           reason: 'rate_limit'
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
       )
     }
 
@@ -129,14 +133,14 @@ serve(async (req) => {
 
     // Update outreach record
     await supabase.from('provider_outreach').upsert({
-      provider_email: request.provider_email,
-      provider_name: request.provider_name,
-      status: 'emailed',
+      email: request.provider_email,
+      name: request.provider_name,
+      outreach_status: 'emailed',
       last_contacted_at: new Date().toISOString(),
       contact_count: 1,
       email_template_used: request.template
     }, {
-      onConflict: 'provider_email'
+      onConflict: 'email'
     })
 
     return new Response(
@@ -146,14 +150,14 @@ serve(async (req) => {
         emails_sent_today: count + 1,
         daily_limit: dailyLimit
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
     )
 
   } catch (error) {
     console.error('Outreach email error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
     )
   }
 })

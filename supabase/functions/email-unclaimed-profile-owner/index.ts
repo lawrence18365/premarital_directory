@@ -1,18 +1,44 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { getAllowedOrigins, getCorsHeaders, getRequestIp, isOriginAllowed } from "../_shared/auth.ts"
+import { enforceRateLimit } from "../_shared/rateLimit.ts"
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 
 serve(async (req) => {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  }
-
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: getCorsHeaders(req.headers.get('origin')) })
   }
 
   try {
+    const origin = req.headers.get('origin')
+    const allowedOrigins = getAllowedOrigins()
+    if (!isOriginAllowed(origin, allowedOrigins)) {
+      return new Response(
+        JSON.stringify({ error: 'Origin not allowed' }),
+        { status: 403, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const rateLimit = await enforceRateLimit({
+      supabaseUrl: Deno.env.get('SUPABASE_URL') ?? '',
+      serviceKey: Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      endpoint: 'email-unclaimed-profile-owner',
+      ipAddress: getRequestIp(req),
+      windowSeconds: 3600,
+      maxRequests: 10
+    })
+    if (!rateLimit.ok) {
+      return rateLimit.response
+        ? new Response(await rateLimit.response.text(), {
+            status: rateLimit.response.status,
+            headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' }
+          })
+        : new Response(JSON.stringify({ error: 'Too many requests' }), {
+            status: 429,
+            headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' }
+          })
+    }
+
     const {
       profileEmail,
       professionalName,
@@ -29,7 +55,7 @@ serve(async (req) => {
     if (!profileEmail || !professionalName || !coupleName) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
       )
     }
 
@@ -97,14 +123,14 @@ https://www.weddingcounselors.com`
 
     return new Response(
       JSON.stringify({ success: true, emailId: emailData.id }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 200, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
     )
 
   } catch (error) {
     console.error('Error sending email:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
     )
   }
 })

@@ -94,7 +94,7 @@ jobs:
       - name: Trigger Campaign
         run: |
           curl -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/profile-activation-campaign" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_KEY }}" \
+            -H "x-internal-api-key: ${{ secrets.INTERNAL_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{"emailsPerHour": 50, "maxDailyEmails": 500}'
 EOF
