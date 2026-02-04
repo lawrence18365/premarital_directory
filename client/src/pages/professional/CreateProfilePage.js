@@ -482,37 +482,6 @@ const CreateProfilePage = () => {
     'Long-Distance Couples'
   ]
 
-  // Insurance options
-  const insuranceOptions = [
-    'Out of Pocket Only',
-    'Sliding Scale Available',
-    'Aetna',
-    'Blue Cross Blue Shield',
-    'Cigna',
-    'United Healthcare',
-    'Other Insurance'
-  ]
-
-  // Payment methods
-  const paymentMethodOptions = [
-    'Cash',
-    'Credit Card',
-    'Check',
-    'HSA/FSA',
-    'Venmo/PayPal'
-  ]
-
-  // Languages
-  const languageOptions = [
-    'English',
-    'Spanish',
-    'Mandarin',
-    'French',
-    'Vietnamese',
-    'Korean',
-    'ASL'
-  ]
-
   const stepLabels = [
     'Who are you?',
     'Where do you practice?',

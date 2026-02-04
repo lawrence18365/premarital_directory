@@ -8,7 +8,7 @@ import FAQ from '../components/common/FAQ'
 import LeadContactForm from '../components/leads/LeadContactForm'
 import LocalSpecialtyContent from '../components/common/LocalSpecialtyContent'
 import LocationInsights from '../components/common/LocationInsights'
-import { getSpecialtyBySlug, getAllSpecialties } from '../data/specialtyConfig'
+import { getSpecialtyBySlug } from '../data/specialtyConfig'
 import { STATE_CONFIG } from '../data/locationConfig'
 import { supabase } from '../lib/supabaseClient'
 import '../assets/css/specialty-page.css'
@@ -101,14 +101,6 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
   // SEO Meta
   const metaTitle = `${specialty.name} Premarital Counseling in ${stateName} | ${new Date().getFullYear()}`
   const metaDescription = `Find ${specialty.name.toLowerCase()} premarital counselors in ${stateName}. Compare ${profiles.length > 0 ? profiles.length : ''} qualified therapists and programs specializing in ${specialty.name} marriage preparation.`
-
-  // Group profiles by city
-  const profilesByCity = profiles.reduce((acc, profile) => {
-    const city = profile.city || 'Other'
-    if (!acc[city]) acc[city] = []
-    acc[city].push(profile)
-    return acc
-  }, {})
 
   // Get major cities from config
   const majorCities = stateConfig?.major_cities || []

@@ -8,9 +8,11 @@ const SpecialtiesList = ({ stateSlug, citySlug }) => {
     ? citySlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
     : stateSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
 
-  const baseUrl = citySlug 
+  // Base URL for specialty links
+  const _baseUrl = citySlug
     ? `/premarital-counseling` // Base
     : `/premarital-counseling`
+  void _baseUrl // Suppress unused warning - reserved for future use
 
   return (
     <div className="specialties-list-section" style={{ marginTop: 'var(--space-10)' }}>

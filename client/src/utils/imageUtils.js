@@ -136,8 +136,10 @@ export const getImageDimensions = (file) => {
   })
 }
 
-export default {
+const imageUtils = {
   compressImage,
   validateImage,
   getImageDimensions
 }
+
+export default imageUtils

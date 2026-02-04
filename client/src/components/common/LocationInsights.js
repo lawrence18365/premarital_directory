@@ -1,6 +1,6 @@
 import React from 'react'
 import { STATE_DISCOUNT_CONFIG } from '../../data/specialtyConfig'
-import { CITY_CONFIG } from '../../data/locationConfig'
+// CITY_CONFIG removed - not currently used
 
 const LocationInsights = ({ stateSlug, citySlug, specialty }) => {
   const discountInfo = STATE_DISCOUNT_CONFIG[stateSlug]

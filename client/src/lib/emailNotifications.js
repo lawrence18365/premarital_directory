@@ -128,7 +128,7 @@ export const sendClaimRejectedEmail = async (email, claimData, reason) => {
   })
 }
 
-export default {
+const emailNotifications = {
   sendClaimSubmittedEmail,
   sendClaimApprovedEmail,
   sendClaimRejectedEmail,
@@ -136,3 +136,5 @@ export default {
   sendProfileRejectedEmail,
   sendProfileCreatedEmail
 }
+
+export default emailNotifications

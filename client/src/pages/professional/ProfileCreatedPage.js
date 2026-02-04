@@ -4,7 +4,7 @@ import SEOHelmet from '../../components/analytics/SEOHelmet'
 
 const ProfileCreatedPage = () => {
   const location = useLocation()
-  const { profileUrl, profileName } = location.state || {}
+  const { profileUrl } = location.state || {}
 
   // Redirect if accessed directly without profile data
   if (!profileUrl) {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+// Link removed - not currently used
 
 const LocalSpecialtyContent = ({ specialty, stateName, cityName }) => {
   if (!specialty) return null
