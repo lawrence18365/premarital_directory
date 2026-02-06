@@ -76,7 +76,6 @@ const CreateProfilePage = () => {
   }, [searchParams])
 
   const [claimingProfile, setClaimingProfile] = useState(false)
-  const [existingUnclaimedProfile, setExistingUnclaimedProfile] = useState(null)
 
   // Pre-fill email from auth and check if profile already exists
   useEffect(() => {
