@@ -5,7 +5,7 @@ import { enforceRateLimit } from "../_shared/rateLimit.ts"
 interface EmailRequest {
   to: string | string[]
   subject: string
-  template: 'profile_created' | 'inquiry_to_provider' | 'inquiry_confirmation' | 'profile_nudge' | 'monthly_stats' | 'profile_approved' | 'profile_rejected'
+  template: 'profile_created' | 'inquiry_to_provider' | 'inquiry_confirmation' | 'profile_nudge' | 'monthly_stats' | 'profile_approved' | 'profile_rejected' | 'admin_new_signup'
   data: Record<string, any>
 }
 
@@ -60,7 +60,8 @@ serve(async (req) => {
       'profile_nudge',
       'monthly_stats',
       'profile_approved',
-      'profile_rejected'
+      'profile_rejected',
+      'admin_new_signup'
     ]
     if (!allowedTemplates.includes(template)) {
       return new Response(
@@ -325,6 +326,29 @@ function generateEmailHTML(template: string, data: Record<string, any>): string 
           <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
           <p style="font-size: 14px; color: #666;">
             Questions? Reply to this email or contact support@weddingcounselors.com
+          </p>
+        </div>
+      `
+
+    case 'admin_new_signup':
+      return `
+        <div style="${baseStyles}">
+          <h1 style="color: #0d9488;">New Counselor Signup</h1>
+          <p>A new counselor just created a profile on Wedding Counselors:</p>
+
+          <div style="background: #f7f7f7; padding: 16px; border-radius: 8px; margin: 16px 0;">
+            <p style="margin: 0 0 8px 0;"><strong>Name:</strong> ${data.name || 'Unknown'}</p>
+            <p style="margin: 0 0 8px 0;"><strong>Email:</strong> ${data.email || 'Unknown'}</p>
+            <p style="margin: 0 0 8px 0;"><strong>Profession:</strong> ${data.profession || 'Not specified'}</p>
+            <p style="margin: 0 0 8px 0;"><strong>Location:</strong> ${data.city || ''}, ${data.state || ''}</p>
+            <p style="margin: 0;"><strong>Source:</strong> ${data.source || 'organic'}</p>
+          </div>
+
+          <p>
+            <a href="${data.profileUrl}" style="${buttonStyle}">View Profile</a>
+          </p>
+          <p style="margin-top: 8px;">
+            <a href="https://www.weddingcounselors.com/admin/moderation" style="color: #0d9488;">Review in Admin Dashboard</a>
           </p>
         </div>
       `

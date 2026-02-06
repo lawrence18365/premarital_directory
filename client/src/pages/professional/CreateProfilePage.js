@@ -5,7 +5,7 @@ import { profileOperations, supabase } from '../../lib/supabaseClient'
 import { trackProfileClaim } from '../../components/analytics/GoogleAnalytics'
 import SEOHelmet from '../../components/analytics/SEOHelmet'
 import { STATE_CONFIG } from '../../data/locationConfig'
-import { sendProfileCreatedEmail } from '../../lib/emailNotifications'
+import { sendProfileCreatedEmail, sendAdminNewSignupAlert } from '../../lib/emailNotifications'
 import { compressImage, validateImage } from '../../utils/imageUtils'
 import '../../assets/css/professional-signup.css'
 
@@ -367,7 +367,7 @@ const CreateProfilePage = () => {
       const profileUrl = `/premarital-counseling/${stateSlug}/${citySlug}/${slug}`
       const fullProfileUrl = `${window.location.origin}${profileUrl}`
 
-      // Send welcome email
+      // Send welcome email + admin notification (non-blocking)
       try {
         await sendProfileCreatedEmail(
           formData.email.trim() || user.email,
@@ -377,6 +377,20 @@ const CreateProfilePage = () => {
         )
       } catch (emailError) {
         console.error('Welcome email failed:', emailError)
+      }
+
+      try {
+        await sendAdminNewSignupAlert({
+          full_name: formData.full_name,
+          email: formData.email.trim() || user.email,
+          profession: formData.profession,
+          city: formData.city,
+          state_province: formData.state_province,
+          slug: slug,
+          signup_source: utmParams.signup_source
+        })
+      } catch (adminEmailError) {
+        console.error('Admin notification failed:', adminEmailError)
       }
 
       navigate('/professional/dashboard')

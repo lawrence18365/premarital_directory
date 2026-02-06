@@ -128,13 +128,38 @@ export const sendClaimRejectedEmail = async (email, claimData, reason) => {
   })
 }
 
+/**
+ * Notify admin when a new profile is created
+ */
+export const sendAdminNewSignupAlert = async (profileData) => {
+  const stateSlug = profileData.state_province?.toLowerCase().replace(/\s+/g, '-') || ''
+  const citySlug = profileData.city?.toLowerCase().replace(/\s+/g, '-') || ''
+  const profileSlug = profileData.slug || profileData.id
+
+  return sendEmail(
+    'hello@weddingcounselors.com',
+    `New Signup: ${profileData.full_name} (${profileData.city}, ${profileData.state_province})`,
+    'admin_new_signup',
+    {
+      name: profileData.full_name,
+      email: profileData.email,
+      profession: profileData.profession,
+      city: profileData.city,
+      state: profileData.state_province,
+      source: profileData.signup_source || 'organic',
+      profileUrl: `https://www.weddingcounselors.com/premarital-counseling/${stateSlug}/${citySlug}/${profileSlug}`
+    }
+  )
+}
+
 const emailNotifications = {
   sendClaimSubmittedEmail,
   sendClaimApprovedEmail,
   sendClaimRejectedEmail,
   sendProfileApprovedEmail,
   sendProfileRejectedEmail,
-  sendProfileCreatedEmail
+  sendProfileCreatedEmail,
+  sendAdminNewSignupAlert
 }
 
 export default emailNotifications
