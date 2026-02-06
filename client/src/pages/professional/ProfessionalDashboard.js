@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabaseClient'
 import { Link, Navigate } from 'react-router-dom'
+import ProfileCompletenessWidget from '../../components/profiles/ProfileCompletenessWidget'
 
 const ProfessionalDashboard = () => {
   const { user, profile, loading: authLoading, signOut } = useAuth()
@@ -12,21 +13,25 @@ const ProfessionalDashboard = () => {
     pendingLeads: 0,
     responseRate: 0
   })
+  const [viewStats, setViewStats] = useState({
+    total: 0,
+    last7d: 0,
+    last30d: 0
+  })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false)
   const [removeLoading, setRemoveLoading] = useState(false)
   const [removeSuccess, setRemoveSuccess] = useState(false)
+  const [showAccountSettings, setShowAccountSettings] = useState(false)
 
   useEffect(() => {
     if (profile) {
       loadDashboardData()
     } else if (!authLoading && user && !profile) {
-      // Auth finished loading, user exists but no profile - stop loading
       setLoading(false)
       setError('No profile found. Please create your profile first.')
     } else if (!authLoading && !user) {
-      // Not logged in
       setLoading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -50,7 +55,7 @@ const ProfessionalDashboard = () => {
 
       setLeads(leadsData || [])
 
-      // Calculate stats
+      // Calculate lead stats
       const totalLeads = leadsData?.length || 0
       const thisMonth = new Date()
       thisMonth.setDate(1)
@@ -77,6 +82,22 @@ const ProfessionalDashboard = () => {
         responseRate
       })
 
+      // Load profile view stats
+      const { data: clicksData } = await supabase
+        .from('profile_clicks')
+        .select('created_at')
+        .eq('profile_id', profile.id)
+
+      const now = new Date()
+      const last7d = new Date(now - 7 * 24 * 60 * 60 * 1000)
+      const last30d = new Date(now - 30 * 24 * 60 * 60 * 1000)
+
+      setViewStats({
+        total: clicksData?.length || 0,
+        last7d: clicksData?.filter(c => new Date(c.created_at) >= last7d).length || 0,
+        last30d: clicksData?.filter(c => new Date(c.created_at) >= last30d).length || 0
+      })
+
     } catch (err) {
       console.error('Error loading dashboard data:', err)
       setError('Failed to load dashboard data. Please try refreshing.')
@@ -94,7 +115,6 @@ const ProfessionalDashboard = () => {
 
     setRemoveLoading(true)
     try {
-      // Soft delete - hide the profile but preserve data
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -106,7 +126,6 @@ const ProfessionalDashboard = () => {
 
       if (error) throw error
 
-      // Optionally add to do_not_contact to prevent future outreach
       await supabase.from('do_not_contact').upsert({
         email: profile.email,
         reason: 'provider_self_remove',
@@ -115,7 +134,6 @@ const ProfessionalDashboard = () => {
         onConflict: 'email'
       })
 
-      // Log the event
       await supabase.from('provider_events').insert({
         provider_email: profile.email,
         profile_id: profile.id,
@@ -165,6 +183,20 @@ const ProfessionalDashboard = () => {
       converted: 'Converted'
     }
     return texts[status] || status
+  }
+
+  // Compute profile age in days
+  const getProfileAgeDays = () => {
+    if (!profile?.created_at) return 0
+    return Math.floor((Date.now() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24))
+  }
+
+  // Generate public profile URL
+  const getPublicProfileUrl = () => {
+    if (!profile) return '#'
+    const stateSlug = String(profile.state_province || '').toLowerCase().replace(/\s+/g, '-')
+    const citySlug = String(profile.city || '').toLowerCase().replace(/\s+/g, '-')
+    return `/premarital-counseling/${stateSlug}/${citySlug}/${profile.slug || profile.id}`
   }
 
   // Wait for auth to load
@@ -226,6 +258,10 @@ const ProfessionalDashboard = () => {
       </div>
     )
   }
+
+  const profileAge = getProfileAgeDays()
+  const isNewProfile = profileAge < 14
+  const isProfileLive = profile?.moderation_status === 'approved'
 
   return (
     <div className="dashboard-container">
@@ -335,39 +371,90 @@ const ProfessionalDashboard = () => {
         </div>
       )}
 
-      {/* Profile Status Alert */}
-      {profile && !profile.is_claimed && (
-        <div className="alert alert-warning">
-          <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
-          <div>
-            <strong>Complete Your Profile Setup</strong>
-            <p>Your profile is not fully set up. Complete your profile to start receiving leads.</p>
-            <Link to="/professional/profile/edit" className="btn btn-sm btn-primary">
-              Complete Setup
+      {/* Welcome Banner for New Profiles */}
+      {isNewProfile && isProfileLive && (
+        <div style={{
+          background: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)',
+          borderRadius: '12px',
+          padding: '1.5rem',
+          marginBottom: '1.5rem',
+          color: 'white'
+        }}>
+          <h3 style={{ color: 'white', margin: '0 0 0.5rem 0', fontSize: '1.15rem' }}>
+            Your profile is live!
+          </h3>
+          <p style={{ margin: '0 0 1rem 0', opacity: 0.9, fontSize: '0.95rem' }}>
+            Couples searching for premarital counseling in {profile.city} can now find you.
+            The more complete your profile, the higher you'll appear in search results.
+          </p>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <a
+              href={getPublicProfileUrl()}
+              style={{
+                display: 'inline-block',
+                padding: '0.5rem 1rem',
+                background: 'rgba(255,255,255,0.2)',
+                color: 'white',
+                borderRadius: '6px',
+                textDecoration: 'none',
+                fontSize: '0.9rem',
+                fontWeight: '500',
+                border: '1px solid rgba(255,255,255,0.3)'
+              }}
+            >
+              View your public profile
+            </a>
+            <Link
+              to="/professional/profile/edit"
+              style={{
+                display: 'inline-block',
+                padding: '0.5rem 1rem',
+                background: 'white',
+                color: '#0d9488',
+                borderRadius: '6px',
+                textDecoration: 'none',
+                fontSize: '0.9rem',
+                fontWeight: '600'
+              }}
+            >
+              Complete your profile
             </Link>
           </div>
         </div>
       )}
 
-      {/* Stats Overview */}
+      {/* Profile Completeness Widget */}
+      <ProfileCompletenessWidget profile={profile} />
+
+      {/* Stats Overview — Views first, then leads */}
       <div className="stats-grid">
+        <div className="stat-card">
+          <div className="stat-icon" style={{ background: '#ede9fe', color: '#7c3aed' }}>
+            <i className="fa fa-eye" aria-hidden="true"></i>
+          </div>
+          <div className="stat-content">
+            <h3>{viewStats.total}</h3>
+            <p>Profile Views</p>
+            {viewStats.last7d > 0 && (
+              <small style={{ color: '#7c3aed', fontWeight: '500' }}>
+                {viewStats.last7d} this week
+              </small>
+            )}
+          </div>
+        </div>
+
         <div className="stat-card">
           <div className="stat-icon stat-icon-primary">
             <i className="fa fa-users" aria-hidden="true"></i>
           </div>
           <div className="stat-content">
             <h3>{stats.totalLeads}</h3>
-            <p>Total Leads</p>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon stat-icon-success">
-            <i className="fa fa-calendar" aria-hidden="true"></i>
-          </div>
-          <div className="stat-content">
-            <h3>{stats.thisMonthLeads}</h3>
-            <p>This Month</p>
+            <p>Couple Inquiries</p>
+            {stats.thisMonthLeads > 0 && (
+              <small style={{ color: 'var(--color-primary)', fontWeight: '500' }}>
+                {stats.thisMonthLeads} this month
+              </small>
+            )}
           </div>
         </div>
 
@@ -377,43 +464,136 @@ const ProfessionalDashboard = () => {
           </div>
           <div className="stat-content">
             <h3>{stats.pendingLeads}</h3>
-            <p>Pending</p>
+            <p>Awaiting Reply</p>
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon stat-icon-info">
-            <i className="fa fa-chart-line" aria-hidden="true"></i>
+          <div className="stat-icon" style={{ background: '#dbeafe', color: '#2563eb' }}>
+            <i className="fa fa-calendar" aria-hidden="true"></i>
           </div>
           <div className="stat-content">
-            <h3>{stats.responseRate}%</h3>
-            <p>Response Rate</p>
+            <h3>{profileAge}</h3>
+            <p>Days Listed</p>
           </div>
         </div>
       </div>
 
+      {/* Visibility Section — shown when no leads yet */}
+      {stats.totalLeads === 0 && isProfileLive && (
+        <div style={{
+          background: 'white',
+          borderRadius: '12px',
+          border: '1px solid var(--gray-200)',
+          padding: '1.5rem',
+          marginBottom: '1.5rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+            <div style={{
+              background: '#f0fdf4',
+              borderRadius: '50%',
+              width: '44px',
+              height: '44px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <i className="fa fa-check-circle" style={{ color: '#16a34a', fontSize: '1.25rem' }} aria-hidden="true"></i>
+            </div>
+            <div style={{ flex: 1 }}>
+              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.05rem' }}>
+                Your profile is active and visible
+              </h3>
+              <p style={{ margin: '0 0 1rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                {viewStats.total > 0
+                  ? `Your profile has been viewed ${viewStats.total} time${viewStats.total !== 1 ? 's' : ''}. As our directory grows, you'll start receiving inquiries from engaged couples in ${profile.city}.`
+                  : `Your profile is now appearing in search results for premarital counseling in ${profile.city}. Views and inquiries will show up here as couples discover you.`
+                }
+              </p>
+
+              {/* How it works - for new profiles with no leads */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                gap: '0.75rem'
+              }}>
+                <div style={{
+                  padding: '0.75rem',
+                  background: 'var(--gray-50)',
+                  borderRadius: '8px',
+                  fontSize: '0.85rem'
+                }}>
+                  <strong style={{ display: 'block', marginBottom: '0.25rem', color: 'var(--text-primary)' }}>
+                    1. Couples search
+                  </strong>
+                  <span style={{ color: 'var(--text-secondary)' }}>
+                    Engaged couples find your city page on Google
+                  </span>
+                </div>
+                <div style={{
+                  padding: '0.75rem',
+                  background: 'var(--gray-50)',
+                  borderRadius: '8px',
+                  fontSize: '0.85rem'
+                }}>
+                  <strong style={{ display: 'block', marginBottom: '0.25rem', color: 'var(--text-primary)' }}>
+                    2. They view profiles
+                  </strong>
+                  <span style={{ color: 'var(--text-secondary)' }}>
+                    Couples browse and compare counselors in your area
+                  </span>
+                </div>
+                <div style={{
+                  padding: '0.75rem',
+                  background: 'var(--gray-50)',
+                  borderRadius: '8px',
+                  fontSize: '0.85rem'
+                }}>
+                  <strong style={{ display: 'block', marginBottom: '0.25rem', color: 'var(--text-primary)' }}>
+                    3. You get contacted
+                  </strong>
+                  <span style={{ color: 'var(--text-secondary)' }}>
+                    Inquiries land here and you're notified by email
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Recent Leads */}
       <div className="dashboard-section">
         <div className="section-header">
-          <h2>Recent Leads</h2>
-          <Link to="/professional/leads" className="btn btn-outline btn-sm">
-            View All Leads
-          </Link>
+          <h2>Recent Inquiries</h2>
+          {leads.length > 0 && (
+            <Link to="/professional/leads" className="btn btn-outline btn-sm">
+              View All
+            </Link>
+          )}
         </div>
 
         {leads.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">
-              <i className="fa fa-heart" aria-hidden="true"></i>
-            </div>
-            <h3>No leads yet</h3>
+          <div style={{
+            background: 'var(--gray-50)',
+            borderRadius: '12px',
+            padding: '2rem',
+            textAlign: 'center'
+          }}>
             {profile?.moderation_status === 'pending' ? (
-              <p>Your profile is under review. Once approved, couples will be able to find you and send inquiries.</p>
+              <>
+                <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', margin: 0 }}>
+                  Your profile is under review. Once approved, couples will be able to find you and send inquiries.
+                </p>
+              </>
             ) : (
               <>
-                <p>Once couples start contacting you through the directory, you'll see their information here.</p>
-                <Link to={(profile?.state_province && profile?.city ? `/premarital-counseling/${String(profile.state_province).toLowerCase().replace(/\s+/g, '-')}/${String(profile.city).toLowerCase().replace(/\s+/g, '-')}/${profile?.slug || profile?.id}` : `/profile/${profile?.slug || profile?.id}`)} className="btn btn-primary">
-                  View Your Public Profile
+                <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', margin: '0 0 1rem 0' }}>
+                  No inquiries yet. When engaged couples reach out through the directory, you'll see their details here and get an email notification.
+                </p>
+                <Link to={getPublicProfileUrl()} className="btn btn-outline" style={{ fontSize: '0.9rem' }}>
+                  Preview Your Public Profile
                 </Link>
               </>
             )}
@@ -474,85 +654,105 @@ const ProfessionalDashboard = () => {
       <div className="dashboard-section">
         <h2>Quick Actions</h2>
         <div className="quick-actions">
-          <Link to="/professional/analytics" className="action-card">
-            <i className="fa fa-chart-line" aria-hidden="true"></i>
-            <h4>View Analytics</h4>
-            <p>See profile views, contact reveals, and inquiry stats</p>
-          </Link>
-
           <Link to="/professional/profile/edit" className="action-card">
             <i className="fa fa-user-edit" aria-hidden="true"></i>
             <h4>Update Profile</h4>
             <p>Edit your bio, specialties, and contact information</p>
           </Link>
 
-          <Link to="/professional/leads" className="action-card">
-            <i className="fa fa-envelope" aria-hidden="true"></i>
-            <h4>View All Leads</h4>
-            <p>See all couples who have contacted you</p>
+          <Link to="/professional/analytics" className="action-card">
+            <i className="fa fa-chart-line" aria-hidden="true"></i>
+            <h4>View Analytics</h4>
+            <p>See profile views, traffic sources, and inquiry stats</p>
           </Link>
 
-          <Link to={`/profile/${profile?.slug || profile?.id}`} className="action-card">
+          <Link to="/professional/leads" className="action-card">
+            <i className="fa fa-envelope" aria-hidden="true"></i>
+            <h4>Manage Leads</h4>
+            <p>View and respond to couple inquiries</p>
+          </Link>
+
+          <a href={getPublicProfileUrl()} className="action-card">
             <i className="fa fa-eye" aria-hidden="true"></i>
-            <h4>Preview Profile</h4>
+            <h4>Public Profile</h4>
             <p>
               {profile?.moderation_status === 'pending'
                 ? 'Preview your profile (not yet visible to couples)'
-                : 'See how couples see your profile'}
+                : 'See how couples see your listing'}
             </p>
-          </Link>
+          </a>
         </div>
       </div>
 
-      {/* Remove Profile Section */}
+      {/* Account Settings - Collapsible, de-emphasized */}
       <div className="dashboard-section" style={{ marginTop: 'var(--space-12)' }}>
-        <h2 style={{ color: 'var(--text-secondary)' }}>Account Settings</h2>
+        <button
+          onClick={() => setShowAccountSettings(!showAccountSettings)}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: 'var(--text-secondary)',
+            fontSize: '0.9rem',
+            padding: 0
+          }}
+        >
+          <i className={`fa fa-chevron-${showAccountSettings ? 'down' : 'right'}`} style={{ fontSize: '0.75rem' }} aria-hidden="true"></i>
+          Account Settings
+        </button>
 
-        {removeSuccess ? (
-          <div style={{
-            background: '#d1fae5',
-            padding: 'var(--space-6)',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid #6ee7b7'
-          }}>
-            <h3 style={{ color: '#065f46', marginBottom: 'var(--space-2)' }}>
-              Profile Removed
-            </h3>
-            <p style={{ color: '#064e3b', margin: 0 }}>
-              Your profile has been removed from WeddingCounselors. You will no longer appear in search results or receive inquiries.
-              If you change your mind, contact us at hello@weddingcounselors.com to restore your listing.
-            </p>
-          </div>
-        ) : (
-          <div style={{
-            background: 'var(--bg-secondary)',
-            padding: 'var(--space-4)',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--gray-200)'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <h4 style={{ margin: '0 0 var(--space-2) 0' }}>Remove My Listing</h4>
-                <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                  Hide your profile from WeddingCounselors. You can contact us later to restore it.
+        {showAccountSettings && (
+          <div style={{ marginTop: 'var(--space-4)' }}>
+            {removeSuccess ? (
+              <div style={{
+                background: '#d1fae5',
+                padding: 'var(--space-6)',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid #6ee7b7'
+              }}>
+                <h3 style={{ color: '#065f46', marginBottom: 'var(--space-2)' }}>
+                  Profile Removed
+                </h3>
+                <p style={{ color: '#064e3b', margin: 0 }}>
+                  Your profile has been removed from WeddingCounselors. You will no longer appear in search results or receive inquiries.
+                  If you change your mind, contact us at hello@weddingcounselors.com to restore your listing.
                 </p>
               </div>
-              <button
-                onClick={() => setShowRemoveConfirm(true)}
-                style={{
-                  padding: 'var(--space-2) var(--space-4)',
-                  background: 'white',
-                  color: '#dc2626',
-                  border: '1px solid #fca5a5',
-                  borderRadius: 'var(--radius-sm)',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  fontWeight: '500'
-                }}
-              >
-                Remove Profile
-              </button>
-            </div>
+            ) : (
+              <div style={{
+                background: 'var(--bg-secondary)',
+                padding: 'var(--space-4)',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--gray-200)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 var(--space-2) 0' }}>Remove My Listing</h4>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                      Hide your profile from WeddingCounselors. You can contact us later to restore it.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowRemoveConfirm(true)}
+                    style={{
+                      padding: 'var(--space-2) var(--space-4)',
+                      background: 'white',
+                      color: '#dc2626',
+                      border: '1px solid #fca5a5',
+                      borderRadius: 'var(--radius-sm)',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                      fontWeight: '500'
+                    }}
+                  >
+                    Remove Profile
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

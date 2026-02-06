@@ -64,7 +64,7 @@ export const sendProfileRejectedEmail = async (email, profileData, reason) => {
 export const sendProfileCreatedEmail = async (email, profileData, profileUrl, baseUrl) => {
   return sendEmail(
     email,
-    'Welcome to Wedding Counselors - Profile Submitted',
+    'Welcome to Wedding Counselors - Your Profile is Live!',
     'profile_created',
     {
       name: profileData.full_name,

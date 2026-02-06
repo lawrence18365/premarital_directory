@@ -1,0 +1,49 @@
+name: Daily Drip Emails
+on:
+  schedule:
+    # Run daily at 2 PM UTC (9 AM EST / 6 AM PST)
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Send all emails to test_email instead of real recipients'
+        required: false
+        default: 'false'
+      test_email:
+        description: 'Test email address (only used if test_mode is true)'
+        required: false
+
+jobs:
+  send-drip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Drip Sequence Emails
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          INTERNAL_API_KEY: ${{ secrets.INTERNAL_API_KEY }}
+        run: |
+          echo "Processing drip email sequence..."
+
+          BODY='{}'
+          if [ "${{ github.event.inputs.test_mode }}" = "true" ]; then
+            BODY='{"test_mode": true, "test_email": "${{ github.event.inputs.test_email }}"}'
+          fi
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X POST "${SUPABASE_URL}/functions/v1/send-drip-emails" \
+            -H "Content-Type: application/json" \
+            -H "x-internal-api-key: ${INTERNAL_API_KEY}" \
+            -d "${BODY}")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY_RESPONSE=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Response (HTTP ${HTTP_CODE}):"
+          echo "$BODY_RESPONSE" | python3 -m json.tool 2>/dev/null || echo "$BODY_RESPONSE"
+
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            echo "ERROR: Drip emails failed with HTTP ${HTTP_CODE}"
+            exit 1
+          fi
+
+          echo "Drip email processing complete!"

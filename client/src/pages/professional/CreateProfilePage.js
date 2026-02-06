@@ -75,6 +75,9 @@ const CreateProfilePage = () => {
     setUtmParams(params)
   }, [searchParams])
 
+  const [claimingProfile, setClaimingProfile] = useState(false)
+  const [existingUnclaimedProfile, setExistingUnclaimedProfile] = useState(null)
+
   // Pre-fill email from auth and check if profile already exists
   useEffect(() => {
     if (user?.email) {
@@ -82,10 +85,47 @@ const CreateProfilePage = () => {
 
       // Check if a profile already exists with this email
       const checkExistingProfile = async () => {
-        const { exists } = await profileOperations.checkEmailExists(user.email)
+        const { exists, profile: existingProfile } = await profileOperations.checkEmailExists(user.email)
         if (exists) {
-          setEmailExistsError(true)
-          setError('A profile with this email already exists. Please log in to access your dashboard.')
+          if (existingProfile.is_claimed && existingProfile.user_id && existingProfile.user_id !== user.id) {
+            // Profile is claimed by a different user
+            setEmailExistsError(true)
+            setError('A profile with this email already exists. Please log in to access your dashboard.')
+          } else if (!existingProfile.is_claimed || !existingProfile.user_id) {
+            // Unclaimed profile - auto-claim it for this user
+            setClaimingProfile(true)
+            try {
+              const { error: claimError } = await supabase
+                .from('profiles')
+                .update({
+                  user_id: user.id,
+                  is_claimed: true,
+                  claimed_at: new Date().toISOString(),
+                  last_login: new Date().toISOString(),
+                  moderation_status: 'approved',
+                  moderation_reviewed_at: new Date().toISOString()
+                })
+                .eq('id', existingProfile.id)
+
+              if (claimError) {
+                console.error('Error auto-claiming profile:', claimError)
+                // Let user continue with the create flow as fallback
+              } else {
+                trackProfileClaim(existingProfile.id, 'auto_claim_signup')
+                await refreshProfile()
+                navigate('/professional/dashboard', { replace: true })
+                return
+              }
+            } catch (err) {
+              console.error('Error auto-claiming profile:', err)
+            } finally {
+              setClaimingProfile(false)
+            }
+          } else {
+            // Profile is claimed by this same user - just redirect
+            await refreshProfile()
+            navigate('/professional/dashboard', { replace: true })
+          }
         }
       }
       checkExistingProfile()
@@ -100,7 +140,7 @@ const CreateProfilePage = () => {
         phone: meta.phone || prev.phone
       }))
     }
-  }, [user])
+  }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -284,8 +324,9 @@ const CreateProfilePage = () => {
         utm_source: utmParams.utm_source || null,
         utm_medium: utmParams.utm_medium || null,
         utm_campaign: utmParams.utm_campaign || null,
-        // Moderation - profile needs admin approval before appearing in directory
-        moderation_status: 'pending'
+        // Auto-approved: user verified email + completed required fields
+        moderation_status: 'approved',
+        moderation_reviewed_at: new Date().toISOString()
       }
 
       const { data: profile, error: createError } = await profileOperations.createProfile(profileData)
@@ -339,19 +380,59 @@ const CreateProfilePage = () => {
         console.error('Welcome email failed:', emailError)
       }
 
-      navigate('/professional/profile-pending', {
-        state: {
-          profileUrl,
-          profileId: profile.id,
-          profileName: formData.full_name,
-          profileEmail: formData.email.trim() || user.email
-        }
-      })
+      navigate('/professional/dashboard')
 
     } catch (err) {
       console.error('Error creating profile:', err)
 
       if (err.code === '23505') {
+        // Unique constraint violation - try to claim the existing unclaimed profile
+        try {
+          const { exists, profile: existingProfile } = await profileOperations.checkEmailExists(
+            formData.email.trim() || user.email
+          )
+          if (exists && (!existingProfile.is_claimed || !existingProfile.user_id)) {
+            // Auto-claim the unclaimed profile and update it with the form data
+            const { error: claimError } = await supabase
+              .from('profiles')
+              .update({
+                user_id: user.id,
+                is_claimed: true,
+                claimed_at: new Date().toISOString(),
+                last_login: new Date().toISOString(),
+                full_name: formData.full_name.trim(),
+                phone: formData.phone.trim() || null,
+                website: formData.website.trim() || null,
+                profession: formData.profession,
+                bio: formData.bio.trim() || null,
+                city: formData.city.trim(),
+                state_province: formData.state_province.trim(),
+                country: formData.country,
+                session_types: formData.session_types,
+                specialties: formData.specialties.length > 0 ? formData.specialties : null,
+                certifications: formData.certifications.length > 0 ? formData.certifications : null,
+                faith_tradition: formData.faith_tradition || null,
+                years_experience: formData.years_experience ? parseInt(formData.years_experience) : null,
+                treatment_approaches: formData.treatment_approaches.length > 0 ? formData.treatment_approaches : null,
+                client_focus: formData.client_focus.length > 0 ? formData.client_focus : null,
+                offers_free_consultation: formData.offers_free_consultation,
+                session_fee_min: formData.session_fee_min ? parseInt(formData.session_fee_min) * 100 : null,
+                session_fee_max: formData.session_fee_max ? parseInt(formData.session_fee_max) * 100 : null,
+                moderation_status: 'approved',
+                moderation_reviewed_at: new Date().toISOString()
+              })
+              .eq('id', existingProfile.id)
+
+            if (!claimError) {
+              trackProfileClaim(existingProfile.id, 'auto_claim_signup')
+              await refreshProfile()
+              navigate('/professional/dashboard')
+              return
+            }
+          }
+        } catch (claimErr) {
+          console.error('Fallback claim failed:', claimErr)
+        }
         setError('A profile with this email already exists. Please try logging in instead.')
       } else {
         setError(err.message || 'There was an error creating your profile. Please try again.')
@@ -488,8 +569,8 @@ const CreateProfilePage = () => {
     'About you'
   ]
 
-  // Loading state - wait for auth to initialize
-  if (authLoading) {
+  // Loading state - wait for auth to initialize or profile claim
+  if (authLoading || claimingProfile) {
     return (
       <div className="professional-signup" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
@@ -942,9 +1023,9 @@ const CreateProfilePage = () => {
                 ) : (
                   <button type="submit" className="quiz-btn quiz-btn--submit" disabled={loading}>
                     {loading ? (
-                      <>Submitting...</>
+                      <>Creating Profile...</>
                     ) : (
-                      <>Submit for Review <i className="fa fa-check" aria-hidden="true"></i></>
+                      <>Create My Profile <i className="fa fa-check" aria-hidden="true"></i></>
                     )}
                   </button>
                 )}
@@ -964,8 +1045,8 @@ const CreateProfilePage = () => {
               <li><i className="fa fa-check" aria-hidden="true"></i> Edit anytime from your dashboard</li>
             </ul>
             <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--slate)', borderTop: '1px solid var(--gray-200)', paddingTop: '1rem' }}>
-              <i className="fa fa-clock-o" aria-hidden="true" style={{ marginRight: '0.5rem' }}></i>
-              New profiles are reviewed within 24 hours to maintain directory quality.
+              <i className="fa fa-bolt" aria-hidden="true" style={{ marginRight: '0.5rem' }}></i>
+              Your profile goes live instantly after submission.
             </p>
           </div>
         </aside>

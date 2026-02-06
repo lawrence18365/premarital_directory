@@ -299,6 +299,31 @@ const ClaimProfilePage = () => {
                 <li>Once live, you can edit your listing anytime.</li>
               </ul>
             </div>
+                        {/* SEO Optimization Tips */}
+            <div style={{
+              background: '#fef3c7',
+              border: '1px solid #fcd34d',
+              borderRadius: '12px',
+              padding: '1.5rem',
+              marginBottom: '1.5rem',
+              textAlign: 'left'
+            }}>
+              <h4 style={{ color: '#92400e', marginBottom: '1rem' }}>
+                <i className="fa fa-search" style={{ marginRight: '0.5rem' }}></i>
+                Maximize Your Visibility
+              </h4>
+              <p style={{ color: '#78350f', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                After claiming, complete these steps to rank higher in Google:
+              </p>
+              <ul style={{ color: '#78350f', fontSize: '0.85rem', margin: 0, paddingLeft: '1.5rem' }}>
+                <li style={{ marginBottom: '0.5rem' }}><strong>Add a professional photo</strong> — 3x more profile views</li>
+                <li style={{ marginBottom: '0.5rem' }}><strong>Write a 150+ word bio</strong> — Include "premarital counseling" and your city</li>
+                <li style={{ marginBottom: '0.5rem' }}><strong>Select 3+ specialties</strong> — Better search matching</li>
+                <li style={{ marginBottom: '0.5rem' }}><strong>Add certifications</strong> — PREPARE/ENRICH, SYMBIS, Gottman, etc.</li>
+                <li><strong>Specify faith tradition</strong> — Many couples filter by this</li>
+              </ul>
+            </div>
+
             <a href="/" className="btn btn-primary btn-large">Return to Directory</a>
           </div>
         </div>

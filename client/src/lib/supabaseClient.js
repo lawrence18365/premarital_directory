@@ -198,8 +198,8 @@ export const profileOperations = {
   async checkEmailExists(email) {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, full_name')
-      .eq('email', email.toLowerCase().trim())
+      .select('id, full_name, is_claimed, user_id')
+      .ilike('email', email.trim())
       .maybeSingle()
 
     return { exists: !!data, profile: data, error }

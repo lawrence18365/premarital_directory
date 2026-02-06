@@ -269,24 +269,26 @@ const ClaimWithTokenPage = () => {
               </ul>
             </div>
 
-            {/* Recommended Next Steps */}
+            {/* Next Steps */}
             <div style={{
-              background: '#fef3c7',
+              background: '#ede9fe',
               padding: 'var(--space-4)',
               borderRadius: 'var(--radius-md)',
               marginBottom: 'var(--space-6)',
               textAlign: 'left',
-              border: '1px solid #fcd34d'
+              border: '1px solid #c4b5fd'
             }}>
-              <p style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: 'var(--space-2)', color: '#92400e' }}>
-                Recommended next steps:
+              <p style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: 'var(--space-2)', color: '#5b21b6' }}>
+                Boost your visibility:
               </p>
-              <ol style={{ margin: 0, paddingLeft: 'var(--space-4)', fontSize: '0.85rem', color: '#78350f' }}>
-                <li style={{ marginBottom: '4px' }}>Add a professional photo</li>
-                <li style={{ marginBottom: '4px' }}>Write a bio that speaks to engaged couples</li>
-                <li style={{ marginBottom: '4px' }}>List your specialties and approach</li>
-                <li>Verify your contact information is current</li>
-              </ol>
+              <ul style={{ margin: '0 0 0.5rem', paddingLeft: 'var(--space-4)', fontSize: '0.85rem', color: '#6d28d9' }}>
+                <li style={{ marginBottom: '4px' }}>Add a professional photo (3x more views)</li>
+                <li style={{ marginBottom: '4px' }}>Write a 150+ word bio</li>
+                <li style={{ marginBottom: '4px' }}>Select your specialties and certifications</li>
+              </ul>
+              <p style={{ fontSize: '0.8rem', margin: 0, color: '#7c3aed' }}>
+                Complete profiles get significantly more inquiries from couples.
+              </p>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>

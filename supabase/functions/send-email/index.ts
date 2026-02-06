@@ -137,21 +137,22 @@ function generateEmailHTML(template: string, data: Record<string, any>): string 
     case 'profile_created':
       return `
         <div style="${baseStyles}">
-          <h1 style="color: #0d9488;">Welcome to Wedding Counselors!</h1>
+          <h1 style="color: #0d9488;">Your Profile is Live!</h1>
           <p>Hi ${data.name || 'there'},</p>
-          <p>Your profile has been created successfully. Here's what to do next:</p>
+          <p>Welcome to Wedding Counselors! Your profile is now live and visible to engaged couples in your area.</p>
+          <p>Here's what to do next to start getting inquiries:</p>
           <ol>
-            <li><strong>Complete your profile</strong> - Add your photo, bio, specialties, and pricing</li>
-            <li><strong>Add your credentials</strong> - List your licenses and certifications</li>
-            <li><strong>Set your availability</strong> - Let couples know your schedule</li>
+            <li><strong>Add a professional photo</strong> - Profiles with photos get 3x more views</li>
+            <li><strong>Write a detailed bio</strong> - Help couples understand your approach</li>
+            <li><strong>Add specialties and certifications</strong> - Appear in more searches</li>
           </ol>
           <p>
             <a href="${data.profileUrl}" style="${buttonStyle}">View Your Profile</a>
           </p>
-          <p>Once your profile is approved, engaged couples in your area will be able to find you.</p>
+          <p>You can update your profile anytime from your <a href="https://www.weddingcounselors.com/professional/dashboard">dashboard</a>.</p>
           <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
           <p style="font-size: 14px; color: #666;">
-            Questions? Reply to this email or visit our <a href="https://www.weddingcounselors.com/support">support page</a>.
+            Questions? Reply to this email or contact us at hello@weddingcounselors.com
           </p>
         </div>
       `

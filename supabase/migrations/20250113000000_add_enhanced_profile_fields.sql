@@ -58,6 +58,8 @@ CREATE INDEX IF NOT EXISTS idx_profiles_session_types ON profiles USING GIN (ses
 CREATE INDEX IF NOT EXISTS idx_profiles_accepting_clients ON profiles(accepting_new_clients) WHERE accepting_new_clients = true;
 
 -- Create function to calculate profile completeness
+-- Drop first because parameter name may differ from existing version
+DROP FUNCTION IF EXISTS calculate_profile_completeness(profiles);
 CREATE OR REPLACE FUNCTION calculate_profile_completeness(profile_record profiles)
 RETURNS INTEGER AS $$
 DECLARE
