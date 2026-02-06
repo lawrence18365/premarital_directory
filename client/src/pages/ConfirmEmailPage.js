@@ -105,7 +105,7 @@ const ConfirmEmailPage = () => {
                 <div className="confirm-email__step-number">3</div>
                 <div className="confirm-email__step-content">
                   <h3>Complete Your Profile</h3>
-                  <p>Add your credentials and submit for review</p>
+                  <p>Add your credentials and go live</p>
                 </div>
                 <div className="confirm-email__step-icon">
                   <i className="fa fa-heart" aria-hidden="true"></i>

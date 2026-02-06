@@ -61,16 +61,19 @@ const SignupForm = () => {
     setError('')
 
     // Check if a profile with this email already exists BEFORE creating auth account
-    const { exists, error: checkError } = await profileOperations.checkEmailExists(formData.email)
+    const { exists, profile: existingProfile, error: checkError } = await profileOperations.checkEmailExists(formData.email)
 
     if (checkError) {
       console.error('Error checking email:', checkError)
       // Continue with signup if check fails (don't block on this)
-    } else if (exists) {
+    } else if (exists && existingProfile?.is_claimed && existingProfile?.user_id) {
+      // Only block if the profile is already claimed by someone with an account
       setError('EXISTING_PROFILE')
       setLoading(false)
       return
     }
+    // If profile exists but is unclaimed (imported), let them sign up -
+    // CreateProfilePage will auto-claim it after email verification
 
     const { data, error } = await signUp(formData.email, formData.password)
 
@@ -111,7 +114,7 @@ const SignupForm = () => {
           <ol className="professional-auth__success-steps">
             <li>Check your inbox (and spam folder just in case).</li>
             <li>Click the verification link to secure your account.</li>
-            <li>Complete your profile and submit for review.</li>
+            <li>Complete your profile and go live instantly.</li>
           </ol>
           <Link to="/professional/login" className="professional-auth__button professional-auth__button--primary">
             Go to Login
@@ -233,10 +236,10 @@ const SignupForm = () => {
             <li><strong>Step 1:</strong> Create your account (you're here)</li>
             <li><strong>Step 2:</strong> Verify your email</li>
             <li><strong>Step 3:</strong> Complete your profile</li>
-            <li><strong>Step 4:</strong> Quick review, then you're live</li>
+            <li><strong>Step 4:</strong> Go live instantly</li>
           </ul>
           <p style={{marginTop: '1rem', fontSize: '0.9rem', color: 'var(--slate)'}}>
-            We review new profiles to maintain directory quality. Most profiles are approved within 24 hours.
+            Your profile goes live as soon as you complete it. Edit anytime from your dashboard.
           </p>
         </aside>
       </section>
