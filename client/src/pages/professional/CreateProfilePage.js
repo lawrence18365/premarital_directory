@@ -437,6 +437,24 @@ const CreateProfilePage = () => {
               .eq('id', existingProfile.id)
 
             if (!claimError) {
+              // Upload photo if user selected one
+              if (photoFile) {
+                try {
+                  const compressedFile = await compressImage(photoFile, {
+                    maxWidth: 800, maxHeight: 800, quality: 0.85, maxSizeKB: 500
+                  })
+                  const { data: uploadData, error: uploadError } = await profileOperations.uploadPhoto(
+                    compressedFile, existingProfile.id
+                  )
+                  if (!uploadError && uploadData?.publicUrl) {
+                    await supabase.from('profiles')
+                      .update({ photo_url: uploadData.publicUrl })
+                      .eq('id', existingProfile.id)
+                  }
+                } catch (photoErr) {
+                  console.error('Photo upload failed during claim:', photoErr)
+                }
+              }
               trackProfileClaim(existingProfile.id, 'auto_claim_signup')
               await refreshProfile()
               navigate('/professional/dashboard')
