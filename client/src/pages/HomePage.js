@@ -270,7 +270,7 @@ const HomePage = () => {
   return (
     <>
       <SEOHelmet
-        title="Premarital Counseling Near Me | Find Marriage Counselors in Your City (2025)"
+        title="Premarital Counseling Near Me | Find Marriage Counselors in Your City"
         description="Find premarital counselors near you. Compare licensed therapists, Christian counselors, and online marriage prep programs. Free directory - contact providers directly."
         url="/"
         keywords="premarital counseling near me, premarital counseling, marriage counseling near me, pre marriage counseling, premarital therapy, christian premarital counseling, online premarital counseling, marriage prep courses"

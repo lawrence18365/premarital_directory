@@ -96,6 +96,7 @@ const SEOHelmet = ({
   title,
   description,
   url,
+  canonicalUrl,
   type = 'website',
   image = '/media/couple_in_counselling_animation.png',
   structuredData = null,
@@ -116,11 +117,20 @@ const SEOHelmet = ({
   const siteName = process.env.REACT_APP_SITE_NAME || 'Wedding Counselors'
   // Fallback to current location path when no url prop provided (prevents duplicate root canonicals)
   const currentPath = (typeof window !== 'undefined' && window.location && window.location.pathname) ? window.location.pathname : ''
-  const effectivePath = url || currentPath || '/'
+  const effectivePath = canonicalUrl || url || currentPath || '/'
 
-  // Normalize URL - remove trailing slashes except for root
-  const normalizedPath = effectivePath === '/' ? '/' : effectivePath.replace(/\/+$/, '')
-  const fullUrl = `${siteUrl}${normalizedPath}`
+  // Resolve absolute canonical URL and normalize trailing slash except root
+  const resolveAbsoluteUrl = (value) => {
+    if (!value || typeof value !== 'string') return `${siteUrl}/`
+    if (/^https?:\/\//i.test(value)) {
+      return value.endsWith('/') ? value.slice(0, -1) : value
+    }
+    const normalizedPath = value.startsWith('/') ? value : `/${value}`
+    const cleanedPath = normalizedPath === '/' ? '/' : normalizedPath.replace(/\/+$/, '')
+    return `${siteUrl}${cleanedPath}`
+  }
+
+  const fullUrl = resolveAbsoluteUrl(effectivePath)
   const fullTitle = title ? `${title} | ${siteName}` : siteName
   const defaultDescription = process.env.REACT_APP_SITE_DESCRIPTION || 'Find qualified premarital counselors, therapists, and coaches near you. Complete directory of wedding counseling professionals.'
 

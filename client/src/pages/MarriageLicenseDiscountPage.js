@@ -72,7 +72,7 @@ const MarriageLicenseDiscountPage = () => {
   return (
     <>
       <SEOHelmet
-        title="Marriage License Discounts for Premarital Counseling | Save $25-$75 (2025)"
+        title="Marriage License Discounts for Premarital Counseling | Save $25-$75"
         description="Save money on your marriage license! 8 states offer $25-$75 discounts for couples who complete premarital counseling. Florida, Texas, Minnesota & more. Find qualified counselors."
         url="/premarital-counseling/marriage-license-discount"
         keywords="marriage license discount, premarital counseling discount, save money marriage license, florida marriage license discount, texas marriage license discount, minnesota marriage license discount"

@@ -100,7 +100,9 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
 
   // SEO Meta
   const metaTitle = `${specialty.name} Premarital Counseling in ${stateName} | ${new Date().getFullYear()}`
-  const metaDescription = `Find ${specialty.name.toLowerCase()} premarital counselors in ${stateName}. Compare ${profiles.length > 0 ? profiles.length : ''} qualified therapists and programs specializing in ${specialty.name} marriage preparation.`
+  const profileCountText = profiles.length > 0 ? profiles.length : 'qualified'
+  const metaDescription = `Find ${specialty.name.toLowerCase()} premarital counselors in ${stateName}. Compare ${profileCountText} therapists and programs specializing in ${specialty.name} marriage preparation.`
+  const shouldNoindex = profiles.length < 3
 
   // Get major cities from config
   const majorCities = stateConfig?.major_cities || []
@@ -114,6 +116,7 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
         description={metaDescription}
         url={`/premarital-counseling/${specialtySlug}/${stateSlug}`}
         breadcrumbs={breadcrumbItems}
+        noindex={shouldNoindex}
       />
 
       <div className="specialty-page">

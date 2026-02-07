@@ -74,6 +74,23 @@ const SPECIALTY_SLUGS = [
   'affordable'
 ]
 
+const SPECIALTY_MATCH_TERMS = {
+  christian: ['christian', 'faith-based', 'biblical', 'pastor', 'clergy', 'ministry'],
+  catholic: ['catholic', 'pre-cana', 'foccus', 'sacrament', 'parish'],
+  lgbtq: ['lgbtq', 'lgbtq+', 'gay', 'lesbian', 'queer', 'affirming', 'same-sex'],
+  online: ['online', 'virtual', 'telehealth', 'video', 'remote'],
+  gottman: ['gottman', 'sound relationship house', 'evidence-based', 'research-based'],
+  'prepare-enrich': ['prepare/enrich', 'prepare-enrich', 'prepare enrich', 'premarital assessment', 'inventory'],
+  interfaith: ['interfaith', 'multi-faith', 'mixed religion', 'interreligious'],
+  'second-marriages': ['second marriage', 'remarriage', 'blended family', 'divorced', 'widowed'],
+  military: ['military', 'veteran', 'armed forces', 'army', 'navy', 'air force', 'marines'],
+  affordable: ['affordable', 'low cost', 'sliding scale', 'budget', 'reduced fee']
+}
+
+const MIN_SPECIALTY_STATE_PROFILES = 3
+const MIN_SPECIALTY_CITY_PROFILES = 2
+const MIN_SPECIALTY_ANCHOR_CITY_PROFILES = 1
+
 const DOMAIN = 'https://www.weddingcounselors.com'
 
 function generateSitemapXML(urls) {
@@ -142,7 +159,7 @@ async function fetchProfileCounts() {
     // Fetch all profiles with their slugs for sitemap
     const { data: profiles, error } = await supabase
       .from('profiles')
-      .select('id, slug, city, state_province, full_name, updated_at, is_hidden')
+      .select('id, slug, city, state_province, full_name, bio, specialties, updated_at, is_hidden')
       .eq('is_hidden', false)
       .order('updated_at', { ascending: false })
 
@@ -192,6 +209,47 @@ function getCitySlug(cityName) {
   return cityName.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
 }
 
+function getProfileSearchText(profile) {
+  const bio = typeof profile.bio === 'string' ? profile.bio : ''
+  const specialties = Array.isArray(profile.specialties)
+    ? profile.specialties.join(' ')
+    : (typeof profile.specialties === 'string' ? profile.specialties : '')
+  return `${bio} ${specialties}`.toLowerCase()
+}
+
+function profileMatchesSpecialty(profile, specialtySlug) {
+  const terms = SPECIALTY_MATCH_TERMS[specialtySlug] || [specialtySlug]
+  const profileText = getProfileSearchText(profile)
+  return terms.some(term => profileText.includes(term.toLowerCase()))
+}
+
+function buildSpecialtyDepth(profiles) {
+  const stateCounts = {}
+  const cityCounts = {}
+
+  if (!profiles || profiles.length === 0) {
+    return { stateCounts, cityCounts }
+  }
+
+  profiles.forEach(profile => {
+    if (!profile.city || !profile.state_province) return
+
+    const stateSlug = getStateSlug(profile.state_province)
+    const citySlug = getCitySlug(profile.city)
+
+    SPECIALTY_SLUGS.forEach(specialty => {
+      if (!profileMatchesSpecialty(profile, specialty)) return
+
+      const stateKey = `${specialty}|${stateSlug}`
+      const cityKey = `${specialty}|${stateSlug}|${citySlug}`
+      stateCounts[stateKey] = (stateCounts[stateKey] || 0) + 1
+      cityCounts[cityKey] = (cityCounts[cityKey] || 0) + 1
+    })
+  })
+
+  return { stateCounts, cityCounts }
+}
+
 async function main() {
   const publicDir = path.join(__dirname, '..', 'public')
   const today = new Date().toISOString().split('T')[0]
@@ -200,6 +258,8 @@ async function main() {
 
   // Fetch profile counts and profiles from Supabase
   const { cityCounts: profileCounts, profiles: allProfiles } = await fetchProfileCounts()
+  const { stateCounts: specialtyStateCounts, cityCounts: specialtyCityCounts } = buildSpecialtyDepth(allProfiles)
+  const hasSpecialtyDepthData = Array.isArray(allProfiles) && allProfiles.length > 0
 
   // 1. Core pages sitemap
   const coreUrls = CORE_PAGES.map(page => ({
@@ -266,42 +326,66 @@ async function main() {
   fs.writeFileSync(path.join(publicDir, 'sitemap-cities.xml'), citySitemap)
   console.log(`\n✅ Generated sitemap-cities.xml (${cityUrls.length} URLs - ALL configured cities)`)
 
-  // 2.5 Programmatic Specialty Sitemap (New)
+  // 2.5 Programmatic Specialty Sitemap (quality-gated to avoid thin URL bloat)
   const specialtyUrls = []
-  
+  let includedSpecialtyStatePages = 0
+  let includedSpecialtyCityPages = 0
+
+  if (!hasSpecialtyDepthData) {
+    console.log('⚠️  Specialty depth data unavailable; using anchor-city fallback for specialty sitemap')
+  }
+
   // For each specialty
   SPECIALTY_SLUGS.forEach(specialty => {
-    // Add Specialty Landing Page (already in core, but good to ensure coverage)
-    // Note: sitemap-core already adds these, so skip root specialty pages here
-    
     // Iterate all states
     Object.keys(STATE_CONFIG).forEach(stateSlug => {
-      // Add Specialty + State Page (e.g., /premarital-counseling/christian/texas)
-      specialtyUrls.push({
-        url: `/premarital-counseling/${specialty}/${stateSlug}`,
-        priority: 0.8,
-        changefreq: 'weekly',
-        lastmod: today
-      })
-      
-      // Add Specialty + State + City Page (e.g., /premarital-counseling/christian/texas/austin)
-      // Only for major cities to avoid exploding the sitemap size too much initially
-      const stateData = STATE_CONFIG[stateSlug]
-      stateData.major_cities.forEach(cityName => {
-        const citySlug = getCitySlug(cityName)
+      const stateKey = `${specialty}|${stateSlug}`
+      const specialtyProfilesInState = specialtyStateCounts[stateKey] || 0
+      const includeStatePage = hasSpecialtyDepthData
+        ? specialtyProfilesInState >= MIN_SPECIALTY_STATE_PROFILES
+        : true
+
+      if (includeStatePage) {
         specialtyUrls.push({
-          url: `/premarital-counseling/${specialty}/${stateSlug}/${citySlug}`,
-          priority: 0.7, // Slightly lower than state/specialty
+          url: `/premarital-counseling/${specialty}/${stateSlug}`,
+          priority: 0.8,
           changefreq: 'weekly',
           lastmod: today
         })
+        includedSpecialtyStatePages++
+      }
+
+      const stateData = STATE_CONFIG[stateSlug]
+      stateData.major_cities.forEach(cityName => {
+        const citySlug = getCitySlug(cityName)
+        const cityKey = `${specialty}|${stateSlug}|${citySlug}`
+        const specialtyProfilesInCity = specialtyCityCounts[cityKey] || 0
+        const isAnchorCity = CITY_CONFIG[stateSlug]?.[citySlug]?.is_anchor === true
+        const includeCityPage = hasSpecialtyDepthData
+          ? (
+            specialtyProfilesInCity >= MIN_SPECIALTY_CITY_PROFILES ||
+            (isAnchorCity && specialtyProfilesInCity >= MIN_SPECIALTY_ANCHOR_CITY_PROFILES)
+          )
+          : isAnchorCity
+
+        if (!includeCityPage) return
+
+        specialtyUrls.push({
+          url: `/premarital-counseling/${specialty}/${stateSlug}/${citySlug}`,
+          priority: specialtyProfilesInCity >= MIN_SPECIALTY_CITY_PROFILES ? 0.7 : 0.6,
+          changefreq: 'weekly',
+          lastmod: today
+        })
+        includedSpecialtyCityPages++
       })
     })
   })
 
   const specialtySitemap = generateSitemapXML(specialtyUrls)
   fs.writeFileSync(path.join(publicDir, 'sitemap-specialties.xml'), specialtySitemap)
-  console.log(`✅ Generated sitemap-specialties.xml (${specialtyUrls.length} URLs - Programmatic SEO)`)
+  console.log(`✅ Generated sitemap-specialties.xml (${specialtyUrls.length} URLs - quality-gated Programmatic SEO)`)
+  console.log(`   - Specialty state pages kept: ${includedSpecialtyStatePages}`)
+  console.log(`   - Specialty city pages kept: ${includedSpecialtyCityPages}`)
 
   // 3. Blog posts sitemap
   const blogUrls = BLOG_POSTS.map(post => ({
@@ -361,11 +445,11 @@ async function main() {
   const totalUrls = coreUrls.length + cityUrls.length + specialtyUrls.length + blogUrls.length + profileUrls.length
   console.log(`\n📊 Total URLs in sitemap: ${totalUrls}`)
   console.log('   - Core pages:', coreUrls.length)
-  console.log('   - Anchor city pages:', cityUrls.length)
+  console.log('   - City pages:', cityUrls.length)
   console.log('   - Specialty pages:', specialtyUrls.length)
   console.log('   - Blog posts:', blogUrls.length)
   console.log('   - Individual profiles:', profileUrls.length)
-  console.log('\n🎯 Focused on anchor cities for SEO authority building')
+  console.log('\n🎯 Focused on higher-signal pages to reduce thin-index coverage')
   console.log('🏆 Cities with more profiles get higher sitemap priority')
   console.log('👤 All visible profiles now included in sitemap')
 }

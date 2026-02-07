@@ -102,6 +102,8 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
   // SEO Meta
   const metaTitle = `${specialty.name} Premarital Counseling in ${cityName}, ${stateConfig?.abbr || stateName} | Top Counselors`
   const metaDescription = `Find ${specialty.name.toLowerCase()} premarital counselors in ${cityName}, ${stateConfig?.abbr || stateName}. Compare top rated therapists and programs for ${specialty.name} marriage preparation.`
+  const isAnchorCity = cityConfig?.is_anchor === true
+  const shouldNoindex = profiles.length === 0 || (!isAnchorCity && profiles.length < 2)
 
   if (loading) return <LoadingSpinner />
 
@@ -112,6 +114,7 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
         description={metaDescription}
         url={`/premarital-counseling/${specialtySlug}/${stateSlug}/${citySlug}`}
         breadcrumbs={breadcrumbItems}
+        noindex={shouldNoindex}
       />
 
       <div className="specialty-page">
