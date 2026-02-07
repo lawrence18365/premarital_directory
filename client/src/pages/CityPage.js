@@ -695,7 +695,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                   </div>
                 )}
 
-                <LocalContent locationName={cityName} />
+                <LocalContent locationName={cityName} content={cityContent?.local_content} />
               </>
             ) : (
               <div className="city-empty">

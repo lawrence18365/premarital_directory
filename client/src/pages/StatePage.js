@@ -373,7 +373,7 @@ const StatePage = () => {
             <div className="state-seo-inner">
               <h2 className="state-seo-title">Premarital Counseling & Marriage Preparation in {stateConfig.name}</h2>
               <StateAIContent stateName={stateConfig.name} content={stateContent} loading={contentLoading} />
-              <LocalContent locationName={stateConfig.name} />
+              <LocalContent locationName={stateConfig.name} content={stateContent?.local_content} />
             </div>
           </div>
         </div>
