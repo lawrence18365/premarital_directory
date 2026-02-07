@@ -28,7 +28,7 @@ const StatePage = () => {
   const [stateData, setStateData] = useState(null)
 
   const stateConfig = STATE_CONFIG[state]
-  
+
   useEffect(() => {
     if (stateConfig) {
       setLoading(false)
@@ -191,10 +191,10 @@ const StatePage = () => {
   return (
     <>
       <SEOHelmet
-        title={stateContent?.title || `Premarital Counseling in ${stateConfig.name} | ${stateData?.totalProfiles || 'Find'} Marriage Counselors (2025)`}
-        description={stateContent?.description || `Find the best premarital counseling in ${stateConfig.name}. Compare ${stateData?.totalProfiles || 'local'} licensed therapists, Christian counselors & marriage prep programs in ${stateConfig.major_cities.length}+ cities. Prices, reviews & direct contact.`}
+        title={stateContent?.title || `Marriage & Premarital Counseling ${stateConfig.name} - ${stateData?.totalProfiles || 'Find'} Therapists (2026)`}
+        description={stateContent?.description || `Find ${stateData?.totalProfiles || 'top'} marriage & premarital counselors in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC), Christian counselors & couples therapy across ${stateConfig.major_cities.length}+ cities. Contact directly.`}
         url={`/premarital-counseling/${state}`}
-        keywords={`premarital counseling ${stateConfig.name}, marriage counseling ${stateConfig.name}, premarital counseling near me ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, marriage therapist ${stateConfig.name}`}
+        keywords={`marriage counseling ${stateConfig.name}, premarital counseling ${stateConfig.name}, marriage therapist ${stateConfig.name}, premarital counseling near me ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, christian marriage counseling ${stateConfig.name}`}
         breadcrumbs={breadcrumbItems}
         structuredData={citiesItemList}
         faqs={stateFAQs}
@@ -207,176 +207,176 @@ const StatePage = () => {
           <div className="state-container">
             <Breadcrumbs items={breadcrumbItems} variant="on-hero" />
             <div className="state-header-content">
-            
-            <h1 className="state-title">
-              {stateContent?.h1 || `Premarital Counseling in ${stateConfig.name}`}
-            </h1>
 
-            <p className="state-subtitle">
-              {stateContent?.description || `Find premarital counseling in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples across ${stateConfig.major_cities.length}+ cities. See methods (Gottman, PREPARE-ENRICH), pricing, and availability.`}
-            </p>
+              <h1 className="state-title">
+                {stateContent?.h1 || `Premarital Counseling in ${stateConfig.name}`}
+              </h1>
 
-            <p style={{
-              fontSize: '0.95rem',
-              color: 'var(--slate)',
-              maxWidth: '800px',
-              margin: 'var(--space-4) auto 0'
-            }}>
-              Many people search for "marriage counseling {stateConfig.name.toLowerCase()}" when planning a wedding.
-              We specialize in <strong>premarital and marriage preparation</strong> — connecting engaged couples with
-              licensed therapists and clergy who focus on building a strong foundation, not just crisis intervention.
-            </p>
+              <p className="state-subtitle">
+                {stateContent?.description || `Find premarital counseling in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples across ${stateConfig.major_cities.length}+ cities. See methods (Gottman, PREPARE-ENRICH), pricing, and availability.`}
+              </p>
 
-            {/* Dual CTAs */}
-            <div className="state-cta-section">
-              <div className="cta-buttons">
-                <button
-                  onClick={() => setShowGetMatchedForm(true)}
-                  className="btn btn-primary btn-large"
-                >
-                  <i className="fa fa-heart mr-2"></i>
-                  Find a Premarital Counselor
-                </button>
-                <Link
-                  to="/professional/signup"
-                  className="btn btn-secondary btn-large"
-                >
-                  <i className="fa fa-plus-circle mr-2"></i>
-                  List Your Practice
-                </Link>
-              </div>
-            </div>
+              <p style={{
+                fontSize: '0.95rem',
+                color: 'var(--slate)',
+                maxWidth: '800px',
+                margin: 'var(--space-4) auto 0'
+              }}>
+                Many people search for "marriage counseling {stateConfig.name.toLowerCase()}" when planning a wedding.
+                We specialize in <strong>premarital and marriage preparation</strong> — connecting engaged couples with
+                licensed therapists and clergy who focus on building a strong foundation, not just crisis intervention.
+              </p>
 
-            {/* Marriage License Discount Section */}
-            {stateConfig.counseling_benefits && (
-              <div className="state-benefits-box">
-                <div className="benefit-layout">
-                  <div className="benefit-icon">
-                    <i className="fa fa-certificate"></i>
-                  </div>
-                  <div className="benefit-content">
-                    <h3>{stateConfig.counseling_benefits.title}</h3>
-                    <p>{stateConfig.counseling_benefits.description}</p>
-                    
-                    {stateConfig.counseling_benefits.requirements && (
-                      <ul className="benefit-requirements">
-                        {stateConfig.counseling_benefits.requirements.map((req, i) => (
-                          <li key={i}>
-                            <i className="fa fa-check-circle"></i> 
-                            {req}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    
-                    <a 
-                      href={stateConfig.counseling_benefits.certificate_url}
-                      target="_blank"
-                      rel="noopener noreferrer" 
-                      className="btn btn-download"
-                    >
-                      <i className="fa fa-download"></i> Download State Certificate Form
-                    </a>
-                  </div>
+              {/* Dual CTAs */}
+              <div className="state-cta-section">
+                <div className="cta-buttons">
+                  <button
+                    onClick={() => setShowGetMatchedForm(true)}
+                    className="btn btn-primary btn-large"
+                  >
+                    <i className="fa fa-heart mr-2"></i>
+                    Find a Premarital Counselor
+                  </button>
+                  <Link
+                    to="/professional/signup"
+                    className="btn btn-secondary btn-large"
+                  >
+                    <i className="fa fa-plus-circle mr-2"></i>
+                    List Your Practice
+                  </Link>
                 </div>
               </div>
-            )}
-          </div>
-        </div>
-      </div>
 
+              {/* Marriage License Discount Section */}
+              {stateConfig.counseling_benefits && (
+                <div className="state-benefits-box">
+                  <div className="benefit-layout">
+                    <div className="benefit-icon">
+                      <i className="fa fa-certificate"></i>
+                    </div>
+                    <div className="benefit-content">
+                      <h3>{stateConfig.counseling_benefits.title}</h3>
+                      <p>{stateConfig.counseling_benefits.description}</p>
 
+                      {stateConfig.counseling_benefits.requirements && (
+                        <ul className="benefit-requirements">
+                          {stateConfig.counseling_benefits.requirements.map((req, i) => (
+                            <li key={i}>
+                              <i className="fa fa-check-circle"></i>
+                              {req}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
 
-      {/* Featured Professionals Section - Immediate Results */}
-      {stateData && stateData.featuredProfiles && stateData.featuredProfiles.length > 0 && (
-        <div className="state-featured-section">
-          <div className="state-container">
-            {/* Money SERP Insights Box */}
-            <LocationInsights stateSlug={state} />
-
-            <div className="mb-6">
-              <h2 className="state-results-title">
-                Featured Premarital Counselors in {stateConfig.name}
-              </h2>
-              <p className="state-results-subtitle">
-                Connect with top-rated premarital counselors and marriage coaches serving the entire state of {stateConfig.name}, including online/virtual options.
-              </p>
-            </div>
-            
-            <div className="featured-grid">
-              {stateData.featuredProfiles.map(profile => (
-                <ProfileCard key={profile.id} profile={profile} />
-              ))}
-            </div>
-            
-            <div className="featured-footer">
-               <p>
-                Not finding what you need? <a href="#cities-grid" onClick={(e) => {
-                  e.preventDefault();
-                  const el = document.getElementById('cities-grid');
-                  if(el) el.scrollIntoView({ behavior: 'smooth' });
-                }}>Browse by city below</a>
-              </p>
+                      <a
+                        href={stateConfig.counseling_benefits.certificate_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-download"
+                      >
+                        <i className="fa fa-download"></i> Download State Certificate Form
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      )}
-      
-      {/* Browse by Specialty Section - Interlinking Strategy */}
-      <div className="state-container">
-        <SpecialtiesList stateSlug={state} />
-      </div>
 
-      {/* Cities Grid Section */}
-      <div id="cities-grid" className="state-container state-results">
-        <div className="mb-6">
-          <h2 className="state-results-title">
-            Premarital Counseling & Marriage Prep by City
-          </h2>
-          <p className="state-results-subtitle">
-            Select a city to find licensed therapists, Christian counselors, and clergy helping engaged couples prepare for marriage across {stateConfig.name}.
-          </p>
-        </div>
 
-        <div className="cities-grid">
-          {stateConfig.major_cities.map(cityName => {
-            const citySlug = cityName.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')
-            return (
-              <Link
-                key={citySlug}
-                to={`/premarital-counseling/${state}/${citySlug}`}
-                className="city-card-large"
-              >
-                <h3>Premarital Counseling & Marriage Prep in {cityName}</h3>
-                <p>Licensed therapists (LMFT, LPC), Christian counselors, clergy, and online options for engaged couples in {cityName}, {stateConfig.abbr}</p>
-                <span className="city-arrow">→</span>
-              </Link>
-            )
-          })}
-        </div>
-      </div>
 
-      {/* FAQ Section for rich results */}
-      <div className="state-container" style={{ marginTop: 'var(--space-12)', marginBottom: 'var(--space-12)' }}>
-        <FAQ
-          faqs={stateFAQs}
-          title={`Premarital Counseling in ${stateConfig.name} — Frequently Asked Questions`}
-          description={`Common questions about premarital counseling in ${stateConfig.name} for engaged couples`}
-          showSearch={false}
-          showAside={false}
-        />
-      </div>
+        {/* Featured Professionals Section - Immediate Results */}
+        {stateData && stateData.featuredProfiles && stateData.featuredProfiles.length > 0 && (
+          <div className="state-featured-section">
+            <div className="state-container">
+              {/* Money SERP Insights Box */}
+              <LocationInsights stateSlug={state} />
 
-      {/* AI-Generated SEO Content Section */}
-      <div className="state-seo-section">
+              <div className="mb-6">
+                <h2 className="state-results-title">
+                  Featured Premarital Counselors in {stateConfig.name}
+                </h2>
+                <p className="state-results-subtitle">
+                  Connect with top-rated premarital counselors and marriage coaches serving the entire state of {stateConfig.name}, including online/virtual options.
+                </p>
+              </div>
+
+              <div className="featured-grid">
+                {stateData.featuredProfiles.map(profile => (
+                  <ProfileCard key={profile.id} profile={profile} />
+                ))}
+              </div>
+
+              <div className="featured-footer">
+                <p>
+                  Not finding what you need? <a href="#cities-grid" onClick={(e) => {
+                    e.preventDefault();
+                    const el = document.getElementById('cities-grid');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}>Browse by city below</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Browse by Specialty Section - Interlinking Strategy */}
         <div className="state-container">
-          <div className="state-seo-inner">
-            <h2 className="state-seo-title">Premarital Counseling & Marriage Preparation in {stateConfig.name}</h2>
-            <StateAIContent stateName={stateConfig.name} content={stateContent} loading={contentLoading} />
-            <LocalContent locationName={stateConfig.name} />
+          <SpecialtiesList stateSlug={state} />
+        </div>
+
+        {/* Cities Grid Section */}
+        <div id="cities-grid" className="state-container state-results">
+          <div className="mb-6">
+            <h2 className="state-results-title">
+              Premarital Counseling & Marriage Prep by City
+            </h2>
+            <p className="state-results-subtitle">
+              Select a city to find licensed therapists, Christian counselors, and clergy helping engaged couples prepare for marriage across {stateConfig.name}.
+            </p>
+          </div>
+
+          <div className="cities-grid">
+            {stateConfig.major_cities.map(cityName => {
+              const citySlug = cityName.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')
+              return (
+                <Link
+                  key={citySlug}
+                  to={`/premarital-counseling/${state}/${citySlug}`}
+                  className="city-card-large"
+                >
+                  <h3>Premarital Counseling & Marriage Prep in {cityName}</h3>
+                  <p>Licensed therapists (LMFT, LPC), Christian counselors, clergy, and online options for engaged couples in {cityName}, {stateConfig.abbr}</p>
+                  <span className="city-arrow">→</span>
+                </Link>
+              )
+            })}
           </div>
         </div>
-      </div>
+
+        {/* FAQ Section for rich results */}
+        <div className="state-container" style={{ marginTop: 'var(--space-12)', marginBottom: 'var(--space-12)' }}>
+          <FAQ
+            faqs={stateFAQs}
+            title={`Premarital Counseling in ${stateConfig.name} — Frequently Asked Questions`}
+            description={`Common questions about premarital counseling in ${stateConfig.name} for engaged couples`}
+            showSearch={false}
+            showAside={false}
+          />
+        </div>
+
+        {/* AI-Generated SEO Content Section */}
+        <div className="state-seo-section">
+          <div className="state-container">
+            <div className="state-seo-inner">
+              <h2 className="state-seo-title">Premarital Counseling & Marriage Preparation in {stateConfig.name}</h2>
+              <StateAIContent stateName={stateConfig.name} content={stateContent} loading={contentLoading} />
+              <LocalContent locationName={stateConfig.name} />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Get Matched Modal */}
@@ -385,7 +385,7 @@ const StatePage = () => {
           <div className="modal-content get-matched-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Find a Premarital Counselor in {stateConfig.name}</h3>
-              <button 
+              <button
                 onClick={() => setShowGetMatchedForm(false)}
                 className="modal-close"
                 aria-label="Close"
@@ -395,7 +395,7 @@ const StatePage = () => {
             </div>
             <div className="modal-body">
               <p>Preparing for marriage? We'll connect you with qualified premarital counselors in {stateConfig.name}.</p>
-              <LeadContactForm 
+              <LeadContactForm
                 profileId={null} // Unassigned lead
                 professionalName={`Counselors in ${stateConfig.name}`}
                 stateName={stateConfig.name}

@@ -210,9 +210,9 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   return (
     <div className="city-page">
       <SEOHelmet
-        title={cityContent?.title || `${profiles.length > 0 ? profiles.length : 'Top'} Premarital Counselors in ${cityName}, ${stateConfig?.abbr || stateName} (2025)`}
-        description={cityContent?.description || `Find the best premarital counseling in ${cityName}, ${stateName}. Compare ${profiles.length || 'local'} licensed therapists, Christian counselors & marriage prep programs. Prices from $100/session. Contact directly - no fees.`}
-        keywords={`premarital counseling ${cityName}, marriage counseling ${cityName}, premarital counseling ${cityName} ${stateName}, pre marriage counseling ${cityName}, premarital therapy ${cityName} ${stateConfig?.abbr || ''}, christian premarital counseling ${cityName}, marriage therapist ${cityName}, couples counseling ${cityName}, pre cana ${cityName}`}
+        title={cityContent?.title || `Premarital & Marriage Counseling ${cityName}, ${stateConfig?.abbr || stateName} - ${profiles.length > 0 ? profiles.length : 'Top'} Therapists (2026)`}
+        description={cityContent?.description || `Find ${profiles.length || 'top'} premarital & marriage counselors in ${cityName}, ${stateName}. Compare licensed therapists (LMFT, LPC), Christian counselors & couples therapy. From $100/session. Contact directly.`}
+        keywords={`premarital counseling ${cityName}, marriage counseling ${cityName}, premarital counseling ${cityName} ${stateName}, marriage therapist ${cityName}, pre marriage counseling ${cityName}, premarital therapy ${cityName} ${stateConfig?.abbr || ''}, christian premarital counseling ${cityName}, christian marriage counseling ${cityName}, pre cana ${cityName}`}
         structuredData={structuredData}
         faqs={cityFAQs}
         noindex={shouldNoindex}
@@ -449,7 +449,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                     </>
                   )
                 })()}
-                
+
                 {/* Browse by Specialty Section - Interlinking Strategy */}
                 <SpecialtiesList stateSlug={state} citySlug={city} />
 

@@ -236,7 +236,10 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                 <div className="profile-hero-info">
                   <div className="profile-hero-header">
                     <h1 className="profile-hero-name">{profile.full_name}</h1>
-                    <div className="profile-hero-profession">{profile.profession}</div>
+                    <div className="profile-hero-profession">
+                      {profile.profession}
+                      {profile.pronouns && <span style={{ fontWeight: 'normal', fontSize: '0.875rem', color: 'var(--text-secondary)', marginLeft: '0.5rem' }}>({profile.pronouns})</span>}
+                    </div>
                     <div className="profile-hero-location">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
@@ -372,7 +375,49 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                   </div>
                 )}
 
-                {/* Approach/Methodology Section */}
+                {/* Certifications Section */}
+                {profile.certifications && Array.isArray(profile.certifications) && profile.certifications.length > 0 && (
+                  <div className="content-section">
+                    <h2 className="section-title">Certifications</h2>
+                    <div className="section-content">
+                      <div className="specialties-grid">
+                        {profile.certifications.map((cert, index) => (
+                          <div key={index} className="specialty-item">
+                            <div className="specialty-icon">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+                              </svg>
+                            </div>
+                            <span className="specialty-name">{cert}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Treatment Approaches Section */}
+                {profile.treatment_approaches && Array.isArray(profile.treatment_approaches) && profile.treatment_approaches.length > 0 && (
+                  <div className="content-section">
+                    <h2 className="section-title">Therapeutic Approach</h2>
+                    <div className="section-content">
+                      <div className="specialties-grid">
+                        {profile.treatment_approaches.map((approach, index) => (
+                          <div key={index} className="specialty-item">
+                            <div className="specialty-icon">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            </div>
+                            <span className="specialty-name">{approach}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Approach/Methodology Section (free-text) */}
                 {profile.approach && (
                   <div className="content-section">
                     <h2 className="section-title">Therapeutic Approach</h2>
@@ -381,6 +426,27 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                         {profile.approach.split('\n').map((paragraph, index) => (
                           <p key={index} className="bio-paragraph">{paragraph}</p>
                         ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Faith Tradition Section */}
+                {profile.faith_tradition && (
+                  <div className="content-section">
+                    <h2 className="section-title">Faith & Approach</h2>
+                    <div className="section-content">
+                      <div className="specialty-item" style={{ display: 'inline-flex' }}>
+                        <div className="specialty-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                          </svg>
+                        </div>
+                        <span className="specialty-name" style={{ textTransform: 'capitalize' }}>
+                          {profile.faith_tradition === 'all-faiths' ? 'All Faiths Welcome'
+                            : profile.faith_tradition === 'secular' ? 'Secular / Non-religious'
+                            : profile.faith_tradition.charAt(0).toUpperCase() + profile.faith_tradition.slice(1)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -449,7 +515,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                 )}
 
                 {/* Pricing & Insurance Section */}
-                {(profile.pricing_range || profile.insurance_accepted || profile.offers_free_consultation) && (
+                {(profile.pricing_range || profile.insurance_accepted || profile.offers_free_consultation || profile.payment_methods || profile.sliding_scale) && (
                   <div className="content-section">
                     <h2 className="section-title">Pricing & Insurance</h2>
                     <div className="section-content">
@@ -483,7 +549,42 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                         </div>
                       )}
 
+                      {profile.payment_methods && profile.payment_methods.length > 0 && (
+                        <div className="info-item" style={{ marginBottom: 'var(--space-4)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--primary)' }}>
+                              <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                            </svg>
+                            <strong>Payment Methods:</strong>
+                          </div>
+                          <div style={{ marginLeft: '1.75rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            {profile.payment_methods.map((method, index) => (
+                              <span key={index} className="hero-specialty-tag" style={{ fontSize: '0.875rem' }}>
+                                {method}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {profile.offers_free_consultation && (
+                        <div className="info-item" style={{
+                          padding: 'var(--space-3)',
+                          background: 'var(--success-bg)',
+                          borderRadius: 'var(--radius-md)',
+                          border: '1px solid var(--success)',
+                          marginBottom: 'var(--space-3)'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success-dark)' }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <strong>Free consultation available</strong>
+                          </div>
+                        </div>
+                      )}
+
+                      {profile.sliding_scale && (
                         <div className="info-item" style={{
                           padding: 'var(--space-3)',
                           background: 'var(--success-bg)',
@@ -494,7 +595,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                               <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <strong>Free consultation available</strong>
+                            <strong>Sliding scale available</strong>
                           </div>
                         </div>
                       )}

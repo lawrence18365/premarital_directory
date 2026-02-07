@@ -216,6 +216,7 @@ export const generateProfessionalStructuredData = (professional) => {
     "image": professional.photo_url || `${baseUrl}/media/couple_in_counselling_animation.png`,
     "address": {
       "@type": "PostalAddress",
+      "streetAddress": professional.address_line1 || undefined,
       "addressLocality": professional.city,
       "addressRegion": professional.state_province,
       "postalCode": professional.postal_code,
@@ -224,6 +225,10 @@ export const generateProfessionalStructuredData = (professional) => {
     "telephone": professional.phone,
     "email": professional.email,
     "url": professional.website,
+    "priceRange": professional.pricing_range || undefined,
+    "knowsLanguage": professional.languages && professional.languages.length > 0
+      ? professional.languages
+      : ["English"],
     "areaServed": {
       "@type": "Place",
       "name": `${professional.city}, ${professional.state_province}`,
@@ -237,7 +242,8 @@ export const generateProfessionalStructuredData = (professional) => {
       "Marriage Counseling",
       "Premarital Counseling",
       "Relationship Therapy",
-      "Couples Therapy"
+      "Couples Therapy",
+      ...(professional.specialties || [])
     ],
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
@@ -249,7 +255,15 @@ export const generateProfessionalStructuredData = (professional) => {
             "@type": "Service",
             "name": "Premarital Counseling",
             "description": "Professional guidance for couples preparing for marriage"
-          }
+          },
+          ...(professional.session_fee_min ? {
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "minPrice": professional.session_fee_min / 100,
+              "maxPrice": professional.session_fee_max ? professional.session_fee_max / 100 : undefined,
+              "priceCurrency": "USD"
+            }
+          } : {})
         }
       ]
     },

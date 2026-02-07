@@ -14,7 +14,7 @@ const CreateProfilePage = () => {
   const [searchParams] = useSearchParams()
   const { user, profile, loading: authLoading, refreshProfile } = useAuth()
   const [currentStep, setCurrentStep] = useState(1)
-  const totalSteps = 3
+  const totalSteps = 4
 
   // Redirect if user already has a profile
   useEffect(() => {
@@ -42,15 +42,25 @@ const CreateProfilePage = () => {
     treatment_approaches: [],
     client_focus: [],
 
+    // Step 2 extras: Address (optional)
+    address_line1: '',
+    postal_code: '',
+
+    // Step 3 extras: Credentials & Education (optional)
+    credentials: [],
+    education: [],
+    languages: [],
+    pronouns: '',
+
     // Step 4: Pricing & Contact (optional)
     offers_free_consultation: false,
+    sliding_scale: false,
     session_fee_min: '',
     session_fee_max: '',
     phone: '',
     website: '',
     insurance_accepted: [],
     payment_methods: [],
-    languages: [],
 
     // Auto-filled
     email: '',
@@ -291,12 +301,16 @@ const CreateProfilePage = () => {
         website: formData.website.trim() || null,
         profession: formData.profession,
         bio: formData.bio.trim() || null,
+        pronouns: formData.pronouns || null,
         years_experience: formData.years_experience ? parseInt(formData.years_experience) : null,
         offers_free_consultation: formData.offers_free_consultation,
+        sliding_scale: formData.sliding_scale,
         session_fee_min: formData.session_fee_min ? parseInt(formData.session_fee_min) * 100 : null,
         session_fee_max: formData.session_fee_max ? parseInt(formData.session_fee_max) * 100 : null,
-        pricing_range: formData.session_fee_min && formData.session_fee_max
-          ? `$${formData.session_fee_min}-$${formData.session_fee_max}`
+        pricing_range: formData.session_fee_min
+          ? formData.session_fee_max
+            ? `$${formData.session_fee_min}-$${formData.session_fee_max}`
+            : `$${formData.session_fee_min}`
           : null,
         specialties: formData.specialties.length > 0 ? formData.specialties : null,
         session_types: formData.session_types,
@@ -308,6 +322,11 @@ const CreateProfilePage = () => {
         insurance_accepted: formData.insurance_accepted.length > 0 ? formData.insurance_accepted : null,
         payment_methods: formData.payment_methods.length > 0 ? formData.payment_methods : null,
         languages: formData.languages.length > 0 ? formData.languages : null,
+        credentials: formData.credentials.length > 0 ? formData.credentials : null,
+        education: formData.education.length > 0 ? formData.education : null,
+        // Address fields
+        address_line1: formData.address_line1.trim() || null,
+        postal_code: formData.postal_code.trim() || null,
         // Standard fields
         accepting_new_clients: true,
         city: formData.city.trim(),
@@ -418,9 +437,12 @@ const CreateProfilePage = () => {
                 website: formData.website.trim() || null,
                 profession: formData.profession,
                 bio: formData.bio.trim() || null,
+                pronouns: formData.pronouns || null,
                 city: formData.city.trim(),
                 state_province: formData.state_province.trim(),
                 country: formData.country,
+                address_line1: formData.address_line1.trim() || null,
+                postal_code: formData.postal_code.trim() || null,
                 session_types: formData.session_types,
                 specialties: formData.specialties.length > 0 ? formData.specialties : null,
                 certifications: formData.certifications.length > 0 ? formData.certifications : null,
@@ -428,7 +450,13 @@ const CreateProfilePage = () => {
                 years_experience: formData.years_experience ? parseInt(formData.years_experience) : null,
                 treatment_approaches: formData.treatment_approaches.length > 0 ? formData.treatment_approaches : null,
                 client_focus: formData.client_focus.length > 0 ? formData.client_focus : null,
+                insurance_accepted: formData.insurance_accepted.length > 0 ? formData.insurance_accepted : null,
+                payment_methods: formData.payment_methods.length > 0 ? formData.payment_methods : null,
+                languages: formData.languages.length > 0 ? formData.languages : null,
+                credentials: formData.credentials.length > 0 ? formData.credentials : null,
+                education: formData.education.length > 0 ? formData.education : null,
                 offers_free_consultation: formData.offers_free_consultation,
+                sliding_scale: formData.sliding_scale,
                 session_fee_min: formData.session_fee_min ? parseInt(formData.session_fee_min) * 100 : null,
                 session_fee_max: formData.session_fee_max ? parseInt(formData.session_fee_max) * 100 : null,
                 moderation_status: 'approved',
@@ -594,10 +622,62 @@ const CreateProfilePage = () => {
     'Long-Distance Couples'
   ]
 
+  // Insurance providers - common US mental health insurance
+  const insuranceOptions = [
+    'Aetna',
+    'Anthem',
+    'Blue Cross Blue Shield',
+    'Cigna',
+    'Humana',
+    'Kaiser Permanente',
+    'Magellan Health',
+    'Medicare',
+    'Medicaid',
+    'Optum / UnitedHealthcare',
+    'Tricare',
+    'Out-of-Network'
+  ]
+
+  // Payment methods
+  const paymentMethodOptions = [
+    'Cash',
+    'Check',
+    'Visa / Mastercard',
+    'American Express',
+    'HSA / FSA',
+    'PayPal / Venmo',
+    'Zelle'
+  ]
+
+  // Languages
+  const languageOptions = [
+    'English',
+    'Spanish',
+    'French',
+    'Mandarin',
+    'Korean',
+    'Vietnamese',
+    'Arabic',
+    'Portuguese',
+    'German',
+    'Hindi',
+    'Tagalog',
+    'Russian',
+    'American Sign Language (ASL)'
+  ]
+
+  // Pronouns
+  const pronounOptions = [
+    { value: 'she/her', label: 'She/Her' },
+    { value: 'he/him', label: 'He/Him' },
+    { value: 'they/them', label: 'They/Them' }
+  ]
+
   const stepLabels = [
     'Who are you?',
     'Where do you practice?',
-    'About you'
+    'About you',
+    'Pricing & contact'
   ]
 
   // Loading state - wait for auth to initialize or profile claim
@@ -886,6 +966,34 @@ const CreateProfilePage = () => {
                 </div>
 
                 <div className="quiz-field">
+                  <label htmlFor="address">Street address <span className="optional">(optional - helps local SEO)</span></label>
+                  <input
+                    type="text"
+                    id="address"
+                    className="quiz-input"
+                    value={formData.address_line1}
+                    onChange={(e) => handleInputChange('address_line1', e.target.value)}
+                    placeholder="123 Main St, Suite 200"
+                  />
+                  <small>Your office address helps couples find you on Google Maps</small>
+                </div>
+
+                <div className="quiz-field-row">
+                  <div className="quiz-field">
+                    <label htmlFor="postal_code">ZIP / Postal code <span className="optional">(optional)</span></label>
+                    <input
+                      type="text"
+                      id="postal_code"
+                      className="quiz-input"
+                      value={formData.postal_code}
+                      onChange={(e) => handleInputChange('postal_code', e.target.value)}
+                      placeholder="78701"
+                    />
+                  </div>
+                  <div className="quiz-field" />
+                </div>
+
+                <div className="quiz-field">
                   <label>How do you meet with clients?</label>
                   <div className="quiz-options quiz-options--session">
                     {sessionTypeOptions.map(option => (
@@ -1014,19 +1122,210 @@ const CreateProfilePage = () => {
                   </div>
                 </div>
 
-                <div className="quiz-field quiz-field--narrow">
-                  <label htmlFor="experience">Years of experience <span className="optional">(optional)</span></label>
-                  <select
-                    id="experience"
-                    className="quiz-select"
-                    value={formData.years_experience}
-                    onChange={(e) => handleInputChange('years_experience', e.target.value)}
-                  >
-                    <option value="">Select...</option>
-                    {yearsOptions.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                <div className="quiz-field-row">
+                  <div className="quiz-field quiz-field--narrow">
+                    <label htmlFor="experience">Years of experience <span className="optional">(optional)</span></label>
+                    <select
+                      id="experience"
+                      className="quiz-select"
+                      value={formData.years_experience}
+                      onChange={(e) => handleInputChange('years_experience', e.target.value)}
+                    >
+                      <option value="">Select...</option>
+                      {yearsOptions.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="quiz-field quiz-field--narrow">
+                    <label htmlFor="pronouns">Pronouns <span className="optional">(optional)</span></label>
+                    <select
+                      id="pronouns"
+                      className="quiz-select"
+                      value={formData.pronouns}
+                      onChange={(e) => handleInputChange('pronouns', e.target.value)}
+                    >
+                      <option value="">Select...</option>
+                      {pronounOptions.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="quiz-field">
+                  <label>Languages spoken <span className="optional">(optional)</span></label>
+                  <div className="quiz-pills">
+                    {languageOptions.map(lang => (
+                      <button
+                        type="button"
+                        key={lang}
+                        className={`quiz-pill ${formData.languages.includes(lang) ? 'is-selected' : ''}`}
+                        onClick={() => handleArrayToggle('languages', lang)}
+                      >
+                        {lang}
+                      </button>
                     ))}
-                  </select>
+                  </div>
+                </div>
+
+                <div className="quiz-field">
+                  <label htmlFor="credentials">License & credentials <span className="optional">(optional)</span></label>
+                  <textarea
+                    id="credentials"
+                    className="quiz-textarea"
+                    rows="3"
+                    value={formData.credentials.join('\n')}
+                    onChange={(e) => handleInputChange('credentials', e.target.value.split('\n').filter(s => s.trim()))}
+                    placeholder={"Licensed by State of Texas / #12345\nMA in Counseling Psychology, 2018"}
+                  />
+                  <small>One per line. Include license numbers, degrees, and credentials (e.g., "PhD in Clinical Psychology, University of Texas, 2015")</small>
+                </div>
+
+                <div className="quiz-field">
+                  <label htmlFor="education">Education & training <span className="optional">(optional)</span></label>
+                  <textarea
+                    id="education"
+                    className="quiz-textarea"
+                    rows="3"
+                    value={formData.education.join('\n')}
+                    onChange={(e) => handleInputChange('education', e.target.value.split('\n').filter(s => s.trim()))}
+                    placeholder={"MA in Counseling Psychology, University of Texas, 2018\nBachelor of Science, Psychology, 2015"}
+                  />
+                  <small>One per line. Include degree, school, and year if applicable</small>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Pricing & Contact (optional) */}
+            {currentStep === 4 && (
+              <div className="quiz-step">
+                <div className="quiz-step__header">
+                  <h1>Pricing & contact info</h1>
+                  <p>Help couples understand your fees and reach you directly. <strong>You can skip this for now.</strong></p>
+                </div>
+
+                <div className="quiz-field-row">
+                  <div className="quiz-field">
+                    <label htmlFor="phone">Phone number <span className="optional">(optional)</span></label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      className="quiz-input"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      placeholder="(512) 555-0123"
+                    />
+                  </div>
+                  <div className="quiz-field">
+                    <label htmlFor="website">Website <span className="optional">(optional)</span></label>
+                    <input
+                      type="url"
+                      id="website"
+                      className="quiz-input"
+                      value={formData.website}
+                      onChange={(e) => handleInputChange('website', e.target.value)}
+                      placeholder="https://yourpractice.com"
+                    />
+                  </div>
+                </div>
+
+                <div className="quiz-field">
+                  <label>Session fees <span className="optional">(optional)</span></label>
+                  <div className="quiz-field-row" style={{ marginBottom: 0 }}>
+                    <div className="quiz-field">
+                      <div className="quiz-input-group">
+                        <span className="quiz-input-prefix">$</span>
+                        <input
+                          type="number"
+                          className="quiz-input"
+                          value={formData.session_fee_min}
+                          onChange={(e) => handleInputChange('session_fee_min', e.target.value)}
+                          placeholder="100"
+                          min="0"
+                        />
+                      </div>
+                      <small>Minimum per session</small>
+                    </div>
+                    <div className="quiz-field">
+                      <div className="quiz-input-group">
+                        <span className="quiz-input-prefix">$</span>
+                        <input
+                          type="number"
+                          className="quiz-input"
+                          value={formData.session_fee_max}
+                          onChange={(e) => handleInputChange('session_fee_max', e.target.value)}
+                          placeholder="200"
+                          min="0"
+                        />
+                      </div>
+                      <small>Maximum per session</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="quiz-field" style={{ display: 'flex', gap: 'var(--space-6)', flexWrap: 'wrap' }}>
+                  <label className="quiz-toggle" style={{ flex: '1 1 200px' }}>
+                    <input
+                      type="checkbox"
+                      checked={formData.offers_free_consultation}
+                      onChange={(e) => handleInputChange('offers_free_consultation', e.target.checked)}
+                    />
+                    <span className="quiz-toggle__switch"></span>
+                    <span className="quiz-toggle__label">
+                      <strong>Free consultation</strong>
+                      <small>Offer a free initial consultation</small>
+                    </span>
+                  </label>
+
+                  <label className="quiz-toggle" style={{ flex: '1 1 200px' }}>
+                    <input
+                      type="checkbox"
+                      checked={formData.sliding_scale}
+                      onChange={(e) => handleInputChange('sliding_scale', e.target.checked)}
+                    />
+                    <span className="quiz-toggle__switch"></span>
+                    <span className="quiz-toggle__label">
+                      <strong>Sliding scale</strong>
+                      <small>Offer reduced rates based on income</small>
+                    </span>
+                  </label>
+                </div>
+
+                <div className="quiz-field">
+                  <label>Insurance accepted <span className="optional">(optional)</span></label>
+                  <small style={{ display: 'block', marginBottom: '0.75rem', color: 'var(--slate)' }}>
+                    Couples frequently search for counselors who accept their insurance
+                  </small>
+                  <div className="quiz-pills">
+                    {insuranceOptions.map(ins => (
+                      <button
+                        type="button"
+                        key={ins}
+                        className={`quiz-pill ${formData.insurance_accepted.includes(ins) ? 'is-selected' : ''}`}
+                        onClick={() => handleArrayToggle('insurance_accepted', ins)}
+                      >
+                        {ins}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="quiz-field">
+                  <label>Payment methods <span className="optional">(optional)</span></label>
+                  <div className="quiz-pills">
+                    {paymentMethodOptions.map(method => (
+                      <button
+                        type="button"
+                        key={method}
+                        className={`quiz-pill ${formData.payment_methods.includes(method) ? 'is-selected' : ''}`}
+                        onClick={() => handleArrayToggle('payment_methods', method)}
+                      >
+                        {method}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}

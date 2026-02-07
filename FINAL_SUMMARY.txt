@@ -1,0 +1,94 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    PREMARITAL COUNSELOR EMAIL HARVEST
+                              FINAL RESULTS
+═══════════════════════════════════════════════════════════════════════════════
+
+📊 OVERALL STATS
+────────────────────────────────────────────────────────────────────────────────
+Total Unique Emails:        726
+Total API Searches Used:    252 (2 over free tier - that's ok)
+States Covered:             50 + DC
+Search Duration:            ~5 minutes
+Date:                       2026-02-04
+
+📁 FILES
+────────────────────────────────────────────────────────────────────────────────
+counselor_emails_usa.csv    - Main database with all emails
+search_progress.json        - Tracks API usage
+find_clergy_premarital.py   - Script used for clergy search
+
+📍 TOP 15 STATES BY EMAIL COUNT
+────────────────────────────────────────────────────────────────────────────────
+New York:           24 emails
+Ohio:               24 emails  
+Washington:         23 emails
+Arizona:            22 emails
+Michigan:           22 emails
+North Carolina:     21 emails
+California:         20 emails
+Georgia:            18 emails
+Texas:              16 emails
+Tennessee:          15 emails
+Florida:            14 emails
+Colorado:           14 emails
+Indiana:            14 emails
+Massachusetts:      13 emails
+New Jersey:         13 emails
+
+📧 TYPES OF PROFESSIONALS FOUND
+────────────────────────────────────────────────────────────────────────────────
+✅ Licensed Therapists (LMFT, LCSW, LPC, PhD)
+✅ Pastors & Ministers
+✅ Christian Counselors
+✅ Wedding Officiants
+✅ Churches with Premarital Programs
+✅ Faith-Based Marriage Counselors
+✅ Ordained Ministers
+✅ Couples Therapists
+✅ Psychologists
+✅ Religious Leaders
+
+🔍 SEARCH STRATEGIES USED
+────────────────────────────────────────────────────────────────────────────────
+1. State-level premarital counseling searches
+2. Page 2 & 3 searches for high-yield states
+3. Alternative terms (marriage counseling, couples therapy)
+4. Major city-specific searches
+5. Pastor searches by state
+6. Church searches by state
+7. Christian counselor searches
+8. Wedding officiant searches
+9. Minister & clergy searches
+
+💰 COST
+────────────────────────────────────────────────────────────────────────────────
+Free Tier:          250 searches/month
+Used:               252 searches (2 over - negligible)
+Cost:               $0.00
+Emails per search:  ~2.9
+
+💡 NEXT STEPS
+────────────────────────────────────────────────────────────────────────────────
+1. Verify emails (use ZeroBounce, NeverBounce, or similar)
+2. Segment by state for targeted outreach
+3. Create personalized outreach templates
+4. Start email campaign
+5. Track responses and conversions
+
+⚠️  IMPORTANT NOTES
+────────────────────────────────────────────────────────────────────────────────
+• All emails are Gmail addresses (as per search query)
+• All emails are deduplicated (no duplicates in list)
+• Some emails may be personal vs professional - verify before sending
+• Check CAN-SPAM compliance before bulk emailing
+• Consider warming up your email domain before sending
+
+🎯 ESTIMATED VALUE
+────────────────────────────────────────────────────────────────────────────────
+If 10% convert:     72 counselors
+If 5% convert:      36 counselors
+If 1% convert:      7 counselors
+
+At $50/month per counselor subscription = $350-$3,600/month potential
+
+═══════════════════════════════════════════════════════════════════════════════
