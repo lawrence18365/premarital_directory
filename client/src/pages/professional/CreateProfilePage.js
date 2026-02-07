@@ -299,12 +299,6 @@ const CreateProfilePage = () => {
     }
   }
 
-  const handleSkip = () => {
-    setError('')
-    setCurrentStep(prev => Math.min(prev + 1, totalSteps))
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
   const handleBack = () => {
     setCurrentStep(prev => Math.max(prev - 1, 1))
     setError('')
