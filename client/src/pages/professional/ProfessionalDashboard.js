@@ -313,16 +313,21 @@ const ProfessionalDashboard = () => {
           </div>
           <div>
             <strong style={{ color: '#92400e', fontSize: '1.1rem', display: 'block', marginBottom: '0.25rem' }}>
-              Profile Under Review
+              Complete Your Profile to Go Live
             </strong>
             <p style={{ color: '#78350f', margin: '0 0 0.5rem', fontSize: '0.95rem' }}>
-              Your profile is being reviewed by our team. This typically takes 24-48 hours.
-              Once approved, you'll appear in directory listings and can start receiving inquiries from couples.
+              Your profile needs a few more details before it appears in the directory. Please add:
             </p>
-            <p style={{ color: '#92400e', margin: 0, fontSize: '0.85rem' }}>
-              <i className="fa fa-envelope-o" aria-hidden="true" style={{ marginRight: '0.5rem' }}></i>
-              We'll email you at <strong>{profile.email}</strong> when your profile is approved.
-            </p>
+            <ul style={{ color: '#78350f', margin: '0 0 0.75rem', paddingLeft: '1.25rem', fontSize: '0.95rem' }}>
+              {!profile.photo_url && <li>A professional headshot</li>}
+              {(!profile.bio || profile.bio.trim().length < 50) && <li>A bio describing your practice</li>}
+              {!profile.phone && !profile.website && <li>A phone number or website</li>}
+              {(!profile.specialties || profile.specialties.length === 0) && <li>At least one specialty</li>}
+            </ul>
+            <a href="/professional/edit" style={{ color: '#92400e', fontWeight: 600, textDecoration: 'underline' }}>
+              <i className="fa fa-pencil" aria-hidden="true" style={{ marginRight: '0.5rem' }}></i>
+              Edit your profile now
+            </a>
           </div>
         </div>
       )}

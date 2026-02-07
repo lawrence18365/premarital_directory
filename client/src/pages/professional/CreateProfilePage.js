@@ -73,6 +73,7 @@ const CreateProfilePage = () => {
   const [utmParams, setUtmParams] = useState({})
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState('')
+  const [isOtherCity, setIsOtherCity] = useState(false)
 
   // Capture UTM parameters on load
   useEffect(() => {
@@ -154,6 +155,12 @@ const CreateProfilePage = () => {
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     setError('')
+
+    // Reset city when state changes
+    if (field === 'state_province') {
+      setFormData(prev => ({ ...prev, [field]: value, city: '' }))
+      setIsOtherCity(false)
+    }
   }
 
   const handlePhotoChange = async (event) => {
@@ -185,6 +192,26 @@ const CreateProfilePage = () => {
         ? prev[field].filter(item => item !== value)
         : [...prev[field], value]
     }))
+  }
+
+  // Get major cities for the selected state abbreviation
+  const getCitiesForSelectedState = () => {
+    if (!formData.state_province) return []
+    const stateEntry = Object.values(STATE_CONFIG).find(
+      config => config.abbr === formData.state_province
+    )
+    return stateEntry?.major_cities || []
+  }
+
+  const handleCitySelect = (value) => {
+    if (value === '__other__') {
+      setIsOtherCity(true)
+      setFormData(prev => ({ ...prev, city: '' }))
+    } else {
+      setIsOtherCity(false)
+      setFormData(prev => ({ ...prev, city: value }))
+    }
+    setError('')
   }
 
   const generateSlug = (name) => {
@@ -241,7 +268,26 @@ const CreateProfilePage = () => {
       }
     }
 
-    // Steps 3 and 4 are optional - no validation required
+    if (step === 1) {
+      if (!photoFile && !photoPreview) {
+        setError('Please upload a professional headshot — couples are much more likely to reach out when they can see who they\'ll be working with')
+        return false
+      }
+    }
+
+    if (step === 3) {
+      if (!formData.bio || formData.bio.trim().length < 50) {
+        setError('Please write a short bio (at least a few sentences) so couples can get to know you')
+        return false
+      }
+    }
+
+    if (step === 4) {
+      if (!formData.phone?.trim() && !formData.website?.trim()) {
+        setError('Please provide at least a phone number or website so couples can reach you')
+        return false
+      }
+    }
 
     return true
   }
@@ -284,6 +330,20 @@ const CreateProfilePage = () => {
 
     if (!user) {
       setError('You must be logged in to create a profile')
+      return
+    }
+
+    // Final validation — ensure all required fields are present
+    if (!photoFile && !photoPreview) {
+      setError('A photo is required. Please go back to Step 1 and upload a headshot.')
+      return
+    }
+    if (!formData.bio || formData.bio.trim().length < 50) {
+      setError('A bio is required. Please go back to Step 3 and write about your practice.')
+      return
+    }
+    if (!formData.phone?.trim() && !formData.website?.trim()) {
+      setError('At least a phone number or website is required so couples can contact you.')
       return
     }
 
@@ -901,7 +961,7 @@ const CreateProfilePage = () => {
 
                 {/* Optional photo on step 1 */}
                 <div className="quiz-field quiz-field--photo">
-                  <label>Add a photo <span className="optional">(optional but recommended)</span></label>
+                  <label>Add a photo <span style={{ color: 'var(--danger, #dc2626)' }}>*</span></label>
                   <div className="quiz-photo">
                     {photoPreview ? (
                       <div className="quiz-photo__preview">
@@ -917,7 +977,7 @@ const CreateProfilePage = () => {
                         <input type="file" accept="image/*" onChange={handlePhotoChange} />
                       </label>
                     )}
-                    <small>A photo helps couples connect with you</small>
+                    <small>A professional headshot is required — profiles with photos get significantly more inquiries</small>
                   </div>
                 </div>
               </div>
@@ -954,14 +1014,48 @@ const CreateProfilePage = () => {
                   </div>
                   <div className="quiz-field">
                     <label htmlFor="city">City</label>
-                    <input
-                      type="text"
-                      id="city"
-                      className="quiz-input"
-                      value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
-                      placeholder="Austin"
-                    />
+                    {formData.state_province && getCitiesForSelectedState().length > 0 ? (
+                      <>
+                        <select
+                          id="city"
+                          className="quiz-select"
+                          value={isOtherCity ? '__other__' : formData.city}
+                          onChange={(e) => handleCitySelect(e.target.value)}
+                        >
+                          <option value="">Select your city...</option>
+                          {getCitiesForSelectedState()
+                            .sort((a, b) => a.localeCompare(b))
+                            .map(cityName => (
+                              <option key={cityName} value={cityName}>
+                                {cityName}
+                              </option>
+                            ))
+                          }
+                          <option value="__other__">Other city...</option>
+                        </select>
+                        {isOtherCity && (
+                          <input
+                            type="text"
+                            className="quiz-input"
+                            style={{ marginTop: '0.5rem' }}
+                            value={formData.city}
+                            onChange={(e) => handleInputChange('city', e.target.value)}
+                            placeholder="Enter your city name"
+                            autoFocus
+                          />
+                        )}
+                      </>
+                    ) : (
+                      <input
+                        type="text"
+                        id="city"
+                        className="quiz-input"
+                        value={formData.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        placeholder={formData.state_province ? 'Enter your city' : 'Select a state first'}
+                        disabled={!formData.state_province}
+                      />
+                    )}
                   </div>
                 </div>
 
@@ -1018,11 +1112,11 @@ const CreateProfilePage = () => {
               <div className="quiz-step">
                 <div className="quiz-step__header">
                   <h1>Tell couples about yourself</h1>
-                  <p>This helps you stand out. <strong>You can skip this for now.</strong></p>
+                  <p>This helps you stand out and connect with the right couples</p>
                 </div>
 
                 <div className="quiz-field">
-                  <label htmlFor="bio">About your practice <span className="optional">(optional)</span></label>
+                  <label htmlFor="bio">About your practice <span style={{ color: 'var(--danger, #dc2626)' }}>*</span></label>
                   <textarea
                     id="bio"
                     className="quiz-textarea"
@@ -1203,12 +1297,15 @@ const CreateProfilePage = () => {
               <div className="quiz-step">
                 <div className="quiz-step__header">
                   <h1>Pricing & contact info</h1>
-                  <p>Help couples understand your fees and reach you directly. <strong>You can skip this for now.</strong></p>
+                  <p>Help couples understand your fees and reach you directly</p>
                 </div>
 
+                <small style={{ display: 'block', marginBottom: '1rem', color: 'var(--slate)' }}>
+                  At least one contact method (phone or website) is required so couples can reach you
+                </small>
                 <div className="quiz-field-row">
                   <div className="quiz-field">
-                    <label htmlFor="phone">Phone number <span className="optional">(optional)</span></label>
+                    <label htmlFor="phone">Phone number</label>
                     <input
                       type="tel"
                       id="phone"
@@ -1219,7 +1316,7 @@ const CreateProfilePage = () => {
                     />
                   </div>
                   <div className="quiz-field">
-                    <label htmlFor="website">Website <span className="optional">(optional)</span></label>
+                    <label htmlFor="website">Website</label>
                     <input
                       type="url"
                       id="website"
@@ -1339,12 +1436,7 @@ const CreateProfilePage = () => {
               )}
 
               <div className="quiz-nav__right">
-                {/* Skip button for optional steps */}
-                {currentStep >= 3 && currentStep < totalSteps && (
-                  <button type="button" className="quiz-btn quiz-btn--skip" onClick={handleSkip}>
-                    Skip for now
-                  </button>
-                )}
+                {/* No skip — photo, bio, and contact info are required */}
 
                 {currentStep < totalSteps ? (
                   <button type="button" className="quiz-btn quiz-btn--next" onClick={handleNext}>

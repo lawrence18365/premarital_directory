@@ -308,7 +308,15 @@ const ProfileEditor = () => {
     if (formData.specialties.length === 0) {
       newErrors.specialties = 'Please select at least one specialty'
     }
-    
+
+    if (!formData.phone?.trim() && !formData.website?.trim()) {
+      newErrors.phone = 'At least a phone number or website is required so couples can reach you'
+    }
+
+    if (!profile?.photo_url && !photoFile) {
+      newErrors.photo = 'A professional headshot is required — profiles with photos get significantly more inquiries'
+    }
+
     return newErrors
   }
 
@@ -355,12 +363,20 @@ const ProfileEditor = () => {
           : null
       }
       
+      // Auto-approve if profile was pending and now has all required fields
+      const hasPhoto = photoUrl || profile?.photo_url
+      const hasBio = formData.bio?.trim().length >= 50
+      const hasContact = formData.phone?.trim() || formData.website?.trim()
+      if (profile?.moderation_status === 'pending' && hasPhoto && hasBio && hasContact) {
+        updateData.moderation_status = 'approved'
+      }
+
       const { error } = await updateProfile(updateData)
-      
+
       if (error) {
         throw new Error('Failed to save profile: ' + error.message)
       }
-      
+
       setSaveSuccess(true)
       window.scrollTo(0, 0)
       setTimeout(() => setSaveSuccess(false), 3000)
@@ -529,7 +545,8 @@ const ProfileEditor = () => {
 
                 <div className="form-group">
                   <label htmlFor="phone">Phone Number</label>
-                  <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="(555) 123-4567" />
+                  <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="(555) 123-4567" className={errors.phone ? 'error' : ''} />
+                  {errors.phone && <div className="field-error">{errors.phone}</div>}
                 </div>
               </div>
 
