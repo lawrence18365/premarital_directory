@@ -29,8 +29,11 @@ export const useOnboardingState = () => {
     // Session types
     session_types: [],
 
-    // Bio
+    // Bio (structured)
     bio: '',
+    bio_approach: '',
+    bio_ideal_client: '',
+    bio_outcomes: '',
 
     // Contact
     phone: '',
@@ -55,6 +58,9 @@ export const useOnboardingState = () => {
     session_fee_max: '',
     insurance_accepted: [],
     payment_methods: [],
+
+    // FAQs
+    faqs: [],
 
     // Meta
     email: ''
@@ -113,6 +119,9 @@ export const useOnboardingState = () => {
             country: existingProfile.country || 'United States',
             session_types: existingProfile.session_types || [],
             bio: existingProfile.bio || '',
+            bio_approach: existingProfile.bio_approach || '',
+            bio_ideal_client: existingProfile.bio_ideal_client || '',
+            bio_outcomes: existingProfile.bio_outcomes || '',
             phone: existingProfile.phone || '',
             website: existingProfile.website || '',
             faith_tradition: existingProfile.faith_tradition || '',
@@ -131,6 +140,7 @@ export const useOnboardingState = () => {
             session_fee_max: existingProfile.session_fee_max ? (existingProfile.session_fee_max / 100).toString() : '',
             insurance_accepted: existingProfile.insurance_accepted || [],
             payment_methods: existingProfile.payment_methods || [],
+            faqs: existingProfile.faqs || [],
             email: existingProfile.email || user.email
           })
 
@@ -218,6 +228,9 @@ export const useOnboardingState = () => {
         postal_code: profileData.postal_code.trim() || null,
         session_types: profileData.session_types.length > 0 ? profileData.session_types : null,
         bio: profileData.bio.trim() || null,
+        bio_approach: profileData.bio_approach?.trim() || null,
+        bio_ideal_client: profileData.bio_ideal_client?.trim() || null,
+        bio_outcomes: profileData.bio_outcomes?.trim() || null,
         phone: profileData.phone.trim() || null,
         website: profileData.website.trim() || null,
         faith_tradition: profileData.faith_tradition || null,
@@ -241,6 +254,7 @@ export const useOnboardingState = () => {
           : null,
         insurance_accepted: profileData.insurance_accepted.length > 0 ? profileData.insurance_accepted : null,
         payment_methods: profileData.payment_methods.length > 0 ? profileData.payment_methods : null,
+        faqs: profileData.faqs && profileData.faqs.length > 0 ? profileData.faqs : null,
         onboarding_step: step,
         onboarding_last_saved_at: new Date().toISOString()
       }

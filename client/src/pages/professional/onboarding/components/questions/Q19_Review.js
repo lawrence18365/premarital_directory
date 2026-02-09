@@ -156,13 +156,25 @@ const Q19_Review = ({
       </div>
 
       <div className="review-section">
-        <h3 className="review-heading">About You</h3>
-        <div className="review-item">
-          <span className="review-label">Bio:</span>
-          <span className="review-value">
-            {profileData.bio ? `${profileData.bio.substring(0, 150)}...` : 'Not provided'}
-          </span>
-        </div>
+        <h3 className="review-heading">About Your Practice</h3>
+        {profileData.bio_approach && (
+          <div className="review-item">
+            <span className="review-label">Your Approach:</span>
+            <span className="review-value">{profileData.bio_approach}</span>
+          </div>
+        )}
+        {profileData.bio_ideal_client && (
+          <div className="review-item">
+            <span className="review-label">Ideal Client:</span>
+            <span className="review-value">{profileData.bio_ideal_client}</span>
+          </div>
+        )}
+        {profileData.bio_outcomes && (
+          <div className="review-item">
+            <span className="review-label">Expected Outcomes:</span>
+            <span className="review-value">{profileData.bio_outcomes}</span>
+          </div>
+        )}
         {profileData.specialties && profileData.specialties.length > 0 && (
           <div className="review-item">
             <span className="review-label">Specialties:</span>
@@ -212,6 +224,18 @@ const Q19_Review = ({
               <span className="review-value">✓ Offers sliding scale fees</span>
             </div>
           )}
+        </div>
+      )}
+
+      {profileData.faqs && profileData.faqs.length > 0 && (
+        <div className="review-section">
+          <h3 className="review-heading">Common Questions</h3>
+          {profileData.faqs.map((faq, index) => (
+            <div key={index} className="review-item" style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: '1rem' }}>
+              <span className="review-label" style={{ marginBottom: '0.25rem' }}>Q: {faq.question}</span>
+              <span className="review-value" style={{ marginLeft: 0 }}>A: {faq.answer}</span>
+            </div>
+          ))}
         </div>
       )}
 

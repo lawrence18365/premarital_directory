@@ -24,7 +24,8 @@ import Q15_Education from './components/questions/Q15_Education'
 import Q16_SessionFees from './components/questions/Q16_SessionFees'
 import Q17_Insurance from './components/questions/Q17_Insurance'
 import Q18_PaymentMethods from './components/questions/Q18_PaymentMethods'
-import Q19_Review from './components/questions/Q19_Review'
+import Q19_FAQBuilder from './components/questions/Q20_FAQBuilder'
+import Q20_Review from './components/questions/Q19_Review'
 
 import '../../../assets/css/professional-signup.css'
 import './onboarding.css'
@@ -77,7 +78,8 @@ const OnboardingPage = () => {
       case 16: return <Q16_SessionFees {...onboardingState} />
       case 17: return <Q17_Insurance {...onboardingState} />
       case 18: return <Q18_PaymentMethods {...onboardingState} />
-      case 19: return <Q19_Review {...onboardingState} />
+      case 19: return <Q19_FAQBuilder {...onboardingState} />
+      case 20: return <Q20_Review {...onboardingState} />
       default: return <Q1_NameAndProfession {...onboardingState} />
     }
   }

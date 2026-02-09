@@ -165,7 +165,7 @@ export const pronounOptions = [
 ]
 
 // Total questions in the onboarding flow
-export const TOTAL_QUESTIONS = 19
+export const TOTAL_QUESTIONS = 20
 
 // Question metadata for tracking
 export const QUESTION_METADATA = {
@@ -173,7 +173,7 @@ export const QUESTION_METADATA = {
   2: { title: 'Professional Photo', required: true },
   3: { title: 'Location', required: true },
   4: { title: 'Session Types', required: true },
-  5: { title: 'Practice Bio', required: true },
+  5: { title: 'About Your Practice', required: true },
   6: { title: 'Contact Info', required: true },
   7: { title: 'Faith Tradition', required: false },
   8: { title: 'Certifications', required: false },
@@ -187,5 +187,6 @@ export const QUESTION_METADATA = {
   16: { title: 'Session Fees & Pricing', required: false },
   17: { title: 'Insurance Accepted', required: false },
   18: { title: 'Payment Methods', required: false },
-  19: { title: 'Review & Publish', required: true }
+  19: { title: 'Common Questions (FAQs)', required: false },
+  20: { title: 'Review & Publish', required: true }
 }
