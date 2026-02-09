@@ -152,7 +152,11 @@ function AppInner() {
               </a>
             )}
             {showSiteChrome && <Navbar />}
-            <main id="main-content" className="main-content">
+            <main
+              id="main-content"
+              className="main-content"
+              style={!showSiteChrome ? { paddingTop: 0 } : undefined}
+            >
               <Suspense fallback={<PremiumLoader />}>
               <Routes>
                 {/* Public Routes */}

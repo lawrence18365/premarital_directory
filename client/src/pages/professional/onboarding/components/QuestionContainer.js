@@ -17,16 +17,24 @@ const QuestionContainer = ({
   const isFirstQuestion = currentStep === 1
   const isLastQuestion = currentStep === TOTAL_QUESTIONS
 
+  const questionContext =
+    currentStep <= 6
+      ? 'Start with the essentials so couples immediately understand who you are.'
+      : currentStep <= 14
+        ? 'Now add depth so your profile stands out in search and fit.'
+        : 'Final touches to help couples choose you with confidence.'
+
   return (
     <div className="onboarding-container">
       <ProgressBar currentStep={currentStep} saving={saving} />
 
       <div className="question-content">
         <div className="question-header">
-          <h2 className="question-title">{questionInfo?.title}</h2>
-          {!questionInfo?.required && (
-            <span className="optional-badge">Optional</span>
-          )}
+          <div className="question-heading-block">
+            <span className="question-kicker">{questionInfo?.required ? 'Required' : 'Optional'}</span>
+            <h2 className="question-title">{questionInfo?.title}</h2>
+            <p className="question-context">{questionContext}</p>
+          </div>
         </div>
 
         {error && (
@@ -79,7 +87,7 @@ const QuestionContainer = ({
                 </>
               ) : (
                 <>
-                  Continue <i className="fa fa-arrow-right"></i>
+                  Next Question <i className="fa fa-arrow-right"></i>
                 </>
               )}
             </button>

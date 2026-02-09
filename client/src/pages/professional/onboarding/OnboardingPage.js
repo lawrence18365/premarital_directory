@@ -29,6 +29,7 @@ import Q20_Review from './components/questions/Q19_Review'
 
 import '../../../assets/css/professional-signup.css'
 import './onboarding.css'
+import { TOTAL_QUESTIONS } from './constants'
 
 const OnboardingPage = () => {
   const { user, profile, loading: authLoading } = useAuth()
@@ -91,14 +92,50 @@ const OnboardingPage = () => {
         description="Join our directory of premarital counselors and coaches. Help engaged couples find the right support for their relationship journey."
       />
       <div className="professional-signup onboarding-page">
-        <div className="signup-header">
-          <h1>Create Your Professional Profile</h1>
-          <p className="subtitle">
-            Let's get you set up — we'll ask one question at a time
-          </p>
-        </div>
+        <div className="onboarding-bg-shape onboarding-bg-shape--one" aria-hidden="true" />
+        <div className="onboarding-bg-shape onboarding-bg-shape--two" aria-hidden="true" />
 
-        {renderQuestion()}
+        <div className="onboarding-shell">
+          <aside className="onboarding-aside">
+            <span className="onboarding-aside-eyebrow">Professional Onboarding</span>
+            <h2>A guided profile setup that feels like a conversation.</h2>
+            <p className="onboarding-aside-copy">
+              One question at a time, built for clarity and confidence. Every step saves automatically so you never lose progress.
+            </p>
+
+            <ul className="onboarding-aside-list">
+              <li>
+                <i className="fa fa-bolt" aria-hidden="true"></i>
+                Fast, focused prompts with no clutter
+              </li>
+              <li>
+                <i className="fa fa-save" aria-hidden="true"></i>
+                Auto-saved to your profile after each Next
+              </li>
+              <li>
+                <i className="fa fa-star" aria-hidden="true"></i>
+                Premium profile quality couples can trust
+              </li>
+            </ul>
+
+            <div className="onboarding-aside-footnote">
+              <i className="fa fa-lock" aria-hidden="true"></i>
+              You are on step {currentStep} of {TOTAL_QUESTIONS}
+            </div>
+          </aside>
+
+          <section className="onboarding-main">
+            <div className="signup-header">
+              <span className="onboarding-header-pill">Guided Setup</span>
+              <h1>Create Your Professional Profile</h1>
+              <p className="subtitle">
+                Tell couples how you work in a simple step-by-step flow.
+              </p>
+            </div>
+
+            {renderQuestion()}
+          </section>
+        </div>
       </div>
     </>
   )
