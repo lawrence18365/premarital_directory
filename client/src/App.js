@@ -90,7 +90,6 @@ const SignupForm = React.lazy(() => import('./components/auth/SignupForm'))
 const ProfessionalDashboard = React.lazy(() => import('./pages/professional/ProfessionalDashboard'))
 const ProfileEditor = React.lazy(() => import('./pages/professional/ProfileEditor'))
 const LeadsPage = React.lazy(() => import('./pages/professional/LeadsPage'))
-const CreateProfilePage = React.lazy(() => import('./pages/professional/CreateProfilePage'))
 const OnboardingPage = React.lazy(() => import('./pages/professional/onboarding/OnboardingPage'))
 const ProfileCreatedPage = React.lazy(() => import('./pages/professional/ProfileCreatedPage'))
 const ProfilePendingPage = React.lazy(() => import('./pages/professional/ProfilePendingPage'))
@@ -195,14 +194,6 @@ function AppInner() {
                 <Route path="/professional/signup" element={<SignupForm />} />
                 <Route path="/professional/confirm-email" element={<ConfirmEmailPage />} />
                 <Route path="/professional/email-verified" element={<EmailVerifiedPage />} />
-                <Route
-                  path="/professional/create"
-                  element={
-                    <ProtectedRoute>
-                      <CreateProfilePage />
-                    </ProtectedRoute>
-                  }
-                />
                 <Route
                   path="/professional/onboarding"
                   element={
