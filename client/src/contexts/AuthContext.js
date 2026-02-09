@@ -60,15 +60,15 @@ export const AuthProvider = ({ children }) => {
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
-        .single()
+        .maybeSingle()
 
       if (profileError) {
-        if (profileError.code === 'PGRST116') {
-          // No profile found - this is expected for new users
-          console.log('No profile found for user:', userId)
-        } else {
-          console.error('Error loading profile:', profileError)
-        }
+        console.error('Error loading profile:', profileError)
+        return
+      }
+
+      if (!profileData) {
+        console.log('No profile found for user:', userId)
         return
       }
 
@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }) => {
         .select('*')
         .eq('id', userId)
         .eq('is_active', true)
-        .single()
+        .maybeSingle()
 
       if (!error && adminData) {
         setIsAdmin(true)

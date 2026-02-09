@@ -165,6 +165,7 @@ export const useOnboardingState = () => {
             .insert({
               user_id: user.id,
               email: user.email,
+              full_name: '',
               onboarding_step: 1,
               onboarding_completed: false,
               onboarding_started_at: new Date().toISOString(),
@@ -209,7 +210,7 @@ export const useOnboardingState = () => {
     }
 
     initializeOnboarding()
-  }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Update field value
   const updateField = useCallback((field, value) => {

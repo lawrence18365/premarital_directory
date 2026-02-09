@@ -8,7 +8,7 @@ const ProgressBar = ({ currentStep, saving }) => {
     <div className="onboarding-progress">
       <div className="progress-info">
         <span className="progress-text">
-          Question {currentStep} of {TOTAL_QUESTIONS}
+          Step {currentStep}
         </span>
         {saving && (
           <span className="saving-indicator">
