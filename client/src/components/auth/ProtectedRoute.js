@@ -2,8 +2,11 @@ import { useAuth } from '../../contexts/AuthContext'
 import { Navigate, useLocation } from 'react-router-dom'
 
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
-  const { user, loading, isAdmin } = useAuth()
+  const { user, profile, loading, isAdmin } = useAuth()
   const location = useLocation()
+  const isOnboardingRoute = location.pathname.startsWith('/professional/onboarding')
+  const requiresCompletedOnboarding =
+    location.pathname.startsWith('/professional/') && !isOnboardingRoute
 
   if (loading) {
     return (
@@ -17,6 +20,15 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
   if (!user) {
     // Save the attempted location for redirect after login
     return <Navigate to="/professional/login" state={{ from: location }} replace />
+  }
+
+  if (
+    !requireAdmin &&
+    requiresCompletedOnboarding &&
+    !isAdmin &&
+    (!profile || !profile.onboarding_completed)
+  ) {
+    return <Navigate to="/professional/onboarding" replace />
   }
 
   if (requireAdmin && !isAdmin) {

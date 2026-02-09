@@ -67,7 +67,6 @@ const commonFAQs = [
 const Q20_FAQBuilder = ({
   currentStep,
   profileData,
-  updateField,
   saving,
   error,
   goToNextQuestion,
@@ -125,15 +124,12 @@ const Q20_FAQBuilder = ({
       }
     }).filter(faq => faq.answer.trim()) // Only include FAQs with answers
 
-    updateField('faqs', faqs)
-
     // Save and navigate
-    await goToNextQuestion(currentStep)
+    await goToNextQuestion(currentStep, { faqs })
   }
 
   const handleSkip = async () => {
-    updateField('faqs', [])
-    await goToNextQuestion(currentStep)
+    await goToNextQuestion(currentStep, { faqs: [] })
   }
 
   return (

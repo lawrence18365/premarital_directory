@@ -122,7 +122,21 @@ if (process.env.NODE_ENV === 'development') {
 
 function AppInner() {
   const location = useLocation()
+  const { user, profile, loading, isAdmin } = useAuth()
   const isHome = ['/', '/therapists', '/coaches', '/clergy'].includes(location.pathname)
+  const isOnboardingRoute = location.pathname.startsWith('/professional/onboarding')
+  const hasIncompleteOnboarding =
+    !loading &&
+    user &&
+    !isAdmin &&
+    (!profile || !profile.onboarding_completed)
+
+  if (hasIncompleteOnboarding && !isOnboardingRoute) {
+    return <Navigate to="/professional/onboarding" replace />
+  }
+
+  const showSiteChrome = !isOnboardingRoute
+
   return (
           <div className={`App ${isHome ? 'App--no-offset' : ''}`}>
             {/* Analytics Tracking */}
@@ -132,10 +146,12 @@ function AppInner() {
             <LaunchTracker />
             <ScrollToTop />
             <PageTransitionLoader />
-            <a href="#main-content" className="skip-to-content">
-              Skip to main content
-            </a>
-            <Navbar />
+            {showSiteChrome && (
+              <a href="#main-content" className="skip-to-content">
+                Skip to main content
+              </a>
+            )}
+            {showSiteChrome && <Navbar />}
             <main id="main-content" className="main-content">
               <Suspense fallback={<PremiumLoader />}>
               <Routes>
@@ -324,7 +340,7 @@ function AppInner() {
               </Routes>
               </Suspense>
             </main>
-            <Footer />
+            {showSiteChrome && <Footer />}
           </div>
   )
 }

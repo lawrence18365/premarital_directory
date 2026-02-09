@@ -230,49 +230,54 @@ export const useOnboardingState = () => {
   }, [])
 
   // Save current progress to database
-  const saveProgress = useCallback(async (step) => {
+  const saveProgress = useCallback(async (step, pendingUpdates = {}) => {
     if (!profileId || !user) return { success: false }
 
     setSaving(true)
     setError('')
 
     try {
+      const mergedData = {
+        ...profileData,
+        ...pendingUpdates
+      }
+
       const updateData = {
-        full_name: profileData.full_name.trim() || null,
-        profession: profileData.profession || null,
-        city: profileData.city.trim() || null,
-        state_province: profileData.state_province.trim() || null,
-        address_line1: profileData.address_line1.trim() || null,
-        postal_code: profileData.postal_code.trim() || null,
-        session_types: profileData.session_types.length > 0 ? profileData.session_types : null,
-        bio: profileData.bio.trim() || null,
-        bio_approach: profileData.bio_approach?.trim() || null,
-        bio_ideal_client: profileData.bio_ideal_client?.trim() || null,
-        bio_outcomes: profileData.bio_outcomes?.trim() || null,
-        phone: profileData.phone.trim() || null,
-        website: profileData.website.trim() || null,
-        faith_tradition: profileData.faith_tradition || null,
-        certifications: profileData.certifications.length > 0 ? profileData.certifications : null,
-        specialties: profileData.specialties.length > 0 ? profileData.specialties : null,
-        treatment_approaches: profileData.treatment_approaches.length > 0 ? profileData.treatment_approaches : null,
-        client_focus: profileData.client_focus.length > 0 ? profileData.client_focus : null,
-        years_experience: profileData.years_experience ? parseInt(profileData.years_experience) : null,
-        pronouns: profileData.pronouns || null,
-        languages: profileData.languages.length > 0 ? profileData.languages : null,
-        credentials: profileData.credentials.length > 0 ? profileData.credentials : null,
-        education: profileData.education.length > 0 ? profileData.education : null,
-        offers_free_consultation: profileData.offers_free_consultation,
-        sliding_scale: profileData.sliding_scale,
-        session_fee_min: profileData.session_fee_min ? parseInt(profileData.session_fee_min) * 100 : null,
-        session_fee_max: profileData.session_fee_max ? parseInt(profileData.session_fee_max) * 100 : null,
-        pricing_range: profileData.session_fee_min
-          ? profileData.session_fee_max
-            ? `$${profileData.session_fee_min}-$${profileData.session_fee_max}`
-            : `$${profileData.session_fee_min}`
+        full_name: mergedData.full_name.trim() || null,
+        profession: mergedData.profession || null,
+        city: mergedData.city.trim() || null,
+        state_province: mergedData.state_province.trim() || null,
+        address_line1: mergedData.address_line1.trim() || null,
+        postal_code: mergedData.postal_code.trim() || null,
+        session_types: mergedData.session_types.length > 0 ? mergedData.session_types : null,
+        bio: mergedData.bio.trim() || null,
+        bio_approach: mergedData.bio_approach?.trim() || null,
+        bio_ideal_client: mergedData.bio_ideal_client?.trim() || null,
+        bio_outcomes: mergedData.bio_outcomes?.trim() || null,
+        phone: mergedData.phone.trim() || null,
+        website: mergedData.website.trim() || null,
+        faith_tradition: mergedData.faith_tradition || null,
+        certifications: mergedData.certifications.length > 0 ? mergedData.certifications : null,
+        specialties: mergedData.specialties.length > 0 ? mergedData.specialties : null,
+        treatment_approaches: mergedData.treatment_approaches.length > 0 ? mergedData.treatment_approaches : null,
+        client_focus: mergedData.client_focus.length > 0 ? mergedData.client_focus : null,
+        years_experience: mergedData.years_experience ? parseInt(mergedData.years_experience) : null,
+        pronouns: mergedData.pronouns || null,
+        languages: mergedData.languages.length > 0 ? mergedData.languages : null,
+        credentials: mergedData.credentials.length > 0 ? mergedData.credentials : null,
+        education: mergedData.education.length > 0 ? mergedData.education : null,
+        offers_free_consultation: mergedData.offers_free_consultation,
+        sliding_scale: mergedData.sliding_scale,
+        session_fee_min: mergedData.session_fee_min ? parseInt(mergedData.session_fee_min) * 100 : null,
+        session_fee_max: mergedData.session_fee_max ? parseInt(mergedData.session_fee_max) * 100 : null,
+        pricing_range: mergedData.session_fee_min
+          ? mergedData.session_fee_max
+            ? `$${mergedData.session_fee_min}-$${mergedData.session_fee_max}`
+            : `$${mergedData.session_fee_min}`
           : null,
-        insurance_accepted: profileData.insurance_accepted.length > 0 ? profileData.insurance_accepted : null,
-        payment_methods: profileData.payment_methods.length > 0 ? profileData.payment_methods : null,
-        faqs: profileData.faqs && profileData.faqs.length > 0 ? profileData.faqs : null,
+        insurance_accepted: mergedData.insurance_accepted.length > 0 ? mergedData.insurance_accepted : null,
+        payment_methods: mergedData.payment_methods.length > 0 ? mergedData.payment_methods : null,
+        faqs: mergedData.faqs && mergedData.faqs.length > 0 ? mergedData.faqs : null,
         onboarding_step: step,
         onboarding_last_saved_at: new Date().toISOString()
       }
@@ -287,7 +292,7 @@ export const useOnboardingState = () => {
       // Also cache to sessionStorage as backup
       sessionStorage.setItem('onboarding_backup', JSON.stringify({
         step,
-        data: profileData,
+        data: mergedData,
         timestamp: Date.now()
       }))
 
@@ -302,9 +307,13 @@ export const useOnboardingState = () => {
   }, [profileId, profileData, user])
 
   // Navigate to next question
-  const goToNextQuestion = useCallback(async (fromStep) => {
+  const goToNextQuestion = useCallback(async (fromStep, pendingUpdates = null) => {
+    if (pendingUpdates) {
+      setProfileData(prev => ({ ...prev, ...pendingUpdates }))
+    }
+
     // Save progress before moving to next step
-    const result = await saveProgress(fromStep + 1)
+    const result = await saveProgress(fromStep + 1, pendingUpdates || {})
     if (!result.success) return false
 
     setCurrentStep(fromStep + 1)

@@ -28,10 +28,9 @@ const Q5_Bio = ({
 
     // Combine into main bio field for backward compatibility
     const combinedBio = `${profileData.bio_approach}\n\n${profileData.bio_ideal_client}\n\n${profileData.bio_outcomes}`
-    updateField('bio', combinedBio)
 
     // Save and navigate
-    await goToNextQuestion(currentStep)
+    await goToNextQuestion(currentStep, { bio: combinedBio })
   }
 
   return (

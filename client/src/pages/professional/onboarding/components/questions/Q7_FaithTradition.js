@@ -16,8 +16,7 @@ const Q7_FaithTradition = ({
   }
 
   const handleSkip = async () => {
-    updateField('faith_tradition', '')
-    await goToNextQuestion(currentStep)
+    await goToNextQuestion(currentStep, { faith_tradition: '' })
   }
 
   return (
