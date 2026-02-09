@@ -42,14 +42,19 @@ const HomeOrDashboard = () => {
     return <HomePage />
   }
 
-  // If user is logged in with a profile, redirect to dashboard
-  if (user && profile) {
+  // If user has incomplete onboarding, redirect to resume
+  if (user && profile && !profile.onboarding_completed) {
+    return <Navigate to="/professional/onboarding" replace />
+  }
+
+  // If user is logged in with a completed profile, redirect to dashboard
+  if (user && profile && profile.onboarding_completed) {
     return <Navigate to="/professional/dashboard" replace />
   }
 
-  // If user is logged in but no profile yet, redirect to create profile
+  // If user is logged in but no profile yet, redirect to onboarding
   if (user && !profile) {
-    return <Navigate to="/professional/create" replace />
+    return <Navigate to="/professional/onboarding" replace />
   }
 
   // Not logged in - show homepage
@@ -86,6 +91,7 @@ const ProfessionalDashboard = React.lazy(() => import('./pages/professional/Prof
 const ProfileEditor = React.lazy(() => import('./pages/professional/ProfileEditor'))
 const LeadsPage = React.lazy(() => import('./pages/professional/LeadsPage'))
 const CreateProfilePage = React.lazy(() => import('./pages/professional/CreateProfilePage'))
+const OnboardingPage = React.lazy(() => import('./pages/professional/onboarding/OnboardingPage'))
 const ProfileCreatedPage = React.lazy(() => import('./pages/professional/ProfileCreatedPage'))
 const ProfilePendingPage = React.lazy(() => import('./pages/professional/ProfilePendingPage'))
 const AnalyticsDashboard = React.lazy(() => import('./pages/professional/AnalyticsDashboard'))
@@ -194,6 +200,14 @@ function AppInner() {
                   element={
                     <ProtectedRoute>
                       <CreateProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/professional/onboarding"
+                  element={
+                    <ProtectedRoute>
+                      <OnboardingPage />
                     </ProtectedRoute>
                   }
                 />
