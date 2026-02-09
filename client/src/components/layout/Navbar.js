@@ -185,7 +185,7 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/professional/create" onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/professional/onboarding" onClick={() => setMobileMenuOpen(false)}>
                     <i className="fa fa-plus-circle" aria-hidden="true"></i>
                     Create Profile
                   </Link>

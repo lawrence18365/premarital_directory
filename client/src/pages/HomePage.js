@@ -465,7 +465,7 @@ const HomePage = () => {
                 </ul>
               </div>
               <div className="provider-cta__actions">
-                <Link to="/professional/create?signup_source=homepage" className="btn provider-cta__primary">
+                <Link to="/professional/signup?signup_source=homepage" className="btn provider-cta__primary">
                   <span className="provider-cta__btn-label">Create Your Free Profile</span>
                   <span className="provider-cta__btn-subtext">List your practice in 5 minutes</span>
                 </Link>
@@ -617,7 +617,7 @@ const HomePage = () => {
                 </div>
 
                 <div className="pros-cta__actions">
-                  <Link to="/professional/create?signup_source=homepage_cta" className="pros-cta__button pros-cta__button--primary">
+                  <Link to="/professional/signup?signup_source=homepage_cta" className="pros-cta__button pros-cta__button--primary">
                     <span>Create Your Free Profile</span>
                     <small>List your practice in five minutes</small>
                   </Link>

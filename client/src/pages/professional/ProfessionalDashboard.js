@@ -211,7 +211,7 @@ const ProfessionalDashboard = () => {
 
   // Redirect users without profiles to create profile
   if (user && !profile) {
-    return <Navigate to="/professional/create" replace />
+    return <Navigate to="/professional/onboarding" replace />
   }
 
   if (loading) {
@@ -244,7 +244,7 @@ const ProfessionalDashboard = () => {
           </h3>
           <p>Try one of these options:</p>
           <div style={{ display: 'flex', gap: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
-            <Link to="/professional/create" className="btn btn-primary">
+            <Link to="/professional/onboarding" className="btn btn-primary">
               Create Profile
             </Link>
             <button onClick={() => window.location.reload()} className="btn btn-outline">

@@ -75,7 +75,7 @@ const SubscriptionPage = () => {
 
   // Redirect users without profiles to create profile
   if (user && !profile) {
-    return <Navigate to="/professional/create" replace />;
+    return <Navigate to="/professional/onboarding" replace />;
   }
 
   const currentTier = profile?.tier || 'community';

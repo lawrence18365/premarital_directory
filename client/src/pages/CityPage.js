@@ -640,7 +640,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                     Join our directory and connect with engaged couples looking for premarital counseling and marriage preparation services in {cityName}, {stateName}.
                   </p>
                   <Link
-                    to={`/professional/create?signup_source=city_page&city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}`}
+                    to={`/professional/signup?signup_source=city_page&city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}`}
                     style={{
                       display: 'inline-block',
                       padding: 'var(--space-3) var(--space-6)',

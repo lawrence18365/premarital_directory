@@ -96,7 +96,7 @@ const EmailVerifiedPage = () => {
                 Complete your profile in just a few minutes. Add your credentials,
                 specialties, and start receiving inquiries from engaged couples.
               </p>
-              <Link to="/professional/create" className="email-verified__btn email-verified__btn--primary">
+              <Link to="/professional/onboarding" className="email-verified__btn email-verified__btn--primary">
                 <i className="fa fa-user-plus" aria-hidden="true"></i>
                 Create Your Profile
               </Link>
