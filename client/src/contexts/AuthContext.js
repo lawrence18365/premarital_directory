@@ -18,34 +18,39 @@ export const AuthProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    let isMounted = true
+
+    const handleSession = async (session) => {
+      if (!isMounted) return
       setUser(session?.user || null)
       if (session?.user) {
-        await Promise.all([
-          loadUserProfile(session.user.id),
-          checkAdminStatus(session.user.id)
-        ])
-      }
-      setLoading(false)
-    })
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user || null)
-        if (session?.user) {
-          await loadUserProfile(session.user.id)
-          await checkAdminStatus(session.user.id)
-        } else {
-          setProfile(null)
-          setIsAdmin(false)
+        try {
+          await Promise.all([
+            loadUserProfile(session.user.id),
+            checkAdminStatus(session.user.id)
+          ])
+        } catch (err) {
+          console.error('Error loading user data:', err)
         }
-        setLoading(false)
+      } else {
+        setProfile(null)
+        setIsAdmin(false)
+      }
+      if (isMounted) setLoading(false)
+    }
+
+    // Use onAuthStateChange as the single source of truth
+    // It fires INITIAL_SESSION on mount, then SIGNED_IN/SIGNED_OUT/etc.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        handleSession(session)
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      isMounted = false
+      subscription.unsubscribe()
+    }
   }, [])
 
   const loadUserProfile = async (userId) => {
