@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { S3Client, PutObjectCommand } from "https://esm.sh/@aws-sdk/client-s3@3.370.0"
-import { getSignedUrl } from "https://esm.sh/@aws-sdk/s3-request-presigner@3.370.0"
+import { S3Client, PutObjectCommand } from "npm:@aws-sdk/client-s3@3.654.0"
+import { getSignedUrl } from "npm:@aws-sdk/s3-request-presigner@3.654.0"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4"
 import { getCorsHeaders, requireUser } from "../_shared/auth.ts"
 
@@ -28,13 +28,25 @@ serve(async (req) => {
       throw new Error('Supabase configuration missing')
     }
 
-    const userResult = await requireUser(req, supabaseUrl, supabaseAnonKey)
-    if (!userResult.ok) {
+    // Extract JWT from Authorization header and validate
+    const authHeader = req.headers.get('authorization') || ''
+    const jwt = authHeader.replace('Bearer ', '')
+    if (!jwt) {
+      return new Response(
+        JSON.stringify({ error: 'No authorization header' }),
+        { status: 401, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const authClient = createClient(supabaseUrl, supabaseAnonKey)
+    const { data: authData, error: authError } = await authClient.auth.getUser(jwt)
+    if (authError || !authData?.user) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
       )
     }
+    const userResult = { ok: true, user: authData.user }
 
     const adminClient = createClient(supabaseUrl, supabaseServiceKey)
 

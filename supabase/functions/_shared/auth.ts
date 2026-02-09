@@ -51,13 +51,12 @@ export async function getUserFromRequest(req: Request, supabaseUrl: string, supa
   const authHeader = req.headers.get('authorization') || ''
   if (!authHeader) return { user: null }
 
-  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    global: {
-      headers: { Authorization: authHeader },
-    },
-  })
+  const jwt = authHeader.replace('Bearer ', '')
+  if (!jwt) return { user: null }
 
-  const { data, error } = await supabase.auth.getUser()
+  const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+  const { data, error } = await supabase.auth.getUser(jwt)
   if (error) return { user: null, error }
   return { user: data.user }
 }
