@@ -95,6 +95,8 @@ export const useOnboardingState = () => {
         return
       }
 
+      setLoading(true)
+
       try {
         // Check if user already has a profile
         const { data: existingProfile, error: fetchError } = await supabase
@@ -178,7 +180,22 @@ export const useOnboardingState = () => {
             .select()
             .single()
 
-          if (createError) throw createError
+          if (createError) {
+            // Duplicate key — profile was created between our check and insert (race condition)
+            if (createError.code === '23505') {
+              const { data: raceProfile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('user_id', user.id)
+                .single()
+              if (raceProfile) {
+                setProfileId(raceProfile.id)
+                setProfileData(prev => ({ ...prev, email: user.email }))
+                return
+              }
+            }
+            throw createError
+          }
 
           setProfileId(newProfile.id)
           setProfileData(prev => ({ ...prev, email: user.email }))

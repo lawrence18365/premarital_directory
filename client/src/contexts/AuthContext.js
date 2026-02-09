@@ -19,11 +19,13 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user || null)
       if (session?.user) {
-        loadUserProfile(session.user.id)
-        checkAdminStatus(session.user.id)
+        await Promise.all([
+          loadUserProfile(session.user.id),
+          checkAdminStatus(session.user.id)
+        ])
       }
       setLoading(false)
     })
