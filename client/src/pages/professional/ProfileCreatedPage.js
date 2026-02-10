@@ -25,19 +25,19 @@ const ProfileCreatedPage = () => {
       <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
         {/* Success Header */}
         <div style={{
-          background: 'linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%)',
+          background: 'linear-gradient(135deg, rgba(14, 94, 94, 0.12) 0%, rgba(14, 94, 94, 0.08) 100%)',
           padding: 'var(--space-12)',
           borderRadius: 'var(--radius-2xl)',
           marginBottom: 'var(--space-8)',
-          border: '2px solid #28a745'
+          border: '2px solid var(--ds-border-strong)'
         }}>
           <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>
-            <i className="fa fa-check-circle" style={{ color: '#28a745' }} aria-hidden="true"></i>
+            <i className="fa fa-check-circle" style={{ color: 'var(--ds-accent)' }} aria-hidden="true"></i>
           </div>
-          <h1 style={{ color: '#155724', marginBottom: 'var(--space-4)' }}>
+          <h1 style={{ color: 'var(--ds-ink)', marginBottom: 'var(--space-4)' }}>
             You're All Set!
           </h1>
-          <p style={{ fontSize: 'var(--text-lg)', color: '#155724', marginBottom: 'var(--space-6)' }}>
+          <p style={{ fontSize: 'var(--text-lg)', color: 'var(--ds-ink-muted)', marginBottom: 'var(--space-6)' }}>
             Your profile is now live. Couples in your area can find you in the directory.
           </p>
         </div>

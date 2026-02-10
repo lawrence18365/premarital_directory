@@ -3,6 +3,21 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { supabase } from '../../../../lib/supabaseClient'
 
+const toBooleanFlag = (value) => {
+  if (typeof value === 'boolean') return value
+  if (value == null) return false
+  if (typeof value === 'number') return value !== 0
+
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase()
+    if (!normalized) return false
+    if (['false', '0', 'no', 'none', 'null', 'n/a'].includes(normalized)) return false
+    return true
+  }
+
+  return Boolean(value)
+}
+
 /**
  * Custom hook for managing onboarding state, auto-save, and navigation
  * Handles loading profile data, updating fields, saving progress, and resuming
@@ -136,8 +151,8 @@ export const useOnboardingState = () => {
             languages: existingProfile.languages || [],
             credentials: existingProfile.credentials || [],
             education: existingProfile.education || [],
-            offers_free_consultation: existingProfile.offers_free_consultation || false,
-            sliding_scale: existingProfile.sliding_scale || false,
+            offers_free_consultation: toBooleanFlag(existingProfile.offers_free_consultation),
+            sliding_scale: toBooleanFlag(existingProfile.sliding_scale),
             session_fee_min: existingProfile.session_fee_min ? (existingProfile.session_fee_min / 100).toString() : '',
             session_fee_max: existingProfile.session_fee_max ? (existingProfile.session_fee_max / 100).toString() : '',
             insurance_accepted: existingProfile.insurance_accepted || [],
@@ -266,8 +281,8 @@ export const useOnboardingState = () => {
         languages: mergedData.languages.length > 0 ? mergedData.languages : null,
         credentials: mergedData.credentials.length > 0 ? mergedData.credentials : null,
         education: mergedData.education.length > 0 ? mergedData.education : null,
-        offers_free_consultation: mergedData.offers_free_consultation,
-        sliding_scale: mergedData.sliding_scale,
+        offers_free_consultation: toBooleanFlag(mergedData.offers_free_consultation),
+        sliding_scale: toBooleanFlag(mergedData.sliding_scale) ? true : null,
         session_fee_min: mergedData.session_fee_min ? parseInt(mergedData.session_fee_min) * 100 : null,
         session_fee_max: mergedData.session_fee_max ? parseInt(mergedData.session_fee_max) * 100 : null,
         pricing_range: mergedData.session_fee_min

@@ -46,7 +46,7 @@
   /* Subtle premium overlay patterns */
   background-image: 
     linear-gradient(135deg, rgba(14, 94, 94, 0.05) 0%, transparent 100%),
-    radial-gradient(circle at 80% 20%, rgba(255, 107, 107, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(14, 94, 94, 0.03) 0%, transparent 50%),
     radial-gradient(circle at 20% 80%, rgba(26, 115, 115, 0.04) 0%, transparent 50%);
   
   /* Premium border */
@@ -135,12 +135,12 @@
 }
 
 .mobile-menu-close:hover {
-  background: rgba(255, 107, 107, 0.2);
-  border-color: rgba(255, 107, 107, 0.4);
+  background: rgba(14, 94, 94, 0.2);
+  border-color: rgba(14, 94, 94, 0.4);
   color: #ffffff;
   transform: scale(1.05);
   box-shadow: 
-    0 8px 25px rgba(255, 107, 107, 0.3),
+    0 8px 25px rgba(14, 94, 94, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
@@ -247,17 +247,17 @@
 }
 
 .navbar-mobile-nav a.active {
-  background: rgba(255, 107, 107, 0.12);
-  border-color: rgba(255, 107, 107, 0.3);
+  background: rgba(14, 94, 94, 0.12);
+  border-color: rgba(14, 94, 94, 0.3);
   color: #0e5e5e;
   box-shadow: 
-    0 4px 20px rgba(255, 107, 107, 0.2),
+    0 4px 20px rgba(14, 94, 94, 0.2),
     0 2px 8px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .navbar-mobile-nav a.active i {
-  color: #ff6b6b;
+  color: #0e5e5e;
 }
 
 /* Special styling for auth section */
@@ -311,19 +311,19 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #0e5e5e;
-  border: 1.5px solid rgba(255, 107, 107, 0.4);
+  border: 1.5px solid rgba(14, 94, 94, 0.4);
   box-shadow: 
     0 2px 8px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .mobile-auth-btn.btn-outline:hover {
-  background: rgba(255, 107, 107, 0.12);
-  color: #ff6b6b;
-  border-color: rgba(255, 107, 107, 0.6);
+  background: rgba(14, 94, 94, 0.12);
+  color: #0e5e5e;
+  border-color: rgba(14, 94, 94, 0.6);
   transform: translateY(-2px);
   box-shadow: 
-    0 6px 20px rgba(255, 107, 107, 0.2),
+    0 6px 20px rgba(14, 94, 94, 0.2),
     0 3px 10px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
@@ -347,8 +347,8 @@
 
 .mobile-sign-out-btn:hover {
   background: rgba(255, 99, 99, 0.1);
-  color: #ff6363;
-  border-color: #ff6363;
+  color: #0e5e5e;
+  border-color: #0e5e5e;
 }
 
 /* Premium Animations */

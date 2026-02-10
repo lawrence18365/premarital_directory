@@ -13,7 +13,7 @@ export const SPECIALTY_CONFIG = {
     keywords: ['christian premarital counseling', 'faith-based marriage counseling', 'bible-based couples counseling', 'christian marriage preparation'],
     filterTerms: ['Christian', 'Faith-Based', 'Biblical', 'Church', 'Pastor', 'Clergy', 'Ministry'],
     icon: 'fa-cross',
-    color: '#8B4513',
+    color: '#0e5e5e',
     intro: `Christian premarital counseling combines professional relationship guidance with Biblical principles and spiritual wisdom. Whether you're looking for a pastor, church-based program, or licensed Christian therapist, faith-centered marriage preparation helps couples build their relationship on a strong spiritual foundation.`,
     benefits: [
       'Biblical framework for marriage',
@@ -49,7 +49,7 @@ export const SPECIALTY_CONFIG = {
     keywords: ['pre-cana classes', 'catholic marriage preparation', 'catholic premarital counseling', 'foccus inventory', 'engaged encounter'],
     filterTerms: ['Catholic', 'Pre-Cana', 'FOCCUS', 'Engaged Encounter', 'Parish', 'Sacrament'],
     icon: 'fa-church',
-    color: '#722F37',
+    color: '#0e5e5e',
     intro: `Catholic marriage preparation (Pre-Cana) is required by the Church before the Sacrament of Marriage. Programs include parish-based classes, Engaged Encounter weekends, sponsor couple mentoring, and the FOCCUS pre-marriage inventory. Find approved programs and Catholic counselors in your diocese.`,
     benefits: [
       'Fulfills Church requirements',
@@ -85,7 +85,7 @@ export const SPECIALTY_CONFIG = {
     keywords: ['lgbtq premarital counseling', 'gay couples counseling', 'same-sex marriage preparation', 'queer affirming therapist', 'lgbtq friendly counselor'],
     filterTerms: ['LGBTQ+', 'LGBTQ', 'Gay', 'Lesbian', 'Queer', 'Affirming', 'Same-Sex', 'Inclusive'],
     icon: 'fa-rainbow',
-    color: '#E40303',
+    color: '#0e5e5e',
     intro: `LGBTQ+ affirming premarital counseling provides inclusive, celebratory support for same-sex couples and queer relationships. These counselors understand the unique experiences, strengths, and challenges LGBTQ+ couples face and create a welcoming space for marriage preparation.`,
     benefits: [
       'Affirming, celebratory approach',
@@ -121,7 +121,7 @@ export const SPECIALTY_CONFIG = {
     keywords: ['online premarital counseling', 'virtual marriage counseling', 'telehealth couples therapy', 'remote premarital preparation', 'video premarital counseling'],
     filterTerms: ['Online', 'Virtual', 'Telehealth', 'Video', 'Remote'],
     icon: 'fa-video',
-    color: '#0066CC',
+    color: '#0e5e5e',
     intro: `Online premarital counseling brings professional marriage preparation to you wherever you are. Perfect for busy couples, long-distance relationships, or those who prefer the convenience of virtual sessions. Video-based counseling is just as effective as in-person and offers greater flexibility.`,
     benefits: [
       'Convenient scheduling',
@@ -157,7 +157,7 @@ export const SPECIALTY_CONFIG = {
     keywords: ['gottman method counseling', 'gottman premarital', 'sound relationship house', 'gottman certified therapist', 'research-based marriage counseling'],
     filterTerms: ['Gottman', 'Sound Relationship House', 'Research-Based', 'Evidence-Based'],
     icon: 'fa-flask',
-    color: '#2E8B57',
+    color: '#0e5e5e',
     intro: `The Gottman Method is based on over 40 years of research by Drs. John and Julie Gottman. Gottman-trained counselors use evidence-based techniques including the Sound Relationship House theory to help couples build friendship, manage conflict, and create shared meaning in their relationship.`,
     benefits: [
       '40+ years of research backing',
@@ -193,7 +193,7 @@ export const SPECIALTY_CONFIG = {
     keywords: ['prepare enrich counseling', 'prepare enrich facilitator', 'premarital assessment', 'prepare enrich premarital', 'relationship inventory'],
     filterTerms: ['PREPARE/ENRICH', 'Prepare-Enrich', 'PREPARE', 'Assessment', 'Inventory'],
     icon: 'fa-clipboard-check',
-    color: '#4169E1',
+    color: '#0e5e5e',
     intro: `PREPARE/ENRICH is the most widely used premarital assessment program, backed by 35+ years of research. Certified facilitators guide couples through a comprehensive inventory that identifies relationship strengths and growth areas, leading to targeted counseling conversations.`,
     benefits: [
       'Comprehensive relationship assessment',
@@ -229,7 +229,7 @@ export const SPECIALTY_CONFIG = {
     keywords: ['interfaith premarital counseling', 'mixed religion couples', 'interfaith marriage counseling', 'multi-faith couples therapy'],
     filterTerms: ['Interfaith', 'Multi-Faith', 'Mixed Religion', 'Interreligious'],
     icon: 'fa-hands-praying',
-    color: '#9932CC',
+    color: '#0e5e5e',
     intro: `Interfaith premarital counseling helps couples from different religious backgrounds navigate their differences and create a shared spiritual path. Counselors experienced with interfaith relationships can help you discuss traditions, family expectations, raising children, and honoring both faiths.`,
     benefits: [
       'Navigate religious differences',
@@ -265,7 +265,7 @@ export const SPECIALTY_CONFIG = {
     keywords: ['second marriage counseling', 'remarriage counseling', 'premarital counseling remarriage', 'blended family counseling'],
     filterTerms: ['Second Marriage', 'Remarriage', 'Blended Family', 'Divorced', 'Widowed'],
     icon: 'fa-heart-circle-plus',
-    color: '#DC143C',
+    color: '#0e5e5e',
     intro: `Premarital counseling for second marriages addresses the unique experiences of couples who've been married before. Whether divorced or widowed, these counselors help you understand past patterns, navigate blended family dynamics, and build a stronger foundation for your next chapter.`,
     benefits: [
       'Learn from past relationships',
@@ -301,7 +301,7 @@ export const SPECIALTY_CONFIG = {
     keywords: ['military premarital counseling', 'military couples therapy', 'army marriage counseling', 'military family counseling'],
     filterTerms: ['Military', 'Veteran', 'Armed Forces', 'Army', 'Navy', 'Air Force', 'Marines'],
     icon: 'fa-shield-halved',
-    color: '#4B5320',
+    color: '#0e5e5e',
     intro: `Military premarital counseling addresses the unique challenges faced by service members and their partners. Counselors experienced with military life understand deployments, frequent relocations, the chain of command, and the stresses of military culture on relationships.`,
     benefits: [
       'Deployment preparation',
@@ -337,7 +337,7 @@ export const SPECIALTY_CONFIG = {
     keywords: ['affordable premarital counseling', 'cheap premarital counseling', 'free premarital counseling', 'sliding scale couples counseling', 'low cost marriage counseling'],
     filterTerms: ['Sliding Scale', 'Affordable', 'Low Cost', 'Free', 'Reduced Fee'],
     icon: 'fa-piggy-bank',
-    color: '#228B22',
+    color: '#0e5e5e',
     intro: `Quality premarital counseling shouldn't be limited by your budget. Many counselors offer sliding scale fees based on income, and community organizations, churches, and training clinics provide low-cost or free options. Find affordable marriage preparation that fits your financial situation.`,
     benefits: [
       'Sliding scale fees',

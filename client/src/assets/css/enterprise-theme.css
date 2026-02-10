@@ -1,0 +1,302 @@
+/* Enterprise Theme Tokens + Global UI Harmonization */
+:root {
+  --ds-accent: #0e5e5e;
+  --ds-accent-strong: #0b4949;
+  --ds-accent-soft: rgba(14, 94, 94, 0.1);
+  --ds-bg: #eef6f6;
+  --ds-bg-soft: #f6fbfb;
+  --ds-surface: #ffffff;
+  --ds-surface-muted: #f4f9f9;
+  --ds-ink: #0b3e3e;
+  --ds-ink-muted: rgba(11, 62, 62, 0.72);
+  --ds-border: rgba(14, 94, 94, 0.16);
+  --ds-border-strong: rgba(14, 94, 94, 0.24);
+  --ds-radius-lg: 14px;
+  --ds-radius-xl: 18px;
+  --ds-shadow-soft: 0 10px 26px rgba(6, 34, 34, 0.06);
+  --ds-shadow-card: 0 16px 40px rgba(6, 34, 34, 0.07);
+}
+
+/* Unify base palette across the site */
+:root {
+  --primary: var(--ds-accent);
+  --primary-light: #16706f;
+  --primary-dark: var(--ds-accent-strong);
+  --secondary: #6f9e97;
+  --secondary-light: #8ab1ab;
+  --secondary-dark: var(--ds-accent);
+  --accent: var(--ds-accent);
+  --accent-light: #2f8a88;
+  --accent-dark: var(--ds-accent-strong);
+  --neutral-light: var(--ds-bg-soft);
+  --neutral: var(--ds-surface);
+  --neutral-mid: #d7e6e6;
+  --neutral-dark: var(--ds-ink);
+  --slate: var(--ds-ink-muted);
+  --mist: #d9e7e7;
+  --gray-light: #edf3f3;
+  --gray-medium: #5f7777;
+  --gray-dark: var(--ds-ink);
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --success: var(--ds-accent);
+  --warning: var(--ds-accent);
+  --error: var(--ds-accent);
+  --danger: var(--ds-accent);
+  --success-bg: var(--ds-accent-soft);
+  --success-dark: var(--ds-accent-strong);
+  --warning-bg: var(--ds-accent-soft);
+  --warning-dark: var(--ds-accent-strong);
+  --error-bg: var(--ds-accent-soft);
+  --error-dark: var(--ds-accent-strong);
+  --bg-secondary: var(--ds-surface-muted);
+  --text-primary: var(--ds-ink);
+  --text-secondary: var(--ds-ink-muted);
+  --text-muted: rgba(11, 62, 62, 0.62);
+  --color-primary: var(--ds-accent);
+  --color-teal: var(--ds-accent);
+  --color-coral: var(--ds-accent);
+  --color-coral-light: var(--ds-accent-soft);
+  --color-sage: var(--ds-accent);
+  --coral: var(--ds-accent);
+  --coral-light: var(--ds-accent-soft);
+  --coral-dark: var(--ds-accent-strong);
+  --blue: var(--ds-accent);
+  --gold: var(--ds-accent);
+}
+
+body {
+  background:
+    radial-gradient(circle at 100% 0, rgba(14, 94, 94, 0.1), rgba(14, 94, 94, 0) 36%),
+    linear-gradient(180deg, #f6fbfb 0%, #eef6f6 100%);
+  color: var(--ds-ink);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--ds-ink);
+  letter-spacing: -0.02em;
+}
+
+p {
+  color: var(--ds-ink-muted);
+}
+
+.navbar {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid var(--ds-border);
+  box-shadow: 0 2px 12px rgba(6, 34, 34, 0.05);
+}
+
+.footer,
+footer {
+  border-top: 1px solid var(--ds-border);
+  background: linear-gradient(180deg, #f8fbfb 0%, #eff7f7 100%);
+}
+
+.footer,
+footer,
+.footer p,
+.footer li,
+.footer-bottom p {
+  color: var(--ds-ink-muted) !important;
+}
+
+.footer h4,
+.footer strong {
+  color: var(--ds-ink) !important;
+}
+
+.footer a {
+  color: var(--ds-ink-muted) !important;
+}
+
+.footer a:hover {
+  color: var(--ds-accent) !important;
+}
+
+.footer .btn.btn-footer {
+  color: #ffffff !important;
+  background: var(--ds-accent) !important;
+  border: 1px solid var(--ds-accent) !important;
+}
+
+.footer .btn.btn-footer:hover {
+  background: var(--ds-accent-strong) !important;
+  border-color: var(--ds-accent-strong) !important;
+}
+
+.btn {
+  border-radius: 11px;
+  font-weight: 600;
+  transition: transform var(--transition), box-shadow var(--transition), background-color var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.btn.btn-primary {
+  background: var(--ds-accent);
+  border-color: var(--ds-accent);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(14, 94, 94, 0.22);
+}
+
+.btn.btn-primary:hover {
+  background: var(--ds-accent-strong);
+  border-color: var(--ds-accent-strong);
+  transform: translateY(-1px);
+}
+
+.btn.btn-outline {
+  color: var(--ds-accent);
+  border-color: var(--ds-border-strong);
+  background: #ffffff;
+}
+
+.btn.btn-outline:hover {
+  border-color: var(--ds-accent);
+  background: var(--ds-surface-muted);
+}
+
+.btn.btn-ghost {
+  color: var(--ds-ink);
+  border: 1px solid transparent;
+  background: rgba(14, 94, 94, 0.06);
+}
+
+.btn.btn-ghost:hover {
+  background: rgba(14, 94, 94, 0.1);
+}
+
+.page-header,
+.states-page-header,
+.discount-hero,
+.features-page .page-header,
+.support-page .page-header,
+.guidelines-page .page-header {
+  background:
+    radial-gradient(circle at 100% 0, rgba(14, 94, 94, 0.08), rgba(14, 94, 94, 0) 36%),
+    linear-gradient(180deg, #f9fcfc 0%, #f1f8f8 100%);
+  border-bottom: 1px solid var(--ds-border);
+}
+
+.card,
+.state-card,
+.discount-state-card,
+.guideline-card,
+.profile-item,
+.rule-item,
+.standard-item,
+.compliance-item,
+.resource-item,
+.faq-category,
+.support-card,
+.feature-card,
+.pricing-card,
+.action-card {
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-soft);
+}
+
+.state-card:hover,
+.discount-state-card:hover,
+.guideline-card:hover,
+.profile-item:hover,
+.rule-item:hover,
+.standard-item:hover,
+.compliance-item:hover,
+.resource-item:hover,
+.support-card:hover,
+.feature-card:hover,
+.pricing-card:hover,
+.action-card:hover {
+  border-color: var(--ds-border-strong);
+  box-shadow: var(--ds-shadow-card);
+  transform: translateY(-2px);
+}
+
+.section-title {
+  color: var(--ds-ink);
+}
+
+.section-subtitle {
+  color: var(--ds-ink-muted);
+}
+
+.badge,
+.discount-amount,
+.profdash-status-pill {
+  background: var(--ds-accent-soft);
+  border: 1px solid var(--ds-border-strong);
+  color: var(--ds-ink);
+}
+
+.badge-new,
+.badge-success,
+.badge-warning,
+.badge-primary,
+.badge-default {
+  background: var(--ds-accent-soft) !important;
+  border: 1px solid var(--ds-border-strong) !important;
+  color: var(--ds-ink) !important;
+}
+
+.alert-success,
+.alert-warning,
+.alert-error {
+  background: var(--ds-accent-soft) !important;
+  border: 1px solid var(--ds-border-strong) !important;
+  color: var(--ds-ink) !important;
+}
+
+.profile-badge.premium,
+.profile-badge.featured,
+.profile-badge.verified {
+  background: var(--ds-accent-soft) !important;
+  border: 1px solid var(--ds-border-strong) !important;
+  color: var(--ds-ink) !important;
+  box-shadow: none !important;
+}
+
+.navbar-mobile-nav a.active {
+  background: rgba(14, 94, 94, 0.12) !important;
+  border-color: rgba(14, 94, 94, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(14, 94, 94, 0.16) !important;
+}
+
+.navbar-mobile-nav a.active i {
+  color: var(--ds-accent) !important;
+}
+
+.mobile-auth-btn.btn-outline {
+  border-color: rgba(14, 94, 94, 0.34) !important;
+  color: var(--ds-accent) !important;
+}
+
+.mobile-auth-btn.btn-outline:hover {
+  background: rgba(14, 94, 94, 0.12) !important;
+  border-color: rgba(14, 94, 94, 0.52) !important;
+  color: var(--ds-accent-strong) !important;
+}
+
+.mobile-sign-out-btn {
+  border-color: rgba(14, 94, 94, 0.34) !important;
+  color: rgba(11, 62, 62, 0.88) !important;
+}
+
+.mobile-sign-out-btn:hover {
+  background: rgba(14, 94, 94, 0.1) !important;
+  color: var(--ds-accent-strong) !important;
+  border-color: rgba(14, 94, 94, 0.52) !important;
+}
+
+/* Keep onboarding full-bleed and dashboard-like */
+.App.App--workspace,
+.App.App--workspace .main-content {
+  background:
+    radial-gradient(circle at 100% 0, rgba(14, 94, 94, 0.08), rgba(14, 94, 94, 0) 34%),
+    linear-gradient(180deg, #f5fbfa 0%, #eef6f6 100%);
+}

@@ -3,9 +3,10 @@
   max-width: 800px;
   margin: 0 auto 2rem;
   padding: 1rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--ds-surface);
+  border-radius: 12px;
+  border: 1px solid var(--ds-border);
+  box-shadow: var(--ds-shadow-soft);
 }
 
 .compact-search-form {
@@ -34,7 +35,7 @@
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--ds-border);
   border-radius: 6px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -42,8 +43,8 @@
 .compact-search-input:focus,
 .compact-search-select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--ds-accent);
+  box-shadow: 0 0 0 3px rgba(14, 94, 94, 0.12);
 }
 
 .compact-search-suggestions {
@@ -52,8 +53,8 @@
   left: 0;
   right: 0;
   margin-top: 0.25rem;
-  background: white;
-  border: 1px solid #d1d5db;
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   max-height: 200px;
@@ -71,13 +72,13 @@
 }
 
 .compact-search-suggestion:hover {
-  background-color: #f3f4f6;
+  background-color: var(--ds-surface-muted);
 }
 
 .compact-search-button {
   padding: 0.75rem 1.5rem;
-  background-color: #3b82f6;
-  color: white;
+  background-color: var(--ds-accent);
+  color: #ffffff;
   border: none;
   border-radius: 6px;
   font-size: 1rem;
@@ -91,12 +92,12 @@
 }
 
 .compact-search-button:hover {
-  background-color: #2563eb;
+  background-color: var(--ds-accent-strong);
 }
 
 .compact-search-button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 3px rgba(14, 94, 94, 0.22);
 }
 
 .sr-only {

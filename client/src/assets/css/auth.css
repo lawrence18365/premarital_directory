@@ -197,7 +197,7 @@
 }
 
 .field-error {
-  color: var(--color-coral, #ff6b35);
+  color: var(--color-coral, #0e5e5e);
   font-size: 0.875rem;
   margin-top: 0.25rem;
   display: flex;
@@ -213,9 +213,9 @@
 }
 
 .error-message {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
+  background: var(--ds-accent-soft);
+  border: 1px solid var(--ds-border-strong);
+  color: var(--ds-ink);
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;

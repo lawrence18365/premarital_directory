@@ -91,11 +91,11 @@ const MarriageLicenseDiscountPage = () => {
             <div className="discount-hero-content">
               <div className="discount-badge">
                 <i className="fa fa-piggy-bank"></i>
-                Save $25-$75
+                Marriage License Savings
               </div>
 
               <h1 className="discount-title">
-                Marriage License Discounts for Premarital Counseling
+                Marriage License Savings for Premarital Counseling
               </h1>
 
               <p className="discount-subtitle">

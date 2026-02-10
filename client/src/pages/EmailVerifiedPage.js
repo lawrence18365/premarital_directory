@@ -41,7 +41,7 @@ const EmailVerifiedPage = () => {
                 style={{
                   left: `${Math.random() * 100}%`,
                   animationDelay: `${Math.random() * 2}s`,
-                  backgroundColor: ['#0e5e5e', '#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff'][Math.floor(Math.random() * 5)]
+                  backgroundColor: ['#0e5e5e', '#126868', '#1a7373', '#2c8383', '#3f9494'][Math.floor(Math.random() * 5)]
                 }}
               />
             ))}

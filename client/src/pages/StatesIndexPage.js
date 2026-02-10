@@ -88,7 +88,7 @@ const StatesIndexPage = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="states-page">
       <SEOHelmet
         title="Premarital Counseling by State | Licensed Therapists, Coaches & Clergy"
         description="Find premarital counseling in all 50 states. Compare licensed therapists, faith-based counselors, and online options. Book intro sessions, read reviews, see pricing."
@@ -100,20 +100,20 @@ const StatesIndexPage = () => {
       />
       {/* Header */}
       <div className="states-page-header">
-        <div className="states-grid !pt-0">
-          <div className="max-w-4xl">
-            <nav className="text-sm text-gray-500 mb-4">
-              <Link to="/" className="hover:text-blue-600">Home</Link>
-              <span className="mx-2">/</span>
-              <span className="text-gray-900">Premarital Counseling</span>
+        <div className="states-grid">
+          <div style={{ maxWidth: '64rem' }}>
+            <nav>
+              <Link to="/">Home</Link>
+              <span style={{ margin: '0 0.5rem' }}>/</span>
+              <span>Premarital Counseling</span>
             </nav>
 
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Premarital Counseling by State — Find Therapists, Faith-Based & Online Options
+            <h1>
+              Premarital Counseling by State
             </h1>
 
-            <p className="text-xl text-gray-600 mb-6">
-              Find premarital counseling in your state. Licensed therapists, Christian and faith-based counselors, and online programs. Compare prices, read reviews, and book intro sessions.
+            <p>
+              Browse all states to find vetted therapists, clergy, and premarital professionals with clear pricing and fit.
             </p>
           </div>
         </div>
@@ -130,17 +130,17 @@ const StatesIndexPage = () => {
             <i className="fa fa-piggy-bank"></i>
           </div>
           <div className="discount-banner-content">
-            <h3>Save $25-$75 on Your Marriage License</h3>
-            <p>8 states offer discounts for couples who complete premarital counseling. See if your state qualifies.</p>
+            <h3>Marriage License Savings by State</h3>
+            <p>Some states reduce marriage license fees after qualifying premarital counseling. See where this applies.</p>
           </div>
           <span className="discount-banner-arrow">→</span>
         </Link>
 
-        <div className="mb-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+        <div className="text-center" style={{ marginBottom: 'var(--space-8)' }}>
+          <h2>
             All 50 States + Washington, DC
           </h2>
-          <p className="text-gray-600">
+          <p>
             Select your state to find premarital counselors specializing in pre-marriage therapy in your area.
           </p>
         </div>
@@ -153,10 +153,10 @@ const StatesIndexPage = () => {
               className="state-card"
             >
               <div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                <h3>
                   {state.name}
                 </h3>
-                <p className="text-sm text-gray-500">{state.abbr}</p>
+                <p>{state.abbr}</p>
               </div>
             </Link>
           ))}
@@ -166,11 +166,11 @@ const StatesIndexPage = () => {
       {/* Browse by Specialty */}
       <div className="specialty-browse-section">
         <div className="states-grid">
-          <div className="mb-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <div className="text-center" style={{ marginBottom: 'var(--space-8)' }}>
+            <h2>
               Browse by Specialty
             </h2>
-            <p className="text-gray-600">
+            <p>
               Find premarital counselors specializing in your specific needs and preferences.
             </p>
           </div>
@@ -202,20 +202,20 @@ const StatesIndexPage = () => {
         <div className="states-grid">
           <div className="content-grid">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                <h2>
                   Why Choose Premarital Counseling?
                 </h2>
                 
-                <div className="space-y-4 text-gray-600">
+                <div>
                   <p>
                     Premarital counseling provides couples with essential tools and insights before marriage. 
                     Our network of licensed professionals across all 50 states helps couples build stronger relationships.
                   </p>
                   
-                  <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">
+                  <h3>
                     Benefits of Premarital Counseling:
                   </h3>
-                  <ul className="space-y-2">
+                  <ul>
                     <li>• Enhanced communication skills</li>
                     <li>• Conflict resolution strategies</li>
                     <li>• Financial planning discussions</li>
@@ -226,20 +226,20 @@ const StatesIndexPage = () => {
               </div>
               
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                <h2>
                   How Our Directory Works
                 </h2>
                 
-                <div className="space-y-4 text-gray-600">
+                <div>
                   <p>
                     Our comprehensive directory makes it easy to find qualified premarital counselors
                     in your state and city. Licensed therapists with verified credentials, plus vetted coaches and clergy reviewed for scope and qualifications.
                   </p>
                   
-                  <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">
+                  <h3>
                     What You'll Find:
                   </h3>
-                  <ul className="space-y-2">
+                  <ul>
                     <li>• Licensed therapists and counselors</li>
                     <li>• Marriage and family therapists (MFT)</li>
                     <li>• Faith-based counseling options</li>

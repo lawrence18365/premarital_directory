@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 
 const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaimed = true, onSuccess }) => {
+  const shortName = professionalName?.split(' ')[0] || 'this professional'
   const [formData, setFormData] = useState({
     couple_name: '',
     couple_email: '',
@@ -134,33 +135,15 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
         <div className="success-icon">
           <i className="fa fa-check-circle" aria-hidden="true"></i>
         </div>
-        <h3>Message Sent Successfully!</h3>
+        <h3>Message sent</h3>
         <p>
-          Thank you for reaching out. {professionalName} will receive your message
-          and respond directly to your email address within 24-48 hours.
+          Your message was delivered to {shortName}. You should hear back by email soon.
         </p>
-        <div className="next-steps">
-          <h4>What happens next?</h4>
-          <ul>
-            <li>
-              <i className="fa fa-envelope" aria-hidden="true"></i>
-              {professionalName} will review your message and respond via email
-            </li>
-            <li>
-              <i className="fa fa-phone" aria-hidden="true"></i>
-              You may receive a phone call if you provided your number
-            </li>
-            <li>
-              <i className="fa fa-calendar" aria-hidden="true"></i>
-              They'll likely suggest scheduling an initial consultation
-            </li>
-          </ul>
-        </div>
         <button
           className="btn btn-outline"
           onClick={() => setSuccess(false)}
         >
-          Send Another Message
+          Send another message
         </button>
       </div>
     )
@@ -169,8 +152,8 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
   return (
     <div className="lead-contact-form">
       <div className="form-header">
-        <h3>Contact {professionalName}</h3>
-        <p>Send a message to get started with your premarital counseling journey</p>
+        <h3>Contact {shortName}</h3>
+        <p>Share your details and what you need help with.</p>
       </div>
 
       {error && (
@@ -190,7 +173,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
               name="couple_name"
               value={formData.couple_name}
               onChange={handleInputChange}
-              placeholder="John & Jane Smith"
+              placeholder="Your names"
               required
             />
           </div>
@@ -203,7 +186,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
               name="couple_email"
               value={formData.couple_email}
               onChange={handleInputChange}
-              placeholder="your.email@example.com"
+              placeholder="Email address"
               required
             />
           </div>
@@ -218,7 +201,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
               name="couple_phone"
               value={formData.couple_phone}
               onChange={handleInputChange}
-              placeholder="(555) 123-4567"
+              placeholder="Phone number"
             />
           </div>
 
@@ -242,7 +225,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
             name="location"
             value={formData.location}
             onChange={handleInputChange}
-            placeholder="Austin, Texas"
+            placeholder="City, state"
           />
         </div>
 
@@ -253,11 +236,10 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
             name="message"
             value={formData.message}
             onChange={handleInputChange}
-            placeholder="Tell us about yourselves, your relationship goals, and what you're looking for in premarital counseling..."
+            placeholder="Briefly describe your goals, timeline, and availability."
             rows={4}
             required
           />
-          <small>Share your story, timeline, and any specific areas you'd like to focus on</small>
         </div>
 
         <div className="form-actions">
@@ -269,12 +251,12 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
             {loading ? (
               <>
                 <i className="fa fa-spinner fa-spin" aria-hidden="true"></i>
-                Sending Message...
+                Sending...
               </>
             ) : (
               <>
                 <i className="fa fa-paper-plane" aria-hidden="true"></i>
-                Send Message
+                Send message
               </>
             )}
           </button>
@@ -283,8 +265,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
         <div className="contact-disclaimer">
           <small>
             <i className="fa fa-shield-alt" aria-hidden="true"></i>
-            Your information is secure and will only be shared with the professional you're contacting.
-            By submitting this form, you agree to our <a href="/privacy">Privacy Policy</a>.
+            Your information is only shared with this professional. By sending, you agree to our <a href="/privacy">Privacy Policy</a>.
           </small>
         </div>
       </form>

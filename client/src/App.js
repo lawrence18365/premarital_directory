@@ -24,6 +24,7 @@ import './assets/css/legal.css'
 import './assets/css/breadcrumbs.css'
 import './assets/css/faq.css'
 import './assets/css/seo-content.css'
+import './assets/css/enterprise-theme.css'
 
 // Analytics Components
 import { GoogleAnalytics, FacebookPixel, GoogleAds } from './components/analytics'
@@ -124,6 +125,12 @@ function AppInner() {
   const location = useLocation()
   const { user, profile, loading, isAdmin } = useAuth()
   const isHome = ['/', '/therapists', '/coaches', '/clergy'].includes(location.pathname)
+  const noChromePrefixes = [
+    '/professional/onboarding'
+  ]
+  const isNoChromeRoute = noChromePrefixes.some(
+    (prefix) => location.pathname === prefix || location.pathname.startsWith(`${prefix}/`)
+  )
   const isOnboardingRoute = location.pathname.startsWith('/professional/onboarding')
   const hasIncompleteOnboarding =
     !loading &&
@@ -135,10 +142,10 @@ function AppInner() {
     return <Navigate to="/professional/onboarding" replace />
   }
 
-  const showSiteChrome = !isOnboardingRoute
+  const showSiteChrome = !isNoChromeRoute
 
   return (
-          <div className={`App ${isHome ? 'App--no-offset' : ''}`}>
+          <div className={`App ${isHome ? 'App--no-offset' : ''} ${isNoChromeRoute ? 'App--workspace' : ''}`}>
             {/* Analytics Tracking */}
             <GoogleAnalytics />
             <FacebookPixel />

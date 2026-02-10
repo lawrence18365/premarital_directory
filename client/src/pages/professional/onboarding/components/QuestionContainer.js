@@ -1,5 +1,4 @@
 import React from 'react'
-import ProgressBar from './ProgressBar'
 import { QUESTION_METADATA, TOTAL_QUESTIONS } from '../constants'
 
 const QuestionContainer = ({
@@ -11,29 +10,22 @@ const QuestionContainer = ({
   onSkip,
   children,
   canSkip = false,
-  continueDisabled = false
+  continueDisabled = false,
+  titleOverride = '',
+  continueLabelOverride = ''
 }) => {
   const questionInfo = QUESTION_METADATA[currentStep]
   const isFirstQuestion = currentStep === 1
   const isLastQuestion = currentStep === TOTAL_QUESTIONS
 
-  const questionContext =
-    currentStep <= 6
-      ? 'Start with the essentials so couples immediately understand who you are.'
-      : currentStep <= 14
-        ? 'Now add depth so your profile stands out in search and fit.'
-        : 'Final touches to help couples choose you with confidence.'
+  const resolvedTitle = titleOverride || questionInfo?.title
 
   return (
     <div className="onboarding-container">
-      <ProgressBar currentStep={currentStep} saving={saving} />
-
       <div className="question-content">
         <div className="question-header">
           <div className="question-heading-block">
-            <span className="question-kicker">{questionInfo?.required ? 'Required' : 'Optional'}</span>
-            <h2 className="question-title">{questionInfo?.title}</h2>
-            <p className="question-context">{questionContext}</p>
+            <h2 className="question-title">{resolvedTitle}</h2>
           </div>
         </div>
 
@@ -87,7 +79,7 @@ const QuestionContainer = ({
                 </>
               ) : (
                 <>
-                  Next Question <i className="fa fa-arrow-right"></i>
+                  {continueLabelOverride || 'Next Question'} <i className="fa fa-arrow-right"></i>
                 </>
               )}
             </button>

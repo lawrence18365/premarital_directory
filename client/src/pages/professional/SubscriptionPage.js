@@ -109,7 +109,7 @@ const SubscriptionPage = () => {
         <div className="dashboard-section">
           <h2>Your Current Plan</h2>
           <div style={{
-            background: 'linear-gradient(135deg, var(--teal) 0%, var(--teal-dark, #0d9488) 100%)',
+            background: 'linear-gradient(135deg, var(--teal) 0%, var(--teal-dark, #0e5e5e) 100%)',
             padding: 'var(--space-6)',
             borderRadius: 'var(--radius-lg)',
             color: 'white',
@@ -183,7 +183,7 @@ const SubscriptionPage = () => {
                 }}>
                   <i
                     className="fa fa-check-circle"
-                    style={{ color: 'var(--success, #22c55e)', marginTop: '2px' }}
+                    style={{ color: 'var(--success, #0e5e5e)', marginTop: '2px' }}
                     aria-hidden="true"
                   ></i>
                   <span>{feature}</span>
@@ -218,7 +218,7 @@ const SubscriptionPage = () => {
                   position: 'absolute',
                   top: '16px',
                   right: '16px',
-                  background: 'var(--warning, #f59e0b)',
+                  background: 'var(--warning, #0e5e5e)',
                   color: 'white',
                   padding: '4px 12px',
                   borderRadius: '20px',
@@ -252,19 +252,19 @@ const SubscriptionPage = () => {
                     fontSize: '0.95rem'
                   }}>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-star" style={{ color: 'var(--warning, #f59e0b)' }} aria-hidden="true"></i>
+                      <i className="fa fa-star" style={{ color: 'var(--warning, #0e5e5e)' }} aria-hidden="true"></i>
                       Priority search placement
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-star" style={{ color: 'var(--warning, #f59e0b)' }} aria-hidden="true"></i>
+                      <i className="fa fa-star" style={{ color: 'var(--warning, #0e5e5e)' }} aria-hidden="true"></i>
                       Featured badge
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-star" style={{ color: 'var(--warning, #f59e0b)' }} aria-hidden="true"></i>
+                      <i className="fa fa-star" style={{ color: 'var(--warning, #0e5e5e)' }} aria-hidden="true"></i>
                       Enhanced profile options
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-star" style={{ color: 'var(--warning, #f59e0b)' }} aria-hidden="true"></i>
+                      <i className="fa fa-star" style={{ color: 'var(--warning, #0e5e5e)' }} aria-hidden="true"></i>
                       Advanced analytics
                     </li>
                   </ul>
@@ -300,7 +300,7 @@ const SubscriptionPage = () => {
                   position: 'absolute',
                   top: '16px',
                   right: '16px',
-                  background: 'var(--warning, #f59e0b)',
+                  background: 'var(--warning, #0e5e5e)',
                   color: 'white',
                   padding: '4px 12px',
                   borderRadius: '20px',
@@ -334,19 +334,19 @@ const SubscriptionPage = () => {
                     fontSize: '0.95rem'
                   }}>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-crown" style={{ color: 'var(--accent, #8b5cf6)' }} aria-hidden="true"></i>
+                      <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>
                       Top placement everywhere
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-crown" style={{ color: 'var(--accent, #8b5cf6)' }} aria-hidden="true"></i>
+                      <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>
                       Highlighted profile design
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-crown" style={{ color: 'var(--accent, #8b5cf6)' }} aria-hidden="true"></i>
+                      <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>
                       Priority lead notifications
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-crown" style={{ color: 'var(--accent, #8b5cf6)' }} aria-hidden="true"></i>
+                      <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>
                       Dedicated account manager
                     </li>
                   </ul>
@@ -375,7 +375,7 @@ const SubscriptionPage = () => {
         <div style={{
           marginTop: 'var(--space-12)',
           padding: 'var(--space-8)',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #0e5e5e 0%, #1a7373 100%)',
           borderRadius: 'var(--radius-lg)',
           color: 'white',
           textAlign: 'center'

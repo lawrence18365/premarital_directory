@@ -96,11 +96,11 @@ const ProfileCompletenessWidget = ({ profile }) => {
   const percentage = Math.round((earnedPoints / totalPoints) * 100);
 
   const getGrade = (pct) => {
-    if (pct >= 90) return { label: 'Looking great', color: '#059669', bg: '#d1fae5' };
-    if (pct >= 70) return { label: 'Almost there', color: '#0891b2', bg: '#cffafe' };
-    if (pct >= 50) return { label: 'Good progress', color: '#7c3aed', bg: '#ede9fe' };
-    if (pct >= 25) return { label: 'Getting started', color: '#d97706', bg: '#fef3c7' };
-    return { label: 'Just created', color: '#6b7280', bg: '#f3f4f6' };
+    if (pct >= 90) return { label: 'Looking great', color: 'var(--ds-accent)', bg: 'rgba(14, 94, 94, 0.14)' };
+    if (pct >= 70) return { label: 'Almost there', color: 'var(--ds-accent)', bg: 'rgba(14, 94, 94, 0.12)' };
+    if (pct >= 50) return { label: 'Good progress', color: 'var(--ds-accent)', bg: 'rgba(14, 94, 94, 0.1)' };
+    if (pct >= 25) return { label: 'Getting started', color: 'var(--ds-accent)', bg: 'rgba(14, 94, 94, 0.09)' };
+    return { label: 'Just created', color: 'var(--ds-ink-muted)', bg: 'var(--ds-surface-muted)' };
   };
 
   const grade = getGrade(percentage);

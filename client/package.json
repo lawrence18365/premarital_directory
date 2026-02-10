@@ -23,6 +23,8 @@
     "prebuild": "node scripts/generate-sitemap.js",
     "build": "react-scripts build",
     "build:sitemap": "node scripts/generate-sitemap.js",
+    "audit:contrast": "node scripts/a11y-contrast-audit.js",
+    "audit:contrast:full": "node scripts/a11y-contrast-audit.js --full",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev": "npm start",

@@ -127,13 +127,13 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
   if (submitted) {
     return (
       <div style={{
-        background: '#f0fdf4',
+        background: 'var(--ds-accent-soft)',
         padding: 'var(--space-6)',
         borderRadius: 'var(--radius-lg)',
-        border: '2px solid #0d9488',
+        border: '2px solid var(--ds-border-strong)',
         textAlign: 'center'
       }}>
-        <h3 style={{ color: '#0d9488', marginBottom: 'var(--space-3)' }}>
+        <h3 style={{ color: 'var(--ds-accent)', marginBottom: 'var(--space-3)' }}>
           Your Inquiry Has Been Sent
         </h3>
         <p style={{ marginBottom: 'var(--space-3)' }}>
@@ -148,14 +148,14 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #f0fdf4 0%, #ccfbf1 100%)',
+      background: 'linear-gradient(135deg, rgba(14, 94, 94, 0.1) 0%, rgba(14, 94, 94, 0.06) 100%)',
       padding: 'var(--space-6)',
       borderRadius: 'var(--radius-lg)',
-      border: '2px solid #0d9488',
+      border: '2px solid var(--ds-border-strong)',
       marginTop: 'var(--space-8)'
     }}>
       <h3 style={{
-        color: '#0d9488',
+        color: 'var(--ds-accent)',
         marginBottom: 'var(--space-2)',
         fontSize: 'var(--text-xl)'
       }}>
@@ -182,7 +182,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
             style={{
               width: '100%',
               padding: '10px',
-              border: '1px solid #d1d5db',
+              border: '1px solid var(--ds-border)',
               borderRadius: '6px',
               fontSize: '0.95rem'
             }}
@@ -202,7 +202,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
             style={{
               width: '100%',
               padding: '10px',
-              border: '1px solid #d1d5db',
+              border: '1px solid var(--ds-border)',
               borderRadius: '6px',
               fontSize: '0.95rem'
             }}
@@ -219,7 +219,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
             style={{
               width: '100%',
               padding: '10px',
-              border: '1px solid #d1d5db',
+              border: '1px solid var(--ds-border)',
               borderRadius: '6px',
               fontSize: '0.95rem',
               background: 'white'
@@ -244,7 +244,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
             style={{
               width: '100%',
               padding: '10px',
-              border: '1px solid #d1d5db',
+              border: '1px solid var(--ds-border)',
               borderRadius: '6px',
               fontSize: '0.95rem',
               resize: 'vertical'
@@ -254,8 +254,8 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
 
         {error && (
           <div style={{
-            background: '#fef2f2',
-            color: '#dc2626',
+            background: 'var(--ds-accent-soft)',
+            color: 'var(--ds-ink)',
             padding: '10px',
             borderRadius: '6px',
             marginBottom: 'var(--space-3)',
@@ -271,7 +271,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
           style={{
             width: '100%',
             padding: '12px',
-            background: isSubmitting ? '#9ca3af' : '#0d9488',
+            background: isSubmitting ? 'var(--gray-400)' : 'var(--ds-accent)',
             color: 'white',
             border: 'none',
             borderRadius: '6px',

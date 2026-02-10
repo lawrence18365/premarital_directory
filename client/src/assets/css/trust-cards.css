@@ -32,7 +32,7 @@
 
 .trust-card {
   background: linear-gradient(180deg, #fff, #fff) padding-box,
-              linear-gradient(135deg, rgba(14, 94, 94, 0.16), rgba(255, 107, 107, 0.12)) border-box;
+              linear-gradient(135deg, rgba(14, 94, 94, 0.16), rgba(14, 94, 94, 0.12)) border-box;
   border: 1px solid transparent;
   border-radius: var(--radius-2xl);
   padding: var(--space-8);

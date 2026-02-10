@@ -61,7 +61,7 @@ const ContactPage = () => {
   }
 
   return (
-    <div style={{ padding: 'var(--space-20) 0', background: 'var(--gray-50)' }}>
+    <div style={{ padding: 'var(--space-20) 0', background: 'var(--ds-bg-soft)' }}>
       <SEOHelmet 
         title="Contact Us - Premarital Counseling Directory"
         description="Get in touch with our team. We help couples find qualified premarital counselors and support professionals in growing their practice."
@@ -95,8 +95,7 @@ const ContactPage = () => {
             
             {error && (
               <div style={{ 
-                background: 'var(--error)',
-                backgroundImage: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                background: 'linear-gradient(135deg, rgba(14, 94, 94, 0.92) 0%, rgba(11, 73, 73, 0.96) 100%)',
                 color: 'var(--white)', 
                 padding: 'var(--space-4)', 
                 borderRadius: 'var(--radius-lg)',
@@ -109,8 +108,7 @@ const ContactPage = () => {
 
             {submitted ? (
               <div style={{ 
-                background: 'var(--success)',
-                backgroundImage: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                background: 'linear-gradient(135deg, rgba(14, 94, 94, 0.92) 0%, rgba(11, 73, 73, 0.96) 100%)',
                 color: 'var(--white)', 
                 padding: 'var(--space-4)', 
                 borderRadius: 'var(--radius-lg)',

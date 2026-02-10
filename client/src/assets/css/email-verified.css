@@ -72,7 +72,7 @@
 .email-verified__checkmark {
   width: 80px;
   height: 80px;
-  color: #22c55e;
+  color: var(--primary);
   animation: checkmark-pop 0.5s ease-out;
 }
 
@@ -167,9 +167,9 @@
 }
 
 .email-verified__progress-step.completed .step-icon {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: var(--white);
-  border-color: #22c55e;
+  border-color: var(--primary);
 }
 
 .email-verified__progress-step span {
@@ -193,7 +193,7 @@
 }
 
 .email-verified__progress-line.completed {
-  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
 }
 
 /* CTA Section */

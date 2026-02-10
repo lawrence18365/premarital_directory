@@ -207,7 +207,7 @@ const ClaimWithTokenPage = () => {
             <div style={{
               width: '80px',
               height: '80px',
-              background: '#d1fae5',
+              background: 'var(--ds-accent-soft)',
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
@@ -271,22 +271,22 @@ const ClaimWithTokenPage = () => {
 
             {/* Next Steps */}
             <div style={{
-              background: '#ede9fe',
+              background: 'var(--ds-surface-muted)',
               padding: 'var(--space-4)',
               borderRadius: 'var(--radius-md)',
               marginBottom: 'var(--space-6)',
               textAlign: 'left',
-              border: '1px solid #c4b5fd'
+              border: '1px solid var(--ds-border-strong)'
             }}>
-              <p style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: 'var(--space-2)', color: '#5b21b6' }}>
+              <p style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: 'var(--space-2)', color: 'var(--ds-ink)' }}>
                 Boost your visibility:
               </p>
-              <ul style={{ margin: '0 0 0.5rem', paddingLeft: 'var(--space-4)', fontSize: '0.85rem', color: '#6d28d9' }}>
+              <ul style={{ margin: '0 0 0.5rem', paddingLeft: 'var(--space-4)', fontSize: '0.85rem', color: 'var(--ds-ink-muted)' }}>
                 <li style={{ marginBottom: '4px' }}>Add a professional photo (3x more views)</li>
                 <li style={{ marginBottom: '4px' }}>Write a 150+ word bio</li>
                 <li style={{ marginBottom: '4px' }}>Select your specialties and certifications</li>
               </ul>
-              <p style={{ fontSize: '0.8rem', margin: 0, color: '#7c3aed' }}>
+              <p style={{ fontSize: '0.8rem', margin: 0, color: 'var(--ds-ink-muted)' }}>
                 Complete profiles get significantly more inquiries from couples.
               </p>
             </div>
@@ -330,13 +330,13 @@ const ClaimWithTokenPage = () => {
             </div>
 
             <div style={{
-              background: '#fef3c7',
+              background: 'var(--ds-accent-soft)',
               padding: 'var(--space-4)',
               borderRadius: 'var(--radius-md)',
               marginBottom: 'var(--space-6)',
-              border: '1px solid #fcd34d'
+              border: '1px solid var(--ds-border-strong)'
             }}>
-              <p style={{ fontSize: '0.9rem', color: '#92400e', margin: 0 }}>
+              <p style={{ fontSize: '0.9rem', color: 'var(--ds-ink)', margin: 0 }}>
                 <strong>You're currently logged in as:</strong><br />
                 {user?.email}
               </p>
@@ -364,8 +364,8 @@ const ClaimWithTokenPage = () => {
 
             {error && (
               <div style={{
-                background: '#fef2f2',
-                color: '#dc2626',
+                background: 'var(--ds-accent-soft)',
+                color: 'var(--ds-ink)',
                 padding: '10px',
                 borderRadius: '6px',
                 marginBottom: 'var(--space-3)',
@@ -556,8 +556,8 @@ const ClaimWithTokenPage = () => {
 
             {error && (
               <div style={{
-                background: '#fef2f2',
-                color: '#dc2626',
+                background: 'var(--ds-accent-soft)',
+                color: 'var(--ds-ink)',
                 padding: '10px',
                 borderRadius: '6px',
                 marginBottom: 'var(--space-3)',

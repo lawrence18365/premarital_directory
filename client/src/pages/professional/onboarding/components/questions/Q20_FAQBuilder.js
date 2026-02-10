@@ -189,9 +189,9 @@ const Q20_FAQBuilder = ({
         })}
       </div>
 
-      <div style={{ marginTop: '2rem', padding: '1rem', background: '#fffbeb', borderRadius: '8px' }}>
-        <p style={{ margin: 0, fontSize: '0.9rem', color: '#92400e' }}>
-          <i className="fa fa-lightbulb-o" style={{ marginRight: '0.5rem', color: '#f59e0b' }}></i>
+      <div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--ds-accent-soft)', borderRadius: '8px', border: '1px solid var(--ds-border)' }}>
+        <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--ds-ink-muted)' }}>
+          <i className="fa fa-lightbulb-o" style={{ marginRight: '0.5rem', color: 'var(--ds-accent)' }}></i>
           <strong>SEO Tip:</strong> These answers appear on your profile and help you rank for searches like "online premarital counseling" or "interfaith marriage prep in [city]." The more specific, the better!
         </p>
       </div>

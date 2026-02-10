@@ -9,31 +9,49 @@ const FAQ = ({
   expandMultiple = false,
   className = '',
   showAside = true,
-  highlights = []
+  highlights = [],
+  showAnchors = false
 }) => {
   const [expandedItems, setExpandedItems] = useState(new Set())
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Filter FAQs based on search term
-  const filteredFaqs = faqs.filter(faq => 
+  const normalizedFaqs = faqs.map((faq, index) => ({ ...faq, __index: index }))
+  const hasSearch = showSearch && faqs.length > 5
+  const filteredFaqs = normalizedFaqs.filter(faq => 
     faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
     faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
   )
+  const visibleIndexes = filteredFaqs.map(faq => faq.__index)
+  const visibleExpandedCount = visibleIndexes.filter((index) => expandedItems.has(index)).length
+  const allVisibleExpanded = visibleIndexes.length > 0 && visibleExpandedCount === visibleIndexes.length
 
-  const toggleExpanded = (index) => {
+  const toggleExpanded = (faqIndex) => {
     const newExpanded = new Set(expandedItems)
     
     if (!expandMultiple) {
       newExpanded.clear()
     }
     
-    if (expandedItems.has(index)) {
-      newExpanded.delete(index)
+    if (expandedItems.has(faqIndex)) {
+      newExpanded.delete(faqIndex)
     } else {
-      newExpanded.add(index)
+      newExpanded.add(faqIndex)
     }
     
     setExpandedItems(newExpanded)
+  }
+
+  const toggleExpandAllVisible = () => {
+    if (allVisibleExpanded) {
+      const collapsedSet = new Set(expandedItems)
+      visibleIndexes.forEach((index) => collapsedSet.delete(index))
+      setExpandedItems(collapsedSet)
+      return
+    }
+
+    const expandedSet = expandMultiple ? new Set(expandedItems) : new Set()
+    visibleIndexes.forEach((index) => expandedSet.add(index))
+    setExpandedItems(expandedSet)
   }
 
   // Generate structured data for SEO (use the full list, not filtered)
@@ -79,7 +97,7 @@ const FAQ = ({
           </div>
 
           <div className="faq-controls">
-            {showSearch && faqs.length > 5 && (
+            {hasSearch && (
               <div className="faq-search">
                 <div className="faq-search-input-container">
                   <input
@@ -94,30 +112,28 @@ const FAQ = ({
                 </div>
               </div>
             )}
-            <div className="faq-actions">
-              <button
-                type="button"
-                className="faq-action"
-                onClick={() => setExpandedItems(new Set(faqs.map((_, i) => i)))}
-              >
-                Expand all
-              </button>
-              <button
-                type="button"
-                className="faq-action"
-                onClick={() => setExpandedItems(new Set())}
-              >
-                Collapse all
-              </button>
+            <div className="faq-meta">
+              <span className="faq-count">
+                {filteredFaqs.length} question{filteredFaqs.length === 1 ? '' : 's'}
+              </span>
+              <div className="faq-actions">
+                <button
+                  type="button"
+                  className="faq-action is-primary"
+                  onClick={toggleExpandAllVisible}
+                >
+                  {allVisibleExpanded ? 'Collapse all' : 'Expand all'}
+                </button>
+              </div>
             </div>
           </div>
 
           <div className="faq-grid">
             <div className="faq-list" role="list">
-              {filteredFaqs.map((faq, index) => {
-                const isExpanded = expandedItems.has(index)
-                const qId = `faq-question-${index}`
-                const aId = `faq-answer-${index}`
+              {filteredFaqs.map((faq) => {
+                const isExpanded = expandedItems.has(faq.__index)
+                const qId = `faq-question-${faq.__index}`
+                const aId = `faq-answer-${faq.__index}`
                 const anchor = `#${qId}`
                 
                 const onKeyDown = (e) => {
@@ -136,13 +152,13 @@ const FAQ = ({
                   } else if (e.key === 'End') {
                     e.preventDefault(); items[items.length - 1]?.focus()
                   } else if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault(); toggleExpanded(index)
+                    e.preventDefault(); toggleExpanded(faq.__index)
                   }
                 }
 
                 return (
                   <div 
-                    key={index} 
+                    key={faq.__index} 
                     className={`faq-item ${isExpanded ? 'expanded' : ''}`}
                     role="listitem"
                   >
@@ -150,28 +166,35 @@ const FAQ = ({
                       <button
                         id={qId}
                         className="faq-question"
-                        onClick={() => toggleExpanded(index)}
+                        onClick={() => toggleExpanded(faq.__index)}
                         onKeyDown={onKeyDown}
                         aria-expanded={isExpanded}
                         aria-controls={aId}
                       >
-                        <span className="faq-question-text">{faq.question}</span>
+                        <span className="faq-question-main">
+                          <span className="faq-question-index" aria-hidden="true">
+                            {String(faq.__index + 1).padStart(2, '0')}
+                          </span>
+                          <span className="faq-question-text">{faq.question}</span>
+                        </span>
                         <span className="faq-toggle-icon" aria-hidden="true">
                           <i className={`fas fa-chevron-${isExpanded ? 'up' : 'down'}`}></i>
                         </span>
                       </button>
-                      <a
-                        href={anchor}
-                        className="faq-anchor"
-                        aria-label="Copy link to this question"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          const url = `${window.location.origin}${window.location.pathname}${anchor}`
-                          navigator.clipboard?.writeText(url)
-                        }}
-                      >
-                        <i className="fas fa-link" aria-hidden="true"></i>
-                      </a>
+                      {showAnchors && (
+                        <a
+                          href={anchor}
+                          className="faq-anchor"
+                          aria-label="Copy link to this question"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            const url = `${window.location.origin}${window.location.pathname}${anchor}`
+                            navigator.clipboard?.writeText(url)
+                          }}
+                        >
+                          <i className="fas fa-link" aria-hidden="true"></i>
+                        </a>
+                      )}
                     </div>
                     
                     <div 
@@ -210,7 +233,7 @@ const FAQ = ({
 
           {filteredFaqs.length === 0 && searchTerm && (
             <div className="faq-no-results">
-              <p>No FAQs found matching "{searchTerm}"</p>
+              <p>No results for "{searchTerm}"</p>
               <button 
                 onClick={() => setSearchTerm('')}
                 className="faq-clear-search"

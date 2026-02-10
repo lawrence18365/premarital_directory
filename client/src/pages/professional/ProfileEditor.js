@@ -3,6 +3,21 @@ import { useAuth } from '../../contexts/AuthContext'
 import { profileOperations } from '../../lib/supabaseClient'
 import { Link } from 'react-router-dom'
 
+const toBooleanFlag = (value) => {
+  if (typeof value === 'boolean') return value
+  if (value == null) return false
+  if (typeof value === 'number') return value !== 0
+
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase()
+    if (!normalized) return false
+    if (['false', '0', 'no', 'none', 'null', 'n/a'].includes(normalized)) return false
+    return true
+  }
+
+  return Boolean(value)
+}
+
 const ProfileEditor = () => {
   const { profile, updateProfile } = useAuth()
   
@@ -32,6 +47,7 @@ const ProfileEditor = () => {
     insurance_accepted: [],
     payment_methods: [],
     offers_free_consultation: false,
+    sliding_scale: false,
     session_fee_min: '',
     session_fee_max: '',
     credentials: []
@@ -220,7 +236,8 @@ const ProfileEditor = () => {
         languages: profile.languages || [],
         insurance_accepted: profile.insurance_accepted || [],
         payment_methods: profile.payment_methods || [],
-        offers_free_consultation: profile.offers_free_consultation || false,
+        offers_free_consultation: toBooleanFlag(profile.offers_free_consultation),
+        sliding_scale: toBooleanFlag(profile.sliding_scale),
         session_fee_min: profile.session_fee_min ? String(Math.round(profile.session_fee_min / 100)) : '',
         session_fee_max: profile.session_fee_max ? String(Math.round(profile.session_fee_max / 100)) : '',
         credentials: profile.credentials || []
@@ -358,6 +375,7 @@ const ProfileEditor = () => {
         years_experience: formData.years_experience ? parseInt(formData.years_experience) : null,
         session_fee_min: formData.session_fee_min ? parseInt(formData.session_fee_min) * 100 : null,
         session_fee_max: formData.session_fee_max ? parseInt(formData.session_fee_max) * 100 : null,
+        sliding_scale: toBooleanFlag(formData.sliding_scale) ? true : null,
         pricing_range: formData.session_fee_min && formData.session_fee_max
           ? `$${formData.session_fee_min}-$${formData.session_fee_max}`
           : null
@@ -781,6 +799,13 @@ const ProfileEditor = () => {
                 </label>
               </div>
 
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                  <input type="checkbox" name="sliding_scale" checked={formData.sliding_scale} onChange={handleInputChange} />
+                  <span>I offer sliding scale fees</span>
+                </label>
+              </div>
+
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="session_fee_min">Minimum Session Fee ($)</label>
@@ -840,12 +865,12 @@ const ProfileEditor = () => {
             </div>
 
             {/* SEO Tips */}
-            <div className="form-section" style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '12px', padding: '1.5rem' }}>
-              <h2 style={{ color: '#166534', marginBottom: '1rem' }}>
+            <div className="form-section" style={{ background: 'var(--ds-accent-soft, rgba(14, 94, 94, 0.1))', border: '1px solid var(--ds-border-strong, rgba(14, 94, 94, 0.24))', borderRadius: '12px', padding: '1.5rem' }}>
+              <h2 style={{ color: 'var(--ds-ink, #0b3e3e)', marginBottom: '1rem' }}>
                 <i className="fa fa-search" style={{ marginRight: '0.5rem' }}></i>
                 SEO Tips for Better Visibility
               </h2>
-              <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#166534' }}>
+              <ul style={{ margin: 0, paddingLeft: '1.5rem', color: 'var(--ds-ink, #0b3e3e)' }}>
                 <li style={{ marginBottom: '0.5rem' }}><strong>Bio:</strong> Write 150+ words including keywords like "premarital counseling," your city name, and specialties</li>
                 <li style={{ marginBottom: '0.5rem' }}><strong>Photo:</strong> Profiles with photos get 3x more views</li>
                 <li style={{ marginBottom: '0.5rem' }}><strong>Specialties:</strong> Select at least 3 to appear in more searches</li>

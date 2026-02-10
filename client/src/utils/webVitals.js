@@ -310,7 +310,7 @@ if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
         bottom: 20px;
         right: 20px;
         z-index: 9999;
-        background: #2563eb;
+        background: #0e5e5e;
         color: white;
         border: none;
         padding: 10px 15px;

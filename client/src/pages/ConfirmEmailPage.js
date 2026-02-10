@@ -141,7 +141,7 @@ const ConfirmEmailPage = () => {
               </ul>
 
               {/* Resend Section */}
-              <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' }}>
+              <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--ds-border)' }}>
                 {!showResendForm && emailFromState ? (
                   <button
                     onClick={() => handleResend({ preventDefault: () => {} })}
@@ -174,7 +174,7 @@ const ConfirmEmailPage = () => {
                         style={{
                           flex: 1,
                           padding: '0.5rem 0.75rem',
-                          border: '1px solid #d1d5db',
+                          border: '1px solid var(--ds-border)',
                           borderRadius: '6px',
                           fontSize: '0.9rem'
                         }}
@@ -200,12 +200,12 @@ const ConfirmEmailPage = () => {
                 )}
 
                 {resendStatus === 'success' && (
-                  <p style={{ color: '#059669', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                  <p style={{ color: 'var(--ds-accent)', fontSize: '0.875rem', marginTop: '0.5rem' }}>
                     <i className="fa fa-check-circle" aria-hidden="true"></i> {resendMessage}
                   </p>
                 )}
                 {resendStatus === 'error' && (
-                  <p style={{ color: '#dc2626', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                  <p style={{ color: 'var(--ds-accent)', fontSize: '0.875rem', marginTop: '0.5rem' }}>
                     <i className="fa fa-exclamation-circle" aria-hidden="true"></i> {resendMessage}
                   </p>
                 )}

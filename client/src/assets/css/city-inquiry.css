@@ -54,7 +54,7 @@
 }
 
 .city-inquiry__error {
-  background: rgba(255, 107, 107, 0.1);
+  background: rgba(14, 94, 94, 0.1);
   color: var(--accent-dark);
   border-radius: var(--radius-lg);
   padding: var(--space-3);

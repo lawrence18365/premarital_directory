@@ -49,7 +49,7 @@ const Q18_PaymentMethods = ({
         </div>
       </div>
 
-      <div style={{ marginTop: '2rem', padding: '1rem', background: '#f0f9ff', borderRadius: '8px' }}>
+      <div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--ds-accent-soft)', borderRadius: '8px', border: '1px solid var(--ds-border)' }}>
         <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--slate)' }}>
           <i className="fa fa-info-circle" style={{ marginRight: '0.5rem', color: 'var(--primary)' }}></i>
           <strong>Almost done!</strong> Just a couple more optional questions to help couples find you, then you'll review and publish.

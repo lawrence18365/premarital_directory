@@ -36,23 +36,23 @@ const ChartLoader = () => (
     alignItems: 'center',
     justifyContent: 'center',
     height: '300px',
-    background: '#f8f9fa',
+    background: 'var(--ds-surface-muted, #f4f9f9)',
     borderRadius: '8px',
-    border: '1px solid #e9ecef'
+    border: '1px solid var(--ds-border, rgba(14, 94, 94, 0.16))'
   }}>
     <div style={{
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       gap: '12px',
-      color: '#6b7280'
+      color: 'var(--ds-ink-muted, rgba(11, 62, 62, 0.72))'
     }}>
       <div 
         style={{
           width: '24px',
           height: '24px',
-          border: '2px solid #e9ecef',
-          borderTop: '2px solid #2563eb',
+          border: '2px solid var(--ds-border, rgba(14, 94, 94, 0.16))',
+          borderTop: '2px solid var(--ds-accent, #0e5e5e)',
           borderRadius: '50%',
           animation: 'spin 1s linear infinite'
         }}
@@ -63,7 +63,7 @@ const ChartLoader = () => (
 )
 
 // Lazy Line Chart Component
-export const LazyLineChart = ({ data, dataKey, color = "#2563eb", ...props }) => (
+export const LazyLineChart = ({ data, dataKey, color = "var(--ds-accent, #0e5e5e)", ...props }) => (
   <Suspense fallback={<ChartLoader />}>
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={data} {...props}>
@@ -78,7 +78,7 @@ export const LazyLineChart = ({ data, dataKey, color = "#2563eb", ...props }) =>
 )
 
 // Lazy Bar Chart Component
-export const LazyBarChart = ({ data, dataKey, color = "#2563eb", ...props }) => (
+export const LazyBarChart = ({ data, dataKey, color = "var(--ds-accent, #0e5e5e)", ...props }) => (
   <Suspense fallback={<ChartLoader />}>
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data} {...props}>

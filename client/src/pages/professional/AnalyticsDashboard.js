@@ -135,7 +135,7 @@ const AnalyticsDashboard = () => {
       {/* Key Metrics */}
       <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
         {/* Profile Views */}
-        <div className="stat-card" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
+        <div className="stat-card" style={{ background: 'linear-gradient(135deg, #0e5e5e 0%, #1a7373 100%)', color: 'white' }}>
           <div className="stat-content">
             <h3 style={{ fontSize: '2.5rem', marginBottom: 'var(--space-2)' }}>
               {analytics.profileClicks.total}
@@ -151,7 +151,7 @@ const AnalyticsDashboard = () => {
         </div>
 
         {/* Contact Reveals */}
-        <div className="stat-card" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: 'white' }}>
+        <div className="stat-card" style={{ background: 'linear-gradient(135deg, #0e5e5e 0%, #1a7373 100%)', color: 'white' }}>
           <div className="stat-content">
             <h3 style={{ fontSize: '2.5rem', marginBottom: 'var(--space-2)' }}>
               {analytics.contactReveals.total}
@@ -167,7 +167,7 @@ const AnalyticsDashboard = () => {
         </div>
 
         {/* Inquiries Received */}
-        <div className="stat-card" style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', color: 'white' }}>
+        <div className="stat-card" style={{ background: 'linear-gradient(135deg, #0e5e5e 0%, #1a7373 100%)', color: 'white' }}>
           <div className="stat-content">
             <h3 style={{ fontSize: '2.5rem', marginBottom: 'var(--space-2)' }}>
               {analytics.inquiries.total}
@@ -359,7 +359,7 @@ const AnalyticsDashboard = () => {
         <div style={{
           marginTop: 'var(--space-12)',
           padding: 'var(--space-8)',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #0e5e5e 0%, #1a7373 100%)',
           borderRadius: 'var(--radius-lg)',
           color: 'white',
           textAlign: 'center'
@@ -376,7 +376,7 @@ const AnalyticsDashboard = () => {
               display: 'inline-block',
               padding: 'var(--space-3) var(--space-6)',
               background: 'white',
-              color: '#667eea',
+              color: 'var(--ds-accent)',
               fontWeight: '600',
               borderRadius: 'var(--radius-md)',
               textDecoration: 'none'

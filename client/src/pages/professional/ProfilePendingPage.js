@@ -23,22 +23,22 @@ const ProfilePendingPage = () => {
       <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
         {/* Pending Header */}
         <div style={{
-          background: 'linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%)',
+          background: 'linear-gradient(135deg, rgba(14, 94, 94, 0.12) 0%, rgba(14, 94, 94, 0.08) 100%)',
           padding: 'var(--space-12)',
           borderRadius: 'var(--radius-2xl)',
           marginBottom: 'var(--space-8)',
-          border: '2px solid #ffc107'
+          border: '2px solid var(--ds-border-strong)'
         }}>
           <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>
-            <i className="fa fa-clock-o" style={{ color: '#856404' }} aria-hidden="true"></i>
+            <i className="fa fa-clock-o" style={{ color: 'var(--ds-accent)' }} aria-hidden="true"></i>
           </div>
-          <h1 style={{ color: '#856404', marginBottom: 'var(--space-4)' }}>
+          <h1 style={{ color: 'var(--ds-ink)', marginBottom: 'var(--space-4)' }}>
             Profile Submitted!
           </h1>
-          <p style={{ fontSize: 'var(--text-lg)', color: '#856404', marginBottom: 'var(--space-2)' }}>
+          <p style={{ fontSize: 'var(--text-lg)', color: 'var(--ds-ink-muted)', marginBottom: 'var(--space-2)' }}>
             Thanks, {profileName.split(' ')[0]}! Your profile is now being reviewed.
           </p>
-          <p style={{ fontSize: 'var(--text-md)', color: '#856404' }}>
+          <p style={{ fontSize: 'var(--text-md)', color: 'var(--ds-ink-muted)' }}>
             We review all new profiles to ensure quality for couples searching our directory.
           </p>
         </div>
@@ -97,7 +97,7 @@ const ProfilePendingPage = () => {
             width: '12px',
             height: '12px',
             borderRadius: '50%',
-            background: '#ffc107',
+            background: 'var(--ds-accent)',
             animation: 'pulse 2s infinite'
           }}></div>
           <span style={{ fontWeight: '600', color: 'var(--slate)' }}>

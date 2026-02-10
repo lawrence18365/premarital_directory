@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabaseClient'
 import { Link, Navigate } from 'react-router-dom'
-import ProfileCompletenessWidget from '../../components/profiles/ProfileCompletenessWidget'
 
 const ProfessionalDashboard = () => {
   const { user, profile, loading: authLoading, signOut } = useAuth()
@@ -233,13 +232,13 @@ const ProfessionalDashboard = () => {
           </div>
         </div>
         <div className="alert alert-error" style={{
-          background: '#fee',
-          border: '1px solid #fcc',
+          background: 'var(--ds-accent-soft)',
+          border: '1px solid var(--ds-border-strong)',
           padding: 'var(--space-6)',
           borderRadius: 'var(--radius-lg)',
           marginTop: 'var(--space-6)'
         }}>
-          <h3 style={{ color: '#c00', marginBottom: 'var(--space-2)' }}>
+          <h3 style={{ color: 'var(--ds-ink)', marginBottom: 'var(--space-2)' }}>
             <i className="fa fa-exclamation-circle" aria-hidden="true"></i> {error}
           </h3>
           <p>Try one of these options:</p>
@@ -260,576 +259,204 @@ const ProfessionalDashboard = () => {
   }
 
   const profileAge = getProfileAgeDays()
-  const isNewProfile = profileAge < 14
-  const isProfileLive = profile?.moderation_status === 'approved'
+  const moderationStatus = profile?.moderation_status || 'pending'
+  const isProfileLive = moderationStatus === 'approved'
+  const missingProfileFields = []
+
+  if (!profile?.photo_url) missingProfileFields.push('Photo')
+  if (!profile?.bio || profile.bio.trim().length < 50) missingProfileFields.push('Bio')
+  if (!profile?.phone && !profile?.website) missingProfileFields.push('Contact')
+  if (!profile?.specialties || profile.specialties.length === 0) missingProfileFields.push('Specialty')
+
+  const statusConfig = {
+    approved: {
+      title: 'Live',
+      message: `Your profile is visible in ${profile?.city || 'your city'}.`
+    },
+    pending: {
+      title: 'Under Review',
+      message: 'Complete remaining fields to speed up approval.'
+    },
+    rejected: {
+      title: 'Needs Updates',
+      message: 'Please update your profile and resubmit for review.'
+    }
+  }
+
+  const activeStatus = statusConfig[moderationStatus] || statusConfig.pending
 
   return (
-    <div className="dashboard-container">
-      {/* Dashboard Header */}
-      <div className="dashboard-header">
-        <div className="dashboard-title">
-          <h1>Professional Dashboard</h1>
-          <p>Welcome back, {profile?.full_name || user?.email}</p>
+    <div className="dashboard-container dashboard-minimal">
+      <section className="profdash-hero">
+        <div className="profdash-title-block">
+          <p className="profdash-eyebrow">Dashboard</p>
+          <h1>{profile?.full_name || user?.email}</h1>
+          <p className="profdash-subtitle">{activeStatus.message}</p>
         </div>
-        <div className="dashboard-actions">
-          <Link to="/professional/analytics" className="btn btn-primary">
-            <i className="fa fa-chart-bar" aria-hidden="true"></i>
-            View Analytics
-          </Link>
+
+        <div className="profdash-actions">
           <Link to="/professional/profile/edit" className="btn btn-outline">
-            <i className="fa fa-edit" aria-hidden="true"></i>
             Edit Profile
           </Link>
+          <Link to="/professional/analytics" className="btn btn-outline">
+            Analytics
+          </Link>
           <button onClick={handleSignOut} className="btn btn-ghost">
-            <i className="fa fa-sign-out" aria-hidden="true"></i>
             Sign Out
           </button>
         </div>
-      </div>
+      </section>
 
-      {/* Moderation Status Alert - Pending */}
-      {profile && profile.moderation_status === 'pending' && (
-        <div style={{
-          background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-          border: '1px solid #f59e0b',
-          borderRadius: '12px',
-          padding: '1.25rem 1.5rem',
-          marginBottom: '1.5rem',
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '1rem'
-        }}>
-          <div style={{
-            background: '#f59e0b',
-            borderRadius: '50%',
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0
-          }}>
-            <i className="fa fa-clock-o" style={{ color: 'white', fontSize: '1.25rem' }} aria-hidden="true"></i>
-          </div>
-          <div>
-            <strong style={{ color: '#92400e', fontSize: '1.1rem', display: 'block', marginBottom: '0.25rem' }}>
-              Complete Your Profile to Go Live
-            </strong>
-            <p style={{ color: '#78350f', margin: '0 0 0.5rem', fontSize: '0.95rem' }}>
-              Your profile needs a few more details before it appears in the directory. Please add:
-            </p>
-            <ul style={{ color: '#78350f', margin: '0 0 0.75rem', paddingLeft: '1.25rem', fontSize: '0.95rem' }}>
-              {!profile.photo_url && <li>A professional headshot</li>}
-              {(!profile.bio || profile.bio.trim().length < 50) && <li>A bio describing your practice</li>}
-              {!profile.phone && !profile.website && <li>A phone number or website</li>}
-              {(!profile.specialties || profile.specialties.length === 0) && <li>At least one specialty</li>}
-            </ul>
-            <a href="/professional/edit" style={{ color: '#92400e', fontWeight: 600, textDecoration: 'underline' }}>
-              <i className="fa fa-pencil" aria-hidden="true" style={{ marginRight: '0.5rem' }}></i>
-              Edit your profile now
-            </a>
-          </div>
+      <section className="profdash-status">
+        <div className="profdash-status-title-row">
+          <span className="profdash-status-pill">{activeStatus.title}</span>
+          <a href={getPublicProfileUrl()} className="profdash-inline-link">Public Profile</a>
         </div>
-      )}
 
-      {/* Moderation Status Alert - Rejected */}
-      {profile && profile.moderation_status === 'rejected' && (
-        <div style={{
-          background: 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)',
-          border: '1px solid #ef4444',
-          borderRadius: '12px',
-          padding: '1.25rem 1.5rem',
-          marginBottom: '1.5rem',
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '1rem'
-        }}>
-          <div style={{
-            background: '#ef4444',
-            borderRadius: '50%',
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0
-          }}>
-            <i className="fa fa-exclamation" style={{ color: 'white', fontSize: '1.25rem' }} aria-hidden="true"></i>
-          </div>
-          <div>
-            <strong style={{ color: '#991b1b', fontSize: '1.1rem', display: 'block', marginBottom: '0.25rem' }}>
-              Profile Not Approved
-            </strong>
-            <p style={{ color: '#7f1d1d', margin: '0 0 0.5rem', fontSize: '0.95rem' }}>
-              Unfortunately, your profile was not approved for our directory.
-              {profile.moderation_notes && (
-                <span style={{ display: 'block', marginTop: '0.5rem' }}>
-                  <strong>Reason:</strong> {profile.moderation_notes}
-                </span>
-              )}
-            </p>
-            <p style={{ color: '#991b1b', margin: 0, fontSize: '0.85rem' }}>
-              If you believe this was a mistake, please contact us at{' '}
-              <a href="mailto:support@weddingcounselors.com" style={{ color: '#991b1b' }}>support@weddingcounselors.com</a>
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Welcome Banner for New Profiles */}
-      {isNewProfile && isProfileLive && (
-        <div style={{
-          background: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)',
-          borderRadius: '12px',
-          padding: '1.5rem',
-          marginBottom: '1.5rem',
-          color: 'white'
-        }}>
-          <h3 style={{ color: 'white', margin: '0 0 0.5rem 0', fontSize: '1.15rem' }}>
-            Your profile is live!
-          </h3>
-          <p style={{ margin: '0 0 1rem 0', opacity: 0.9, fontSize: '0.95rem' }}>
-            Couples searching for premarital counseling in {profile.city} can now find you.
-            The more complete your profile, the higher you'll appear in search results.
+        {moderationStatus === 'pending' && missingProfileFields.length > 0 && (
+          <p className="profdash-status-copy">
+            Missing: {missingProfileFields.join(' · ')}.
+            {' '}
+            <Link to="/professional/profile/edit" className="profdash-inline-link">Update profile</Link>
           </p>
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <a
-              href={getPublicProfileUrl()}
-              style={{
-                display: 'inline-block',
-                padding: '0.5rem 1rem',
-                background: 'rgba(255,255,255,0.2)',
-                color: 'white',
-                borderRadius: '6px',
-                textDecoration: 'none',
-                fontSize: '0.9rem',
-                fontWeight: '500',
-                border: '1px solid rgba(255,255,255,0.3)'
-              }}
-            >
-              View your public profile
-            </a>
-            <Link
-              to="/professional/profile/edit"
-              style={{
-                display: 'inline-block',
-                padding: '0.5rem 1rem',
-                background: 'white',
-                color: '#0d9488',
-                borderRadius: '6px',
-                textDecoration: 'none',
-                fontSize: '0.9rem',
-                fontWeight: '600'
-              }}
-            >
-              Complete your profile
-            </Link>
-          </div>
-        </div>
-      )}
+        )}
 
-      {/* Profile Completeness Widget */}
-      <ProfileCompletenessWidget profile={profile} />
+        {moderationStatus === 'rejected' && (
+          <p className="profdash-status-copy">
+            {profile?.moderation_notes || 'Please update your profile details and resubmit.'}
+          </p>
+        )}
 
-      {/* Stats Overview — Views first, then leads */}
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon" style={{ background: '#ede9fe', color: '#7c3aed' }}>
-            <i className="fa fa-eye" aria-hidden="true"></i>
-          </div>
-          <div className="stat-content">
-            <h3>{viewStats.total}</h3>
-            <p>Profile Views</p>
-            {viewStats.last7d > 0 && (
-              <small style={{ color: '#7c3aed', fontWeight: '500' }}>
-                {viewStats.last7d} this week
-              </small>
+        {moderationStatus === 'approved' && (
+          <p className="profdash-status-copy">
+            Listed for {profileAge} day{profileAge === 1 ? '' : 's'} in {profile?.city || 'your city'}.
+          </p>
+        )}
+      </section>
+
+      <section className="profdash-metrics">
+        <article className="profdash-metric-card">
+          <p>Views</p>
+          <h3>{viewStats.total}</h3>
+        </article>
+        <article className="profdash-metric-card">
+          <p>Inquiries</p>
+          <h3>{stats.totalLeads}</h3>
+        </article>
+        <article className="profdash-metric-card">
+          <p>Awaiting Reply</p>
+          <h3>{stats.pendingLeads}</h3>
+        </article>
+        <article className="profdash-metric-card">
+          <p>Response Rate</p>
+          <h3>{stats.responseRate}%</h3>
+        </article>
+      </section>
+
+      <section className="profdash-grid">
+        <div className="profdash-panel">
+          <div className="profdash-panel-head">
+            <h2>Recent Inquiries</h2>
+            {leads.length > 0 && (
+              <Link to="/professional/leads" className="profdash-inline-link">
+                View all
+              </Link>
             )}
           </div>
-        </div>
 
-        <div className="stat-card">
-          <div className="stat-icon stat-icon-primary">
-            <i className="fa fa-users" aria-hidden="true"></i>
-          </div>
-          <div className="stat-content">
-            <h3>{stats.totalLeads}</h3>
-            <p>Couple Inquiries</p>
-            {stats.thisMonthLeads > 0 && (
-              <small style={{ color: 'var(--color-primary)', fontWeight: '500' }}>
-                {stats.thisMonthLeads} this month
-              </small>
-            )}
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon stat-icon-warning">
-            <i className="fa fa-bell" aria-hidden="true"></i>
-          </div>
-          <div className="stat-content">
-            <h3>{stats.pendingLeads}</h3>
-            <p>Awaiting Reply</p>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon" style={{ background: '#dbeafe', color: '#2563eb' }}>
-            <i className="fa fa-calendar" aria-hidden="true"></i>
-          </div>
-          <div className="stat-content">
-            <h3>{profileAge}</h3>
-            <p>Days Listed</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Visibility Section — shown when no leads yet */}
-      {stats.totalLeads === 0 && isProfileLive && (
-        <div style={{
-          background: 'white',
-          borderRadius: '12px',
-          border: '1px solid var(--gray-200)',
-          padding: '1.5rem',
-          marginBottom: '1.5rem'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-            <div style={{
-              background: '#f0fdf4',
-              borderRadius: '50%',
-              width: '44px',
-              height: '44px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}>
-              <i className="fa fa-check-circle" style={{ color: '#16a34a', fontSize: '1.25rem' }} aria-hidden="true"></i>
+          {leads.length === 0 ? (
+            <div className="profdash-empty">
+              <p>No inquiries yet.</p>
+              {isProfileLive && (
+                <a href={getPublicProfileUrl()} className="profdash-inline-link">
+                  Review public profile
+                </a>
+              )}
             </div>
-            <div style={{ flex: 1 }}>
-              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.05rem' }}>
-                Your profile is active and visible
-              </h3>
-              <p style={{ margin: '0 0 1rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                {viewStats.total > 0
-                  ? `Your profile has been viewed ${viewStats.total} time${viewStats.total !== 1 ? 's' : ''}. As our directory grows, you'll start receiving inquiries from engaged couples in ${profile.city}.`
-                  : `Your profile is now appearing in search results for premarital counseling in ${profile.city}. Views and inquiries will show up here as couples discover you.`
-                }
-              </p>
-
-              {/* How it works - for new profiles with no leads */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                gap: '0.75rem'
-              }}>
-                <div style={{
-                  padding: '0.75rem',
-                  background: 'var(--gray-50)',
-                  borderRadius: '8px',
-                  fontSize: '0.85rem'
-                }}>
-                  <strong style={{ display: 'block', marginBottom: '0.25rem', color: 'var(--text-primary)' }}>
-                    1. Couples search
-                  </strong>
-                  <span style={{ color: 'var(--text-secondary)' }}>
-                    Engaged couples find your city page on Google
-                  </span>
-                </div>
-                <div style={{
-                  padding: '0.75rem',
-                  background: 'var(--gray-50)',
-                  borderRadius: '8px',
-                  fontSize: '0.85rem'
-                }}>
-                  <strong style={{ display: 'block', marginBottom: '0.25rem', color: 'var(--text-primary)' }}>
-                    2. They view profiles
-                  </strong>
-                  <span style={{ color: 'var(--text-secondary)' }}>
-                    Couples browse and compare counselors in your area
-                  </span>
-                </div>
-                <div style={{
-                  padding: '0.75rem',
-                  background: 'var(--gray-50)',
-                  borderRadius: '8px',
-                  fontSize: '0.85rem'
-                }}>
-                  <strong style={{ display: 'block', marginBottom: '0.25rem', color: 'var(--text-primary)' }}>
-                    3. You get contacted
-                  </strong>
-                  <span style={{ color: 'var(--text-secondary)' }}>
-                    Inquiries land here and you're notified by email
-                  </span>
-                </div>
-              </div>
+          ) : (
+            <div className="profdash-lead-list">
+              {leads.map((lead) => (
+                <article key={lead.id} className="profdash-lead-item">
+                  <div>
+                    <h4>{lead.couple_name}</h4>
+                    <p>{lead.couple_email}</p>
+                    <small>{formatDate(lead.created_at)}</small>
+                  </div>
+                  <div className="profdash-lead-actions">
+                    <span className={`badge ${getStatusBadge(lead.status)}`}>
+                      {getStatusText(lead.status)}
+                    </span>
+                    <Link to={`/professional/leads/${lead.id}`} className="profdash-inline-link">
+                      Open
+                    </Link>
+                  </div>
+                </article>
+              ))}
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Recent Leads */}
-      <div className="dashboard-section">
-        <div className="section-header">
-          <h2>Recent Inquiries</h2>
-          {leads.length > 0 && (
-            <Link to="/professional/leads" className="btn btn-outline btn-sm">
-              View All
-            </Link>
           )}
         </div>
 
-        {leads.length === 0 ? (
-          <div style={{
-            background: 'var(--gray-50)',
-            borderRadius: '12px',
-            padding: '2rem',
-            textAlign: 'center'
-          }}>
-            {profile?.moderation_status === 'pending' ? (
-              <>
-                <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', margin: 0 }}>
-                  Your profile is under review. Once approved, couples will be able to find you and send inquiries.
-                </p>
-              </>
-            ) : (
-              <>
-                <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', margin: '0 0 1rem 0' }}>
-                  No inquiries yet. When engaged couples reach out through the directory, you'll see their details here and get an email notification.
-                </p>
-                <Link to={getPublicProfileUrl()} className="btn btn-outline" style={{ fontSize: '0.9rem' }}>
-                  Preview Your Public Profile
-                </Link>
-              </>
+        <div className="profdash-panel">
+          <h2>Actions</h2>
+          <div className="profdash-action-list">
+            <Link to="/professional/profile/edit" className="profdash-action-item">
+              <span>Update Profile</span>
+              <i className="fa fa-chevron-right" aria-hidden="true"></i>
+            </Link>
+            <Link to="/professional/analytics" className="profdash-action-item">
+              <span>View Analytics</span>
+              <i className="fa fa-chevron-right" aria-hidden="true"></i>
+            </Link>
+            <Link to="/professional/leads" className="profdash-action-item">
+              <span>Manage Leads</span>
+              <i className="fa fa-chevron-right" aria-hidden="true"></i>
+            </Link>
+            <a href={getPublicProfileUrl()} className="profdash-action-item">
+              <span>Public Profile</span>
+              <i className="fa fa-chevron-right" aria-hidden="true"></i>
+            </a>
+          </div>
+
+          <div className="profdash-account-block">
+            <button
+              onClick={() => setShowAccountSettings(!showAccountSettings)}
+              className="profdash-account-toggle"
+            >
+              <i className={`fa fa-chevron-${showAccountSettings ? 'down' : 'right'}`} aria-hidden="true"></i>
+              Account Settings
+            </button>
+
+            {showAccountSettings && (
+              <div className="profdash-account-content">
+                {removeSuccess ? (
+                  <p className="profdash-account-success">
+                    Profile removed. Contact hello@weddingcounselors.com to restore.
+                  </p>
+                ) : (
+                  <div className="profdash-account-row">
+                    <p>Hide your listing from search results.</p>
+                    <button onClick={() => setShowRemoveConfirm(true)} className="profdash-danger-btn">
+                      Remove Profile
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
-        ) : (
-          <div className="leads-table">
-            <div className="table-header">
-              <div className="table-cell">Couple</div>
-              <div className="table-cell">Contact</div>
-              <div className="table-cell">Date</div>
-              <div className="table-cell">Status</div>
-              <div className="table-cell">Action</div>
-            </div>
-
-            {leads.map(lead => (
-              <div key={lead.id} className="table-row">
-                <div className="table-cell">
-                  <div className="lead-info">
-                    <strong>{lead.couple_name}</strong>
-                    {lead.wedding_date && (
-                      <small>Wedding: {new Date(lead.wedding_date).toLocaleDateString()}</small>
-                    )}
-                  </div>
-                </div>
-
-                <div className="table-cell">
-                  <div className="contact-info">
-                    <div>{lead.couple_email}</div>
-                    {lead.couple_phone && <small>{lead.couple_phone}</small>}
-                  </div>
-                </div>
-
-                <div className="table-cell">
-                  <small>{formatDate(lead.created_at)}</small>
-                </div>
-
-                <div className="table-cell">
-                  <span className={`badge ${getStatusBadge(lead.status)}`}>
-                    {getStatusText(lead.status)}
-                  </span>
-                </div>
-
-                <div className="table-cell">
-                  <Link
-                    to={`/professional/leads/${lead.id}`}
-                    className="btn btn-sm btn-outline"
-                  >
-                    View Details
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="dashboard-section">
-        <h2>Quick Actions</h2>
-        <div className="quick-actions">
-          <Link to="/professional/profile/edit" className="action-card">
-            <i className="fa fa-user-edit" aria-hidden="true"></i>
-            <h4>Update Profile</h4>
-            <p>Edit your bio, specialties, and contact information</p>
-          </Link>
-
-          <Link to="/professional/analytics" className="action-card">
-            <i className="fa fa-chart-line" aria-hidden="true"></i>
-            <h4>View Analytics</h4>
-            <p>See profile views, traffic sources, and inquiry stats</p>
-          </Link>
-
-          <Link to="/professional/leads" className="action-card">
-            <i className="fa fa-envelope" aria-hidden="true"></i>
-            <h4>Manage Leads</h4>
-            <p>View and respond to couple inquiries</p>
-          </Link>
-
-          <a href={getPublicProfileUrl()} className="action-card">
-            <i className="fa fa-eye" aria-hidden="true"></i>
-            <h4>Public Profile</h4>
-            <p>
-              {profile?.moderation_status === 'pending'
-                ? 'Preview your profile (not yet visible to couples)'
-                : 'See how couples see your listing'}
-            </p>
-          </a>
         </div>
-      </div>
+      </section>
 
-      {/* Account Settings - Collapsible, de-emphasized */}
-      <div className="dashboard-section" style={{ marginTop: 'var(--space-12)' }}>
-        <button
-          onClick={() => setShowAccountSettings(!showAccountSettings)}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            color: 'var(--text-secondary)',
-            fontSize: '0.9rem',
-            padding: 0
-          }}
-        >
-          <i className={`fa fa-chevron-${showAccountSettings ? 'down' : 'right'}`} style={{ fontSize: '0.75rem' }} aria-hidden="true"></i>
-          Account Settings
-        </button>
-
-        {showAccountSettings && (
-          <div style={{ marginTop: 'var(--space-4)' }}>
-            {removeSuccess ? (
-              <div style={{
-                background: '#d1fae5',
-                padding: 'var(--space-6)',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid #6ee7b7'
-              }}>
-                <h3 style={{ color: '#065f46', marginBottom: 'var(--space-2)' }}>
-                  Profile Removed
-                </h3>
-                <p style={{ color: '#064e3b', margin: 0 }}>
-                  Your profile has been removed from WeddingCounselors. You will no longer appear in search results or receive inquiries.
-                  If you change your mind, contact us at hello@weddingcounselors.com to restore your listing.
-                </p>
-              </div>
-            ) : (
-              <div style={{
-                background: 'var(--bg-secondary)',
-                padding: 'var(--space-4)',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--gray-200)'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <h4 style={{ margin: '0 0 var(--space-2) 0' }}>Remove My Listing</h4>
-                    <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                      Hide your profile from WeddingCounselors. You can contact us later to restore it.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setShowRemoveConfirm(true)}
-                    style={{
-                      padding: 'var(--space-2) var(--space-4)',
-                      background: 'white',
-                      color: '#dc2626',
-                      border: '1px solid #fca5a5',
-                      borderRadius: 'var(--radius-sm)',
-                      cursor: 'pointer',
-                      fontSize: '0.9rem',
-                      fontWeight: '500'
-                    }}
-                  >
-                    Remove Profile
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Remove Confirmation Modal */}
       {showRemoveConfirm && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: 'white',
-            padding: 'var(--space-8)',
-            borderRadius: 'var(--radius-lg)',
-            maxWidth: '500px',
-            width: '90%'
-          }}>
-            <h3 style={{ marginBottom: 'var(--space-4)', color: '#dc2626' }}>
-              Remove Your Profile?
-            </h3>
-            <p style={{ marginBottom: 'var(--space-4)' }}>
-              This will:
-            </p>
-            <ul style={{ marginBottom: 'var(--space-6)', paddingLeft: 'var(--space-4)' }}>
-              <li>Hide your profile from all search results</li>
-              <li>Stop sending you couple inquiries</li>
-              <li>Remove you from city pages</li>
-              <li>Prevent future outreach emails from us</li>
-            </ul>
-            <p style={{ marginBottom: 'var(--space-6)', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              You can contact hello@weddingcounselors.com to restore your listing later if you change your mind.
-            </p>
-
-            <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-              <button
-                onClick={() => setShowRemoveConfirm(false)}
-                disabled={removeLoading}
-                style={{
-                  flex: 1,
-                  padding: 'var(--space-3)',
-                  background: 'var(--gray-100)',
-                  border: 'none',
-                  borderRadius: 'var(--radius-sm)',
-                  cursor: 'pointer',
-                  fontWeight: '500'
-                }}
-              >
+        <div className="profdash-modal-backdrop">
+          <div className="profdash-modal">
+            <h3>Remove profile?</h3>
+            <p>This hides your profile and stops new inquiries.</p>
+            <div className="profdash-modal-actions">
+              <button onClick={() => setShowRemoveConfirm(false)} disabled={removeLoading} className="btn btn-outline">
                 Cancel
               </button>
-              <button
-                onClick={handleRemoveProfile}
-                disabled={removeLoading}
-                style={{
-                  flex: 1,
-                  padding: 'var(--space-3)',
-                  background: '#dc2626',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 'var(--radius-sm)',
-                  cursor: removeLoading ? 'not-allowed' : 'pointer',
-                  fontWeight: '500'
-                }}
-              >
-                {removeLoading ? 'Removing...' : 'Yes, Remove My Profile'}
+              <button onClick={handleRemoveProfile} disabled={removeLoading} className="profdash-danger-btn">
+                {removeLoading ? 'Removing...' : 'Remove'}
               </button>
             </div>
           </div>
