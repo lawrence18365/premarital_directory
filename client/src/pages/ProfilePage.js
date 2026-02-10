@@ -55,8 +55,18 @@ const toBooleanFlag = (value) => {
   return Boolean(value)
 }
 
+const hasAvailabilityData = (value) => {
+  if (value === true || value === false) return true
+  if (typeof value === 'number') return value === 0 || value === 1
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase()
+    return ['true', 'false', '1', '0', 'yes', 'no'].includes(normalized)
+  }
+  return false
+}
+
 const getSessionFormatLabel = (sessionTypes = []) => {
-  if (!sessionTypes.length) return 'Ask about online and in-person options'
+  if (!sessionTypes.length) return 'Not listed'
   return sessionTypes.join(', ')
 }
 
@@ -70,7 +80,7 @@ const getPricingLabel = (profile) => {
   if (min && max) return `$${min}-$${max} per session`
   if (min) return `$${min}+ per session`
   if (max) return `Up to $${max} per session`
-  return 'Ask about session fees'
+  return 'Not listed'
 }
 
 const getPrimaryLicenseType = (profile, credentials = [], certifications = []) => {
@@ -96,7 +106,8 @@ const getPrimaryLicenseType = (profile, credentials = [], certifications = []) =
 
 const getAvailabilityLabel = (profile) => {
   if (!profile?.is_claimed) return 'Availability unverified'
-  if (profile?.accepting_new_clients) return 'Accepting new clients'
+  if (!hasAvailabilityData(profile?.accepting_new_clients)) return 'Availability not listed'
+  if (toBooleanFlag(profile?.accepting_new_clients)) return 'Accepting new clients'
   return 'Limited availability'
 }
 
@@ -326,13 +337,16 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     ]
   )
 
-  const programFitAudience = clientFocus.length > 0
-    ? clientFocus.slice(0, 3).join(', ')
-    : 'Engaged couples preparing for marriage'
+  const explicitPremaritalSpecialty = specialties.find((item) => /premarital|pre[-\s]?marriage|marriage prep/i.test(String(item)))
+  const programFitAudience = explicitPremaritalSpecialty
+    ? `Listed specialty: ${explicitPremaritalSpecialty}`
+    : clientFocus.length > 0
+      ? `Listed client focus: ${clientFocus.slice(0, 3).join(', ')}`
+      : 'Not listed'
 
   const programTopics = specialties.length > 0
     ? specialties.slice(0, 5).join(', ')
-    : 'Communication, conflict resolution, finances, values, and relationship expectations'
+    : 'Not listed'
 
   const sessionFormatLabel = getSessionFormatLabel(sessionTypes)
   const insuranceLabel = insuranceAccepted.length > 0 ? insuranceAccepted.join(', ') : 'Not listed'
@@ -342,7 +356,13 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   const licenseLabel = credentials.length > 0 ? credentials.join(', ') : 'Not listed'
   const professionLabel = (() => {
     const profession = profile?.profession || 'Premarital Counselor'
-    if (!licenseType) return profession
+    if (!licenseType) {
+      if (/licensed therapist/i.test(profession)) return 'Therapist (license not listed)'
+      if (/therapist|counselor|psychologist|social worker/i.test(profession)) {
+        return `${profession} (license not listed)`
+      }
+      return profession
+    }
     const generic = /licensed therapist|therapist|counselor/i.test(profession)
     const alreadyIncludes = profession.toUpperCase().includes(licenseType)
     if (generic && !alreadyIncludes) {
@@ -352,21 +372,20 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   })()
   const availabilityLabel = getAvailabilityLabel(profile)
   const methodsLabel = premaritalMethods.length > 0 ? premaritalMethods.join(', ') : 'Not provided'
-  const hasExplicitPremaritalSpecialty = specialties.some((item) => /premarital|pre[-\s]?marriage|marriage prep/i.test(String(item)))
   const programStructureLabel = premaritalMethods.length > 0
     ? `Structured sessions using ${methodsLabel}`
     : 'Not provided'
 
   const premaritalFitSignals = [
-    hasExplicitPremaritalSpecialty ? 'Lists premarital counseling as a specialty' : null,
-    premaritalMethods.length > 0 ? `Uses evidence-based methods (${methodsLabel})` : null,
-    hasOnlineOption ? 'Online sessions available for easier scheduling' : null,
-    availabilityLabel === 'Accepting new clients' ? 'Currently accepting new premarital clients' : null,
-    profile.years_experience ? `${profile.years_experience}+ years of experience` : null
+    explicitPremaritalSpecialty ? `Profile tag: ${explicitPremaritalSpecialty}` : null,
+    premaritalMethods.length > 0 ? `Profile methods listed: ${methodsLabel}` : null,
+    hasOnlineOption ? 'Profile session format includes online' : null,
+    availabilityLabel === 'Accepting new clients' ? 'Profile availability lists accepting new clients' : null,
+    profile.years_experience ? `Profile lists ${profile.years_experience}+ years of experience` : null
   ].filter(Boolean)
 
   if (premaritalFitSignals.length === 0) {
-    premaritalFitSignals.push('Premarital-specific details have not been provided')
+    premaritalFitSignals.push('Profile tags and logistics are limited')
   }
 
   const quickFacts = [
@@ -375,6 +394,16 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     { label: 'Insurance', value: insuranceAccepted.length > 0 ? 'Accepted' : 'Not listed' },
     { label: 'License type', value: licenseTypeLabel || 'Not listed' }
   ]
+
+  const missingDetails = []
+  if (!licenseTypeLabel || licenseLabel === 'Not listed') missingDetails.push('license')
+  if (pricingLabel === 'Not listed') missingDetails.push('session fees')
+  if (insuranceLabel === 'Not listed') missingDetails.push('insurance')
+  if (sessionFormatLabel === 'Not listed') missingDetails.push('session format')
+  if (availabilityLabel === 'Availability unverified' || availabilityLabel === 'Availability not listed') {
+    missingDetails.push('availability')
+  }
+  const hasMissingDetails = missingDetails.length > 0
 
   const hasPricingSection =
     Boolean(profile?.pricing_range) ||
@@ -485,6 +514,22 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
               </div>
             </header>
 
+            {hasMissingDetails && (
+              <section className="profile-premium-card profile-missing-details">
+                <h2>Missing details</h2>
+                <p>
+                  This listing has not provided: {missingDetails.join(', ')}.
+                </p>
+                {!profile.is_claimed && (
+                  <p className="profile-missing-details-claim">
+                    <Link to={`/claim-profile/${profile.slug || profile.id}`}>
+                      Claim this profile to verify license, fees, and availability.
+                    </Link>
+                  </p>
+                )}
+              </section>
+            )}
+
             <div className="profile-premium-grid">
               <main className="profile-premium-main">
                 <section className="profile-premium-card">
@@ -534,7 +579,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                   </p>
                   <div className="profile-detail-stack">
                     <div className="profile-detail-row">
-                      <span>Best fit for</span>
+                      <span>Profile tags</span>
                       <strong>{programFitAudience}</strong>
                     </div>
                     <div className="profile-detail-row">
@@ -570,6 +615,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                       <strong>{licenseLabel}</strong>
                     </div>
                   </div>
+                  <h3 className="profile-signal-heading">Profile tags and provided details</h3>
                   <ul className="profile-fit-signal-list">
                     {premaritalFitSignals.slice(0, 4).map((signal) => (
                       <li key={signal}>{signal}</li>
@@ -716,7 +762,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     </div>
                     <div className="profile-kpi-row">
                       <span>Insurance</span>
-                      <strong>{insuranceAccepted.length > 0 ? 'Accepted plans listed' : 'Ask for coverage details'}</strong>
+                      <strong>{insuranceAccepted.length > 0 ? 'Accepted plans listed' : 'Not listed'}</strong>
                     </div>
                   </div>
 
@@ -834,7 +880,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                   <section className="profile-premium-card profile-premium-card-claim">
                     <h2>Is this your profile?</h2>
                     <p>
-                      Claim this listing to update details, manage inquiries, and receive lead notifications.
+                      Claim this profile to verify license, fees, and availability, then manage inquiries in your dashboard.
                     </p>
                     <Link
                       to={`/claim-profile/${profile.slug || profile.id}`}

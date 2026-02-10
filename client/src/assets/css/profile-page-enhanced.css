@@ -263,6 +263,31 @@
   line-height: 1.45;
 }
 
+.profile-missing-details {
+  margin-top: 0.85rem;
+  border-color: rgba(186, 82, 53, 0.24);
+  background: linear-gradient(180deg, rgba(255, 248, 245, 0.95), rgba(255, 255, 255, 0.98));
+}
+
+.profile-missing-details p {
+  margin: 0.62rem 0 0;
+  font-size: 0.9rem;
+}
+
+.profile-missing-details-claim {
+  margin-top: 0.42rem;
+}
+
+.profile-missing-details-claim a {
+  color: var(--profile-accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.profile-missing-details-claim a:hover {
+  text-decoration: underline;
+}
+
 .profile-note-inline {
   border: 1px dashed var(--profile-line-strong);
   border-radius: 12px;
@@ -406,6 +431,10 @@
   list-style: none;
   display: grid;
   gap: 0.4rem;
+}
+
+.profile-signal-heading {
+  margin-top: 0.72rem !important;
 }
 
 .profile-fit-signal-list li {

@@ -4,10 +4,10 @@ import { supabase } from '../../lib/supabaseClient'
 const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaimed = true, onSuccess }) => {
   const shortName = professionalName?.split(' ')[0] || 'this professional'
   const [formData, setFormData] = useState({
-    couple_name: '',
+    partner_one_name: '',
+    partner_two_name: '',
     couple_email: '',
     couple_phone: '',
-    preferred_contact: 'email',
     wedding_date: '',
     location: '',
     message: '',
@@ -29,7 +29,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!formData.couple_name || !formData.couple_email || !formData.message) {
+    if (!formData.partner_one_name || !formData.couple_email || !formData.message) {
       setError('Please fill in all required fields')
       return
     }
@@ -38,9 +38,10 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
     setError('')
 
     try {
-      const outboundMessage = formData.preferred_contact
-        ? `Preferred contact: ${formData.preferred_contact}\n\n${formData.message}`
-        : formData.message
+      const outboundMessage = formData.message
+      const coupleName = formData.partner_two_name
+        ? `${formData.partner_one_name} & ${formData.partner_two_name}`
+        : formData.partner_one_name
 
       // Determine lead status based on profile claim status
       const leadStatus = isProfileClaimed ? 'new' : 'pending_claim'
@@ -50,7 +51,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
         .from('profile_leads')
         .insert([{
           profile_id: profileId,
-          couple_name: formData.couple_name,
+          couple_name: coupleName,
           couple_email: formData.couple_email,
           couple_phone: formData.couple_phone,
           wedding_date: formData.wedding_date || null,
@@ -72,7 +73,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
               leadId: leadData[0].id,
               profileId: profileId,
               coupleData: {
-                name: formData.couple_name,
+                name: coupleName,
                 email: formData.couple_email,
                 phone: formData.couple_phone,
                 wedding_date: formData.wedding_date,
@@ -90,7 +91,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
             body: {
               profileEmail: targetEmail,
               professionalName: professionalName,
-              coupleName: formData.couple_name,
+              coupleName: coupleName,
               coupleEmail: formData.couple_email,
               coupleLocation: formData.location,
               city: profile?.city,
@@ -109,10 +110,10 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
 
       // Reset form
       setFormData({
-        couple_name: '',
+        partner_one_name: '',
+        partner_two_name: '',
         couple_email: '',
         couple_phone: '',
-        preferred_contact: 'email',
         wedding_date: '',
         location: '',
         message: '',
@@ -172,44 +173,42 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
       <form onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="couple_name">Your Names *</label>
+            <label htmlFor="partner_one_name">Partner 1 *</label>
             <input
               type="text"
-              id="couple_name"
-              name="couple_name"
-              value={formData.couple_name}
+              id="partner_one_name"
+              name="partner_one_name"
+              value={formData.partner_one_name}
               onChange={handleInputChange}
-              placeholder="Your names"
+              placeholder="First partner name"
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="couple_email">Email Address *</label>
+            <label htmlFor="partner_two_name">Partner 2 (optional)</label>
             <input
-              type="email"
-              id="couple_email"
-              name="couple_email"
-              value={formData.couple_email}
+              type="text"
+              id="partner_two_name"
+              name="partner_two_name"
+              value={formData.partner_two_name}
               onChange={handleInputChange}
-              placeholder="Email address"
-              required
+              placeholder="Second partner name"
             />
           </div>
         </div>
 
         <div className="form-group">
-          <label htmlFor="preferred_contact">Preferred Contact</label>
-          <select
-            id="preferred_contact"
-            name="preferred_contact"
-            value={formData.preferred_contact}
+          <label htmlFor="couple_email">Email Address *</label>
+          <input
+            type="email"
+            id="couple_email"
+            name="couple_email"
+            value={formData.couple_email}
             onChange={handleInputChange}
-          >
-            <option value="email">Email</option>
-            <option value="text">Text</option>
-            <option value="phone">Phone call</option>
-          </select>
+            placeholder="Email address"
+            required
+          />
         </div>
 
         <div className="form-group">
