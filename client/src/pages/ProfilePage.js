@@ -7,10 +7,19 @@ import Breadcrumbs, { generateBreadcrumbs } from '../components/common/Breadcrum
 import SEOHelmet, { generateProfessionalStructuredData } from '../components/analytics/SEOHelmet'
 import { trackProfileView } from '../components/analytics/GoogleAnalytics'
 import { trackFacebookProfileView } from '../components/analytics/FacebookPixel'
+import { STATE_CONFIG } from '../data/locationConfig'
 
 import { profileOperations } from '../lib/supabaseClient'
 import UnclaimedProfileBanner from '../components/profiles/UnclaimedProfileBanner'
 import '../assets/css/profile-page-enhanced.css'
+
+// Helper: Convert state abbreviation to slug (OH -> ohio)
+const getStateSlugFromAbbr = (abbr) => {
+  if (!abbr) return null
+  const normalized = String(abbr).toUpperCase()
+  const entry = Object.entries(STATE_CONFIG).find(([_, config]) => config.abbr === normalized)
+  return entry ? entry[0] : generateSlug(abbr)
+}
 
 const asArray = (value) => {
   if (!Array.isArray(value)) return []
@@ -65,9 +74,24 @@ const hasAvailabilityData = (value) => {
   return false
 }
 
+const formatSessionTypeLabel = (value) => {
+  if (!value) return null
+  const normalized = String(value).trim().toLowerCase()
+  if (!normalized) return null
+  if (normalized === 'online') return 'Online'
+  if (normalized === 'hybrid') return 'Hybrid'
+  if (normalized === 'in-person' || normalized === 'in person' || normalized === 'inperson') return 'In-Person'
+  if (normalized === 'virtual') return 'Virtual'
+
+  return normalized.replace(/\b\w/g, (character) => character.toUpperCase())
+}
+
 const getSessionFormatLabel = (sessionTypes = []) => {
   if (!sessionTypes.length) return 'Not listed'
-  return sessionTypes.join(', ')
+  return sessionTypes
+    .map((sessionType) => formatSessionTypeLabel(sessionType))
+    .filter(Boolean)
+    .join(', ')
 }
 
 const getPricingLabel = (profile) => {
@@ -280,14 +304,19 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   const treatmentApproaches = uniqueValues(asArray(profile?.treatment_approaches))
   const clientFocus = uniqueValues(asArray(profile?.client_focus))
   const languages = uniqueValues(asArray(profile?.languages))
-  const sessionTypes = uniqueValues(asArray(profile?.session_types))
+  const sessionTypesRaw = uniqueValues(asArray(profile?.session_types))
+  const sessionTypes = uniqueValues(
+    sessionTypesRaw
+      .map((sessionType) => formatSessionTypeLabel(sessionType))
+      .filter(Boolean)
+  )
   const credentials = uniqueValues(asArray(profile?.credentials))
   const certifications = uniqueValues(asArray(profile?.certifications))
   const education = uniqueValues(asArray(profile?.education))
   const insuranceAccepted = uniqueValues(asArray(profile?.insurance_accepted))
   const paymentMethods = uniqueValues(asArray(profile?.payment_methods))
   const faithTraditionLabel = formatFaithTradition(profile?.faith_tradition)
-  const hasOnlineOption = sessionTypes.some((sessionType) => /online|virtual|hybrid/i.test(sessionType))
+  const hasOnlineOption = sessionTypesRaw.some((sessionType) => /online|virtual|hybrid/i.test(String(sessionType)))
   const slidingScaleEnabled = toBooleanFlag(profile?.sliding_scale)
   const freeConsultationEnabled = toBooleanFlag(profile?.offers_free_consultation)
 
@@ -376,7 +405,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     : 'Not provided'
 
   const logisticsItems = [
-    { key: 'specialty', label: 'Listed specialty', value: explicitPremaritalSpecialty, missingLabel: 'premarital specialty' },
+    { key: 'specialty', label: 'Listed specialty', value: explicitPremaritalSpecialty, missingLabel: null },
     { key: 'client-focus', label: 'Client focus', value: listedClientFocus, missingLabel: 'client focus' },
     { key: 'methods', label: 'Program methods', value: isMissingDescriptor(methodsLabel) ? null : methodsLabel, missingLabel: 'program methods' },
     { key: 'program-structure', label: 'Program structure', value: isMissingDescriptor(programStructureLabel) ? null : programStructureLabel, missingLabel: 'program structure' },
@@ -389,12 +418,6 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   ]
 
   const providedLogisticsItems = logisticsItems.filter((item) => !isMissingDescriptor(item.value))
-  const missingDetails = uniqueValues(
-    logisticsItems
-      .filter((item) => isMissingDescriptor(item.value))
-      .map((item) => item.missingLabel)
-  )
-
   const quickFacts = [
     { label: 'License type', value: licenseTypeLabel },
     { label: 'Session format', value: sessionFormatLabel },
@@ -412,7 +435,6 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
 
   const shouldCollapseLogistics = providedLogisticsItems.length < 3
   const availabilityIsVerified = availabilityLabel === 'Accepting new clients' || availabilityLabel === 'Limited availability'
-  const hasMissingDetails = missingDetails.length > 0
 
   const hasPricingSection =
     Boolean(profile?.pricing_range) ||
@@ -420,6 +442,19 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     paymentMethods.length > 0 ||
     freeConsultationEnabled ||
     slidingScaleEnabled
+
+  // Ensure website has protocol for external links
+  const websiteUrl = profile?.website
+    ? (profile.website.startsWith('http://') || profile.website.startsWith('https://'))
+      ? profile.website
+      : `https://${profile.website}`
+    : null
+
+  // Build canonical URL with normalized state/city slugs to avoid duplicates
+  // Use full state name (ohio) not abbreviation (oh) for canonical
+  const canonicalPath = profile?.state_province && profile?.city && profile?.slug
+    ? `/premarital-counseling/${getStateSlugFromAbbr(profile.state_province)}/${generateSlug(profile.city)}/${profile.slug}`
+    : window.location.pathname
 
   return (
     <>
@@ -432,7 +467,8 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
         professional={profile}
         keywords={`${profile?.profession}, premarital counseling, ${profile?.city}, ${profile?.state_province}, ${specialties.join(', ')}`}
         breadcrumbs={breadcrumbItems}
-        canonicalUrl={`https://www.weddingcounselors.com${window.location.pathname}`}
+        faqs={providerFaqItems.length > 0 ? providerFaqItems : null}
+        canonicalUrl={`https://www.weddingcounselors.com${canonicalPath}`}
         noindex={false}
       />
 
@@ -497,12 +533,6 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                   </div>
                 )}
 
-                {hasMissingDetails && (
-                  <p className="profile-inline-missing">
-                    Details not provided. <a href="#missing-details">See missing details.</a>
-                  </p>
-                )}
-
                 {specialties.length > 0 && (
                   <div className="profile-premium-top-tags">
                     {specialties.slice(0, 6).map((specialty) => (
@@ -518,9 +548,9 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                 <button onClick={scrollToContact} className="btn btn-primary">
                   Send Message
                 </button>
-                {profile.website && (
+                {websiteUrl && (
                   <a
-                    href={profile.website}
+                    href={websiteUrl}
                     target="_blank"
                     rel="nofollow noopener noreferrer"
                     className="btn btn-outline"
@@ -530,22 +560,6 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                 )}
               </div>
             </header>
-
-            {hasMissingDetails && (
-              <section id="missing-details" className="profile-premium-card profile-missing-details">
-                <h2>Missing details</h2>
-                <p>
-                  This listing has not provided: {missingDetails.join(', ')}.
-                </p>
-                {!profile.is_claimed && (
-                  <p className="profile-missing-details-claim">
-                    <Link to={`/claim-profile/${profile.slug || profile.id}`}>
-                      Claim this profile to verify license, fees, and availability.
-                    </Link>
-                  </p>
-                )}
-              </section>
-            )}
 
             <div className="profile-premium-grid">
               <main className="profile-premium-main">
@@ -620,35 +634,16 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                           <p className="profile-checklist-empty">No structured details listed yet.</p>
                         )}
                       </div>
-                      <div className="profile-checklist-column">
-                        <h3>What&apos;s missing</h3>
-                        {missingDetails.length > 0 ? (
-                          <ul className="profile-checklist profile-checklist-missing">
-                            {missingDetails.map((detail) => (
-                              <li key={detail}>{detail}</li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <p className="profile-checklist-empty">No missing details flagged.</p>
-                        )}
-                      </div>
                     </div>
                   ) : (
-                    <>
-                      <div className="profile-detail-stack">
-                        {providedLogisticsItems.map((item) => (
-                          <div key={item.key} className="profile-detail-row">
-                            <span>{item.label}</span>
-                            <strong>{item.value}</strong>
-                          </div>
-                        ))}
-                      </div>
-                      {hasMissingDetails && (
-                        <p className="profile-data-note profile-data-note-inline">
-                          Details not provided. <a href="#missing-details">See missing details.</a>
-                        </p>
-                      )}
-                    </>
+                    <div className="profile-detail-stack">
+                      {providedLogisticsItems.map((item) => (
+                        <div key={item.key} className="profile-detail-row">
+                          <span>{item.label}</span>
+                          <strong>{item.value}</strong>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </section>
 
@@ -776,12 +771,6 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     ))}
                   </div>
 
-                  {hasMissingDetails && (
-                    <p className="profile-inline-missing profile-inline-missing-dark">
-                      Details not provided. <a href="#missing-details">See missing details.</a>
-                    </p>
-                  )}
-
                   {profile.booking_url ? (
                     <a
                       href={profile.booking_url}
@@ -848,11 +837,11 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                         </div>
                       )}
 
-                      {profile.website && (
+                      {websiteUrl && (
                         <div className="profile-contact-row">
                           <span>Website</span>
                           <a
-                            href={profile.website}
+                            href={websiteUrl}
                             target="_blank"
                             rel="nofollow noopener noreferrer"
                             className="profile-contact-link"
