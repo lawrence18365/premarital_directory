@@ -1,7 +1,6 @@
 /* Refined State Page Styles - Matching Landing Page Identity */
 
 .state-page {
-  min-height: 100vh;
   background: var(--ivory);
   background-image: 
     radial-gradient(circle at 10% 20%, rgba(14, 94, 94, 0.03) 0%, transparent 40%),
