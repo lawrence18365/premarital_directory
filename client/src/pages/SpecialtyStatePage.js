@@ -21,6 +21,7 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
   
   const [loading, setLoading] = useState(true)
   const [profiles, setProfiles] = useState([])
+  const [availableCities, setAvailableCities] = useState([])
   const [showGetMatchedForm, setShowGetMatchedForm] = useState(false)
   const [displayCount, setDisplayCount] = useState(12)
 
@@ -67,12 +68,43 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
       if (error) {
         console.error('Error loading specialty profiles:', error)
         setProfiles([])
+        setAvailableCities([])
       } else {
-        setProfiles(data || [])
+        const specialtyProfiles = data || []
+        setProfiles(specialtyProfiles)
+
+        const cityCounts = {}
+        const stateCities = stateConfig?.major_cities || []
+        const canonicalCityBySlug = stateCities.reduce((acc, cityName) => {
+          const slug = cityName.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+          acc[slug] = cityName
+          return acc
+        }, {})
+
+        specialtyProfiles.forEach((profile) => {
+          const cityName = (profile.city || '').trim()
+          if (!cityName) return
+          const citySlug = cityName.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+          if (!canonicalCityBySlug[citySlug]) return
+
+          if (!cityCounts[citySlug]) {
+            cityCounts[citySlug] = {
+              name: canonicalCityBySlug[citySlug],
+              slug: citySlug,
+              count: 0
+            }
+          }
+          cityCounts[citySlug].count += 1
+        })
+
+        setAvailableCities(
+          Object.values(cityCounts).sort((a, b) => b.count - a.count)
+        )
       }
     } catch (err) {
       console.error('Error:', err)
       setProfiles([])
+      setAvailableCities([])
     }
 
     setLoading(false)
@@ -83,7 +115,7 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Page Not Found</h1>
-        <Link to="/premarital-counseling" className="text-blue-600 hover:underline">
+        <Link to="/premarital-counseling" className="btn btn-outline">
           Browse all premarital counselors
         </Link>
       </div>
@@ -105,7 +137,7 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
   const shouldNoindex = profiles.length < 3
 
   // Get major cities from config
-  const majorCities = stateConfig?.major_cities || []
+  const majorCities = availableCities
 
   if (loading) return <LoadingSpinner />
 
@@ -208,15 +240,13 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
                 <h3>Find {specialty.name} Counseling by City</h3>
                 <div className="state-pills">
                   {majorCities.map(city => {
-                     const citySlug = city.toLowerCase().replace(/\s+/g, '-')
-                     // Only show if we have profiles or if it's a major city (for SEO structure)
                      return (
                         <Link
-                          key={city}
-                          to={`/premarital-counseling/${specialtySlug}/${stateSlug}/${citySlug}`}
+                          key={city.slug}
+                          to={`/premarital-counseling/${specialtySlug}/${stateSlug}/${city.slug}`}
                           className="state-pill"
                         >
-                          {city}
+                          {city.name}
                         </Link>
                      )
                   })}

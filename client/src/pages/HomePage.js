@@ -4,11 +4,12 @@ import SEOHelmet from '../components/analytics/SEOHelmet'
 import '../assets/css/hero-modern.css'
 import '../assets/css/hero-immersive.css'
 import StateDropdown from '../components/common/StateDropdown'
-import { supabase } from '../lib/supabaseClient'
+import { profileOperations, supabase } from '../lib/supabaseClient'
 import FAQ, { premaritalCounselingFAQs } from '../components/common/FAQ'
 import heroBg from '../assets/images/oil_painting_premarital_couple_in_distress.webp'
+import { STATE_CONFIG } from '../data/locationConfig'
 
-const POPULAR_CITIES = [
+const FALLBACK_POPULAR_CITIES = [
   // Top metro areas by wedding volume
   { city: 'New York', state: 'New York', slug: 'new-york', stateSlug: 'new-york' },
   { city: 'Los Angeles', state: 'California', slug: 'los-angeles', stateSlug: 'california' },
@@ -24,9 +25,15 @@ const POPULAR_CITIES = [
   { city: 'Denver', state: 'Colorado', slug: 'denver', stateSlug: 'colorado' }
 ]
 
+const STATE_BY_ABBR = Object.entries(STATE_CONFIG).reduce((acc, [slug, config]) => {
+  acc[config.abbr] = { slug, name: config.name }
+  return acc
+}, {})
+
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedState, setSelectedState] = useState('')
+  const [popularCities, setPopularCities] = useState(FALLBACK_POPULAR_CITIES)
 
   const navigate = useNavigate()
 
@@ -49,6 +56,31 @@ const HomePage = () => {
     }
     checkAuthAndRedirect()
   }, [navigate])
+
+  useEffect(() => {
+    const loadPopularCities = async () => {
+      const { data, error } = await profileOperations.getLocationCoverage()
+      if (error || !data?.cityCounts?.length) return
+
+      const topCities = data.cityCounts
+        .filter((entry) => entry.count > 0 && STATE_BY_ABBR[entry.stateAbbr])
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 12)
+        .map((entry) => ({
+          city: entry.cityName,
+          state: STATE_BY_ABBR[entry.stateAbbr].name,
+          stateSlug: STATE_BY_ABBR[entry.stateAbbr].slug,
+          slug: entry.citySlug,
+          count: entry.count
+        }))
+
+      if (topCities.length > 0) {
+        setPopularCities(topCities)
+      }
+    }
+
+    loadPopularCities()
+  }, [])
 
   const handleHeroSubmit = (e) => {
     e.preventDefault()
@@ -177,13 +209,13 @@ const HomePage = () => {
               <p className="section-eyebrow">Local directories</p>
               <h2 id="popular-cities-heading">Find Premarital Counseling Near You</h2>
               <p className="popular-cities__intro">
-                Search top counselors serving major metro areas — explore therapists, clergy, and coaches who understand your community.
+                Browse cities with active counselor listings so you can compare real options right now.
               </p>
             </div>
             <div className="popular-cities__grid">
-              {POPULAR_CITIES.map((location) => (
+              {popularCities.map((location) => (
                 <Link
-                  key={location.slug}
+                  key={`${location.stateSlug}-${location.slug}`}
                   to={`/premarital-counseling/${location.stateSlug}/${location.slug}`}
                   className="popular-cities__card"
                   aria-label={`Premarital counseling in ${location.city}, ${location.state}`}
@@ -193,7 +225,9 @@ const HomePage = () => {
                     <span className="popular-cities__pin" aria-hidden="true">●</span>
                   </div>
                   <h3 className="popular-cities__city">Premarital counseling in {location.city}</h3>
-                  <p className="popular-cities__state">{location.state}</p>
+                  <p className="popular-cities__state">
+                    {location.state}{location.count ? ` • ${location.count} listed` : ''}
+                  </p>
                   <span className="popular-cities__cta">
                     View counselors
                     <span aria-hidden="true"> →</span>

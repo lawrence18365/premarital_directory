@@ -129,6 +129,19 @@ export const profileOperations = {
     return { data, error }
   },
 
+  // Get single profile by slug only
+  async getProfileBySlug(slug) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('slug', slug)
+      .eq('is_hidden', false)
+      .or('moderation_status.eq.approved,moderation_status.is.null')
+      .maybeSingle()
+
+    return { data, error }
+  },
+
   // Get profiles by state
   async getProfilesByState(stateAbbr) {
     const { data, error } = await supabase
@@ -179,6 +192,8 @@ export const profileOperations = {
     const { data, error } = await supabase
       .from('profiles')
       .select('state_province')
+      .eq('is_hidden', false)
+      .or('moderation_status.eq.approved,moderation_status.is.null')
     
     if (error) return { data: null, error }
     
@@ -192,6 +207,65 @@ export const profileOperations = {
     })
     
     return { data: stateCounts, error: null }
+  },
+
+  // Get active state/city coverage for discovery UX
+  async getLocationCoverage() {
+    const stateCounts = {}
+    const cityMap = {}
+    const pageSize = 1000
+    let page = 0
+
+    while (true) {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('state_province, city')
+        .eq('is_hidden', false)
+        .or('moderation_status.eq.approved,moderation_status.is.null')
+        .range(page * pageSize, (page + 1) * pageSize - 1)
+
+      if (error) {
+        return { data: null, error }
+      }
+
+      if (!data || data.length === 0) {
+        break
+      }
+
+      data.forEach((profile) => {
+        const stateAbbr = (profile.state_province || '').trim().toUpperCase()
+        const cityName = (profile.city || '').trim()
+        if (!stateAbbr) return
+
+        stateCounts[stateAbbr] = (stateCounts[stateAbbr] || 0) + 1
+        if (!cityName) return
+
+        const normalizedCity = cityName.toLowerCase().replace(/\s+/g, ' ').trim()
+        const citySlug = normalizedCity.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+        const key = `${stateAbbr}|${normalizedCity}`
+
+        if (!cityMap[key]) {
+          cityMap[key] = {
+            stateAbbr,
+            cityName,
+            citySlug,
+            count: 0
+          }
+        }
+        cityMap[key].count += 1
+      })
+
+      if (data.length < pageSize) break
+      page += 1
+    }
+
+    return {
+      data: {
+        stateCounts,
+        cityCounts: Object.values(cityMap)
+      },
+      error: null
+    }
   },
 
   // Check if a profile already exists with this email

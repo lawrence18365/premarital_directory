@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 
 /**
- * Multi-provider inquiry form - the "money" feature
- * Sends one message to multiple counselors in a city
+ * Optional multi-provider inquiry form.
+ * Sends one message to a small set of matching counselors.
  */
 const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, providers }) => {
   const [formData, setFormData] = useState({
@@ -37,13 +37,13 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
       );
     }
 
-    // Prioritize by tier, then take top 3-5
+    // Prioritize by tier, then keep this intentionally small.
     const sorted = filtered.sort((a, b) => {
       const tierOrder = { 'area_spotlight': 1, 'local_featured': 2, 'community': 3 };
       return (tierOrder[a.tier] || 99) - (tierOrder[b.tier] || 99);
     });
 
-    return sorted.slice(0, Math.min(5, Math.max(3, sorted.length)));
+    return sorted.slice(0, Math.min(3, Math.max(1, sorted.length)));
   };
 
   const handleSubmit = async (e) => {
@@ -102,7 +102,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
       await supabase.functions.invoke('send-email', {
         body: {
           to: formData.email,
-          subject: `Your Inquiry Has Been Sent to ${matchingProviders.length} Counselors`,
+          subject: `Your Inquiry Was Shared with ${matchingProviders.length} Matches`,
           template: 'inquiry_confirmation',
           data: {
             coupleName: formData.name || 'there',
@@ -134,10 +134,10 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
         textAlign: 'center'
       }}>
         <h3 style={{ color: 'var(--ds-accent)', marginBottom: 'var(--space-3)' }}>
-          Your Inquiry Has Been Sent
+          Inquiry Sent
         </h3>
         <p style={{ marginBottom: 'var(--space-3)' }}>
-          We've sent your message to {getMatchingProviders().length} premarital counselors in {cityName}.
+          We shared your message with {getMatchingProviders().length} matching counselors in {cityName}.
         </p>
         <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
           Check your email at <strong>{formData.email}</strong> for responses. Counselors typically reply within 24-48 hours.
@@ -159,14 +159,14 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
         marginBottom: 'var(--space-2)',
         fontSize: 'var(--text-xl)'
       }}>
-        Contact Multiple Counselors at Once
+        Optional: Contact a Few Matches
       </h3>
       <p style={{
         color: 'var(--text-secondary)',
         marginBottom: 'var(--space-4)',
         fontSize: '0.95rem'
       }}>
-        Send one message to 3-5 matching counselors in {cityName}. They'll reply directly to your email.
+        If you'd rather not message one-by-one, we can forward this to up to 3 matching counselors in {cityName}.
       </p>
 
       <form onSubmit={handleSubmit}>
@@ -281,7 +281,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
             transition: 'background 0.2s'
           }}
         >
-          {isSubmitting ? 'Sending...' : `Send to ${getMatchingProviders().length} Counselors`}
+          {isSubmitting ? 'Sending...' : `Send to ${getMatchingProviders().length} Matches`}
         </button>
 
         <p style={{
@@ -290,7 +290,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
           marginTop: 'var(--space-2)',
           textAlign: 'center'
         }}>
-          We'll send your message to counselors who match your preference. They'll reply directly to your email.
+          This is optional. For a direct 1:1 conversation, open any profile and contact that counselor directly.
         </p>
       </form>
     </div>

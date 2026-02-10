@@ -28,11 +28,6 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
             <i className="fa fa-shield-alt"></i> Verified
           </div>
         )}
-        {!profile.is_sponsored && !profile.is_verified && (
-          <div className="profile-badge-hint">
-            <i className="fa fa-lock"></i> Unverified
-          </div>
-        )}
       </div>
       
       <div className="profile-header">
@@ -92,7 +87,7 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
             ? `/professionals/${stateSlug}/${citySlug}/${profileSlug}` 
             : `/profile/${profileSlug}`
         } className="btn btn-primary">
-          View Profile
+          View & Contact
         </Link>
       </div>
     </div>

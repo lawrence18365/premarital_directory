@@ -273,18 +273,33 @@ async function main() {
 
   // 2. All Cities Sitemap (Expanded from just anchor cities)
   const cityUrls = []
+  const hasProfileCoverage = !!profileCounts
+  const stateProfileCounts = {}
+  if (Array.isArray(allProfiles)) {
+    allProfiles.forEach((profile) => {
+      if (!profile?.state_province) return
+      const stateSlug = getStateSlug(profile.state_province)
+      stateProfileCounts[stateSlug] = (stateProfileCounts[stateSlug] || 0) + 1
+    })
+  }
   
   // Flatten all cities from STATE_CONFIG
   const allCities = []
+  let includedStatePages = 0
   Object.keys(STATE_CONFIG).forEach(stateSlug => {
     const stateData = STATE_CONFIG[stateSlug]
+    const hasStateProfiles = (stateProfileCounts[stateSlug] || 0) > 0
+
     // Add State Page
-    cityUrls.push({
-      url: `/premarital-counseling/${stateSlug}`,
-      priority: 0.8,
-      changefreq: 'weekly',
-      lastmod: today
-    })
+    if (!hasProfileCoverage || hasStateProfiles) {
+      cityUrls.push({
+        url: `/premarital-counseling/${stateSlug}`,
+        priority: 0.8,
+        changefreq: 'weekly',
+        lastmod: today
+      })
+      includedStatePages++
+    }
 
     // Add City Pages
     stateData.major_cities.forEach(cityName => {
@@ -311,6 +326,8 @@ async function main() {
     
     // Check if it's an anchor city in CITY_CONFIG
     const isAnchor = CITY_CONFIG[city.stateSlug]?.[city.citySlug]?.is_anchor === true
+    const includeCityPage = hasProfileCoverage ? profileCount > 0 : isAnchor
+    if (!includeCityPage) return
     
     const priority = calculatePriority(profileCount, maxProfileCount, isAnchor)
     
@@ -324,7 +341,13 @@ async function main() {
 
   const citySitemap = generateSitemapXML(cityUrls)
   fs.writeFileSync(path.join(publicDir, 'sitemap-cities.xml'), citySitemap)
-  console.log(`\n✅ Generated sitemap-cities.xml (${cityUrls.length} URLs - ALL configured cities)`)
+  console.log(`\n✅ Generated sitemap-cities.xml (${cityUrls.length} URLs)`)
+  if (hasProfileCoverage) {
+    console.log(`   - Included state pages with active profiles: ${includedStatePages}`)
+    console.log('   - Included city pages with active profiles only')
+  } else {
+    console.log('   - Coverage data unavailable: included state pages + anchor cities only')
+  }
 
   // 2.5 Programmatic Specialty Sitemap (quality-gated to avoid thin URL bloat)
   const specialtyUrls = []
@@ -341,9 +364,14 @@ async function main() {
     Object.keys(STATE_CONFIG).forEach(stateSlug => {
       const stateKey = `${specialty}|${stateSlug}`
       const specialtyProfilesInState = specialtyStateCounts[stateKey] || 0
+      const stateData = STATE_CONFIG[stateSlug]
+      const stateHasAnchorCity = stateData.major_cities.some((cityName) => {
+        const citySlug = getCitySlug(cityName)
+        return CITY_CONFIG[stateSlug]?.[citySlug]?.is_anchor === true
+      })
       const includeStatePage = hasSpecialtyDepthData
         ? specialtyProfilesInState >= MIN_SPECIALTY_STATE_PROFILES
-        : true
+        : stateHasAnchorCity
 
       if (includeStatePage) {
         specialtyUrls.push({
@@ -355,7 +383,6 @@ async function main() {
         includedSpecialtyStatePages++
       }
 
-      const stateData = STATE_CONFIG[stateSlug]
       stateData.major_cities.forEach(cityName => {
         const citySlug = getCitySlug(cityName)
         const cityKey = `${specialty}|${stateSlug}|${citySlug}`

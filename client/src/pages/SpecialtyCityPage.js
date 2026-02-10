@@ -22,6 +22,7 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
 
   const [loading, setLoading] = useState(true)
   const [profiles, setProfiles] = useState([])
+  const [nearbySpecialtyCities, setNearbySpecialtyCities] = useState([])
   const [showGetMatchedForm, setShowGetMatchedForm] = useState(false)
   const [displayCount, setDisplayCount] = useState(12)
 
@@ -67,12 +68,57 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
       if (error) {
         console.error('Error loading specialty profiles:', error)
         setProfiles([])
+        setNearbySpecialtyCities([])
       } else {
         setProfiles(data || [])
+
+        const { data: stateSpecialtyProfiles, error: stateError } = await supabase
+          .from('profiles')
+          .select('city')
+          .eq('is_hidden', false)
+          .eq('state_province', stateConfig?.abbr || stateSlug)
+          .or(filterConditions)
+          .limit(300)
+
+        if (stateError) {
+          setNearbySpecialtyCities([])
+        } else {
+          const canonicalCityBySlug = (stateConfig?.major_cities || []).reduce((acc, name) => {
+            const slug = name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+            acc[slug] = name
+            return acc
+          }, {})
+
+          const cityCounts = {}
+          ;(stateSpecialtyProfiles || []).forEach((profile) => {
+            const profileCity = (profile.city || '').trim()
+            if (!profileCity) return
+            const slug = profileCity.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+            if (!canonicalCityBySlug[slug]) return
+
+            if (!cityCounts[slug]) {
+              cityCounts[slug] = {
+                name: canonicalCityBySlug[slug],
+                slug,
+                count: 0
+              }
+            }
+            cityCounts[slug].count += 1
+          })
+
+          const currentCitySlug = cityName.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+          setNearbySpecialtyCities(
+            Object.values(cityCounts)
+              .filter((cityItem) => cityItem.slug !== currentCitySlug)
+              .sort((a, b) => b.count - a.count)
+              .slice(0, 6)
+          )
+        }
       }
     } catch (err) {
       console.error('Error:', err)
       setProfiles([])
+      setNearbySpecialtyCities([])
     }
 
     setLoading(false)
@@ -83,7 +129,7 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Page Not Found</h1>
-        <Link to="/premarital-counseling" className="text-blue-600 hover:underline">
+        <Link to="/premarital-counseling" className="btn btn-outline">
           Browse all premarital counselors
         </Link>
       </div>
@@ -201,27 +247,22 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
             )}
             
             {/* Nearby Cities Links */}
-            <div className="states-with-specialty">
-              <h3>Nearby {specialty.name} Counseling</h3>
-              <div className="state-pills">
-                {stateConfig?.major_cities
-                   .filter(c => c !== cityName)
-                   .slice(0, 6)
-                   .map(city => {
-                     const cSlug = city.toLowerCase().replace(/\s+/g, '-')
-                     return (
-                        <Link
-                          key={city}
-                          to={`/premarital-counseling/${specialtySlug}/${stateSlug}/${cSlug}`}
-                          className="state-pill"
-                        >
-                          {city}
-                        </Link>
-                     )
-                   })
-                }
+            {nearbySpecialtyCities.length > 0 && (
+              <div className="states-with-specialty">
+                <h3>Nearby {specialty.name} Counseling</h3>
+                <div className="state-pills">
+                  {nearbySpecialtyCities.map((cityItem) => (
+                    <Link
+                      key={cityItem.slug}
+                      to={`/premarital-counseling/${specialtySlug}/${stateSlug}/${cityItem.slug}`}
+                      className="state-pill"
+                    >
+                      {cityItem.name}
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
           </div>
         </div>

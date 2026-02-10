@@ -1,75 +1,54 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import CompactSearch from '../components/common/CompactSearch'
 import { getAllSpecialties } from '../data/specialtyConfig'
+import { STATE_CONFIG } from '../data/locationConfig'
+import { profileOperations } from '../lib/supabaseClient'
 import '../assets/css/states-page.css'
 
-const STATES = [
-  { slug: 'alabama', name: 'Alabama', abbr: 'AL' },
-  { slug: 'alaska', name: 'Alaska', abbr: 'AK' },
-  { slug: 'arizona', name: 'Arizona', abbr: 'AZ' },
-  { slug: 'arkansas', name: 'Arkansas', abbr: 'AR' },
-  { slug: 'california', name: 'California', abbr: 'CA' },
-  { slug: 'colorado', name: 'Colorado', abbr: 'CO' },
-  { slug: 'connecticut', name: 'Connecticut', abbr: 'CT' },
-  { slug: 'delaware', name: 'Delaware', abbr: 'DE' },
-  { slug: 'florida', name: 'Florida', abbr: 'FL' },
-  { slug: 'georgia', name: 'Georgia', abbr: 'GA' },
-  { slug: 'hawaii', name: 'Hawaii', abbr: 'HI' },
-  { slug: 'idaho', name: 'Idaho', abbr: 'ID' },
-  { slug: 'illinois', name: 'Illinois', abbr: 'IL' },
-  { slug: 'indiana', name: 'Indiana', abbr: 'IN' },
-  { slug: 'iowa', name: 'Iowa', abbr: 'IA' },
-  { slug: 'kansas', name: 'Kansas', abbr: 'KS' },
-  { slug: 'kentucky', name: 'Kentucky', abbr: 'KY' },
-  { slug: 'louisiana', name: 'Louisiana', abbr: 'LA' },
-  { slug: 'maine', name: 'Maine', abbr: 'ME' },
-  { slug: 'maryland', name: 'Maryland', abbr: 'MD' },
-  { slug: 'massachusetts', name: 'Massachusetts', abbr: 'MA' },
-  { slug: 'michigan', name: 'Michigan', abbr: 'MI' },
-  { slug: 'minnesota', name: 'Minnesota', abbr: 'MN' },
-  { slug: 'mississippi', name: 'Mississippi', abbr: 'MS' },
-  { slug: 'missouri', name: 'Missouri', abbr: 'MO' },
-  { slug: 'montana', name: 'Montana', abbr: 'MT' },
-  { slug: 'nebraska', name: 'Nebraska', abbr: 'NE' },
-  { slug: 'nevada', name: 'Nevada', abbr: 'NV' },
-  { slug: 'new-hampshire', name: 'New Hampshire', abbr: 'NH' },
-  { slug: 'new-jersey', name: 'New Jersey', abbr: 'NJ' },
-  { slug: 'new-mexico', name: 'New Mexico', abbr: 'NM' },
-  { slug: 'new-york', name: 'New York', abbr: 'NY' },
-  { slug: 'north-carolina', name: 'North Carolina', abbr: 'NC' },
-  { slug: 'north-dakota', name: 'North Dakota', abbr: 'ND' },
-  { slug: 'ohio', name: 'Ohio', abbr: 'OH' },
-  { slug: 'oklahoma', name: 'Oklahoma', abbr: 'OK' },
-  { slug: 'oregon', name: 'Oregon', abbr: 'OR' },
-  { slug: 'pennsylvania', name: 'Pennsylvania', abbr: 'PA' },
-  { slug: 'rhode-island', name: 'Rhode Island', abbr: 'RI' },
-  { slug: 'south-carolina', name: 'South Carolina', abbr: 'SC' },
-  { slug: 'south-dakota', name: 'South Dakota', abbr: 'SD' },
-  { slug: 'tennessee', name: 'Tennessee', abbr: 'TN' },
-  { slug: 'texas', name: 'Texas', abbr: 'TX' },
-  { slug: 'utah', name: 'Utah', abbr: 'UT' },
-  { slug: 'vermont', name: 'Vermont', abbr: 'VT' },
-  { slug: 'virginia', name: 'Virginia', abbr: 'VA' },
-  { slug: 'washington', name: 'Washington', abbr: 'WA' },
-  { slug: 'washington-dc', name: 'Washington, DC', abbr: 'DC' },
-  { slug: 'west-virginia', name: 'West Virginia', abbr: 'WV' },
-  { slug: 'wisconsin', name: 'Wisconsin', abbr: 'WI' },
-  { slug: 'wyoming', name: 'Wyoming', abbr: 'WY' }
-]
+const STATES = Object.entries(STATE_CONFIG)
+  .map(([slug, config]) => ({
+    slug,
+    name: config.name,
+    abbr: config.abbr
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name))
 
 const StatesIndexPage = () => {
+  const [stateCounts, setStateCounts] = useState({})
+  const [coverageLoaded, setCoverageLoaded] = useState(false)
+
+  useEffect(() => {
+    const loadCoverage = async () => {
+      const { data, error } = await profileOperations.getLocationCoverage()
+      if (!error && data?.stateCounts) {
+        setStateCounts(data.stateCounts)
+      }
+      setCoverageLoaded(true)
+    }
+
+    loadCoverage()
+  }, [])
+
+  const activeStates = useMemo(() => {
+    return STATES
+      .filter((stateItem) => (stateCounts[stateItem.abbr] || 0) > 0)
+      .sort((a, b) => (stateCounts[b.abbr] || 0) - (stateCounts[a.abbr] || 0))
+  }, [stateCounts])
+
+  const visibleStates = coverageLoaded && activeStates.length > 0 ? activeStates : STATES
+
   // Generate ItemList structured data for states
   const statesItemList = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "Premarital Counselors by State",
-    "description": "Browse all 50 states and D.C. to find verified premarital counselors near you.",
+    "description": "Browse states with active premarital counselor listings and find verified professionals near you.",
     "mainEntity": {
       "@type": "ItemList",
-      "numberOfItems": STATES.length,
-      "itemListElement": STATES.map((state, index) => ({
+      "numberOfItems": visibleStates.length,
+      "itemListElement": visibleStates.map((state, index) => ({
         "@type": "ListItem",
         "position": index + 1,
         "item": {
@@ -91,7 +70,7 @@ const StatesIndexPage = () => {
     <div className="states-page">
       <SEOHelmet
         title="Premarital Counseling by State | Licensed Therapists, Coaches & Clergy"
-        description="Find premarital counseling in all 50 states. Compare licensed therapists, faith-based counselors, and online options. Book intro sessions, read reviews, see pricing."
+        description="Find premarital counseling by state. Compare licensed therapists, faith-based counselors, and online options from active listings."
         url="/premarital-counseling"
         keywords="premarital counseling, premarital therapy, pre marriage counseling, couples counseling before marriage, pre cana"
         breadcrumbs={breadcrumbs}
@@ -113,7 +92,7 @@ const StatesIndexPage = () => {
             </h1>
 
             <p>
-              Browse all states to find vetted therapists, clergy, and premarital professionals with clear pricing and fit.
+              Browse states to find vetted therapists, clergy, and premarital professionals with clear pricing and fit.
             </p>
           </div>
         </div>
@@ -136,30 +115,33 @@ const StatesIndexPage = () => {
           <span className="discount-banner-arrow">→</span>
         </Link>
 
-        <div className="text-center" style={{ marginBottom: 'var(--space-8)' }}>
-          <h2>
-            All 50 States + Washington, DC
-          </h2>
-          <p>
-            Select your state to find premarital counselors specializing in pre-marriage therapy in your area.
-          </p>
-        </div>
+          <div className="text-center" style={{ marginBottom: 'var(--space-8)' }}>
+            <h2>
+              {coverageLoaded ? 'States With Active Counselors' : 'Premarital Counseling by State'}
+            </h2>
+            <p>
+              Select your state to find premarital counselors currently accepting inquiries.
+            </p>
+          </div>
 
-        <div className="state-grid">
-          {STATES.map(state => (
-            <Link
-              key={state.slug}
-              to={`/premarital-counseling/${state.slug}`}
-              className="state-card"
-            >
-              <div>
-                <h3>
-                  {state.name}
-                </h3>
-                <p>{state.abbr}</p>
-              </div>
-            </Link>
-          ))}
+          <div className="state-grid">
+            {visibleStates.map(state => (
+              <Link
+                key={state.slug}
+                to={`/premarital-counseling/${state.slug}`}
+                className="state-card"
+              >
+                <div>
+                  <h3>
+                    {state.name}
+                  </h3>
+                  <p>
+                    {state.abbr}
+                    {stateCounts[state.abbr] ? ` • ${stateCounts[state.abbr]} listed` : ''}
+                  </p>
+                </div>
+              </Link>
+            ))}
         </div>
       </div>
 
@@ -209,7 +191,7 @@ const StatesIndexPage = () => {
                 <div>
                   <p>
                     Premarital counseling provides couples with essential tools and insights before marriage. 
-                    Our network of licensed professionals across all 50 states helps couples build stronger relationships.
+                    Our network of licensed professionals across the U.S. helps couples build stronger relationships.
                   </p>
                   
                   <h3>

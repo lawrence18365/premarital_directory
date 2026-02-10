@@ -62,6 +62,48 @@
   --coral-dark: var(--ds-accent-strong);
   --blue: var(--ds-accent);
   --gold: var(--ds-accent);
+  --gold-light: var(--secondary-light);
+  --teal: var(--primary);
+  --teal-light: var(--primary-light);
+  --teal-dark: var(--primary-dark);
+  --white: #ffffff;
+  --bg-primary: var(--ds-surface);
+  --background: var(--ds-surface);
+  --background-secondary: var(--ds-surface-muted);
+  --background-highlight: var(--ds-accent-soft);
+  --border-color: var(--ds-border);
+  --primary-color: var(--primary);
+  --card-color: var(--ds-surface);
+  --text-tertiary: var(--text-muted);
+  --text-md: var(--text-base);
+  --transition-normal: var(--transition);
+  --font-weight-medium: var(--weight-medium);
+  --font-weight-semibold: var(--weight-semibold);
+  --font-weight-bold: var(--weight-bold);
+  --spacing-8: var(--space-8);
+  --specialty-color: var(--primary);
+  --gray-25: #fbfdfd;
+  --gray-50: #f6fbfb;
+  --gray-100: #edf5f5;
+  --gray-200: #dbe9e9;
+  --gray-300: #c5d9d9;
+  --gray-400: #9ab6b6;
+  --gray-500: #6f8f8f;
+  --gray-600: #527070;
+  --gray-700: #3a5757;
+  --gray-800: #223f3f;
+  --gray-900: #0f2d2d;
+  --color-gray-50: var(--gray-50);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-gray-600: var(--gray-600);
+  --color-gray-700: var(--gray-700);
+  --color-gray-800: var(--gray-800);
+  --color-gray-900: var(--gray-900);
+  --color-teal-dark: var(--teal-dark);
 }
 
 body {

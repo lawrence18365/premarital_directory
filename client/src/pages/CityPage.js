@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import ProfileList from '../components/profiles/ProfileList';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -12,12 +12,92 @@ import CityContentGenerator from '../lib/cityContentGenerator';
 import LocalContent from '../components/common/LocalContent';
 import SpecialtiesList from '../components/common/SpecialtiesList';
 import LocationInsights from '../components/common/LocationInsights';
-import LeadContactForm from '../components/leads/LeadContactForm';
 import FAQ from '../components/common/FAQ';
 import HowToChooseSection from '../components/city/HowToChooseSection';
 import MultiProviderInquiryForm from '../components/city/MultiProviderInquiryForm';
-import { clickTrackingOperations, cityOverridesOperations } from '../lib/supabaseClient';
+import { cityOverridesOperations } from '../lib/supabaseClient';
 import '../assets/css/state-page.css';
+
+const asArray = (value) => {
+  if (Array.isArray(value)) return value
+  if (typeof value === 'string' && value.trim()) {
+    return value.split(',').map((item) => item.trim()).filter(Boolean)
+  }
+  return []
+}
+
+const toBool = (value) => {
+  if (typeof value === 'boolean') return value
+  if (typeof value === 'number') return value === 1
+  if (typeof value === 'string') {
+    return ['true', '1', 'yes'].includes(value.trim().toLowerCase())
+  }
+  return false
+}
+
+const getProfileRole = (profile) => {
+  const profession = String(profile?.profession || '').toLowerCase()
+
+  const isClergy = ['clergy', 'pastor', 'priest', 'minister', 'reverend', 'deacon', 'chaplain', 'rabbi', 'pre-cana'].some((term) => profession.includes(term))
+  if (isClergy) return 'clergy'
+
+  const isCoach = ['coach', 'facilitator'].some((term) => profession.includes(term))
+  if (isCoach) return 'coach'
+
+  const isTherapist = ['therapist', 'lmft', 'lpc', 'lcsw', 'psychologist', 'counselor'].some((term) => profession.includes(term))
+  if (isTherapist) return 'therapist'
+
+  return 'other'
+}
+
+const groupProfilesByRole = (profiles = []) => {
+  const grouped = { therapist: [], clergy: [], coach: [], other: [] }
+  profiles.forEach((profile) => {
+    grouped[getProfileRole(profile)].push(profile)
+  })
+  return grouped
+}
+
+const formatFaithTradition = (value) => {
+  const labels = {
+    secular: 'Secular',
+    christian: 'Christian',
+    catholic: 'Catholic',
+    protestant: 'Protestant',
+    jewish: 'Jewish',
+    muslim: 'Muslim',
+    interfaith: 'Interfaith',
+    'all-faiths': 'All faiths'
+  }
+  return labels[value] || value
+}
+
+const getPriceMidpoint = (profile) => {
+  const min = Number(profile?.session_fee_min) > 0 ? Number(profile.session_fee_min) / 100 : null
+  const max = Number(profile?.session_fee_max) > 0 ? Number(profile.session_fee_max) / 100 : null
+  if (min && max) return (min + max) / 2
+  return min || max || null
+}
+
+const getSessionTypes = (profile) => {
+  const raw = asArray(profile?.session_types).map((type) => String(type).toLowerCase())
+  const values = new Set(raw)
+  if (values.has('online') && values.has('in-person')) values.add('hybrid')
+  if (values.has('both')) values.add('hybrid')
+  return values
+}
+
+const hasInsurance = (profile) => {
+  const accepted = asArray(profile?.insurance_accepted).map((item) => String(item).toLowerCase())
+  if (accepted.length === 0) return false
+  return accepted.some((item) => item !== 'self-pay only')
+}
+
+const isSelfPayOnly = (profile) => {
+  const accepted = asArray(profile?.insurance_accepted).map((item) => String(item).toLowerCase())
+  if (accepted.length === 0) return true
+  return accepted.every((item) => item === 'self-pay only')
+}
 
 const CityPage = ({ stateOverride, cityOverride }) => {
   const params = useParams()
@@ -30,6 +110,14 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   const [contentLoading, setContentLoading] = useState(true)
   const [cityOverrideData, setCityOverrideData] = useState(null)
   const [seoContent, setSeoContent] = useState(null)
+  const [directoryFilters, setDirectoryFilters] = useState({
+    faith: 'all',
+    sessionType: 'all',
+    price: 'all',
+    insurance: 'all',
+    neighborhood: 'all',
+    availability: 'all'
+  })
 
   const stateConfig = STATE_CONFIG[state]
   const cityConfig = CITY_CONFIG[state]?.[city]
@@ -45,6 +133,94 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   const nearbyCities = (stateConfig?.major_cities || [])
     .filter((c) => c.toLowerCase().replace(/\s+/g, '-') !== city)
     .slice(0, 6)
+
+  const groupedProfiles = useMemo(() => groupProfilesByRole(profiles), [profiles])
+  const locationStats = useMemo(() => {
+    const cards = [
+      { label: 'Licensed Professionals', value: profiles.length, alwaysShow: true },
+      { label: 'Licensed Therapists', value: groupedProfiles.therapist.length },
+      { label: 'Faith-Based / Clergy', value: groupedProfiles.clergy.length },
+      { label: 'Relationship Coaches', value: groupedProfiles.coach.length }
+    ]
+    return cards.filter((card) => card.alwaysShow || card.value > 0)
+  }, [profiles, groupedProfiles])
+
+  const neighborhoodOptions = useMemo(() => {
+    return Array.from(
+      new Set(
+        profiles
+          .map((profile) => String(profile?.postal_code || '').trim())
+          .filter(Boolean)
+      )
+    ).sort()
+  }, [profiles])
+
+  const faithOptions = useMemo(() => {
+    return Array.from(
+      new Set(
+        profiles
+          .map((profile) => String(profile?.faith_tradition || '').trim())
+          .filter(Boolean)
+      )
+    ).sort()
+  }, [profiles])
+
+  const filteredProfiles = useMemo(() => {
+    return profiles.filter((profile) => {
+      if (directoryFilters.faith !== 'all' && profile.faith_tradition !== directoryFilters.faith) {
+        return false
+      }
+
+      if (directoryFilters.sessionType !== 'all') {
+        const sessionTypes = getSessionTypes(profile)
+        if (!sessionTypes.has(directoryFilters.sessionType)) return false
+      }
+
+      if (directoryFilters.price !== 'all') {
+        const priceMidpoint = getPriceMidpoint(profile)
+        if (!priceMidpoint && directoryFilters.price !== 'unknown') return false
+        if (directoryFilters.price === 'under150' && !(priceMidpoint < 150)) return false
+        if (directoryFilters.price === '150to250' && !(priceMidpoint >= 150 && priceMidpoint <= 250)) return false
+        if (directoryFilters.price === '250plus' && !(priceMidpoint > 250)) return false
+        if (directoryFilters.price === 'unknown' && priceMidpoint) return false
+      }
+
+      if (directoryFilters.insurance === 'accepts' && !hasInsurance(profile)) {
+        return false
+      }
+
+      if (directoryFilters.insurance === 'selfpay' && !isSelfPayOnly(profile)) {
+        return false
+      }
+
+      if (directoryFilters.neighborhood !== 'all' && String(profile?.postal_code || '').trim() !== directoryFilters.neighborhood) {
+        return false
+      }
+
+      if (directoryFilters.availability === 'accepting' && !toBool(profile?.accepting_new_clients)) {
+        return false
+      }
+
+      if (directoryFilters.availability === 'limited' && toBool(profile?.accepting_new_clients)) {
+        return false
+      }
+
+      return true
+    })
+  }, [profiles, directoryFilters])
+
+  const groupedFilteredProfiles = useMemo(() => groupProfilesByRole(filteredProfiles), [filteredProfiles])
+
+  const clearDirectoryFilters = () => {
+    setDirectoryFilters({
+      faith: 'all',
+      sessionType: 'all',
+      price: 'all',
+      insurance: 'all',
+      neighborhood: 'all',
+      availability: 'all'
+    })
+  }
 
   useEffect(() => {
     loadCityProfiles()
@@ -77,16 +253,6 @@ const CityPage = ({ stateOverride, cityOverride }) => {
       // SEO content is optional, don't show error if not found
       console.log('No SEO content found for', city, state)
     }
-  }
-
-  // Track profile click for conversion analytics
-  const handleProfileClick = (profile) => {
-    clickTrackingOperations.logProfileClick({
-      profileId: profile.id,
-      city: cityName,
-      state: stateName,
-      source: 'city_page'
-    })
   }
 
   const loadCityProfiles = async () => {
@@ -176,11 +342,17 @@ const CityPage = ({ stateOverride, cityOverride }) => {
     }))
   } : null
 
+  const sessionCostRange = cityContent?.sections?.pricing?.sessionCost || '$150-$250 per session'
+  const sessionCostForCopy = /session/i.test(String(sessionCostRange))
+    ? sessionCostRange
+    : `${sessionCostRange} per session`
+  const costStartingAt = (String(sessionCostRange).match(/\$?\s?(\d+)/)?.[1]) || '150'
+
   // City-specific FAQ data for rich results
   const cityFAQs = [
     {
       question: `How much does premarital counseling cost in ${cityName}?`,
-      answer: `Premarital counseling in ${cityName}, ${stateName} typically costs between $100-$200 per session. Many counselors offer package deals for 5-8 sessions. Faith-based options like Pre-Cana may be free or low-cost through churches. Some insurance plans may cover premarital therapy.`
+      answer: `Premarital counseling in ${cityName}, ${stateName} typically costs ${sessionCostForCopy}. Many counselors offer package deals for 5-8 sessions. Faith-based options like Pre-Cana may be free or low-cost through churches. Some insurance plans may cover premarital therapy.`
     },
     {
       question: `How many premarital counseling sessions do engaged couples need in ${cityName}?`,
@@ -210,13 +382,13 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   // With dynamic stats blocks added, we can index pages with fewer profiles
   // Anchor cities are always indexable to build SEO authority regardless of profile count
   const isAnchor = isAnchorCity(state, city)
-  const shouldNoindex = !isAnchor && profiles.length < 3  // Lowered from 5 since we now have dynamic content
+  const shouldNoindex = profiles.length === 0 || (!isAnchor && profiles.length < 3)
 
   return (
     <div className="city-page">
       <SEOHelmet
         title={cityContent?.title || `Premarital & Marriage Counseling ${cityName}, ${stateConfig?.abbr || stateName} - ${profiles.length > 0 ? profiles.length : 'Top'} Therapists (2026)`}
-        description={cityContent?.description || `Find ${profiles.length || 'top'} premarital & marriage counselors in ${cityName}, ${stateName}. Compare licensed therapists (LMFT, LPC), Christian counselors & couples therapy. From $100/session. Contact directly.`}
+        description={cityContent?.description || `Find ${profiles.length || 'top'} premarital & marriage counselors in ${cityName}, ${stateName}. Compare licensed therapists (LMFT, LPC), Christian counselors & couples therapy. From $${costStartingAt}/session. Contact directly.`}
         keywords={`premarital counseling ${cityName}, marriage counseling ${cityName}, premarital counseling ${cityName} ${stateName}, marriage therapist ${cityName}, pre marriage counseling ${cityName}, premarital therapy ${cityName} ${stateConfig?.abbr || ''}, christian premarital counseling ${cityName}, christian marriage counseling ${cityName}, pre cana ${cityName}`}
         structuredData={structuredData}
         faqs={cityFAQs}
@@ -259,18 +431,12 @@ const CityPage = ({ stateOverride, cityOverride }) => {
             {/* City Stats */}
             {profiles.length > 0 && (
               <div className="location-stats">
-                <div className="stat">
-                  <span className="stat-number">{profiles.length}</span>
-                  <span className="stat-label">Licensed Professionals</span>
-                </div>
-                <div className="stat">
-                  <span className="stat-number">{profiles.filter(p => p.profession?.includes('Therapist')).length}</span>
-                  <span className="stat-label">Licensed Therapists</span>
-                </div>
-                <div className="stat">
-                  <span className="stat-number">{profiles.filter(p => p.profession?.includes('Coach')).length}</span>
-                  <span className="stat-label">Certified Coaches</span>
-                </div>
+                {locationStats.map((stat) => (
+                  <div className="stat" key={stat.label}>
+                    <span className="stat-number">{stat.value}</span>
+                    <span className="stat-label">{stat.label}</span>
+                  </div>
+                ))}
               </div>
             )}
 
@@ -318,153 +484,205 @@ const CityPage = ({ stateOverride, cityOverride }) => {
             ) : hasProfiles ? (
               <>
                 <div className="results-header">
-                  <h2>Premarital Counselors in {cityName} — Therapists & Clergy</h2>
-                  <p>Licensed professionals and faith-based counselors specializing in marriage preparation for engaged couples</p>
+                  <h2>Premarital Counselors in {cityName}</h2>
+                  <p>Shortlist quickly, then open a profile to contact one counselor directly.</p>
                 </div>
 
-                {/* Top Picks Section - SEO & UX boost */}
-                {profiles.length >= 3 && (
-                  <section className="city-top-picks">
-                    <div className="city-top-picks__heading">
-                      <p className="section-eyebrow">Featured premarital counselors</p>
-                      <h3>Top Premarital Counselors in {cityName}</h3>
-                      <p>
-                        Vetted therapists, clergy, and coaches serving engaged couples in {cityName}. Reach out directly to compare fit, approach, and availability.
-                      </p>
-                    </div>
-                    <div className="city-top-picks__list">
-                      {profiles.slice(0, 4).map((profile, idx) => (
-                        <article className="city-top-picks__card" key={profile.id}>
-                          <div className="city-top-picks__rank">#{idx + 1}</div>
-                          <div className="city-top-picks__card-body">
-                            <h4>
-                              <Link
-                                to={`/premarital-counseling/${state}/${city}/${profile.slug}`}
-                                title={`${profile.full_name} - ${profile.profession || 'Premarital Counselor'} in ${cityName}`}
-                                onClick={() => handleProfileClick(profile)}
-                              >
-                                {profile.full_name}
-                              </Link>
-                            </h4>
-                            <p className="city-top-picks__role">{profile.profession || 'Premarital Counselor'} · {profile.city}</p>
-                            {profile.specialties && profile.specialties.length > 0 && (
-                              <p className="city-top-picks__specialties">
-                                Focus: {profile.specialties.slice(0, 2).join(', ')}
-                              </p>
-                            )}
-                          </div>
-                          <Link
-                            to={`/premarital-counseling/${state}/${city}/${profile.slug}`}
-                            className="city-top-picks__cta"
-                            onClick={() => handleProfileClick(profile)}
-                          >
-                            View Profile
-                          </Link>
-                        </article>
-                      ))}
-                    </div>
-                  </section>
+                <section className="city-filters">
+                  <div className="city-filters__grid">
+                    <label className="city-filters__field">
+                      <span>Faith</span>
+                      <select
+                        value={directoryFilters.faith}
+                        onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, faith: event.target.value }))}
+                      >
+                        <option value="all">Any faith</option>
+                        {faithOptions.map((faithValue) => (
+                          <option key={faithValue} value={faithValue}>
+                            {formatFaithTradition(faithValue)}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label className="city-filters__field">
+                      <span>Session type</span>
+                      <select
+                        value={directoryFilters.sessionType}
+                        onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, sessionType: event.target.value }))}
+                      >
+                        <option value="all">Online or in-person</option>
+                        <option value="online">Online</option>
+                        <option value="in-person">In-person</option>
+                        <option value="hybrid">Hybrid</option>
+                      </select>
+                    </label>
+
+                    <label className="city-filters__field">
+                      <span>Price</span>
+                      <select
+                        value={directoryFilters.price}
+                        onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, price: event.target.value }))}
+                      >
+                        <option value="all">Any price</option>
+                        <option value="under150">Under $150</option>
+                        <option value="150to250">$150-$250</option>
+                        <option value="250plus">$250+</option>
+                        <option value="unknown">Not listed</option>
+                      </select>
+                    </label>
+
+                    <label className="city-filters__field">
+                      <span>Insurance</span>
+                      <select
+                        value={directoryFilters.insurance}
+                        onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, insurance: event.target.value }))}
+                      >
+                        <option value="all">Any</option>
+                        <option value="accepts">Accepts insurance</option>
+                        <option value="selfpay">Self-pay only</option>
+                      </select>
+                    </label>
+
+                    <label className="city-filters__field">
+                      <span>Neighborhood / ZIP</span>
+                      <select
+                        value={directoryFilters.neighborhood}
+                        onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, neighborhood: event.target.value }))}
+                        disabled={neighborhoodOptions.length === 0}
+                      >
+                        <option value="all">{neighborhoodOptions.length > 0 ? 'Any area' : 'No area data yet'}</option>
+                        {neighborhoodOptions.map((zip) => (
+                          <option key={zip} value={zip}>
+                            {zip}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label className="city-filters__field">
+                      <span>Availability</span>
+                      <select
+                        value={directoryFilters.availability}
+                        onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, availability: event.target.value }))}
+                      >
+                        <option value="all">Any availability</option>
+                        <option value="accepting">Accepting new clients</option>
+                        <option value="limited">Limited availability</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div className="city-filters__footer">
+                    <p>
+                      Showing <strong>{filteredProfiles.length}</strong> of <strong>{profiles.length}</strong> counselors
+                    </p>
+                    <button
+                      type="button"
+                      className="btn btn-outline city-filters__clear"
+                      onClick={clearDirectoryFilters}
+                    >
+                      Reset filters
+                    </button>
+                  </div>
+                </section>
+
+                {filteredProfiles.length === 0 ? (
+                  <div className="city-filter-empty">
+                    <h3>No counselors match these filters yet</h3>
+                    <p>Try broadening your filters to see more options in {cityName}.</p>
+                  </div>
+                ) : (
+                  <>
+                    {groupedFilteredProfiles.therapist.length > 0 && (
+                      <div style={{ marginBottom: 'var(--space-12)' }}>
+                        <h3 style={{
+                          fontSize: '1.5rem',
+                          marginBottom: 'var(--space-4)',
+                          color: 'var(--text-primary)',
+                          borderBottom: '2px solid var(--color-primary)',
+                          paddingBottom: 'var(--space-2)'
+                        }}>
+                          Licensed Therapists & Counselors
+                        </h3>
+                        <ProfileList
+                          profiles={groupedFilteredProfiles.therapist}
+                          loading={false}
+                          error={null}
+                        />
+                      </div>
+                    )}
+
+                    {groupedFilteredProfiles.clergy.length > 0 && (
+                      <div style={{ marginBottom: 'var(--space-12)' }}>
+                        <h3 style={{
+                          fontSize: '1.5rem',
+                          marginBottom: 'var(--space-4)',
+                          color: 'var(--text-primary)',
+                          borderBottom: '2px solid var(--color-primary)',
+                          paddingBottom: 'var(--space-2)'
+                        }}>
+                          Clergy & Faith-Based Marriage Preparation
+                        </h3>
+                        <ProfileList
+                          profiles={groupedFilteredProfiles.clergy}
+                          loading={false}
+                          error={null}
+                        />
+                      </div>
+                    )}
+
+                    {groupedFilteredProfiles.coach.length > 0 && (
+                      <div style={{ marginBottom: 'var(--space-12)' }}>
+                        <h3 style={{
+                          fontSize: '1.5rem',
+                          marginBottom: 'var(--space-4)',
+                          color: 'var(--text-primary)',
+                          borderBottom: '2px solid var(--color-primary)',
+                          paddingBottom: 'var(--space-2)'
+                        }}>
+                          Relationship Coaches
+                        </h3>
+                        <ProfileList
+                          profiles={groupedFilteredProfiles.coach}
+                          loading={false}
+                          error={null}
+                        />
+                      </div>
+                    )}
+
+                    {groupedFilteredProfiles.other.length > 0 && (
+                      <div style={{ marginBottom: 'var(--space-12)' }}>
+                        <h3 style={{
+                          fontSize: '1.5rem',
+                          marginBottom: 'var(--space-4)',
+                          color: 'var(--text-primary)',
+                          borderBottom: '2px solid var(--color-primary)',
+                          paddingBottom: 'var(--space-2)'
+                        }}>
+                          Other Marriage Preparation Professionals
+                        </h3>
+                        <ProfileList
+                          profiles={groupedFilteredProfiles.other}
+                          loading={false}
+                          error={null}
+                        />
+                      </div>
+                    )}
+
+                    {filteredProfiles.length >= 3 && (
+                      <details className="city-secondary-inquiry">
+                        <summary>Optional: send one inquiry to multiple matches</summary>
+                        <MultiProviderInquiryForm
+                          cityName={cityName}
+                          stateName={stateName}
+                          stateSlug={state}
+                          citySlug={city}
+                          providers={filteredProfiles}
+                        />
+                      </details>
+                    )}
+                  </>
                 )}
-
-                {/* Multi-Provider Inquiry Form - THE MONEY FEATURE */}
-                {profiles.length >= 3 && (
-                  <MultiProviderInquiryForm
-                    cityName={cityName}
-                    stateName={stateName}
-                    stateSlug={state}
-                    citySlug={city}
-                    providers={profiles}
-                  />
-                )}
-
-                {/* Separate Therapists and Clergy Sections */}
-                {(() => {
-                  const therapists = profiles.filter(p =>
-                    p.profession?.toLowerCase().includes('therapist') ||
-                    p.profession?.toLowerCase().includes('lmft') ||
-                    p.profession?.toLowerCase().includes('lpc') ||
-                    p.profession?.toLowerCase().includes('lcsw') ||
-                    (p.profession?.toLowerCase().includes('counselor') && !p.profession?.toLowerCase().includes('clergy'))
-                  )
-                  const clergy = profiles.filter(p =>
-                    p.profession?.toLowerCase().includes('clergy') ||
-                    p.profession?.toLowerCase().includes('pastor') ||
-                    p.profession?.toLowerCase().includes('priest') ||
-                    p.profession?.toLowerCase().includes('minister') ||
-                    (p.profession?.toLowerCase().includes('reverend'))
-                  )
-                  const others = profiles.filter(p => !therapists.includes(p) && !clergy.includes(p))
-
-                  return (
-                    <>
-                      {therapists.length > 0 && (
-                        <div style={{ marginBottom: 'var(--space-12)' }}>
-                          <h3 style={{
-                            fontSize: '1.5rem',
-                            marginBottom: 'var(--space-4)',
-                            color: 'var(--text-primary)',
-                            borderBottom: '2px solid var(--color-primary)',
-                            paddingBottom: 'var(--space-2)'
-                          }}>
-                            Licensed Therapists & Counselors (LMFT, LPC, LCSW)
-                          </h3>
-                          <p style={{ marginBottom: 'var(--space-6)', color: 'var(--text-secondary)' }}>
-                            Licensed mental health professionals offering premarital and early marriage counseling
-                          </p>
-                          <ProfileList
-                            profiles={therapists}
-                            loading={false}
-                            error={null}
-                            showLocation={false}
-                          />
-                        </div>
-                      )}
-
-                      {clergy.length > 0 && (
-                        <div style={{ marginBottom: 'var(--space-12)' }}>
-                          <h3 style={{
-                            fontSize: '1.5rem',
-                            marginBottom: 'var(--space-4)',
-                            color: 'var(--text-primary)',
-                            borderBottom: '2px solid var(--color-primary)',
-                            paddingBottom: 'var(--space-2)'
-                          }}>
-                            Clergy & Faith-Based Marriage Preparation
-                          </h3>
-                          <p style={{ marginBottom: 'var(--space-6)', color: 'var(--text-secondary)' }}>
-                            Religious leaders and clergy offering Christian, Catholic, and faith-based premarital counseling
-                          </p>
-                          <ProfileList
-                            profiles={clergy}
-                            loading={false}
-                            error={null}
-                            showLocation={false}
-                          />
-                        </div>
-                      )}
-
-                      {others.length > 0 && (
-                        <div style={{ marginBottom: 'var(--space-12)' }}>
-                          <h3 style={{
-                            fontSize: '1.5rem',
-                            marginBottom: 'var(--space-4)',
-                            color: 'var(--text-primary)',
-                            borderBottom: '2px solid var(--color-primary)',
-                            paddingBottom: 'var(--space-2)'
-                          }}>
-                            Other Marriage Preparation Professionals
-                          </h3>
-                          <ProfileList
-                            profiles={others}
-                            loading={false}
-                            error={null}
-                            showLocation={false}
-                          />
-                        </div>
-                      )}
-                    </>
-                  )
-                })()}
 
                 {/* Browse by Specialty Section - Interlinking Strategy */}
                 <SpecialtiesList stateSlug={state} citySlug={city} />
@@ -636,7 +854,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                 <div style={{
                   marginTop: 'var(--space-8)',
                   padding: 'var(--space-6)',
-                  background: 'linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%)',
+                  background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)',
                   borderRadius: 'var(--radius-lg)',
                   color: 'white',
                   textAlign: 'center'
@@ -782,7 +1000,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                   <div className="sidebar-section">
                     <h3>Session Costs in {cityName}</h3>
                     <div className="pricing-info">
-                      <p><strong>{cityContent.sections.pricing.sessionCost || '$120-200 per session'}</strong></p>
+                      <p><strong>{cityContent.sections.pricing.sessionCost || '$150-$250 per session'}</strong></p>
                       {cityContent.sections.pricing.packageDeals && (
                         <p>{cityContent.sections.pricing.packageDeals}</p>
                       )}
@@ -870,22 +1088,6 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                 </Link>
               </div>
             )}
-
-            {/* Contact Form for Engaged Couples */}
-            <div id="contact-form" className="sidebar-section cta-section" style={{ background: 'var(--bg-primary)', padding: 'var(--space-8)', borderRadius: 'var(--radius-md)' }}>
-              <h3>Connect With a Premarital Counselor</h3>
-              <p>Preparing for marriage? We'll connect you with experienced premarital counselors in {cityName}.</p>
-              <LeadContactForm
-                profileId={null}
-                professionalName={`Counselors in ${cityName}`}
-                stateName={stateName}
-                isStateMatching={true}
-                onSuccess={() => {
-                  // Could show success message
-                  alert('Thank you! We\'ll connect you with counselors in ' + cityName + '.')
-                }}
-              />
-            </div>
 
             {/* CTA Section for Professionals */}
             <div className="sidebar-section cta-section">
