@@ -72,6 +72,13 @@ const formatFaithTradition = (value) => {
   return labels[value] || value
 }
 
+const formatTypeList = (items = []) => {
+  if (items.length === 0) return 'premarital counselors'
+  if (items.length === 1) return items[0]
+  if (items.length === 2) return `${items[0]} and ${items[1]}`
+  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`
+}
+
 const getPriceMidpoint = (profile) => {
   const min = Number(profile?.session_fee_min) > 0 ? Number(profile.session_fee_min) / 100 : null
   const max = Number(profile?.session_fee_max) > 0 ? Number(profile.session_fee_max) / 100 : null
@@ -135,6 +142,14 @@ const CityPage = ({ stateOverride, cityOverride }) => {
     .slice(0, 6)
 
   const groupedProfiles = useMemo(() => groupProfilesByRole(profiles), [profiles])
+  const providerTypeLabels = useMemo(() => {
+    const labels = []
+    if (groupedProfiles.therapist.length > 0) labels.push('therapists')
+    if (groupedProfiles.clergy.length > 0) labels.push('clergy')
+    if (groupedProfiles.coach.length > 0) labels.push('coaches')
+    if (groupedProfiles.other.length > 0 || labels.length === 0) labels.push('premarital counselors')
+    return labels
+  }, [groupedProfiles])
   const locationStats = useMemo(() => {
     const cards = [
       { label: 'Licensed Professionals', value: profiles.length, alwaysShow: true },
@@ -342,11 +357,15 @@ const CityPage = ({ stateOverride, cityOverride }) => {
     }))
   } : null
 
-  const sessionCostRange = cityContent?.sections?.pricing?.sessionCost || '$150-$250 per session'
-  const sessionCostForCopy = /session/i.test(String(sessionCostRange))
-    ? sessionCostRange
-    : `${sessionCostRange} per session`
-  const costStartingAt = (String(sessionCostRange).match(/\$?\s?(\d+)/)?.[1]) || '150'
+  const sessionCostRaw = cityContent?.sections?.pricing?.sessionCost || '$150-$250'
+  const sessionCostDisplayRange = String(sessionCostRaw)
+    .replace(/\/\s*session/ig, '')
+    .replace(/per\s+session/ig, '')
+    .trim()
+  const sessionCostForCopy = /session/i.test(String(sessionCostRaw))
+    ? String(sessionCostRaw).trim()
+    : `${sessionCostDisplayRange} per session`
+  const costStartingAt = (sessionCostDisplayRange.match(/\$?\s?(\d+)/)?.[1]) || '150'
 
   // City-specific FAQ data for rich results
   const cityFAQs = [
@@ -402,7 +421,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
           <div className="state-header-content">
             <h1>Premarital Counseling in {cityName}, {stateName}</h1>
             <p className="lead city-hero-subtitle">
-              Compare {profiles.length > 0 ? profiles.length : 'qualified'} premarital counselors, therapists, and clergy in {cityName}. Browse profiles, see their focus, and reach out directly.
+              Compare {profiles.length > 0 ? profiles.length : 'qualified'} {formatTypeList(providerTypeLabels)} in {cityName}. Browse profiles, see their focus, and reach out directly.
             </p>
 
             <div className="city-hero-highlights">
@@ -469,7 +488,11 @@ const CityPage = ({ stateOverride, cityOverride }) => {
       {/* City Content */}
       <div className="container">
         {/* Money SERP Insights Box */}
-        <LocationInsights stateSlug={state} citySlug={city} />
+        <LocationInsights
+          stateSlug={state}
+          citySlug={city}
+          costEstimateOverride={sessionCostDisplayRange}
+        />
 
         <div id="providers-list" className={`state-content ${showEmptyState ? 'state-content--empty' : ''}`}>
           {/* Left Column - Profiles */}
@@ -544,21 +567,22 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                       </select>
                     </label>
 
-                    <label className="city-filters__field">
-                      <span>Neighborhood / ZIP</span>
-                      <select
-                        value={directoryFilters.neighborhood}
-                        onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, neighborhood: event.target.value }))}
-                        disabled={neighborhoodOptions.length === 0}
-                      >
-                        <option value="all">{neighborhoodOptions.length > 0 ? 'Any area' : 'No area data yet'}</option>
-                        {neighborhoodOptions.map((zip) => (
-                          <option key={zip} value={zip}>
-                            {zip}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                    {neighborhoodOptions.length > 0 && (
+                      <label className="city-filters__field">
+                        <span>Neighborhood / ZIP</span>
+                        <select
+                          value={directoryFilters.neighborhood}
+                          onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, neighborhood: event.target.value }))}
+                        >
+                          <option value="all">Any area</option>
+                          {neighborhoodOptions.map((zip) => (
+                            <option key={zip} value={zip}>
+                              {zip}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    )}
 
                     <label className="city-filters__field">
                       <span>Availability</span>

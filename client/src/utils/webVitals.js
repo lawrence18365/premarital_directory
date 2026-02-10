@@ -299,32 +299,6 @@ if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
   window.getWebVitalsData = getWebVitalsData
   window.getWebVitalsSummary = getWebVitalsSummary
   window.exportWebVitalsData = exportWebVitalsData
-  
-  // Show Web Vitals button in development
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      const button = document.createElement('button')
-      button.textContent = 'Web Vitals'
-      button.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 9999;
-        background: #0e5e5e;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      `
-      button.onclick = () => {
-        console.table(getWebVitalsSummary().metrics)
-      }
-      document.body.appendChild(button)
-    }, 2000)
-  })
 }
 
 // Auto-initialize on import

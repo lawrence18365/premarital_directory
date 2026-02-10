@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 import { generateSlug } from '../lib/utils'
 import { formatLocation, formatPhoneNumber } from '../lib/utils'
 import LeadContactForm from '../components/leads/LeadContactForm'
@@ -70,8 +70,11 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   const [emailRevealed, setEmailRevealed] = useState(false)
   const [imageError, setImageError] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
 
   const canShowDirectContact = profile?.tier === 'local_featured' || profile?.tier === 'area_spotlight'
+  const claimQueryParam = new URLSearchParams(location.search).get('claim')
+  const shouldShowClaimPrompts = ['1', 'true', 'yes'].includes(String(claimQueryParam || '').toLowerCase()) || Boolean(location.state?.showClaimCta)
 
   useEffect(() => {
     loadProfile()
@@ -285,7 +288,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
       />
 
       <div className="profile-page profile-premium">
-        {profile && !profile.is_claimed && (
+        {profile && !profile.is_claimed && shouldShowClaimPrompts && (
           <UnclaimedProfileBanner
             profile={profile}
             viewCount={null}
@@ -647,7 +650,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                   </section>
                 )}
 
-                {!profile.is_claimed && (
+                {!profile.is_claimed && shouldShowClaimPrompts && (
                   <section className="profile-premium-card profile-premium-card-claim">
                     <h2>Is this your profile?</h2>
                     <p>

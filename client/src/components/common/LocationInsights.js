@@ -2,7 +2,7 @@ import React from 'react'
 import { STATE_DISCOUNT_CONFIG } from '../../data/specialtyConfig'
 // CITY_CONFIG removed - not currently used
 
-const LocationInsights = ({ stateSlug, citySlug, specialty }) => {
+const LocationInsights = ({ stateSlug, citySlug, specialty, costEstimateOverride }) => {
   const discountInfo = STATE_DISCOUNT_CONFIG[stateSlug]
   
   // Estimate cost tier based on anchor status or hardcoded list
@@ -22,7 +22,10 @@ const LocationInsights = ({ stateSlug, citySlug, specialty }) => {
     return '$90 - $160'
   }
 
-  const costEstimate = getCostEstimate()
+  const costEstimate = String(costEstimateOverride || getCostEstimate())
+    .replace(/\/\s*session/ig, '')
+    .replace(/per\s+session/ig, '')
+    .trim()
   const cityName = citySlug 
     ? citySlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
     : 'Local'
