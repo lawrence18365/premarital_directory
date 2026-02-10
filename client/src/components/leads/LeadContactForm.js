@@ -9,6 +9,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
     couple_email: '',
     couple_phone: '',
     wedding_date: '',
+    timeline: '',
     location: '',
     message: '',
     source: 'directory'
@@ -38,7 +39,10 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
     setError('')
 
     try {
-      const outboundMessage = formData.message
+      const timelinePrefix = formData.timeline
+        ? `Timeline: ${formData.timeline}\n\n`
+        : ''
+      const outboundMessage = `${timelinePrefix}${formData.message}`
       const coupleName = formData.partner_two_name
         ? `${formData.partner_one_name} & ${formData.partner_two_name}`
         : formData.partner_one_name
@@ -77,6 +81,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
                 email: formData.couple_email,
                 phone: formData.couple_phone,
                 wedding_date: formData.wedding_date,
+                timeline: formData.timeline,
                 location: formData.location,
                 message: outboundMessage
               }
@@ -115,6 +120,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
         couple_email: '',
         couple_phone: '',
         wedding_date: '',
+        timeline: '',
         location: '',
         message: '',
         source: 'directory'
@@ -262,6 +268,22 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
               onChange={handleInputChange}
               placeholder="City, state"
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="timeline">Timeline (optional)</label>
+            <select
+              id="timeline"
+              name="timeline"
+              value={formData.timeline}
+              onChange={handleInputChange}
+            >
+              <option value="">Select timeline</option>
+              <option value="ASAP">ASAP</option>
+              <option value="1-3 months">1-3 months</option>
+              <option value="3-6 months">3-6 months</option>
+              <option value="6+ months">6+ months</option>
+            </select>
           </div>
         </details>
 
