@@ -256,6 +256,13 @@
   line-height: 1.6;
 }
 
+.profile-data-note {
+  margin: 0.55rem 0 0;
+  font-size: 0.8rem;
+  color: rgba(11, 62, 62, 0.62);
+  line-height: 1.45;
+}
+
 .profile-note-inline {
   border: 1px dashed var(--profile-line-strong);
   border-radius: 12px;
@@ -470,13 +477,6 @@
 
 .profile-premium-card-emphasis .btn {
   margin-top: 0.75rem;
-}
-
-.profile-response-note {
-  margin: 0.62rem 0 0;
-  font-size: 0.78rem;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.86);
 }
 
 .profile-kpi-list {

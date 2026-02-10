@@ -32,6 +32,53 @@ const toBool = (value) => {
   return false
 }
 
+const extractLicenseType = (profile) => {
+  const text = [
+    profile?.profession,
+    ...asArray(profile?.credentials),
+    ...asArray(profile?.certifications)
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toUpperCase()
+
+  if (/\bLMFT\b/.test(text)) return 'LMFT'
+  if (/\bLPCC\b/.test(text)) return 'LPCC'
+  if (/\bLCSW\b/.test(text)) return 'LCSW'
+  if (/\bLPC\b/.test(text)) {
+    return String(profile?.state_province || '').toUpperCase() === 'CA' ? 'LPCC' : 'LPC'
+  }
+  if (/\bLMHC\b/.test(text)) return 'LMHC'
+  if (/PSYCHOLOGIST|PSY\.D|PSYD|PHD/.test(text)) return 'Psychologist'
+  return null
+}
+
+const hasAvailabilityData = (profile) => {
+  const value = profile?.accepting_new_clients
+  if (value === true || value === false) return true
+  if (typeof value === 'number') return value === 0 || value === 1
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase()
+    return ['true', 'false', '1', '0', 'yes', 'no'].includes(normalized)
+  }
+  return false
+}
+
+const getAvailabilityState = (profile) => {
+  const claimed = toBool(profile?.is_claimed)
+  const hasData = hasAvailabilityData(profile)
+
+  if (!claimed || !hasData) {
+    return { label: 'unverified', rank: 0, known: false, isAccepting: false }
+  }
+
+  if (toBool(profile?.accepting_new_clients)) {
+    return { label: 'accepting', rank: 3, known: true, isAccepting: true }
+  }
+
+  return { label: 'limited', rank: 2, known: true, isAccepting: false }
+}
+
 const getProfileRole = (profile) => {
   const profession = String(profile?.profession || '').toLowerCase()
 
@@ -264,18 +311,78 @@ const enrichPremaritalSignals = (profile) => {
   const structuredProgram = hasStructuredProgram(profile, textBlob)
   const lgbtqAffirming = supportsLgbtq(profile, textBlob)
   const eveningWeekend = hasEveningWeekendAvailability(profile, textBlob)
-  const sessionTypes = getSessionTypes(profile)
+  const availabilityState = getAvailabilityState(profile)
+  const hasPriceData = Boolean(getProfilePriceBounds(profile))
+  const hasInsuranceData = asArray(profile?.insurance_accepted).length > 0
+  const hasSessionData = asArray(profile?.session_types).length > 0
+  const licenseType = extractLicenseType(profile)
+  const detailsVerified = Boolean(licenseType && hasSessionData && hasPriceData)
 
-  let score = 0
-  if (premaritalFocused) score += 48
-  if (structuredProgram) score += 14
-  if (methodTags.length > 0) score += Math.min(24, methodTags.length * 8)
-  if (toBool(profile?.accepting_new_clients)) score += 7
-  if (sessionTypes.has('online') || sessionTypes.has('hybrid')) score += 4
-  if (lgbtqAffirming) score += 4
-  if (Number(profile?.years_experience) > 0) score += Math.min(3, Math.floor(Number(profile.years_experience) / 5))
+  const fitSignals = []
 
-  const premaritalFitScore = Math.max(0, Math.min(100, score))
+  if (premaritalFocused) {
+    fitSignals.push({ reason: 'Premarital specialty listed', points: 26 })
+  }
+
+  if (structuredProgram) {
+    fitSignals.push({ reason: 'Structured program evidence', points: 12 })
+  }
+
+  if (methodTags.length > 0) {
+    const methodLabels = METHOD_FILTERS
+      .filter((method) => methodTags.includes(method.value))
+      .slice(0, 2)
+      .map((method) => method.label)
+    fitSignals.push({
+      reason: methodLabels.length > 0 ? `Methods listed: ${methodLabels.join(', ')}` : 'Method details listed',
+      points: Math.min(14, methodTags.length * 7)
+    })
+  }
+
+  if (hasSessionData) {
+    fitSignals.push({ reason: 'Session format listed', points: 7 })
+  }
+
+  if (hasPriceData) {
+    fitSignals.push({ reason: 'Pricing listed', points: 7 })
+  }
+
+  if (hasInsuranceData) {
+    fitSignals.push({ reason: 'Insurance details listed', points: 4 })
+  }
+
+  if (availabilityState.known) {
+    fitSignals.push({
+      reason: availabilityState.isAccepting ? 'Accepting new clients' : 'Availability status listed',
+      points: availabilityState.isAccepting ? 6 : 3
+    })
+  }
+
+  if (licenseType) {
+    fitSignals.push({ reason: `License type listed (${licenseType})`, points: 6 })
+  }
+
+  if (lgbtqAffirming) {
+    fitSignals.push({ reason: 'LGBTQ+ affirming signal', points: 3 })
+  }
+
+  if (eveningWeekend) {
+    fitSignals.push({ reason: 'Evenings/weekends signal', points: 3 })
+  }
+
+  if (Number(profile?.years_experience) > 0) {
+    fitSignals.push({
+      reason: `${profile.years_experience}+ years experience`,
+      points: Math.min(7, Math.floor(Number(profile.years_experience) / 3))
+    })
+  }
+
+  const rawScore = fitSignals.reduce((sum, signal) => sum + signal.points, 0)
+  const premaritalFitScore = Math.max(18, Math.min(96, Math.round(rawScore)))
+  const fitReasonLabels = fitSignals
+    .sort((a, b) => b.points - a.points)
+    .map((signal) => signal.reason)
+    .slice(0, 4)
 
   return {
     ...profile,
@@ -284,7 +391,13 @@ const enrichPremaritalSignals = (profile) => {
     structuredProgram,
     methodTags,
     lgbtqAffirming,
-    eveningWeekend
+    eveningWeekend,
+    detailsVerified,
+    availabilityState,
+    hasPriceData,
+    hasInsuranceData,
+    licenseType,
+    fitReasonLabels
   }
 }
 
@@ -301,6 +414,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
     sessionType: 'all',
     price: 'all',
     insurance: 'all',
+    verified: 'all',
     method: 'all',
     premarital: 'all',
     programStyle: 'all',
@@ -414,6 +528,10 @@ const CityPage = ({ stateOverride, cityOverride }) => {
         return false
       }
 
+      if (directoryFilters.verified === 'details' && !profile.detailsVerified) {
+        return false
+      }
+
       if (directoryFilters.method !== 'all' && !profile.methodTags.includes(directoryFilters.method)) {
         return false
       }
@@ -442,11 +560,11 @@ const CityPage = ({ stateOverride, cityOverride }) => {
         return false
       }
 
-      if (directoryFilters.availability === 'accepting' && !toBool(profile?.accepting_new_clients)) {
+      if (directoryFilters.availability === 'accepting' && !(profile.availabilityState?.known && profile.availabilityState?.isAccepting)) {
         return false
       }
 
-      if (directoryFilters.availability === 'limited' && toBool(profile?.accepting_new_clients)) {
+      if (directoryFilters.availability === 'limited' && !(profile.availabilityState?.known && !profile.availabilityState?.isAccepting)) {
         return false
       }
 
@@ -460,9 +578,10 @@ const CityPage = ({ stateOverride, cityOverride }) => {
     sorted.sort((a, b) => {
       if (sortBy === 'best-premarital') {
         if (b.premaritalFitScore !== a.premaritalFitScore) return b.premaritalFitScore - a.premaritalFitScore
-      } else if (sortBy === 'availability') {
-        if (toBool(a.accepting_new_clients) !== toBool(b.accepting_new_clients)) {
-          return Number(toBool(b.accepting_new_clients)) - Number(toBool(a.accepting_new_clients))
+      } else if (sortBy === 'verified-details') {
+        if (a.detailsVerified !== b.detailsVerified) return Number(b.detailsVerified) - Number(a.detailsVerified)
+        if ((b.fitReasonLabels?.length || 0) !== (a.fitReasonLabels?.length || 0)) {
+          return (b.fitReasonLabels?.length || 0) - (a.fitReasonLabels?.length || 0)
         }
         if (b.premaritalFitScore !== a.premaritalFitScore) return b.premaritalFitScore - a.premaritalFitScore
       } else if (sortBy === 'price-low') {
@@ -498,6 +617,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
       sessionType: 'all',
       price: 'all',
       insurance: 'all',
+      verified: 'all',
       method: 'all',
       premarital: 'all',
       programStyle: 'all',
@@ -600,6 +720,13 @@ const CityPage = ({ stateOverride, cityOverride }) => {
     : hasFaithIntegratedProviders
       ? 'Some therapists can integrate faith values when requested.'
       : 'Most listings are therapist-led and focused on practical relationship preparation.'
+  const listedMethodNames = methodOptions
+    .filter((option) => option.value !== 'faith-based')
+    .slice(0, 2)
+    .map((option) => option.label)
+  const timelineMethodSentence = listedMethodNames.length > 0
+    ? `Listed methods in this city include ${listedMethodNames.join(' and ')}.`
+    : 'Method details are shown only when each provider supplies them.'
   const timelineFaithSentence = groupedProfiles.clergy.length > 0
     ? 'Clergy-led programs may require 4-6 sessions.'
     : 'Many couples choose a structured 5-8 session process.'
@@ -627,7 +754,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
     },
     {
       question: `How many premarital counseling sessions do engaged couples need in ${cityName}?`,
-      answer: `Most engaged couples in ${cityName} complete 5-8 premarital counseling sessions over 2-3 months before their wedding. Programs like PREPARE-ENRICH and Gottman Method have structured timelines. ${timelineFaithSentence}`
+      answer: `Most engaged couples in ${cityName} complete 5-8 premarital counseling sessions over 2-3 months before their wedding. ${timelineMethodSentence} ${timelineFaithSentence}`
     },
     faithFaq,
     {
@@ -649,7 +776,9 @@ const CityPage = ({ stateOverride, cityOverride }) => {
       ? { label: 'Faith-based options', detail: `${groupedProfiles.clergy.length} clergy and faith-integrated providers` }
       : hasFaithIntegratedProviders
         ? { label: 'Faith-integrated care', detail: 'Available with select therapist-led programs' }
-        : { label: 'Premarital methods', detail: 'Gottman, EFT, PREPARE/ENRICH and more' },
+        : methodOptions.length > 0
+          ? { label: 'Methods listed', detail: `${methodOptions.length} method tags shown from provider profiles` }
+          : { label: 'Methods listed', detail: 'Methods are shown only when provided by each profile' },
     { label: 'Session formats', detail: 'Online and in-person availability' }
   ]
 
@@ -782,14 +911,14 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                         onChange={(event) => setSortBy(event.target.value)}
                       >
                         <option value="best-premarital">Best for premarital</option>
-                        <option value="availability">Soonest availability</option>
+                        <option value="verified-details">Most complete profiles</option>
                         <option value="price-low">Lowest price</option>
                         <option value="faith-based">Faith-based first</option>
                         <option value="online">Online first</option>
                       </select>
                     </label>
                     <p className="city-filters__hint">
-                      Ranking uses premarital-specific signals like explicit premarital focus, structured programs, methods, and availability.
+                      Ranking uses explicit profile signals like premarital focus, methods listed, and detail completeness.
                     </p>
                   </div>
 
@@ -898,6 +1027,17 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                     </label>
 
                     <label className="city-filters__field">
+                      <span>Verified details</span>
+                      <select
+                        value={directoryFilters.verified}
+                        onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, verified: event.target.value }))}
+                      >
+                        <option value="all">All profiles</option>
+                        <option value="details">License + format + price listed</option>
+                      </select>
+                    </label>
+
+                    <label className="city-filters__field">
                       <span>Schedule</span>
                       <select
                         value={directoryFilters.schedule}
@@ -931,9 +1071,9 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                         value={directoryFilters.availability}
                         onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, availability: event.target.value }))}
                       >
-                        <option value="all">Any availability</option>
-                        <option value="accepting">Accepting new clients</option>
-                        <option value="limited">Limited availability</option>
+                        <option value="all">Any availability status</option>
+                        <option value="accepting">Accepting (claimed profiles)</option>
+                        <option value="limited">Limited (claimed profiles)</option>
                       </select>
                     </label>
                   </div>
@@ -1118,7 +1258,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                 )}
 
                 {/* Decision Help - More Valuable Than Generic Content */}
-                <HowToChooseSection cityName={cityName} />
+                <HowToChooseSection cityName={cityName} stateAbbr={stateConfig?.abbr} />
 
                 {/* City-specific FAQ for rich results */}
                 <div style={{ marginTop: 'var(--space-12)' }}>

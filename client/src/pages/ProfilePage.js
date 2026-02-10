@@ -86,7 +86,9 @@ const getPrimaryLicenseType = (profile, credentials = [], certifications = []) =
   if (/\bLMFT\b/.test(text)) return 'LMFT'
   if (/\bLPCC\b/.test(text)) return 'LPCC'
   if (/\bLCSW\b/.test(text)) return 'LCSW'
-  if (/\bLPC\b/.test(text)) return 'LPC'
+  if (/\bLPC\b/.test(text)) {
+    return String(profile?.state_province || '').toUpperCase() === 'CA' ? 'LPCC' : 'LPC'
+  }
   if (/\bLMHC\b/.test(text)) return 'LMHC'
   if (/PSYCHOLOGIST|PSY\.D|PSYD|PHD/.test(text)) return 'Psychologist'
   return null
@@ -300,19 +302,19 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   const fallbackFaqItems = [
     {
       question: `How premarital-focused is ${firstName}'s work?`,
-      answer: 'Ask whether your sessions will follow a structured premarital curriculum with clear goals before the wedding.'
+      answer: 'Ask whether this professional offers a specific premarital program or general couples counseling.'
     },
     {
       question: 'What does a typical timeline look like?',
-      answer: 'Most couples complete 5-8 sessions over 2-3 months, but timeline should match your wedding date and scheduling needs.'
+      answer: 'Ask how many sessions they recommend and whether the timeline can be adjusted to your wedding date.'
     },
     {
       question: 'What program methods are used?',
-      answer: 'Ask about assessments and methods (for example Gottman, PREPARE/ENRICH, EFT, or faith-based frameworks) and how those tools are applied.'
+      answer: 'Ask which methods or assessments they personally use and how those are applied in sessions.'
     },
     {
       question: 'What should we clarify before booking?',
-      answer: 'Confirm session format, pricing, availability, and whether this professional is currently accepting new premarital clients.'
+      answer: 'Confirm session format, pricing, insurance, and current availability before booking.'
     }
   ]
   const faqItems = providerFaqItems.length > 0 ? providerFaqItems : fallbackFaqItems
@@ -333,11 +335,11 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     : 'Communication, conflict resolution, finances, values, and relationship expectations'
 
   const sessionFormatLabel = getSessionFormatLabel(sessionTypes)
-  const insuranceLabel = insuranceAccepted.length > 0 ? insuranceAccepted.join(', ') : 'Ask about accepted plans'
+  const insuranceLabel = insuranceAccepted.length > 0 ? insuranceAccepted.join(', ') : 'Not listed'
   const pricingLabel = getPricingLabel(profile)
   const licenseType = getPrimaryLicenseType(profile, credentials, certifications)
   const licenseTypeLabel = licenseType ? `${licenseType} (${profile.state_province || stateName || 'State'})` : null
-  const licenseLabel = credentials.length > 0 ? credentials.join(', ') : 'License details available on request'
+  const licenseLabel = credentials.length > 0 ? credentials.join(', ') : 'Not listed'
   const professionLabel = (() => {
     const profession = profile?.profession || 'Premarital Counselor'
     if (!licenseType) return profession
@@ -349,11 +351,11 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     return profession
   })()
   const availabilityLabel = getAvailabilityLabel(profile)
-  const methodsLabel = premaritalMethods.length > 0 ? premaritalMethods.join(', ') : 'Customized framework based on your goals'
+  const methodsLabel = premaritalMethods.length > 0 ? premaritalMethods.join(', ') : 'Not provided'
   const hasExplicitPremaritalSpecialty = specialties.some((item) => /premarital|pre[-\s]?marriage|marriage prep/i.test(String(item)))
   const programStructureLabel = premaritalMethods.length > 0
     ? `Structured sessions using ${methodsLabel}`
-    : 'Customized premarital sessions with timeline and goals set in your first visit'
+    : 'Not provided'
 
   const premaritalFitSignals = [
     hasExplicitPremaritalSpecialty ? 'Lists premarital counseling as a specialty' : null,
@@ -364,7 +366,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   ].filter(Boolean)
 
   if (premaritalFitSignals.length === 0) {
-    premaritalFitSignals.push('Focuses on communication, conflict tools, and marriage preparation goals')
+    premaritalFitSignals.push('Premarital-specific details have not been provided')
   }
 
   const quickFacts = [
@@ -499,9 +501,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     ) : (
                       <>
                         <p>
-                          {firstName} is a {professionLabel || 'premarital counseling professional'} serving couples in {profile.city}, {profile.state_province}.
-                          {profile.years_experience ? ` With ${profile.years_experience} years of experience, ` : ' '}
-                          the focus is practical preparation for long-term relationship health.
+                          {firstName} is listed as a {professionLabel || 'premarital counseling professional'} in {profile.city}, {profile.state_province}. Public profile details are currently limited.
                         </p>
                         <p className="profile-note-inline">
                           This profile has limited public details. If this is your listing,{' '}
@@ -529,6 +529,9 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
 
                 <section className="profile-premium-card">
                   <h2>Premarital Fit & Logistics</h2>
+                  <p className="profile-data-note">
+                    Only details provided on this profile are shown below.
+                  </p>
                   <div className="profile-detail-stack">
                     <div className="profile-detail-row">
                       <span>Best fit for</span>
@@ -731,9 +734,6 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                       Send Message
                     </button>
                   )}
-                  <p className="profile-response-note">
-                    Most professionals reply within 1-2 business days.
-                  </p>
                 </section>
 
                 <section id="contact-section" className="profile-premium-card profile-contact-card">

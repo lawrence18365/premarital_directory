@@ -4,7 +4,11 @@ import React from 'react';
  * Decision-help section that actually helps couples choose
  * Much more valuable than generic AI-generated content
  */
-const HowToChooseSection = ({ cityName }) => {
+const HowToChooseSection = ({ cityName, stateAbbr }) => {
+  const therapistCredentialCopy = stateAbbr === 'CA'
+    ? 'LMFT, LPCC, LCSW, or Psychologist credentials. Deeper focus on communication patterns, conflict resolution, and mental health. Best for couples who want evidence-based approaches.'
+    : 'LMFT, LPCC/LPC, LCSW, or Psychologist credentials (titles vary by state). Deeper focus on communication patterns, conflict resolution, and mental health. Best for couples who want evidence-based approaches.'
+
   return (
     <section style={{
       marginTop: 'var(--space-12)',
@@ -43,7 +47,7 @@ const HowToChooseSection = ({ cityName }) => {
               Licensed Therapist
             </strong>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0 }}>
-              LMFT, LPC, or LCSW credentials. Deeper focus on communication patterns, conflict resolution, and mental health. Best for couples who want evidence-based approaches.
+              {therapistCredentialCopy}
             </p>
           </div>
           <div style={{

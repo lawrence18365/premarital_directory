@@ -4,6 +4,17 @@ import { generateSlug, formatLocation, truncateText, getStateNameFromAbbr } from
 
 const asArray = (value) => (Array.isArray(value) ? value : [])
 
+const hasAvailabilityData = (profile) => {
+  const value = profile?.accepting_new_clients
+  if (value === true || value === false) return true
+  if (typeof value === 'number') return value === 0 || value === 1
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase()
+    return ['true', 'false', '1', '0', 'yes', 'no'].includes(normalized)
+  }
+  return false
+}
+
 const getPrimaryCredential = (profile) => {
   const text = [
     profile?.profession,
@@ -17,7 +28,9 @@ const getPrimaryCredential = (profile) => {
   if (/\bLMFT\b/.test(text)) return 'LMFT'
   if (/\bLPCC\b/.test(text)) return 'LPCC'
   if (/\bLCSW\b/.test(text)) return 'LCSW'
-  if (/\bLPC\b/.test(text)) return 'LPC'
+  if (/\bLPC\b/.test(text)) {
+    return String(profile?.state_province || '').toUpperCase() === 'CA' ? 'LPCC' : 'LPC'
+  }
   if (/\bLMHC\b/.test(text)) return 'LMHC'
   if (/PSYCHOLOGIST|PSY\.D|PSYD|PHD/.test(text)) return 'Psychologist'
   return null
@@ -75,19 +88,23 @@ const getRateLabel = (profile) => {
   if (min && max) return `$${min}-$${max}`
   if (min) return `$${min}+`
   if (profile?.pricing_range) return String(profile.pricing_range)
-  return 'Rate not listed'
+  return null
 }
 
 const getInsuranceLabel = (profile) => {
   const accepted = asArray(profile?.insurance_accepted).map((item) => String(item).toLowerCase())
-  if (accepted.length === 0) return 'Insurance not listed'
+  if (accepted.length === 0) return null
   const hasNonSelfPay = accepted.some((item) => item !== 'self-pay only')
   if (hasNonSelfPay) return 'Insurance accepted'
   return 'Self-pay only'
 }
 
 const getAvailabilityLabel = (profile) => {
+  if (profile?.availabilityState?.label === 'accepting') return 'Accepting new clients'
+  if (profile?.availabilityState?.label === 'limited') return 'Limited availability'
+  if (profile?.availabilityState?.label === 'unverified') return 'Availability unverified'
   if (!profile?.is_claimed) return 'Availability unverified'
+  if (!hasAvailabilityData(profile)) return 'Availability not listed'
   if (profile?.accepting_new_clients) return 'Accepting new clients'
   return 'Limited availability'
 }
@@ -102,23 +119,38 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
   const fitScore = Number(profile?.premaritalFitScore)
   const hasFitScore = Number.isFinite(fitScore) && fitScore > 0
   const professionLabel = getProfessionLabel(profile)
+  const isClaimed = Boolean(profile?.is_claimed)
+  const rateLabel = getRateLabel(profile)
+  const insuranceLabel = getInsuranceLabel(profile)
+  const availabilityLabel = getAvailabilityLabel(profile)
+
+  const missingDetails = []
+  if (!rateLabel) missingDetails.push('pricing')
+  if (!insuranceLabel) missingDetails.push('insurance')
+  if (!isClaimed || availabilityLabel === 'Availability unverified' || availabilityLabel === 'Availability not listed') {
+    missingDetails.push('availability')
+  }
+
+  const detailsPendingLabel = missingDetails.length >= 2
+    ? `Details pending: ${missingDetails.slice(0, 2).join(' + ')}`
+    : null
 
   const decisionPills = [
     getSessionTypeLabel(profile),
     profile?.postal_code ? `ZIP ${profile.postal_code}` : null,
     getMethodLabel(profile),
     formatFaithLabel(profile?.faith_tradition),
-    getRateLabel(profile),
-    getInsuranceLabel(profile),
-    getAvailabilityLabel(profile)
+    rateLabel,
+    insuranceLabel,
+    !detailsPendingLabel ? availabilityLabel : detailsPendingLabel
   ].filter(Boolean)
 
-  const fitReasons = [
-    profile?.premaritalFocused ? 'Premarital-focused' : null,
-    profile?.structuredProgram ? 'Structured program' : null,
-    profile?.methodTags?.includes('prepare-enrich') ? 'Uses PREPARE/ENRICH' : null,
-    profile?.methodTags?.includes('gottman') ? 'Uses Gottman tools' : null
-  ].filter(Boolean)
+  const fitReasons = Array.isArray(profile?.fitReasonLabels) && profile.fitReasonLabels.length > 0
+    ? profile.fitReasonLabels
+    : [
+      profile?.premaritalFocused ? 'Premarital-focused' : null,
+      profile?.structuredProgram ? 'Structured program evidence' : null
+    ].filter(Boolean)
 
   return (
     <div className={`profile-card profile-card--${type} ${profile.is_sponsored ? 'sponsored' : ''} ${!hasPhoto ? 'no-photo' : ''}`}>
@@ -192,6 +224,12 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
       {fitReasons.length > 0 && (
         <div className="profile-fit-reasons">
           Why this match: {fitReasons.slice(0, 2).join(' · ')}
+        </div>
+      )}
+
+      {detailsPendingLabel && (
+        <div className="profile-fit-reasons">
+          Ask directly about pricing, insurance, and availability.
         </div>
       )}
       
