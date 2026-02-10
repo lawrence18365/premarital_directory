@@ -40,6 +40,11 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   ).join(' ') : 'Unknown City')
 
   const stateName = stateConfig?.name || state
+  const hasProfiles = profiles.length > 0
+  const showEmptyState = !loading && !error && !hasProfiles
+  const nearbyCities = (stateConfig?.major_cities || [])
+    .filter((c) => c.toLowerCase().replace(/\s+/g, '-') !== city)
+    .slice(0, 6)
 
   useEffect(() => {
     loadCityProfiles()
@@ -272,12 +277,23 @@ const CityPage = ({ stateOverride, cityOverride }) => {
             {/* Quick CTA for Engaged Couples */}
             <div className="state-cta-section" style={{ marginTop: 'var(--space-8)' }}>
               <div className="cta-buttons">
-                <button
-                  onClick={() => document.getElementById('providers-list').scrollIntoView({ behavior: 'smooth' })}
-                  className="btn btn-primary btn-large"
-                >
-                  Browse {profiles.length} Counselors Below
-                </button>
+                {showEmptyState ? (
+                  <>
+                    <Link to={`/premarital-counseling/${state}`} className="btn btn-primary btn-large">
+                      Browse {stateName} Counselors
+                    </Link>
+                    <Link to="/premarital-counseling" className="btn btn-outline btn-large">
+                      View All Cities
+                    </Link>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => document.getElementById('providers-list').scrollIntoView({ behavior: 'smooth' })}
+                    className="btn btn-primary btn-large"
+                  >
+                    Browse {profiles.length} Counselors Below
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -289,9 +305,9 @@ const CityPage = ({ stateOverride, cityOverride }) => {
         {/* Money SERP Insights Box */}
         <LocationInsights stateSlug={state} citySlug={city} />
 
-        <div id="providers-list" className="state-content">
+        <div id="providers-list" className={`state-content ${showEmptyState ? 'state-content--empty' : ''}`}>
           {/* Left Column - Profiles */}
-          <div className="state-main">
+          <div className={`state-main ${showEmptyState ? 'state-main--empty' : ''}`}>
             {loading ? (
               <div className="loading-section">
                 <LoadingSpinner />
@@ -299,7 +315,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
               </div>
             ) : error ? (
               <ErrorMessage message={error} />
-            ) : profiles.length > 0 ? (
+            ) : hasProfiles ? (
               <>
                 <div className="results-header">
                   <h2>Premarital Counselors in {cityName} — Therapists & Clergy</h2>
@@ -700,21 +716,43 @@ const CityPage = ({ stateOverride, cityOverride }) => {
             ) : (
               <div className="city-empty">
                 <div className="city-empty__card">
-                  <p className="section-eyebrow">Growing coverage</p>
-                  <h2>No premarital counselors listed yet in {cityName}</h2>
+                  <p className="section-eyebrow">New in this city</p>
+                  <h2>No premarital counselors listed in {cityName} yet</h2>
                   <p className="city-empty__lead">
-                    We’re still onboarding counselors in {cityName}. Explore nearby cities or browse statewide listings while we add local professionals.
+                    We are onboarding providers in {cityName}. In the meantime, browse nearby cities or all listings in {stateName}.
                   </p>
                   <div className="city-empty__actions">
                     <Link to={`/premarital-counseling/${state}`} className="city-empty__button city-empty__button--primary">
-                      Browse {stateName} Listings
+                      Browse {stateName}
                     </Link>
                     <Link to="/premarital-counseling" className="city-empty__button city-empty__button--ghost">
-                      Search All Cities
+                      All Cities
                     </Link>
                   </div>
+                  {nearbyCities.length > 0 && (
+                    <div className="city-empty__nearby">
+                      <p className="city-empty__nearby-title">Nearby cities in {stateName}</p>
+                      <div className="city-empty__nearby-list">
+                        {nearbyCities.map((nearbyCityName) => {
+                          const nearbySlug = nearbyCityName.toLowerCase().replace(/\s+/g, '-')
+                          return (
+                            <Link
+                              key={nearbySlug}
+                              to={`/premarital-counseling/${state}/${nearbySlug}`}
+                              className="city-empty__nearby-link"
+                            >
+                              {nearbyCityName}
+                            </Link>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
                   <div className="city-empty__note">
-                    <p>Are you a premarital counselor in {cityName}? <Link to="/claim-profile">Join the directory</Link> to be featured here.</p>
+                    <p>Are you a provider in {cityName}?</p>
+                    <Link to="/claim-profile" className="city-empty__join-link">
+                      List your practice
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -722,6 +760,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
           </div>
 
           {/* Right Sidebar - AI Generated Content Only */}
+          {!showEmptyState && (
           <aside className="state-sidebar">
             {contentLoading ? (
               <div className="sidebar-loading">
@@ -857,6 +896,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
               </Link>
             </div>
           </aside>
+          )}
         </div>
       </div>
     </div>
