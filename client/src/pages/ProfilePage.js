@@ -285,11 +285,15 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   }
 
   const stateName = profile?.state_province || (state ? state.replace(/-/g, ' ').replace(/\b\w/g, (character) => character.toUpperCase()) : null)
+  // Normalize state slug: convert abbreviations (mn -> minnesota) for breadcrumb URLs
+  const normalizedStateSlug = profile?.state_province
+    ? getStateSlugFromAbbr(profile.state_province)
+    : (state || generateSlug(stateName))
   const breadcrumbItems = stateName && profile
     ? generateBreadcrumbs.profilePage(
       stateName,
       profile.full_name,
-      `/premarital-counseling/${state || generateSlug(stateName)}`,
+      `/premarital-counseling/${normalizedStateSlug}`,
       null
     )
     : generateBreadcrumbs.profilePage(
@@ -871,13 +875,13 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     <h2>Explore More</h2>
                     <div className="profile-link-list">
                       <Link
-                        to={`/premarital-counseling/${state || generateSlug(profile.state_province)}/${generateSlug(profile.city)}`}
+                        to={`/premarital-counseling/${normalizedStateSlug}/${generateSlug(profile.city)}`}
                         className="profile-link-row"
                       >
                         Premarital counseling in {profile.city}
                       </Link>
                       <Link
-                        to={`/premarital-counseling/${state || generateSlug(profile.state_province)}`}
+                        to={`/premarital-counseling/${normalizedStateSlug}`}
                         className="profile-link-row"
                       >
                         Browse all {profile.state_province} counselors
