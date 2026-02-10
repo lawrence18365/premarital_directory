@@ -2,6 +2,19 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 const AuthContext = createContext({})
+const INITIAL_AUTH_TIMEOUT_MS = 8000
+const SESSION_DATA_TIMEOUT_MS = 8000
+
+const withTimeout = (promise, timeoutMs, label) => {
+  let timeoutId
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`${label} timed out after ${timeoutMs}ms`))
+    }, timeoutMs)
+  })
+
+  return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timeoutId))
+}
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
@@ -19,15 +32,18 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     let isMounted = true
+    let hasResolvedInitialSession = false
+    let activeSessionRequest = 0
 
     const handleSession = async (session) => {
+      const requestId = ++activeSessionRequest
       if (!isMounted) return
       setUser(session?.user || null)
       if (session?.user) {
         try {
           await Promise.all([
-            loadUserProfile(session.user.id),
-            checkAdminStatus(session.user.id)
+            withTimeout(loadUserProfile(session.user.id), SESSION_DATA_TIMEOUT_MS, 'loadUserProfile'),
+            withTimeout(checkAdminStatus(session.user.id), SESSION_DATA_TIMEOUT_MS, 'checkAdminStatus')
           ])
         } catch (err) {
           console.error('Error loading user data:', err)
@@ -36,19 +52,45 @@ export const AuthProvider = ({ children }) => {
         setProfile(null)
         setIsAdmin(false)
       }
-      if (isMounted) setLoading(false)
+      if (isMounted && requestId === activeSessionRequest) {
+        setLoading(false)
+      }
     }
 
-    // Use onAuthStateChange as the single source of truth
-    // It fires INITIAL_SESSION on mount, then SIGNED_IN/SIGNED_OUT/etc.
+    // Listen for auth changes (INITIAL_SESSION, SIGNED_IN, SIGNED_OUT, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      (_event, session) => {
+        if (!hasResolvedInitialSession) {
+          hasResolvedInitialSession = true
+        }
         handleSession(session)
       }
     )
 
+    // Fallback for environments where INITIAL_SESSION may not fire.
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (!isMounted || hasResolvedInitialSession) return
+        hasResolvedInitialSession = true
+        handleSession(session)
+      })
+      .catch((error) => {
+        console.error('Error getting initial session:', error)
+        if (!isMounted || hasResolvedInitialSession) return
+        hasResolvedInitialSession = true
+        setLoading(false)
+      })
+
+    const initialSessionTimeout = setTimeout(() => {
+      if (!isMounted || hasResolvedInitialSession) return
+      console.warn(`Auth initialization timed out after ${INITIAL_AUTH_TIMEOUT_MS}ms`)
+      hasResolvedInitialSession = true
+      setLoading(false)
+    }, INITIAL_AUTH_TIMEOUT_MS)
+
     return () => {
       isMounted = false
+      clearTimeout(initialSessionTimeout)
       subscription.unsubscribe()
     }
   }, [])
@@ -64,17 +106,20 @@ export const AuthProvider = ({ children }) => {
 
       if (profileError) {
         console.error('Error loading profile:', profileError)
+        setProfile(null)
         return
       }
 
       if (!profileData) {
         console.log('No profile found for user:', userId)
+        setProfile(null)
         return
       }
 
       setProfile(profileData)
     } catch (error) {
       console.error('Error in loadUserProfile:', error)
+      setProfile(null)
     }
   }
 

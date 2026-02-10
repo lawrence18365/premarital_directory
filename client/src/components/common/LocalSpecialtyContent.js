@@ -25,11 +25,11 @@ const LocalSpecialtyContent = ({ specialty, stateName, cityName }) => {
         return (
           <>
              <p>
-               For Catholic couples in {locationName}, completing <strong>Pre-Cana marriage preparation</strong> is a required step before the Sacrament of Matrimony.
-               {cityName ? ` Parishes in the ${cityName} area` : ` Dioceses across ${stateName}`} typically offer weekend retreats, sponsor couple programs, or classes.
+               For Catholic couples in {locationName}, <strong>Pre-Cana marriage preparation</strong> is often part of parish marriage requirements.
+               {cityName ? ` The listings in ${cityName}` : ` The listings in ${stateName}`} show verified parish and diocesan programs first.
              </p>
              <p>
-               Many Catholic counselors in {locationName} also use the FOCCUS inventory to help you discuss topics like family of origin, communication, and sacramental theology.
+               Many programs use FOCCUS or similar inventories to guide conversations about communication, family of origin, and sacramental preparation.
              </p>
           </>
         )

@@ -69,21 +69,30 @@ class SitemapService {
     // Get profiles ready for indexing (approved + published)
     const { data: profiles } = await this.supabase
       .from('profiles')
-      .select('slug, full_name, state_province, city, updated_at, ready_for_indexing')
-      .eq('ready_for_indexing', true)
+      .select('slug, full_name, state_province, city, onboarding_last_saved_at, created_at, is_sponsored')
+      .eq('is_hidden', false)
       .eq('status', 'approved')
       .order('created_at', { ascending: true })
 
+    if (!profiles || profiles.length === 0) {
+      console.log('No approved profiles found for sitemap')
+      return 0
+    }
+
     const sitemapContent = this.buildXmlSitemap(
-      profiles.map(profile => {
-        const stateSlug = Object.keys(STATE_CONFIG).find(key => STATE_CONFIG[key].name === profile.state_province)
-        return {
-          url: `https://weddingcounselors.com/professionals/${stateSlug}/${profile.slug}`,
-          lastmod: new Date(profile.updated_at).toISOString().split('T')[0],
-          changefreq: 'monthly',
-          priority: profile.is_sponsored ? '0.8' : '0.6'
-        }
-      })
+      profiles
+        .filter(profile => profile.slug && profile.city && profile.state_province)
+        .map(profile => {
+          const stateSlug = profile.state_province.toLowerCase().replace(/\s+/g, '-')
+          const citySlug = profile.city.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+          const lastmod = profile.onboarding_last_saved_at || profile.created_at
+          return {
+            url: `https://www.weddingcounselors.com/premarital-counseling/${stateSlug}/${citySlug}/${profile.slug}`,
+            lastmod: new Date(lastmod).toISOString().split('T')[0],
+            changefreq: 'monthly',
+            priority: profile.is_sponsored ? '0.8' : '0.6'
+          }
+        })
     )
 
     await fs.writeFile(

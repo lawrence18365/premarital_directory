@@ -114,6 +114,7 @@ const ConfirmEmailPage = React.lazy(() => import('./pages/ConfirmEmailPage'))
 const EmailVerifiedPage = React.lazy(() => import('./pages/EmailVerifiedPage'))
 const SEOContentPage = React.lazy(() => import('./pages/SEOContentPage'))
 const ClaimWithTokenPage = React.lazy(() => import('./pages/ClaimWithTokenPage'))
+const ClaimProgramPage = React.lazy(() => import('./pages/ClaimProgramPage'))
 
 // Test functions for AI content generation (development only)
 if (process.env.NODE_ENV === 'development') {
@@ -198,6 +199,7 @@ function AppInner() {
                 <Route path="/claim-profile" element={<ClaimProfilePage />} />
                 <Route path="/claim-profile/:slugOrId" element={<ClaimProfilePage />} />
                 <Route path="/claim/:token" element={<ClaimWithTokenPage />} />
+                <Route path="/claim-program/:token" element={<ClaimProgramPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/therapists" element={<HomePage />} />

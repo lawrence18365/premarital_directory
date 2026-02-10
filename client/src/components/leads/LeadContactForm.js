@@ -150,7 +150,8 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
         </div>
         <h3>Message sent</h3>
         <p>
-          Your message was delivered to {shortName}. You should hear back by email soon.
+          Your message was delivered to {shortName}. Most professionals reply within 1-2 business days.
+          If you do not hear back, contact another counselor in your city.
         </p>
         <button
           className="btn btn-outline"

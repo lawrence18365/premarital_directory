@@ -8,6 +8,18 @@ const RESPONSE_WINDOW_DAYS = 30
 const RESPONDED_STATUSES = new Set(['contacted', 'scheduled', 'converted', 'booked_elsewhere'])
 const EXCLUDED_RESPONSE_STATUSES = new Set(['spam', 'duplicate'])
 const OPEN_LEAD_STATUSES = new Set(['new', 'pending_claim'])
+const DASHBOARD_QUERY_TIMEOUT_MS = 12000
+
+const withTimeout = (promise, label, timeoutMs = DASHBOARD_QUERY_TIMEOUT_MS) => {
+  let timeoutId
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`${label} timed out after ${timeoutMs}ms`))
+    }, timeoutMs)
+  })
+
+  return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timeoutId))
+}
 
 const ProfessionalDashboard = () => {
   const { user, profile, loading: authLoading, signOut } = useAuth()
@@ -48,25 +60,32 @@ const ProfessionalDashboard = () => {
     if (!profile) return
 
     setLoading(true)
+    setError(null)
 
     try {
       // Load recent leads
-      const { data: recentLeadsData, error: recentLeadsError } = await supabase
-        .from('profile_leads')
-        .select('*')
-        .eq('profile_id', profile.id)
-        .order('created_at', { ascending: false })
-        .limit(10)
+      const { data: recentLeadsData, error: recentLeadsError } = await withTimeout(
+        supabase
+          .from('profile_leads')
+          .select('*')
+          .eq('profile_id', profile.id)
+          .order('created_at', { ascending: false })
+          .limit(10),
+        'Loading recent leads'
+      )
 
       if (recentLeadsError) throw recentLeadsError
 
       setLeads(recentLeadsData || [])
 
-      const { data: allLeadsData, error: allLeadsError } = await supabase
-        .from('profile_leads')
-        .select('id, status, created_at')
-        .eq('profile_id', profile.id)
-        .order('created_at', { ascending: false })
+      const { data: allLeadsData, error: allLeadsError } = await withTimeout(
+        supabase
+          .from('profile_leads')
+          .select('id, status, created_at')
+          .eq('profile_id', profile.id)
+          .order('created_at', { ascending: false }),
+        'Loading lead stats'
+      )
 
       if (allLeadsError) throw allLeadsError
 
@@ -105,10 +124,15 @@ const ProfessionalDashboard = () => {
       })
 
       // Load profile view stats
-      const { data: clicksData } = await supabase
-        .from('profile_clicks')
-        .select('created_at')
-        .eq('profile_id', profile.id)
+      const { data: clicksData, error: clicksError } = await withTimeout(
+        supabase
+          .from('profile_clicks')
+          .select('created_at')
+          .eq('profile_id', profile.id),
+        'Loading profile views'
+      )
+
+      if (clicksError) throw clicksError
 
       const last7d = new Date(now - 7 * 24 * 60 * 60 * 1000)
       const last30d = new Date(now - 30 * 24 * 60 * 60 * 1000)
@@ -121,10 +145,14 @@ const ProfessionalDashboard = () => {
 
     } catch (err) {
       console.error('Error loading dashboard data:', err)
-      setError('Failed to load dashboard data. Please try refreshing.')
+      setError(
+        err?.message?.includes('timed out')
+          ? 'Dashboard request timed out. Please refresh and try again.'
+          : 'Failed to load dashboard data. Please try refreshing.'
+      )
+    } finally {
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   const handleSignOut = async () => {

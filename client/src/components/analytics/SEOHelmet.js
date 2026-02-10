@@ -217,6 +217,25 @@ const SEOHelmet = ({
 export const generateProfessionalStructuredData = (professional) => {
   const baseUrl = process.env.REACT_APP_SITE_URL || 'https://www.weddingcounselors.com';
 
+  // Build canonical profile URL
+  const stateSlug = professional.state_province
+    ? professional.state_province.toLowerCase().replace(/\s+/g, '-')
+    : null
+  const citySlug = professional.city
+    ? professional.city.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+    : null
+  const profileSlug = professional.slug || professional.full_name?.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-')
+  const canonicalPath = stateSlug && citySlug && profileSlug
+    ? `/premarital-counseling/${stateSlug}/${citySlug}/${profileSlug}`
+    : `/professionals/${professional.id}`
+
+  // Normalize website URL to include protocol
+  const normalizedWebsite = professional.website
+    ? (professional.website.startsWith('http://') || professional.website.startsWith('https://'))
+      ? professional.website
+      : `https://${professional.website}`
+    : undefined
+
   const professionalData = {
     "@context": "https://schema.org",
     "@type": ["Person", "LocalBusiness"],
@@ -234,18 +253,16 @@ export const generateProfessionalStructuredData = (professional) => {
     },
     "telephone": professional.phone,
     "email": professional.email,
-    "url": professional.website,
+    "url": normalizedWebsite,
     "priceRange": professional.pricing_range || undefined,
     "knowsLanguage": professional.languages && professional.languages.length > 0
       ? professional.languages
       : ["English"],
     "areaServed": {
       "@type": "Place",
-      "name": `${professional.city}, ${professional.state_province}`,
-      "geo": {
-        "@type": "GeoCoordinates",
-        "addressCountry": "US"
-      }
+      "name": professional.city && professional.state_province
+        ? `${professional.city}, ${professional.state_province}`
+        : "United States"
     },
     "serviceType": professional.specialties || ["Premarital Counseling"],
     "knowsAbout": [
@@ -277,14 +294,40 @@ export const generateProfessionalStructuredData = (professional) => {
         }
       ]
     },
-    "mainEntityOfPage": `${baseUrl}/profile/${professional.id}`,
+    "mainEntityOfPage": `${baseUrl}${canonicalPath}`,
     "sameAs": [
-      professional.website,
+      normalizedWebsite,
       professional.facebook_url,
       professional.linkedin_url,
       professional.instagram_url
     ].filter(Boolean)
   };
+
+  // Add credentials as hasCredential schema
+  const allCredentials = [
+    ...(Array.isArray(professional.credentials) ? professional.credentials : []),
+    ...(Array.isArray(professional.certifications) ? professional.certifications : [])
+  ].filter(Boolean)
+  if (allCredentials.length > 0) {
+    professionalData.hasCredential = allCredentials.map(cred => ({
+      "@type": "EducationalOccupationalCredential",
+      "credentialCategory": "license",
+      "name": cred
+    }))
+  }
+
+  // Add education as alumniOf
+  if (Array.isArray(professional.education) && professional.education.length > 0) {
+    professionalData.alumniOf = professional.education.map(edu => ({
+      "@type": "EducationalOrganization",
+      "name": edu
+    }))
+  }
+
+  // Add years of experience
+  if (professional.years_experience) {
+    professionalData.yearsOfExperience = professional.years_experience
+  }
 
   if (professional.reviews && professional.reviews.length > 0) {
     const totalRating = professional.reviews.reduce((acc, review) => acc + review.rating, 0);

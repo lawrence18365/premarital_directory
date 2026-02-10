@@ -63,35 +63,31 @@ serve(async (req) => {
       throw new Error('RESEND_API_KEY not configured')
     }
 
-    const firstName = professionalName.split(' ')[0]
+    const greetingName = professionalName?.trim() || 'there'
     const locationText = coupleLocation || (city ? `${city}, ${state}` : 'your area')
 
     // Plain text email (no HTML spam design)
-    const emailText = `Hi ${firstName},
+    const emailText = `Hi ${greetingName},
 
-A couple just tried to contact you through WeddingCounselors.com.
+New inquiry received via your listing on WeddingCounselors.com.
 
-${coupleName}${coupleLocation ? ` from ${locationText}` : ''} filled out your contact form and their message is waiting for you.
-
-To read their inquiry and respond, claim your free profile:
+${coupleName}${coupleLocation ? ` from ${locationText}` : ''} submitted an inquiry. Claim your profile to view the message and reply:
 ${claimUrl}
 
-Once you claim (takes 2 min), you can:
-• Read ${coupleName}'s full message
-• Receive future inquiries to your inbox
-• Update your profile & availability
-• Track leads & views
+After claiming, you can:
+• View the full inquiry details
+• Reply directly to the couple
+• Receive future inquiries in your dashboard
 
-100% free. No credit card.
+No credit card required.
 
 ---
-COUPLE'S INFO:
+INQUIRY SUMMARY:
 Name: ${coupleName}
-Email: [Claim Profile to View]${coupleLocation ? `
+Email: [Available after claim]${coupleLocation ? `
 Location: ${locationText}` : ''}
 
-After claiming, you'll see their full contact info and can reply directly.
-
+You received this email because your public listing uses this contact email.
 Questions? Reply to this email.
 
 Wedding Counselors
@@ -108,7 +104,7 @@ https://www.weddingcounselors.com`
         from: 'Wedding Counselors <hello@weddingcounselors.com>',
         to: [profileEmail],
         reply_to: 'hello@weddingcounselors.com',
-        subject: `A couple tried to contact you – ${coupleName}`,
+        subject: `New inquiry received via your listing - ${coupleName}`,
         text: emailText,
       }),
     })

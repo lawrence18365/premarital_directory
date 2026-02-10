@@ -90,6 +90,7 @@ const SPECIALTY_MATCH_TERMS = {
 const MIN_SPECIALTY_STATE_PROFILES = 3
 const MIN_SPECIALTY_CITY_PROFILES = 2
 const MIN_SPECIALTY_ANCHOR_CITY_PROFILES = 1
+const MIN_VERIFIED_CATHOLIC_PROGRAMS = 3
 
 const DOMAIN = 'https://www.weddingcounselors.com'
 
@@ -159,9 +160,9 @@ async function fetchProfileCounts() {
     // Fetch all profiles with their slugs for sitemap
     const { data: profiles, error } = await supabase
       .from('profiles')
-      .select('id, slug, city, state_province, full_name, bio, specialties, updated_at, is_hidden')
+      .select('id, slug, city, state_province, full_name, bio, specialties, onboarding_last_saved_at, created_at, is_hidden')
       .eq('is_hidden', false)
-      .order('updated_at', { ascending: false })
+      .order('created_at', { ascending: false })
 
     if (error) {
       console.log('⚠️  Error fetching profiles:', error.message)
@@ -181,6 +182,56 @@ async function fetchProfileCounts() {
   } catch (err) {
     console.log('⚠️  Failed to connect to Supabase:', err.message)
     return { cityCounts: null, profiles: [] }
+  }
+}
+
+async function fetchCatholicProgramCounts() {
+  if (!createClient) {
+    console.log('⚠️  Supabase client not available for Catholic program counts')
+    return { stateCounts: {}, cityCounts: {}, totalPrograms: 0, hasCoverage: false }
+  }
+
+  const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
+  const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.log('⚠️  Supabase credentials not found for Catholic program counts')
+    return { stateCounts: {}, cityCounts: {}, totalPrograms: 0, hasCoverage: false }
+  }
+
+  try {
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+    const { data: programs, error } = await supabase
+      .from('program_directory_public')
+      .select('id, city, state_province, tradition')
+      .eq('tradition', 'Catholic')
+
+    if (error) {
+      console.log('⚠️  Error fetching Catholic program counts:', error.message)
+      return { stateCounts: {}, cityCounts: {}, totalPrograms: 0, hasCoverage: false }
+    }
+
+    const stateCounts = {}
+    const cityCounts = {}
+    ;(programs || []).forEach((program) => {
+      if (!program?.state_province || !program?.city) return
+      const stateSlug = getStateSlug(program.state_province)
+      const citySlug = getCitySlug(program.city)
+      const stateKey = `${stateSlug}`
+      const cityKey = `${stateSlug}|${citySlug}`
+      stateCounts[stateKey] = (stateCounts[stateKey] || 0) + 1
+      cityCounts[cityKey] = (cityCounts[cityKey] || 0) + 1
+    })
+
+    return {
+      stateCounts,
+      cityCounts,
+      totalPrograms: (programs || []).length,
+      hasCoverage: true
+    }
+  } catch (err) {
+    console.log('⚠️  Failed to fetch Catholic program counts:', err.message)
+    return { stateCounts: {}, cityCounts: {}, totalPrograms: 0, hasCoverage: false }
   }
 }
 
@@ -258,11 +309,23 @@ async function main() {
 
   // Fetch profile counts and profiles from Supabase
   const { cityCounts: profileCounts, profiles: allProfiles } = await fetchProfileCounts()
+  const {
+    stateCounts: catholicProgramStateCounts,
+    cityCounts: catholicProgramCityCounts,
+    totalPrograms: totalCatholicPrograms,
+    hasCoverage: hasCatholicProgramCoverage
+  } = await fetchCatholicProgramCounts()
   const { stateCounts: specialtyStateCounts, cityCounts: specialtyCityCounts } = buildSpecialtyDepth(allProfiles)
   const hasSpecialtyDepthData = Array.isArray(allProfiles) && allProfiles.length > 0
 
   // 1. Core pages sitemap
-  const coreUrls = CORE_PAGES.map(page => ({
+  const corePages = CORE_PAGES.filter((page) => {
+    if (page.url !== '/premarital-counseling/catholic') return true
+    if (!hasCatholicProgramCoverage) return false
+    return totalCatholicPrograms >= MIN_VERIFIED_CATHOLIC_PROGRAMS
+  })
+
+  const coreUrls = corePages.map(page => ({
     ...page,
     lastmod: today
   }))
@@ -355,7 +418,7 @@ async function main() {
   let includedSpecialtyCityPages = 0
 
   if (!hasSpecialtyDepthData) {
-    console.log('⚠️  Specialty depth data unavailable; using anchor-city fallback for specialty sitemap')
+    console.log('⚠️  Specialty depth data unavailable; using anchor-city fallback for non-Catholic specialty sitemap')
   }
 
   // For each specialty
@@ -364,14 +427,22 @@ async function main() {
     Object.keys(STATE_CONFIG).forEach(stateSlug => {
       const stateKey = `${specialty}|${stateSlug}`
       const specialtyProfilesInState = specialtyStateCounts[stateKey] || 0
+      const catholicProgramsInState = catholicProgramStateCounts[stateSlug] || 0
       const stateData = STATE_CONFIG[stateSlug]
       const stateHasAnchorCity = stateData.major_cities.some((cityName) => {
         const citySlug = getCitySlug(cityName)
         return CITY_CONFIG[stateSlug]?.[citySlug]?.is_anchor === true
       })
-      const includeStatePage = hasSpecialtyDepthData
-        ? specialtyProfilesInState >= MIN_SPECIALTY_STATE_PROFILES
-        : stateHasAnchorCity
+      const includeStatePage = specialty === 'catholic'
+        ? (
+          hasCatholicProgramCoverage &&
+          catholicProgramsInState >= MIN_VERIFIED_CATHOLIC_PROGRAMS
+        )
+        : (
+          hasSpecialtyDepthData
+            ? specialtyProfilesInState >= MIN_SPECIALTY_STATE_PROFILES
+            : stateHasAnchorCity
+        )
 
       if (includeStatePage) {
         specialtyUrls.push({
@@ -387,13 +458,21 @@ async function main() {
         const citySlug = getCitySlug(cityName)
         const cityKey = `${specialty}|${stateSlug}|${citySlug}`
         const specialtyProfilesInCity = specialtyCityCounts[cityKey] || 0
+        const catholicProgramsInCity = catholicProgramCityCounts[`${stateSlug}|${citySlug}`] || 0
         const isAnchorCity = CITY_CONFIG[stateSlug]?.[citySlug]?.is_anchor === true
-        const includeCityPage = hasSpecialtyDepthData
+        const includeCityPage = specialty === 'catholic'
           ? (
-            specialtyProfilesInCity >= MIN_SPECIALTY_CITY_PROFILES ||
-            (isAnchorCity && specialtyProfilesInCity >= MIN_SPECIALTY_ANCHOR_CITY_PROFILES)
+            hasCatholicProgramCoverage &&
+            catholicProgramsInCity >= MIN_VERIFIED_CATHOLIC_PROGRAMS
           )
-          : isAnchorCity
+          : (
+            hasSpecialtyDepthData
+              ? (
+                specialtyProfilesInCity >= MIN_SPECIALTY_CITY_PROFILES ||
+                (isAnchorCity && specialtyProfilesInCity >= MIN_SPECIALTY_ANCHOR_CITY_PROFILES)
+              )
+              : isAnchorCity
+          )
 
         if (!includeCityPage) return
 
@@ -433,8 +512,8 @@ async function main() {
       if (profile.slug && profile.city && profile.state_province) {
         const stateSlug = getStateSlug(profile.state_province)
         const citySlug = getCitySlug(profile.city)
-        const lastmod = profile.updated_at
-          ? new Date(profile.updated_at).toISOString().split('T')[0]
+        const lastmod = profile.onboarding_last_saved_at
+          ? new Date(profile.onboarding_last_saved_at).toISOString().split('T')[0]
           : today
 
         profileUrls.push({

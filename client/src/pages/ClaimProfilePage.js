@@ -7,7 +7,7 @@ import { profileOperations } from '../lib/supabaseClient'
 import { sendClaimSubmittedEmail } from '../lib/emailNotifications'
 
 const ClaimProfilePage = () => {
-  const { id } = useParams() // Optional - for claiming specific profile
+  const { slugOrId } = useParams() // Optional - for claiming specific profile
   const [existingProfile, setExistingProfile] = useState(null)
   const [formData, setFormData] = useState({
     full_name: '',
@@ -31,15 +31,15 @@ const ClaimProfilePage = () => {
   const [checkingDuplicate, setCheckingDuplicate] = useState(false)
 
   useEffect(() => {
-    if (id) {
+    if (slugOrId) {
       loadExistingProfile()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+  }, [slugOrId])
 
   const loadExistingProfile = async () => {
     try {
-      const { data, error } = await profileOperations.getProfile(id)
+      const { data, error } = await profileOperations.getProfile(slugOrId)
       if (data && !error) {
         setExistingProfile(data)
         setFormData({

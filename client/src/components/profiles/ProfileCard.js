@@ -76,9 +76,9 @@ const getSessionTypeLabel = (profile) => {
   const hasOnline = sessionTypes.includes('online') || sessionTypes.includes('hybrid')
   const hasInPerson = sessionTypes.includes('in-person') || sessionTypes.includes('hybrid')
 
-  if (hasOnline && hasInPerson) return 'Online + In-person'
+  if (hasOnline && hasInPerson) return 'Online + In-Person'
   if (hasOnline) return 'Online'
-  if (hasInPerson) return 'In-person'
+  if (hasInPerson) return 'In-Person'
   return null
 }
 
