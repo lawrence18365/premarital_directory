@@ -1,6 +1,7 @@
 import React from 'react'
 import QuestionContainer from '../QuestionContainer'
 import { supabase } from '../../../../../lib/supabaseClient'
+import { getStateNameFromAbbr } from '../../../../../lib/utils'
 import { sendProfileCreatedEmail, sendAdminNewSignupAlert } from '../../../../../lib/emailNotifications'
 
 const Q19_Review = ({
@@ -43,6 +44,7 @@ const Q19_Review = ({
           slug: slug,
           onboarding_completed: true,
           onboarding_last_saved_at: new Date().toISOString(),
+          status: 'approved',
           moderation_status: 'approved',
           moderation_reviewed_at: new Date().toISOString(),
           is_claimed: true,
@@ -54,15 +56,12 @@ const Q19_Review = ({
       if (publishError) throw publishError
 
       // Generate profile URL
-      const getStateSlug = (stateAbbr) => {
-        return stateAbbr.toLowerCase()
-      }
-
       const getCitySlug = (cityName) => {
         return cityName.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')
       }
 
-      const stateSlug = getStateSlug(profileData.state_province)
+      // Convert state abbreviation to full name for SEO-friendly URLs
+      const stateSlug = getStateNameFromAbbr(profileData.state_province) || profileData.state_province?.toLowerCase()
       const citySlug = getCitySlug(profileData.city)
       const profileUrl = `/premarital-counseling/${stateSlug}/${citySlug}/${slug}`
       const fullProfileUrl = `${window.location.origin}${profileUrl}`

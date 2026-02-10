@@ -74,7 +74,7 @@ const Footer = () => {
           <div className="footer-section">
             <h4>For Professionals</h4>
             <ul>
-              <li><Link to="/professional/signup">List Your Practice</Link></li>
+              <li><Link to="/professional/signup" rel="nofollow">List Your Practice</Link></li>
               <li><Link to="/claim-profile">Claim Profile</Link></li>
               <li><Link to="/features">Features</Link></li>
               <li><Link to="/guidelines">Guidelines</Link></li>

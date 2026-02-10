@@ -266,7 +266,7 @@ const HomePage = () => {
                 </p>
               </div>
               <div className="provider-cta__actions">
-                <Link to="/professional/signup?signup_source=homepage_cta" className="btn provider-cta__primary">
+                <Link to="/professional/signup?signup_source=homepage_cta" className="btn provider-cta__primary" rel="nofollow">
                   <span className="provider-cta__btn-label">Create Your Free Profile</span>
                   <span className="provider-cta__btn-subtext">No credit card required</span>
                 </Link>

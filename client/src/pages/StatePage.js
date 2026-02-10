@@ -251,6 +251,7 @@ const StatePage = () => {
                   <Link
                     to="/professional/signup"
                     className="btn btn-secondary btn-large"
+                    rel="nofollow"
                   >
                     <i className="fa fa-plus-circle mr-2"></i>
                     List Your Practice

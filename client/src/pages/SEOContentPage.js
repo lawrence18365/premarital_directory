@@ -5,6 +5,7 @@ import { SEOHelmet } from '../components/analytics'
 import Breadcrumbs from '../components/common/Breadcrumbs'
 import ProfileList from '../components/profiles/ProfileList'
 import { profileOperations } from '../lib/supabaseClient'
+import { generateSlug } from '../lib/utils'
 
 const SEOContentPage = () => {
   const { slug } = useParams()
@@ -180,15 +181,15 @@ const SEOContentPage = () => {
                   </p>
                   <div className="cta-actions">
                     {content.type === 'city' ? (
-                      <a 
-                        href={`/professionals?state=${content.state}&city=${content.location}`}
+                      <a
+                        href={`/premarital-counseling/${generateSlug(content.state)}/${generateSlug(content.location)}`}
                         className="btn btn-primary btn-large"
                       >
                         Find Counselors in {content.location}
                       </a>
                     ) : (
-                      <a 
-                        href={`/professionals?state=${content.location}`}
+                      <a
+                        href={`/premarital-counseling/${generateSlug(content.location)}`}
                         className="btn btn-primary btn-large"
                       >
                         Browse {content.location} Professionals
@@ -234,10 +235,10 @@ const SEOContentPage = () => {
                       </div>
                     ))}
                   </div>
-                  <a 
-                    href={content.type === 'city' 
-                      ? `/professionals?state=${content.state}&city=${content.location}`
-                      : `/professionals?state=${content.location}`
+                  <a
+                    href={content.type === 'city'
+                      ? `/premarital-counseling/${generateSlug(content.state)}/${generateSlug(content.location)}`
+                      : `/premarital-counseling/${generateSlug(content.location)}`
                     }
                     className="btn btn-primary btn-full"
                   >
@@ -292,10 +293,10 @@ const SEOContentPage = () => {
               <h2>Featured Professionals in {content.location}</h2>
               <ProfileList profiles={relatedProfiles} />
               <div style={{ textAlign: 'center', marginTop: 'var(--space-8)' }}>
-                <a 
-                  href={content.type === 'city' 
-                    ? `/professionals?state=${content.state}&city=${content.location}`
-                    : `/professionals?state=${content.location}`
+                <a
+                  href={content.type === 'city'
+                    ? `/premarital-counseling/${generateSlug(content.state)}/${generateSlug(content.location)}`
+                    : `/premarital-counseling/${generateSlug(content.location)}`
                   }
                   className="btn btn-primary btn-large"
                 >

@@ -4,9 +4,12 @@ import LoadingSpinner from '../components/common/LoadingSpinner'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import Breadcrumbs from '../components/common/Breadcrumbs'
 import ProfileCard from '../components/profiles/ProfileCard'
+import ProgramCard from '../components/programs/ProgramCard'
 import FAQ from '../components/common/FAQ'
 import LeadContactForm from '../components/leads/LeadContactForm'
 import { getSpecialtyBySlug, getAllSpecialties } from '../data/specialtyConfig'
+import { STATE_CONFIG } from '../data/locationConfig'
+import { buildCatholicProgramsQuery, isCatholicSpecialty, normalizeProgramRecord } from '../lib/programCatalog'
 import { supabase } from '../lib/supabaseClient'
 import '../assets/css/specialty-page.css'
 
@@ -15,6 +18,7 @@ const SpecialtyPage = () => {
   const { state: specialtySlug } = useParams()
   const [loading, setLoading] = useState(true)
   const [profiles, setProfiles] = useState([])
+  const [programs, setPrograms] = useState([])
   const [showGetMatchedForm, setShowGetMatchedForm] = useState(false)
   const [displayCount, setDisplayCount] = useState(12)
 
@@ -33,6 +37,22 @@ const SpecialtyPage = () => {
     setLoading(true)
 
     try {
+      if (isCatholicSpecialty(specialty)) {
+        const { data: programData, error: programError } = await buildCatholicProgramsQuery(supabase)
+          .order('next_start_date', { ascending: true, nullsFirst: false })
+          .order('church_name', { ascending: true })
+          .limit(200)
+
+        if (programError) {
+          console.error('Error loading catholic programs:', programError)
+          setPrograms([])
+        } else {
+          setPrograms((programData || []).map(normalizeProgramRecord))
+        }
+      } else {
+        setPrograms([])
+      }
+
       // Build OR conditions for filterTerms
       const filterConditions = specialty.filterTerms
         .map(term => `bio.ilike.%${term}%,specialties.cs.{${term}}`)
@@ -71,6 +91,7 @@ const SpecialtyPage = () => {
     } catch (err) {
       console.error('Error:', err)
       setProfiles([])
+      setPrograms([])
     }
 
     setLoading(false)
@@ -136,6 +157,22 @@ const SpecialtyPage = () => {
   }, {})
 
   const statesWithProfiles = Object.keys(profilesByState).sort()
+  const isCatholic = isCatholicSpecialty(specialty)
+  const programsByState = programs.reduce((acc, program) => {
+    const stateValue = program?.church?.stateProvince
+    if (!stateValue) return acc
+    if (!acc[stateValue]) acc[stateValue] = []
+    acc[stateValue].push(program)
+    return acc
+  }, {})
+  const statesWithPrograms = Object.keys(programsByState).sort((a, b) => programsByState[b].length - programsByState[a].length)
+
+  const toStateSlug = (stateValue) => {
+    const normalized = String(stateValue || '').trim().toLowerCase()
+    const byAbbr = Object.entries(STATE_CONFIG).find(([, config]) => config.abbr?.toLowerCase() === normalized)
+    if (byAbbr) return byAbbr[0]
+    return normalized.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+  }
 
   if (loading) return <LoadingSpinner />
 
@@ -176,14 +213,15 @@ const SpecialtyPage = () => {
                   className="btn btn-primary btn-large"
                 >
                   <i className="fa fa-heart mr-2"></i>
-                  Find a {specialty.name} Counselor
+                  {isCatholic ? 'Find a Catholic Program' : `Find a ${specialty.name} Counselor`}
                 </button>
                 <Link
                   to="/professional/signup"
                   className="btn btn-secondary btn-large"
+                  rel="nofollow"
                 >
                   <i className="fa fa-plus-circle mr-2"></i>
-                  List Your Practice
+                  {isCatholic ? 'List Your Program' : 'List Your Practice'}
                 </Link>
               </div>
             </div>
@@ -211,65 +249,133 @@ const SpecialtyPage = () => {
         <div className="specialty-profiles-section">
           <div className="specialty-container">
             <h2 className="section-title">
-              {profiles.length > 0
-                ? `${profiles.length} ${specialty.name} Premarital Counselors`
-                : `Find ${specialty.name} Premarital Counselors`
-              }
+              {isCatholic
+                ? (programs.length > 0
+                  ? `${programs.length} Verified Catholic Pre-Cana Programs`
+                  : 'Verified Catholic Pre-Cana Programs')
+                : (profiles.length > 0
+                  ? `${profiles.length} ${specialty.name} Premarital Counselors`
+                  : `Find ${specialty.name} Premarital Counselors`
+                )}
             </h2>
             <p className="section-subtitle">
-              {profiles.length > 0
-                ? `Connect with premarital counselors specializing in ${specialty.name.toLowerCase()} marriage preparation across the United States.`
-                : `We're building our network of ${specialty.name.toLowerCase()} counselors. Submit your preferences and we'll match you with qualified professionals.`
-              }
+              {isCatholic
+                ? (programs.length > 0
+                  ? 'Browse verified parish and diocesan marriage preparation programs first. Catholic-friendly therapists are listed below as secondary options.'
+                  : 'No verified programs are published yet in this specialty. Claim your parish program to be listed.')
+                : (profiles.length > 0
+                  ? `Connect with premarital counselors specializing in ${specialty.name.toLowerCase()} marriage preparation across the United States.`
+                  : `We're building our network of ${specialty.name.toLowerCase()} counselors. Submit your preferences and we'll match you with qualified professionals.`
+                )}
             </p>
 
-            {profiles.length > 0 ? (
+            {isCatholic ? (
               <>
-                <div className="profiles-grid">
-                  {profiles.slice(0, displayCount).map(profile => (
-                    <ProfileCard key={profile.id} profile={profile} />
-                  ))}
-                </div>
+                {programs.length > 0 ? (
+                  <div className="programs-grid">
+                    {programs.slice(0, displayCount).map((program) => (
+                      <ProgramCard key={program.id} program={program} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="no-profiles-cta">
+                    <p>No verified Catholic programs are listed yet. If you run Pre-Cana in your parish, claim your listing to publish it.</p>
+                    <a href="mailto:hello@weddingcounselors.com?subject=Claim%20Our%20Parish%20Program" className="btn btn-primary">
+                      Claim Your Program
+                    </a>
+                  </div>
+                )}
 
-                {profiles.length > displayCount && (
+                {programs.length > displayCount && (
                   <div className="load-more-section">
                     <button
                       onClick={() => setDisplayCount(prev => prev + 12)}
                       className="btn btn-outline"
                     >
-                      Load More Counselors ({profiles.length - displayCount} remaining)
+                      Load More Programs ({programs.length - displayCount} remaining)
                     </button>
                   </div>
                 )}
 
-                {/* States with counselors */}
-                {statesWithProfiles.length > 0 && (
+                {statesWithPrograms.length > 0 && (
                   <div className="states-with-specialty">
-                    <h3>Browse {specialty.name} Counselors by State</h3>
+                    <h3>Browse Catholic Programs by State</h3>
                     <div className="state-pills">
-                      {statesWithProfiles.map(state => (
-                        <Link
-                          key={state}
-                          to={`/premarital-counseling/${state.toLowerCase().replace(/\s+/g, '-')}`}
-                          className="state-pill"
-                        >
-                          {state} ({profilesByState[state].length})
-                        </Link>
+                      {statesWithPrograms.map((state) => {
+                        const stateSlug = toStateSlug(state)
+                        return (
+                          <Link
+                            key={state}
+                            to={`/premarital-counseling/catholic/${stateSlug}`}
+                            className="state-pill"
+                          >
+                            {state} ({programsByState[state].length})
+                          </Link>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {profiles.length > 0 && (
+                  <div className="states-with-specialty">
+                    <h3>Catholic-Friendly Therapists (Secondary)</h3>
+                    <div className="profiles-grid">
+                      {profiles.slice(0, 6).map((profile) => (
+                        <ProfileCard key={profile.id} profile={profile} />
                       ))}
                     </div>
                   </div>
                 )}
               </>
             ) : (
-              <div className="no-profiles-cta">
-                <p>We're actively growing our {specialty.name.toLowerCase()} counselor network.</p>
-                <button
-                  onClick={() => setShowGetMatchedForm(true)}
-                  className="btn btn-primary"
-                >
-                  Get Matched With a Counselor
-                </button>
-              </div>
+              profiles.length > 0 ? (
+                <>
+                  <div className="profiles-grid">
+                    {profiles.slice(0, displayCount).map(profile => (
+                      <ProfileCard key={profile.id} profile={profile} />
+                    ))}
+                  </div>
+
+                  {profiles.length > displayCount && (
+                    <div className="load-more-section">
+                      <button
+                        onClick={() => setDisplayCount(prev => prev + 12)}
+                        className="btn btn-outline"
+                      >
+                        Load More Counselors ({profiles.length - displayCount} remaining)
+                      </button>
+                    </div>
+                  )}
+
+                  {statesWithProfiles.length > 0 && (
+                    <div className="states-with-specialty">
+                      <h3>Browse {specialty.name} Counselors by State</h3>
+                      <div className="state-pills">
+                        {statesWithProfiles.map(state => (
+                          <Link
+                            key={state}
+                            to={`/premarital-counseling/${state.toLowerCase().replace(/\s+/g, '-')}`}
+                            className="state-pill"
+                          >
+                            {state} ({profilesByState[state].length})
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="no-profiles-cta">
+                  <p>We're actively growing our {specialty.name.toLowerCase()} counselor network.</p>
+                  <button
+                    onClick={() => setShowGetMatchedForm(true)}
+                    className="btn btn-primary"
+                  >
+                    Get Matched With a Counselor
+                  </button>
+                </div>
+              )
             )}
           </div>
         </div>
@@ -332,7 +438,7 @@ const SpecialtyPage = () => {
               <p>Looking for {specialty.name.toLowerCase()} marriage preparation? We'll connect you with qualified counselors.</p>
               <LeadContactForm
                 profileId={null}
-                professionalName={`${specialty.name} Counselors`}
+                professionalName={isCatholic ? 'Catholic Pre-Cana Programs' : `${specialty.name} Counselors`}
                 isSpecialtyMatching={true}
                 specialtyType={specialty.name}
                 onSuccess={() => {

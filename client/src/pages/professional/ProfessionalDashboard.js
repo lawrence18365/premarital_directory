@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabaseClient'
+import { getStateNameFromAbbr } from '../../lib/utils'
 import { Link, Navigate } from 'react-router-dom'
+
+const RESPONSE_WINDOW_DAYS = 30
+const RESPONDED_STATUSES = new Set(['contacted', 'scheduled', 'converted', 'booked_elsewhere'])
+const EXCLUDED_RESPONSE_STATUSES = new Set(['spam', 'duplicate'])
+const OPEN_LEAD_STATUSES = new Set(['new', 'pending_claim'])
 
 const ProfessionalDashboard = () => {
   const { user, profile, loading: authLoading, signOut } = useAuth()
@@ -10,7 +16,9 @@ const ProfessionalDashboard = () => {
     totalLeads: 0,
     thisMonthLeads: 0,
     pendingLeads: 0,
-    responseRate: 0
+    responseRate: 0,
+    responseEligibleLeads: 0,
+    respondedLeads: 0
   })
   const [viewStats, setViewStats] = useState({
     total: 0,
@@ -43,42 +51,57 @@ const ProfessionalDashboard = () => {
 
     try {
       // Load recent leads
-      const { data: leadsData, error: leadsError } = await supabase
+      const { data: recentLeadsData, error: recentLeadsError } = await supabase
         .from('profile_leads')
         .select('*')
         .eq('profile_id', profile.id)
         .order('created_at', { ascending: false })
         .limit(10)
 
-      if (leadsError) throw leadsError
+      if (recentLeadsError) throw recentLeadsError
 
-      setLeads(leadsData || [])
+      setLeads(recentLeadsData || [])
+
+      const { data: allLeadsData, error: allLeadsError } = await supabase
+        .from('profile_leads')
+        .select('id, status, created_at')
+        .eq('profile_id', profile.id)
+        .order('created_at', { ascending: false })
+
+      if (allLeadsError) throw allLeadsError
 
       // Calculate lead stats
-      const totalLeads = leadsData?.length || 0
+      const allLeads = allLeadsData || []
+      const totalLeads = allLeads.length
       const thisMonth = new Date()
       thisMonth.setDate(1)
       thisMonth.setHours(0, 0, 0, 0)
 
-      const thisMonthLeads = leadsData?.filter(
+      const thisMonthLeads = allLeads.filter(
         lead => new Date(lead.created_at) >= thisMonth
-      ).length || 0
+      ).length
 
-      const pendingLeads = leadsData?.filter(
-        lead => lead.status === 'new'
-      ).length || 0
+      const pendingLeads = allLeads.filter((lead) => OPEN_LEAD_STATUSES.has(lead.status)).length
 
-      const contactedLeads = leadsData?.filter(
-        lead => lead.status === 'contacted'
-      ).length || 0
+      const now = new Date()
+      const responseWindowStart = new Date(now.getTime() - RESPONSE_WINDOW_DAYS * 24 * 60 * 60 * 1000)
+      const responseWindowLeads = allLeads.filter((lead) => {
+        const createdAt = new Date(lead.created_at)
+        return createdAt >= responseWindowStart && !EXCLUDED_RESPONSE_STATUSES.has(lead.status)
+      })
 
-      const responseRate = totalLeads > 0 ? Math.round((contactedLeads / totalLeads) * 100) : 0
+      const respondedLeads = responseWindowLeads.filter((lead) => RESPONDED_STATUSES.has(lead.status)).length
+      const responseRate = responseWindowLeads.length > 0
+        ? Math.round((respondedLeads / responseWindowLeads.length) * 100)
+        : 0
 
       setStats({
         totalLeads,
         thisMonthLeads,
         pendingLeads,
-        responseRate
+        responseRate,
+        responseEligibleLeads: responseWindowLeads.length,
+        respondedLeads
       })
 
       // Load profile view stats
@@ -87,7 +110,6 @@ const ProfessionalDashboard = () => {
         .select('created_at')
         .eq('profile_id', profile.id)
 
-      const now = new Date()
       const last7d = new Date(now - 7 * 24 * 60 * 60 * 1000)
       const last30d = new Date(now - 30 * 24 * 60 * 60 * 1000)
 
@@ -167,9 +189,15 @@ const ProfessionalDashboard = () => {
   const getStatusBadge = (status) => {
     const badges = {
       new: 'badge-new',
+      pending_claim: 'badge-warning',
       contacted: 'badge-success',
       scheduled: 'badge-warning',
-      converted: 'badge-primary'
+      converted: 'badge-primary',
+      booked_elsewhere: 'badge-success',
+      no_response: 'badge-default',
+      duplicate: 'badge-default',
+      spam: 'badge-default',
+      archived: 'badge-default'
     }
     return badges[status] || 'badge-default'
   }
@@ -177,9 +205,15 @@ const ProfessionalDashboard = () => {
   const getStatusText = (status) => {
     const texts = {
       new: 'New',
+      pending_claim: 'Pending claim',
       contacted: 'Contacted',
       scheduled: 'Scheduled',
-      converted: 'Converted'
+      converted: 'Converted',
+      booked_elsewhere: 'Booked elsewhere',
+      no_response: 'No response',
+      duplicate: 'Duplicate',
+      spam: 'Spam',
+      archived: 'Archived'
     }
     return texts[status] || status
   }
@@ -193,7 +227,8 @@ const ProfessionalDashboard = () => {
   // Generate public profile URL
   const getPublicProfileUrl = () => {
     if (!profile) return '#'
-    const stateSlug = String(profile.state_province || '').toLowerCase().replace(/\s+/g, '-')
+    // Convert state abbreviation to full name for SEO-friendly URLs
+    const stateSlug = getStateNameFromAbbr(profile.state_province) || String(profile.state_province || '').toLowerCase().replace(/\s+/g, '-')
     const citySlug = String(profile.city || '').toLowerCase().replace(/\s+/g, '-')
     return `/premarital-counseling/${stateSlug}/${citySlug}/${profile.slug || profile.id}`
   }
@@ -348,10 +383,13 @@ const ProfessionalDashboard = () => {
           <h3>{stats.pendingLeads}</h3>
         </article>
         <article className="profdash-metric-card">
-          <p>Response Rate</p>
+          <p>30-day response</p>
           <h3>{stats.responseRate}%</h3>
         </article>
       </section>
+      <p className="text-muted text-small" style={{ marginBottom: 'var(--space-6)' }}>
+        Response rate uses the last {RESPONSE_WINDOW_DAYS} days and counts leads marked contacted, scheduled, converted, or booked elsewhere ({stats.respondedLeads}/{stats.responseEligibleLeads}).
+      </p>
 
       <section className="profdash-grid">
         <div className="profdash-panel">
@@ -386,7 +424,7 @@ const ProfessionalDashboard = () => {
                     <span className={`badge ${getStatusBadge(lead.status)}`}>
                       {getStatusText(lead.status)}
                     </span>
-                    <Link to={`/professional/leads/${lead.id}`} className="profdash-inline-link">
+                    <Link to="/professional/leads" className="profdash-inline-link">
                       Open
                     </Link>
                   </div>

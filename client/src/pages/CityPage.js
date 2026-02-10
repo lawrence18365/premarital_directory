@@ -1380,6 +1380,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                   </p>
                   <Link
                     to={`/professional/signup?signup_source=city_page&city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}`}
+                    rel="nofollow"
                     style={{
                       display: 'inline-block',
                       padding: 'var(--space-3) var(--space-6)',

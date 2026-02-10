@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import supabase from '../../lib/supabaseClient'
+import { getStateNameFromAbbr } from '../../lib/utils'
 
 const SitemapGenerator = () => {
   const [profiles, setProfiles] = useState([])
@@ -38,7 +39,8 @@ const SitemapGenerator = () => {
 
     const generateLocationSlug = (city, state) => {
       const citySlug = city?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-') || 'unknown'
-      const stateSlug = state?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-') || 'unknown'
+      // Convert state abbreviation to full name for SEO-friendly URLs
+      const stateSlug = getStateNameFromAbbr(state) || state?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-') || 'unknown'
       return `${stateSlug}/${citySlug}`
     }
 

@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabaseClient'
+import { getStateNameFromAbbr } from '../../lib/utils'
 import { Link } from 'react-router-dom'
+
+const RESPONSE_WINDOW_DAYS = 30
+const RESPONDED_STATUSES = new Set(['contacted', 'scheduled', 'converted', 'booked_elsewhere'])
+const EXCLUDED_RESPONSE_STATUSES = new Set(['spam', 'duplicate'])
 
 const LeadsPage = () => {
   const { profile } = useAuth()
@@ -90,9 +95,15 @@ const LeadsPage = () => {
   const getStatusBadge = (status) => {
     const badges = {
       new: { class: 'badge-new', text: 'New', icon: 'fa-bell' },
+      pending_claim: { class: 'badge-warning', text: 'Pending Claim', icon: 'fa-hourglass-half' },
       contacted: { class: 'badge-success', text: 'Contacted', icon: 'fa-phone' },
       scheduled: { class: 'badge-warning', text: 'Scheduled', icon: 'fa-calendar' },
-      converted: { class: 'badge-primary', text: 'Client', icon: 'fa-heart' }
+      converted: { class: 'badge-primary', text: 'Client', icon: 'fa-heart' },
+      booked_elsewhere: { class: 'badge-default', text: 'Booked Elsewhere', icon: 'fa-share' },
+      no_response: { class: 'badge-default', text: 'No Response', icon: 'fa-clock-o' },
+      duplicate: { class: 'badge-default', text: 'Duplicate', icon: 'fa-copy' },
+      spam: { class: 'badge-default', text: 'Spam', icon: 'fa-ban' },
+      archived: { class: 'badge-default', text: 'Archived', icon: 'fa-archive' }
     }
     return badges[status] || { class: 'badge-default', text: status, icon: 'fa-question' }
   }
@@ -108,15 +119,25 @@ const LeadsPage = () => {
   }
 
   const getLeadStats = () => {
+    const now = new Date()
+    const responseWindowStart = new Date(now.getTime() - RESPONSE_WINDOW_DAYS * 24 * 60 * 60 * 1000)
+    const responseWindowLeads = leads.filter((lead) => {
+      const createdAt = new Date(lead.created_at)
+      return createdAt >= responseWindowStart && !EXCLUDED_RESPONSE_STATUSES.has(lead.status)
+    })
+    const respondedLeads = responseWindowLeads.filter((lead) => RESPONDED_STATUSES.has(lead.status)).length
+
     const stats = {
       total: leads.length,
       new: leads.filter(l => l.status === 'new').length,
       contacted: leads.filter(l => l.status === 'contacted').length,
-      converted: leads.filter(l => l.status === 'converted').length
+      converted: leads.filter(l => l.status === 'converted').length,
+      responseEligibleLeads: responseWindowLeads.length,
+      respondedLeads
     }
-    
-    stats.responseRate = stats.total > 0 
-      ? Math.round(((stats.contacted + stats.converted) / stats.total) * 100) 
+
+    stats.responseRate = stats.responseEligibleLeads > 0
+      ? Math.round((stats.respondedLeads / stats.responseEligibleLeads) * 100)
       : 0
 
     return stats
@@ -172,9 +193,12 @@ const LeadsPage = () => {
         
         <div className="stat-item">
           <div className="stat-number">{stats.responseRate}%</div>
-          <div className="stat-label">Response Rate</div>
+          <div className="stat-label">30-Day Response</div>
         </div>
       </div>
+      <p className="text-muted text-small" style={{ marginBottom: 'var(--space-5)' }}>
+        Response rate uses the last {RESPONSE_WINDOW_DAYS} days and counts leads marked contacted, scheduled, converted, or booked elsewhere ({stats.respondedLeads}/{stats.responseEligibleLeads}).
+      </p>
 
       {/* Filters */}
       <div className="leads-filters">
@@ -198,9 +222,15 @@ const LeadsPage = () => {
           >
             <option value="all">All Statuses</option>
             <option value="new">New</option>
+            <option value="pending_claim">Pending Claim</option>
             <option value="contacted">Contacted</option>
             <option value="scheduled">Scheduled</option>
             <option value="converted">Converted to Client</option>
+            <option value="booked_elsewhere">Booked Elsewhere</option>
+            <option value="no_response">No Response</option>
+            <option value="duplicate">Duplicate</option>
+            <option value="spam">Spam</option>
+            <option value="archived">Archived</option>
           </select>
         </div>
 
@@ -226,7 +256,7 @@ const LeadsPage = () => {
             }
           </p>
           {leads.length === 0 && (
-            <Link to={(profile?.state_province && profile?.city ? `/premarital-counseling/${String(profile.state_province).toLowerCase().replace(/\s+/g, '-')}/${String(profile.city).toLowerCase().replace(/\s+/g, '-')}/${profile?.slug || profile?.id}` : `/profile/${profile?.slug || profile?.id}`)} className="btn btn-primary">
+            <Link to={(profile?.state_province && profile?.city ? `/premarital-counseling/${getStateNameFromAbbr(profile.state_province) || String(profile.state_province).toLowerCase().replace(/\s+/g, '-')}/${String(profile.city).toLowerCase().replace(/\s+/g, '-')}/${profile?.slug || profile?.id}` : `/profile/${profile?.slug || profile?.id}`)} className="btn btn-primary">
               View Your Public Profile
             </Link>
           )}
@@ -314,9 +344,15 @@ const LeadsPage = () => {
                       onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
                     >
                       <option value="new">New</option>
+                      <option value="pending_claim">Pending Claim</option>
                       <option value="contacted">Contacted</option>
                       <option value="scheduled">Scheduled</option>
                       <option value="converted">Converted</option>
+                      <option value="booked_elsewhere">Booked Elsewhere</option>
+                      <option value="no_response">No Response</option>
+                      <option value="duplicate">Duplicate</option>
+                      <option value="spam">Spam</option>
+                      <option value="archived">Archived</option>
                     </select>
                   </div>
                 </div>

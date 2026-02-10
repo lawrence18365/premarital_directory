@@ -204,7 +204,7 @@ const PricingPage = () => {
               pre-marriage preparation. Get listed where engaged couples are already searching.
             </p>
             <div className="cta-buttons" style={{ marginTop: 'var(--space-6)' }}>
-              <Link to="/professional/signup" className="btn btn-primary">
+              <Link to="/professional/signup" className="btn btn-primary" rel="nofollow">
                 Create Your Free Profile
               </Link>
               <Link to="/features" className="btn btn-outline">
