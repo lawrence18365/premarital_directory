@@ -342,3 +342,46 @@ footer,
     radial-gradient(circle at 100% 0, rgba(14, 94, 94, 0.08), rgba(14, 94, 94, 0) 34%),
     linear-gradient(180deg, #f5fbfa 0%, #eef6f6 100%);
 }
+
+/* Profile card conversion row */
+.profile-card .profile-fit-indicator {
+  margin-top: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--ds-border-strong);
+  background: var(--ds-accent-soft);
+  color: var(--ds-ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.18rem 0.52rem;
+}
+
+.profile-card .profile-decision-row {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.profile-card .profile-decision-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(14, 94, 94, 0.2);
+  background: rgba(14, 94, 94, 0.06);
+  color: rgba(11, 62, 62, 0.84);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 0.26rem 0.58rem;
+}
+
+.profile-card .profile-fit-reasons {
+  margin-top: 0.55rem;
+  font-size: 0.78rem;
+  color: rgba(11, 62, 62, 0.72);
+  line-height: 1.4;
+}

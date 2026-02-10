@@ -145,6 +145,36 @@
   padding: 0.24rem 0.58rem;
 }
 
+.profile-premium-quickfacts {
+  margin-top: 0.7rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 0.45rem;
+}
+
+.profile-premium-quickfact {
+  border: 1px solid var(--profile-line);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 0.5rem 0.58rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.profile-premium-quickfact span {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(11, 62, 62, 0.64);
+}
+
+.profile-premium-quickfact strong {
+  font-size: 0.83rem;
+  color: rgba(11, 62, 62, 0.88);
+  line-height: 1.35;
+}
+
 .profile-premium-top-tags {
   margin-top: 0.75rem;
   display: flex;
@@ -363,6 +393,37 @@
   text-transform: uppercase;
 }
 
+.profile-fit-signal-list {
+  margin: 0.72rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.profile-fit-signal-list li {
+  position: relative;
+  margin: 0;
+  padding: 0.3rem 0.3rem 0.3rem 1.05rem;
+  border: 1px solid var(--profile-line);
+  border-radius: 10px;
+  background: rgba(14, 94, 94, 0.03);
+  color: rgba(11, 62, 62, 0.84);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.profile-fit-signal-list li::before {
+  content: '';
+  position: absolute;
+  left: 0.52rem;
+  top: 0.74rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--profile-accent);
+}
+
 .profile-faq-list {
   margin-top: 0.72rem;
   display: grid;
@@ -409,6 +470,13 @@
 
 .profile-premium-card-emphasis .btn {
   margin-top: 0.75rem;
+}
+
+.profile-response-note {
+  margin: 0.62rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.86);
 }
 
 .profile-kpi-list {
@@ -584,6 +652,27 @@
   gap: 0.34rem;
 }
 
+.profile-premium .lead-contact-form .lead-contact-form-optional {
+  border: 1px solid var(--profile-line);
+  border-radius: 10px;
+  background: rgba(14, 94, 94, 0.03);
+  padding: 0.55rem 0.62rem;
+}
+
+.profile-premium .lead-contact-form .lead-contact-form-optional summary {
+  cursor: pointer;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(11, 62, 62, 0.68);
+  list-style: none;
+}
+
+.profile-premium .lead-contact-form .lead-contact-form-optional[open] summary {
+  margin-bottom: 0.55rem;
+}
+
 .profile-premium .lead-contact-form .form-group label {
   font-size: 0.73rem;
   font-weight: 700;
@@ -593,6 +682,7 @@
 }
 
 .profile-premium .lead-contact-form input,
+.profile-premium .lead-contact-form select,
 .profile-premium .lead-contact-form textarea {
   width: 100%;
   border: 1px solid var(--profile-line);
@@ -605,10 +695,17 @@
 }
 
 .profile-premium .lead-contact-form input:focus,
+.profile-premium .lead-contact-form select:focus,
 .profile-premium .lead-contact-form textarea:focus {
   outline: none;
   border-color: var(--profile-line-strong);
   box-shadow: 0 0 0 3px rgba(14, 94, 94, 0.12);
+}
+
+.profile-premium .lead-contact-form .form-group small {
+  font-size: 0.72rem;
+  color: rgba(11, 62, 62, 0.58);
+  line-height: 1.35;
 }
 
 .profile-premium .lead-contact-form textarea {
@@ -708,6 +805,10 @@
   .profile-premium-top-tags,
   .profile-premium-hero-actions {
     justify-content: center;
+  }
+
+  .profile-premium-quickfacts {
+    grid-template-columns: 1fr;
   }
 
   .profile-premium-hero-actions {

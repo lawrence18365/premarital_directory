@@ -55,6 +55,49 @@ const toBooleanFlag = (value) => {
   return Boolean(value)
 }
 
+const getSessionFormatLabel = (sessionTypes = []) => {
+  if (!sessionTypes.length) return 'Ask about online and in-person options'
+  return sessionTypes.join(', ')
+}
+
+const getPricingLabel = (profile) => {
+  const minCents = Number(profile?.session_fee_min)
+  const maxCents = Number(profile?.session_fee_max)
+  const min = minCents > 0 ? Math.round(minCents / 100) : null
+  const max = maxCents > 0 ? Math.round(maxCents / 100) : null
+
+  if (profile?.pricing_range) return String(profile.pricing_range)
+  if (min && max) return `$${min}-$${max} per session`
+  if (min) return `$${min}+ per session`
+  if (max) return `Up to $${max} per session`
+  return 'Ask about session fees'
+}
+
+const getPrimaryLicenseType = (profile, credentials = [], certifications = []) => {
+  const text = [
+    profile?.profession,
+    ...credentials,
+    ...certifications
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toUpperCase()
+
+  if (/\bLMFT\b/.test(text)) return 'LMFT'
+  if (/\bLPCC\b/.test(text)) return 'LPCC'
+  if (/\bLCSW\b/.test(text)) return 'LCSW'
+  if (/\bLPC\b/.test(text)) return 'LPC'
+  if (/\bLMHC\b/.test(text)) return 'LMHC'
+  if (/PSYCHOLOGIST|PSY\.D|PSYD|PHD/.test(text)) return 'Psychologist'
+  return null
+}
+
+const getAvailabilityLabel = (profile) => {
+  if (!profile?.is_claimed) return 'Availability unverified'
+  if (profile?.accepting_new_clients) return 'Accepting new clients'
+  return 'Limited availability'
+}
+
 const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   const params = useParams()
   const state = stateOverride || params.state
@@ -244,25 +287,91 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     { label: 'Education', items: education }
   ].filter((group) => group.items.length > 0)
 
-  const faqItems = [
+  const providerFaqItems = Array.isArray(profile?.faqs)
+    ? profile.faqs
+      .filter((faq) => faq?.question && faq?.answer)
+      .map((faq) => ({
+        question: String(faq.question).trim(),
+        answer: String(faq.answer).trim()
+      }))
+      .filter((faq) => faq.question && faq.answer)
+    : []
+
+  const fallbackFaqItems = [
     {
-      question: 'What is premarital counseling?',
-      answer: 'Premarital counseling helps couples build communication skills, align expectations, and prepare for marriage with practical tools.'
+      question: `How premarital-focused is ${firstName}'s work?`,
+      answer: 'Ask whether your sessions will follow a structured premarital curriculum with clear goals before the wedding.'
     },
     {
-      question: 'How long does counseling usually take?',
-      answer: 'Most couples complete 4 to 8 sessions, depending on goals, timeline, and session frequency.'
+      question: 'What does a typical timeline look like?',
+      answer: 'Most couples complete 5-8 sessions over 2-3 months, but timeline should match your wedding date and scheduling needs.'
     },
     {
-      question: 'Is insurance accepted?',
-      answer: insuranceAccepted.length > 0
-        ? `${firstName} lists ${insuranceAccepted.join(', ')}. Confirm eligibility directly with your insurance provider.`
-        : 'Coverage varies by plan. Ask your insurance provider and confirm details with the professional.'
+      question: 'What program methods are used?',
+      answer: 'Ask about assessments and methods (for example Gottman, PREPARE/ENRICH, EFT, or faith-based frameworks) and how those tools are applied.'
     },
     {
-      question: 'What happens in the first session?',
-      answer: 'The first session typically covers your relationship goals, key stress points, and a practical roadmap for next steps.'
+      question: 'What should we clarify before booking?',
+      answer: 'Confirm session format, pricing, availability, and whether this professional is currently accepting new premarital clients.'
     }
+  ]
+  const faqItems = providerFaqItems.length > 0 ? providerFaqItems : fallbackFaqItems
+
+  const premaritalMethods = uniqueValues(
+    [
+      ...treatmentApproaches.filter((item) => /gottman|eft|prepare|enrich|foccus|symbis|pre-cana|faith/i.test(String(item))),
+      ...certifications.filter((item) => /gottman|eft|prepare|enrich|foccus|symbis|pre-cana|faith/i.test(String(item)))
+    ]
+  )
+
+  const programFitAudience = clientFocus.length > 0
+    ? clientFocus.slice(0, 3).join(', ')
+    : 'Engaged couples preparing for marriage'
+
+  const programTopics = specialties.length > 0
+    ? specialties.slice(0, 5).join(', ')
+    : 'Communication, conflict resolution, finances, values, and relationship expectations'
+
+  const sessionFormatLabel = getSessionFormatLabel(sessionTypes)
+  const insuranceLabel = insuranceAccepted.length > 0 ? insuranceAccepted.join(', ') : 'Ask about accepted plans'
+  const pricingLabel = getPricingLabel(profile)
+  const licenseType = getPrimaryLicenseType(profile, credentials, certifications)
+  const licenseTypeLabel = licenseType ? `${licenseType} (${profile.state_province || stateName || 'State'})` : null
+  const licenseLabel = credentials.length > 0 ? credentials.join(', ') : 'License details available on request'
+  const professionLabel = (() => {
+    const profession = profile?.profession || 'Premarital Counselor'
+    if (!licenseType) return profession
+    const generic = /licensed therapist|therapist|counselor/i.test(profession)
+    const alreadyIncludes = profession.toUpperCase().includes(licenseType)
+    if (generic && !alreadyIncludes) {
+      return `${profession} (${licenseType})`
+    }
+    return profession
+  })()
+  const availabilityLabel = getAvailabilityLabel(profile)
+  const methodsLabel = premaritalMethods.length > 0 ? premaritalMethods.join(', ') : 'Customized framework based on your goals'
+  const hasExplicitPremaritalSpecialty = specialties.some((item) => /premarital|pre[-\s]?marriage|marriage prep/i.test(String(item)))
+  const programStructureLabel = premaritalMethods.length > 0
+    ? `Structured sessions using ${methodsLabel}`
+    : 'Customized premarital sessions with timeline and goals set in your first visit'
+
+  const premaritalFitSignals = [
+    hasExplicitPremaritalSpecialty ? 'Lists premarital counseling as a specialty' : null,
+    premaritalMethods.length > 0 ? `Uses evidence-based methods (${methodsLabel})` : null,
+    hasOnlineOption ? 'Online sessions available for easier scheduling' : null,
+    availabilityLabel === 'Accepting new clients' ? 'Currently accepting new premarital clients' : null,
+    profile.years_experience ? `${profile.years_experience}+ years of experience` : null
+  ].filter(Boolean)
+
+  if (premaritalFitSignals.length === 0) {
+    premaritalFitSignals.push('Focuses on communication, conflict tools, and marriage preparation goals')
+  }
+
+  const quickFacts = [
+    { label: 'Session format', value: sessionFormatLabel },
+    { label: 'Typical pricing', value: pricingLabel },
+    { label: 'Insurance', value: insuranceAccepted.length > 0 ? 'Accepted' : 'Not listed' },
+    { label: 'License type', value: licenseTypeLabel || 'Not listed' }
   ]
 
   const hasPricingSection =
@@ -327,14 +436,23 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                 <p className="profile-premium-eyebrow">Professional Profile</p>
                 <h1>{profile.full_name}</h1>
                 <p className="profile-premium-role">
-                  {profile.profession}
+                  {professionLabel}
                   {profile.pronouns ? ` (${profile.pronouns})` : ''}
                 </p>
 
                 <div className="profile-premium-meta">
                   <span>{formatLocation(profile)}</span>
                   {profile.years_experience && <span>{profile.years_experience}+ years experience</span>}
-                  {profile.accepting_new_clients && <span>Accepting new clients</span>}
+                  <span>{availabilityLabel}</span>
+                </div>
+
+                <div className="profile-premium-quickfacts">
+                  {quickFacts.map((fact) => (
+                    <div key={fact.label} className="profile-premium-quickfact">
+                      <span>{fact.label}</span>
+                      <strong>{fact.value}</strong>
+                    </div>
+                  ))}
                 </div>
 
                 {specialties.length > 0 && (
@@ -381,7 +499,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     ) : (
                       <>
                         <p>
-                          {firstName} is a {profile.profession || 'premarital counseling professional'} serving couples in {profile.city}, {profile.state_province}.
+                          {firstName} is a {professionLabel || 'premarital counseling professional'} serving couples in {profile.city}, {profile.state_province}.
                           {profile.years_experience ? ` With ${profile.years_experience} years of experience, ` : ' '}
                           the focus is practical preparation for long-term relationship health.
                         </p>
@@ -408,6 +526,53 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     </div>
                   </section>
                 )}
+
+                <section className="profile-premium-card">
+                  <h2>Premarital Fit & Logistics</h2>
+                  <div className="profile-detail-stack">
+                    <div className="profile-detail-row">
+                      <span>Best fit for</span>
+                      <strong>{programFitAudience}</strong>
+                    </div>
+                    <div className="profile-detail-row">
+                      <span>Session format</span>
+                      <strong>{sessionFormatLabel}</strong>
+                    </div>
+                    <div className="profile-detail-row">
+                      <span>Program methods</span>
+                      <strong>{methodsLabel}</strong>
+                    </div>
+                    <div className="profile-detail-row">
+                      <span>Program structure</span>
+                      <strong>{programStructureLabel}</strong>
+                    </div>
+                    <div className="profile-detail-row">
+                      <span>Topics covered</span>
+                      <strong>{programTopics}</strong>
+                    </div>
+                    <div className="profile-detail-row">
+                      <span>Pricing</span>
+                      <strong>{pricingLabel}</strong>
+                    </div>
+                    <div className="profile-detail-row">
+                      <span>Insurance</span>
+                      <strong>{insuranceLabel}</strong>
+                    </div>
+                    <div className="profile-detail-row">
+                      <span>Availability</span>
+                      <strong>{availabilityLabel}</strong>
+                    </div>
+                    <div className="profile-detail-row">
+                      <span>License / credential</span>
+                      <strong>{licenseLabel}</strong>
+                    </div>
+                  </div>
+                  <ul className="profile-fit-signal-list">
+                    {premaritalFitSignals.slice(0, 4).map((signal) => (
+                      <li key={signal}>{signal}</li>
+                    ))}
+                  </ul>
+                </section>
 
                 {focusGroups.length > 0 && (
                   <section className="profile-premium-card">
@@ -497,7 +662,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                 )}
 
                 <section className="profile-premium-card">
-                  <h2>Frequently Asked Questions</h2>
+                  <h2>{providerFaqItems.length > 0 ? 'Frequently Asked Questions' : 'Questions to Ask Before Booking'}</h2>
                   <div className="profile-faq-list">
                     {faqItems.map((faq) => (
                       <article key={faq.question} className="profile-faq-item">
@@ -536,7 +701,19 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     )}
                     <div className="profile-kpi-row">
                       <span>Status</span>
-                      <strong>{profile.accepting_new_clients ? 'Accepting new clients' : 'Limited availability'}</strong>
+                      <strong>{availabilityLabel}</strong>
+                    </div>
+                    <div className="profile-kpi-row">
+                      <span>Session format</span>
+                      <strong>{sessionFormatLabel}</strong>
+                    </div>
+                    <div className="profile-kpi-row">
+                      <span>Pricing</span>
+                      <strong>{pricingLabel}</strong>
+                    </div>
+                    <div className="profile-kpi-row">
+                      <span>Insurance</span>
+                      <strong>{insuranceAccepted.length > 0 ? 'Accepted plans listed' : 'Ask for coverage details'}</strong>
                     </div>
                   </div>
 
@@ -554,6 +731,9 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                       Send Message
                     </button>
                   )}
+                  <p className="profile-response-note">
+                    Most professionals reply within 1-2 business days.
+                  </p>
                 </section>
 
                 <section id="contact-section" className="profile-premium-card profile-contact-card">

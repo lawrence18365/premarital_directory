@@ -1,89 +1,94 @@
-import React, { useState } from 'react';
-import { supabase } from '../../lib/supabaseClient';
+import React, { useMemo, useState } from 'react'
+import { supabase } from '../../lib/supabaseClient'
+
+const MAX_SELECTABLE = 5
+
+const getTierPriority = (tier) => {
+  const order = { area_spotlight: 1, local_featured: 2, community: 3 }
+  return order[tier] || 99
+}
 
 /**
  * Optional multi-provider inquiry form.
- * Sends one message to a small set of matching counselors.
+ * Couples explicitly choose the counselors to contact.
  */
 const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, providers }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    preferredType: 'either',
     message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState(null);
+  })
+  const [selectedProviderIds, setSelectedProviderIds] = useState([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState(null)
 
-  // Filter and select providers to contact
-  const getMatchingProviders = () => {
-    let filtered = [...providers];
+  const rankedProviders = useMemo(() => {
+    return [...providers]
+      .sort((a, b) => {
+        const aFit = Number(a.premaritalFitScore) || 0
+        const bFit = Number(b.premaritalFitScore) || 0
+        if (bFit !== aFit) return bFit - aFit
+        if (getTierPriority(a.tier) !== getTierPriority(b.tier)) return getTierPriority(a.tier) - getTierPriority(b.tier)
+        return new Date(b.created_at) - new Date(a.created_at)
+      })
+      .slice(0, 18)
+  }, [providers])
 
-    // Filter by preferred type if specified
-    if (formData.preferredType === 'therapist') {
-      filtered = filtered.filter(p =>
-        p.profession?.toLowerCase().includes('therapist') ||
-        p.profession?.toLowerCase().includes('lmft') ||
-        p.profession?.toLowerCase().includes('lpc') ||
-        p.profession?.toLowerCase().includes('lcsw')
-      );
-    } else if (formData.preferredType === 'clergy') {
-      filtered = filtered.filter(p =>
-        p.profession?.toLowerCase().includes('pastor') ||
-        p.profession?.toLowerCase().includes('priest') ||
-        p.profession?.toLowerCase().includes('clergy') ||
-        p.profession?.toLowerCase().includes('minister')
-      );
-    }
+  const selectedProviders = useMemo(
+    () => rankedProviders.filter((provider) => selectedProviderIds.includes(provider.id)),
+    [rankedProviders, selectedProviderIds]
+  )
 
-    // Prioritize by tier, then keep this intentionally small.
-    const sorted = filtered.sort((a, b) => {
-      const tierOrder = { 'area_spotlight': 1, 'local_featured': 2, 'community': 3 };
-      return (tierOrder[a.tier] || 99) - (tierOrder[b.tier] || 99);
-    });
+  const toggleProviderSelection = (providerId) => {
+    setSelectedProviderIds((previous) => {
+      if (previous.includes(providerId)) {
+        return previous.filter((id) => id !== providerId)
+      }
+      if (previous.length >= MAX_SELECTABLE) {
+        return previous
+      }
+      return [...previous, providerId]
+    })
+  }
 
-    return sorted.slice(0, Math.min(3, Math.max(1, sorted.length)));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    setIsSubmitting(true)
+    setError(null)
 
     try {
-      const matchingProviders = getMatchingProviders();
-
-      if (matchingProviders.length === 0) {
-        throw new Error('No matching counselors found. Please try a different preference.');
+      if (selectedProviders.length === 0) {
+        throw new Error('Select at least one counselor before sending.')
       }
 
-      const providerIds = matchingProviders.map(p => p.id);
+      if (selectedProviders.length > MAX_SELECTABLE) {
+        throw new Error(`Please select no more than ${MAX_SELECTABLE} counselors.`)
+      }
 
-      // Insert inquiry record
       const { error: insertError } = await supabase
         .from('city_inquiries')
         .insert({
           couple_name: formData.name || null,
           couple_email: formData.email,
           couple_message: formData.message,
-          preferred_type: formData.preferredType,
+          preferred_type: 'custom_select',
           city: cityName,
           state: stateName,
-          provider_ids: providerIds,
-          source: 'city_page'
+          provider_ids: selectedProviders.map((provider) => provider.id),
+          source: 'city_page_selected'
         })
         .select()
-        .single();
+        .single()
 
-      if (insertError) throw insertError;
+      if (insertError) throw insertError
 
-      // Trigger emails to providers (via Edge Function)
-      for (const provider of matchingProviders) {
+      for (const provider of selectedProviders) {
+        if (!provider.email) continue
         await supabase.functions.invoke('send-email', {
           body: {
             to: provider.email,
-            subject: `New Inquiry from a Couple in ${cityName}`,
+            subject: `New inquiry from a couple in ${cityName}`,
             template: 'inquiry_to_provider',
             data: {
               providerName: provider.full_name?.split(' ')[0] || 'there',
@@ -92,37 +97,36 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
               coupleName: formData.name || 'A couple',
               coupleEmail: formData.email,
               message: formData.message,
-              dashboardUrl: `https://www.weddingcounselors.com/professional/analytics`
+              dashboardUrl: 'https://www.weddingcounselors.com/professional/analytics'
             }
           }
-        });
+        })
       }
 
-      // Send confirmation to couple
       await supabase.functions.invoke('send-email', {
         body: {
           to: formData.email,
-          subject: `Your Inquiry Was Shared with ${matchingProviders.length} Matches`,
+          subject: `Your message was sent to ${selectedProviders.length} counselors`,
           template: 'inquiry_confirmation',
           data: {
             coupleName: formData.name || 'there',
-            providerCount: matchingProviders.length,
+            providerCount: selectedProviders.length,
             city: cityName,
             state: stateName,
             stateSlug,
             citySlug
           }
         }
-      });
+      })
 
-      setSubmitted(true);
-    } catch (err) {
-      console.error('Inquiry submission error:', err);
-      setError(err.message || 'Failed to send inquiry. Please try again.');
+      setSubmitted(true)
+    } catch (submitError) {
+      console.error('Inquiry submission error:', submitError)
+      setError(submitError.message || 'Failed to send inquiry. Please try again.')
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   if (submitted) {
     return (
@@ -134,16 +138,16 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
         textAlign: 'center'
       }}>
         <h3 style={{ color: 'var(--ds-accent)', marginBottom: 'var(--space-3)' }}>
-          Inquiry Sent
+          Message Sent
         </h3>
         <p style={{ marginBottom: 'var(--space-3)' }}>
-          We shared your message with {getMatchingProviders().length} matching counselors in {cityName}.
+          Your message was sent only to the {selectedProviders.length} counselor{selectedProviders.length > 1 ? 's' : ''} you selected.
         </p>
         <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-          Check your email at <strong>{formData.email}</strong> for responses. Counselors typically reply within 24-48 hours.
+          Check your email at <strong>{formData.email}</strong> for responses.
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -166,10 +170,76 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
         marginBottom: 'var(--space-4)',
         fontSize: '0.95rem'
       }}>
-        If you'd rather not message one-by-one, we can forward this to up to 3 matching counselors in {cityName}.
+        Select up to {MAX_SELECTABLE} counselors. We will send your message only to the counselors you check.
       </p>
 
       <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: 'var(--space-4)' }}>
+          <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '0.9rem' }}>
+            Choose counselors (up to {MAX_SELECTABLE}) *
+          </label>
+          <div style={{
+            display: 'grid',
+            gap: '8px',
+            maxHeight: '260px',
+            overflowY: 'auto',
+            padding: '10px',
+            border: '1px solid var(--ds-border)',
+            borderRadius: '8px',
+            background: 'white'
+          }}>
+            {rankedProviders.map((provider) => {
+              const checked = selectedProviderIds.includes(provider.id)
+              const disableUnchecked = !checked && selectedProviderIds.length >= MAX_SELECTABLE
+              return (
+                <label
+                  key={provider.id}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'auto 1fr auto',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '8px',
+                    borderRadius: '8px',
+                    border: checked ? '1px solid var(--ds-border-strong)' : '1px solid rgba(14, 94, 94, 0.08)',
+                    background: checked ? 'rgba(14, 94, 94, 0.08)' : 'var(--white)',
+                    cursor: disableUnchecked ? 'not-allowed' : 'pointer',
+                    opacity: disableUnchecked ? 0.55 : 1
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    disabled={disableUnchecked}
+                    onChange={() => toggleProviderSelection(provider.id)}
+                  />
+                  <span style={{ minWidth: 0 }}>
+                    <strong style={{ display: 'block', color: 'var(--text-primary)', fontSize: '0.92rem' }}>
+                      {provider.full_name}
+                    </strong>
+                    <span style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '0.82rem' }}>
+                      {provider.profession}
+                    </span>
+                  </span>
+                  {Number.isFinite(Number(provider.premaritalFitScore)) && (
+                    <span style={{
+                      fontSize: '0.72rem',
+                      fontWeight: '700',
+                      letterSpacing: '0.03em',
+                      color: 'var(--ds-accent)',
+                      background: 'var(--ds-accent-soft)',
+                      borderRadius: '999px',
+                      padding: '0.18rem 0.5rem'
+                    }}>
+                      Fit {provider.premaritalFitScore}
+                    </span>
+                  )}
+                </label>
+              )
+            })}
+          </div>
+        </div>
+
         <div style={{ marginBottom: 'var(--space-3)' }}>
           <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9rem' }}>
             Your Name (optional)
@@ -177,7 +247,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
           <input
             type="text"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={(event) => setFormData({ ...formData, name: event.target.value })}
             placeholder="Jane & John"
             style={{
               width: '100%',
@@ -196,7 +266,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
           <input
             type="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={(event) => setFormData({ ...formData, email: event.target.value })}
             required
             placeholder="you@example.com"
             style={{
@@ -209,38 +279,16 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
           />
         </div>
 
-        <div style={{ marginBottom: 'var(--space-3)' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9rem' }}>
-            Preference
-          </label>
-          <select
-            value={formData.preferredType}
-            onChange={(e) => setFormData({ ...formData, preferredType: e.target.value })}
-            style={{
-              width: '100%',
-              padding: '10px',
-              border: '1px solid var(--ds-border)',
-              borderRadius: '6px',
-              fontSize: '0.95rem',
-              background: 'white'
-            }}
-          >
-            <option value="either">Either Therapist or Clergy</option>
-            <option value="therapist">Licensed Therapist (LMFT, LPC, etc.)</option>
-            <option value="clergy">Clergy / Faith-Based</option>
-          </select>
-        </div>
-
         <div style={{ marginBottom: 'var(--space-4)' }}>
           <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9rem' }}>
             Your Message *
           </label>
           <textarea
             value={formData.message}
-            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+            onChange={(event) => setFormData({ ...formData, message: event.target.value })}
             required
             rows={4}
-            placeholder="Tell counselors about your situation... When are you getting married? What are you looking for in premarital counseling? Any specific concerns?"
+            placeholder="Share your timeline, what you want from premarital counseling, and any key concerns."
             style={{
               width: '100%',
               padding: '10px',
@@ -267,21 +315,21 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || selectedProviderIds.length === 0}
           style={{
             width: '100%',
             padding: '12px',
-            background: isSubmitting ? 'var(--gray-400)' : 'var(--ds-accent)',
+            background: isSubmitting || selectedProviderIds.length === 0 ? 'var(--gray-400)' : 'var(--ds-accent)',
             color: 'white',
             border: 'none',
             borderRadius: '6px',
             fontSize: '1rem',
             fontWeight: '600',
-            cursor: isSubmitting ? 'not-allowed' : 'pointer',
+            cursor: isSubmitting || selectedProviderIds.length === 0 ? 'not-allowed' : 'pointer',
             transition: 'background 0.2s'
           }}
         >
-          {isSubmitting ? 'Sending...' : `Send to ${getMatchingProviders().length} Matches`}
+          {isSubmitting ? 'Sending...' : `Send to ${selectedProviderIds.length} Counselor${selectedProviderIds.length === 1 ? '' : 's'}`}
         </button>
 
         <p style={{
@@ -290,11 +338,11 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
           marginTop: 'var(--space-2)',
           textAlign: 'center'
         }}>
-          This is optional. For a direct 1:1 conversation, open any profile and contact that counselor directly.
+          Prefer 1:1 outreach? Open any profile and contact that counselor directly.
         </p>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default MultiProviderInquiryForm;
+export default MultiProviderInquiryForm

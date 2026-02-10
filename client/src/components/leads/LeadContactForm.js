@@ -7,6 +7,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
     couple_name: '',
     couple_email: '',
     couple_phone: '',
+    preferred_contact: 'email',
     wedding_date: '',
     location: '',
     message: '',
@@ -37,6 +38,10 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
     setError('')
 
     try {
+      const outboundMessage = formData.preferred_contact
+        ? `Preferred contact: ${formData.preferred_contact}\n\n${formData.message}`
+        : formData.message
+
       // Determine lead status based on profile claim status
       const leadStatus = isProfileClaimed ? 'new' : 'pending_claim'
 
@@ -50,7 +55,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
           couple_phone: formData.couple_phone,
           wedding_date: formData.wedding_date || null,
           location: formData.location,
-          message: formData.message,
+          message: outboundMessage,
           source: formData.source,
           status: leadStatus
         }])
@@ -72,7 +77,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
                 phone: formData.couple_phone,
                 wedding_date: formData.wedding_date,
                 location: formData.location,
-                message: formData.message
+                message: outboundMessage
               }
             }
           })
@@ -107,6 +112,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
         couple_name: '',
         couple_email: '',
         couple_phone: '',
+        preferred_contact: 'email',
         wedding_date: '',
         location: '',
         message: '',
@@ -192,41 +198,18 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
           </div>
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="couple_phone">Phone Number</label>
-            <input
-              type="tel"
-              id="couple_phone"
-              name="couple_phone"
-              value={formData.couple_phone}
-              onChange={handleInputChange}
-              placeholder="Phone number"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="wedding_date">Wedding Date</label>
-            <input
-              type="date"
-              id="wedding_date"
-              name="wedding_date"
-              value={formData.wedding_date}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
-
         <div className="form-group">
-          <label htmlFor="location">Your Location</label>
-          <input
-            type="text"
-            id="location"
-            name="location"
-            value={formData.location}
+          <label htmlFor="preferred_contact">Preferred Contact</label>
+          <select
+            id="preferred_contact"
+            name="preferred_contact"
+            value={formData.preferred_contact}
             onChange={handleInputChange}
-            placeholder="City, state"
-          />
+          >
+            <option value="email">Email</option>
+            <option value="text">Text</option>
+            <option value="phone">Phone call</option>
+          </select>
         </div>
 
         <div className="form-group">
@@ -236,11 +219,52 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
             name="message"
             value={formData.message}
             onChange={handleInputChange}
-            placeholder="Briefly describe your goals, timeline, and availability."
+            placeholder="Share your goals, wedding timeline, and what kind of premarital support you want."
             rows={4}
             required
           />
         </div>
+
+        <details className="lead-contact-form-optional">
+          <summary>Optional details</summary>
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="couple_phone">Phone Number (optional)</label>
+              <input
+                type="tel"
+                id="couple_phone"
+                name="couple_phone"
+                value={formData.couple_phone}
+                onChange={handleInputChange}
+                placeholder="Phone number"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="wedding_date">Wedding Date (optional)</label>
+              <input
+                type="date"
+                id="wedding_date"
+                name="wedding_date"
+                value={formData.wedding_date}
+                onChange={handleInputChange}
+              />
+              <small>Month and year are fine if your date is not final.</small>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="location">Your Location (optional)</label>
+            <input
+              type="text"
+              id="location"
+              name="location"
+              value={formData.location}
+              onChange={handleInputChange}
+              placeholder="City, state"
+            />
+          </div>
+        </details>
 
         <div className="form-actions">
           <button
@@ -265,7 +289,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
         <div className="contact-disclaimer">
           <small>
             <i className="fa fa-shield-alt" aria-hidden="true"></i>
-            Your information is only shared with this professional. By sending, you agree to our <a href="/privacy">Privacy Policy</a>.
+            Sent only to this professional. No spam or list sharing. By sending, you agree to our <a href="/privacy">Privacy Policy</a>.
           </small>
         </div>
       </form>

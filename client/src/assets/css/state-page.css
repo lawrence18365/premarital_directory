@@ -536,9 +536,30 @@
   box-shadow: var(--shadow-sm);
 }
 
+:is(.city-page, .state-page) .city-filters__toolbar {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: end;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid rgba(14, 94, 94, 0.12);
+}
+
+:is(.city-page, .state-page) .city-filters__field--sort {
+  margin: 0;
+}
+
+:is(.city-page, .state-page) .city-filters__hint {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 :is(.city-page, .state-page) .city-filters__grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: var(--space-3);
 }
 
@@ -635,6 +656,11 @@
 }
 
 @media (max-width: 768px) {
+  :is(.city-page, .state-page) .city-filters__toolbar {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
   :is(.city-page, .state-page) .city-filters__grid {
     grid-template-columns: 1fr;
   }

@@ -2,7 +2,48 @@ import React from 'react'
 import { STATE_DISCOUNT_CONFIG } from '../../data/specialtyConfig'
 // CITY_CONFIG removed - not currently used
 
-const LocationInsights = ({ stateSlug, citySlug, specialty, costEstimateOverride }) => {
+const parsePriceRangeText = (value) => {
+  if (!value) return null
+  const matches = String(value).match(/\d{2,4}/g)
+  if (!matches || matches.length === 0) return null
+  const numbers = matches.map((entry) => Number(entry)).filter((entry) => Number.isFinite(entry) && entry > 0)
+  if (numbers.length === 0) return null
+  return {
+    min: Math.min(...numbers),
+    max: Math.max(...numbers)
+  }
+}
+
+const getProfilePriceBounds = (profile) => {
+  const minFee = Number(profile?.session_fee_min) > 0 ? Math.round(Number(profile.session_fee_min) / 100) : null
+  const maxFee = Number(profile?.session_fee_max) > 0 ? Math.round(Number(profile.session_fee_max) / 100) : null
+
+  if (minFee && maxFee) return { min: Math.min(minFee, maxFee), max: Math.max(minFee, maxFee) }
+  if (minFee) return { min: minFee, max: minFee }
+  if (maxFee) return { min: maxFee, max: maxFee }
+
+  return parsePriceRangeText(profile?.pricing_range)
+}
+
+const getProfileBackedCostEstimate = (profiles = []) => {
+  const ranges = profiles
+    .map((profile) => getProfilePriceBounds(profile))
+    .filter((range) => range && Number.isFinite(range.min) && Number.isFinite(range.max))
+
+  if (ranges.length === 0) {
+    return null
+  }
+
+  const min = Math.max(50, Math.round(Math.min(...ranges.map((range) => range.min)) / 5) * 5)
+  const max = Math.max(min + 10, Math.round(Math.max(...ranges.map((range) => range.max)) / 5) * 5)
+
+  return {
+    rangeLabel: `$${min} - $${max}`,
+    sourceLabel: `From ${ranges.length} listed profile${ranges.length === 1 ? '' : 's'} with published pricing`
+  }
+}
+
+const LocationInsights = ({ stateSlug, citySlug, specialty, costEstimateOverride, profiles = [] }) => {
   const discountInfo = STATE_DISCOUNT_CONFIG[stateSlug]
   
   // Estimate cost tier based on anchor status or hardcoded list
@@ -22,13 +63,16 @@ const LocationInsights = ({ stateSlug, citySlug, specialty, costEstimateOverride
     return '$90 - $160'
   }
 
-  const costEstimate = String(costEstimateOverride || getCostEstimate())
+  const profileBackedEstimate = getProfileBackedCostEstimate(profiles)
+  const fallbackCostEstimate = String(costEstimateOverride || getCostEstimate())
     .replace(/\/\s*session/ig, '')
     .replace(/per\s+session/ig, '')
     .trim()
+  const costEstimate = profileBackedEstimate?.rangeLabel || fallbackCostEstimate
   const cityName = citySlug 
     ? citySlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
     : 'Local'
+  const costSubtext = profileBackedEstimate?.sourceLabel || `Market estimate for ${cityName}`
 
   return (
     <div className="location-insights-box" style={{
@@ -73,14 +117,14 @@ const LocationInsights = ({ stateSlug, citySlug, specialty, costEstimateOverride
         {/* Cost Block */}
         <div className="insight-item" style={{ padding: 'var(--space-5)' }}>
           <div style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem', marginBottom: '4px' }}>
-            Average Cost
+            Typical Session Range
           </div>
           <div style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--text-primary)' }}>
             {costEstimate}
             <span style={{ fontSize: '0.8rem', fontWeight: '400', color: 'var(--text-tertiary)', marginLeft: '4px' }}>/ session</span>
           </div>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-            Based on {cityName} market rates
+            {costSubtext}
           </p>
         </div>
 
