@@ -9,7 +9,7 @@ import { trackProfileView } from '../components/analytics/GoogleAnalytics'
 import { trackFacebookProfileView } from '../components/analytics/FacebookPixel'
 import { STATE_CONFIG } from '../data/locationConfig'
 
-import { profileOperations } from '../lib/supabaseClient'
+import { profileOperations, clickTrackingOperations } from '../lib/supabaseClient'
 import UnclaimedProfileBanner from '../components/profiles/UnclaimedProfileBanner'
 import '../assets/css/profile-page-enhanced.css'
 
@@ -191,6 +191,13 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     if (profile) {
       trackProfileView(profile.full_name, profile.city, profile.state_province)
       trackFacebookProfileView(profile.full_name)
+      // Track view in Supabase for professional dashboards
+      clickTrackingOperations.logProfileClick({
+        profileId: profile.id,
+        city: profile.city || 'unknown',
+        state: profile.state_province || 'unknown',
+        source: 'profile_page'
+      }).catch(() => {}) // Silent fail - don't break page for tracking
     }
   }, [profile])
 

@@ -1,0 +1,29 @@
+name: Daily Drip Emails
+
+on:
+  schedule:
+    - cron: '0 14 * * *' # 2 PM UTC / 9 AM ET daily
+  workflow_dispatch: # Manual trigger for testing
+
+jobs:
+  send-drip-emails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send drip emails
+        run: |
+          response=$(curl -s -w "\n%{http_code}" \
+            -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/send-drip-emails" \
+            -H "Content-Type: application/json" \
+            -H "x-internal-api-key: ${{ secrets.INTERNAL_API_KEY }}" \
+            -d '{}')
+
+          http_code=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -1)
+
+          echo "Status: $http_code"
+          echo "Response: $body"
+
+          if [ "$http_code" -ge 400 ]; then
+            echo "::error::Drip email function returned $http_code"
+            exit 1
+          fi

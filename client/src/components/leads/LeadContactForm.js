@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 
-const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaimed = true, onSuccess }) => {
+const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaimed = true, isStateMatching, isSpecialtyMatching, isDiscountMatching, stateName, specialtyType, onSuccess }) => {
   const shortName = professionalName?.split(' ')[0] || 'this professional'
   const [formData, setFormData] = useState({
     partner_one_name: '',
@@ -68,9 +68,34 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
 
       if (leadError) throw leadError
 
-      // Send email notification based on claim status
+      // Send email notification based on lead type
       try {
-        if (isProfileClaimed) {
+        const isUnmatchedLead = !profileId
+        if (isUnmatchedLead) {
+          // Unmatched lead (from state/specialty/discount pages) - notify admin
+          const matchContext = isDiscountMatching ? 'Marriage License Discount'
+            : isSpecialtyMatching ? (specialtyType || 'Specialty')
+            : isStateMatching ? (stateName || 'State')
+            : 'General'
+
+          await supabase.functions.invoke('send-lead-notification', {
+            body: {
+              leadId: leadData[0].id,
+              profileId: null,
+              isUnmatchedLead: true,
+              matchContext,
+              coupleData: {
+                name: coupleName,
+                email: formData.couple_email,
+                phone: formData.couple_phone,
+                wedding_date: formData.wedding_date,
+                timeline: formData.timeline,
+                location: formData.location,
+                message: outboundMessage
+              }
+            }
+          })
+        } else if (isProfileClaimed) {
           // Standard notification for claimed profiles
           await supabase.functions.invoke('send-lead-notification', {
             body: {
@@ -89,7 +114,6 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
           })
         } else {
           // Email for UNCLAIMED profiles - notify the professional and admin
-          // Use profile email if available, otherwise send to admin for manual handling
           const targetEmail = profile?.email || 'hello@weddingcounselors.com'
 
           await supabase.functions.invoke('email-unclaimed-profile-owner', {

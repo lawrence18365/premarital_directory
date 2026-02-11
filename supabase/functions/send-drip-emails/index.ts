@@ -182,10 +182,8 @@ serve(async (req) => {
 
           sent++
 
-          // Rate limit
-          if (sent % 8 === 0) {
-            await new Promise(r => setTimeout(r, 1000))
-          }
+          // Delay to respect Resend rate limits (2/sec on free tier)
+          await new Promise(r => setTimeout(r, 600))
         } catch (err) {
           errors.push(`${profile.email} step ${dripStep.step}: ${err.message}`)
         }

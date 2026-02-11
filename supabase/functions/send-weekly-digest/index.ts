@@ -200,10 +200,8 @@ serve(async (req) => {
 
         sent++
 
-        // Small delay to respect Resend rate limits (10/sec on free tier)
-        if (sent % 8 === 0) {
-          await new Promise(r => setTimeout(r, 1000))
-        }
+        // Delay to respect Resend rate limits (2/sec on free tier)
+        await new Promise(r => setTimeout(r, 600))
       } catch (err) {
         failed++
         errors.push(`${profile.email}: ${err.message}`)

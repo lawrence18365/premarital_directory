@@ -1,0 +1,29 @@
+name: Weekly Digest
+
+on:
+  schedule:
+    - cron: '0 14 * * 1' # Monday 2 PM UTC / 9 AM ET
+  workflow_dispatch: # Manual trigger for testing
+
+jobs:
+  send-weekly-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send weekly digest
+        run: |
+          response=$(curl -s -w "\n%{http_code}" \
+            -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/send-weekly-digest" \
+            -H "Content-Type: application/json" \
+            -H "x-internal-api-key: ${{ secrets.INTERNAL_API_KEY }}" \
+            -d '{}')
+
+          http_code=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -1)
+
+          echo "Status: $http_code"
+          echo "Response: $body"
+
+          if [ "$http_code" -ge 400 ]; then
+            echo "::error::Weekly digest function returned $http_code"
+            exit 1
+          fi
