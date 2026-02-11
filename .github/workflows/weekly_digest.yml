@@ -1,9 +1,8 @@
 name: Weekly Profile Digest
 on:
-  schedule:
-    # Monday 9 AM UTC (4 AM EST / 1 AM PST)
-    # Counselors see it first thing Monday morning
-    - cron: '0 9 * * 1'
+  # Schedule disabled - Supabase function send-weekly-digest not deployed (404)
+  # schedule:
+  #   - cron: '0 9 * * 1'
   workflow_dispatch:
     inputs:
       test_mode:

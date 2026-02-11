@@ -1,9 +1,8 @@
 name: Daily Automated Outreach
 on:
-  schedule:
-    # Run every day at 9 AM UTC (4 AM EST / 1 AM PST)
-    # Best time for B2B emails: recipients see it first thing in morning
-    - cron: '0 9 * * *'
+  # Schedule disabled - these scripts are in scripts/outreach/ not repo root
+  # schedule:
+  #   - cron: '0 9 * * *'
   workflow_dispatch:
     inputs:
       skip_enrichment:

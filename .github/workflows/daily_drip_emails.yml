@@ -1,8 +1,8 @@
 name: Daily Drip Emails
 on:
-  schedule:
-    # Run daily at 2 PM UTC (9 AM EST / 6 AM PST)
-    - cron: '0 14 * * *'
+  # Schedule disabled - Supabase function send-drip-emails not deployed (404)
+  # schedule:
+  #   - cron: '0 14 * * *'
   workflow_dispatch:
     inputs:
       test_mode:
