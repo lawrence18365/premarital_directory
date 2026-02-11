@@ -12,7 +12,6 @@
 .state-page-header {
   position: relative;
   background: transparent;
-  padding: var(--space-16) 0 var(--space-8);
   border-bottom: none;
 }
 

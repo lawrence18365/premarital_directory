@@ -2,8 +2,9 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 const AuthContext = createContext({})
-const INITIAL_AUTH_TIMEOUT_MS = 8000
-const SESSION_DATA_TIMEOUT_MS = 8000
+const INITIAL_AUTH_TIMEOUT_MS = 15000
+const SESSION_DATA_TIMEOUT_MS = 15000
+const PROFILE_LOAD_RETRIES = 2
 
 const withTimeout = (promise, timeoutMs, label) => {
   let timeoutId
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }) => {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [profileLoadFailed, setProfileLoadFailed] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -39,14 +41,26 @@ export const AuthProvider = ({ children }) => {
       const requestId = ++activeSessionRequest
       if (!isMounted) return
       setUser(session?.user || null)
+      setProfileLoadFailed(false)
       if (session?.user) {
-        try {
-          await Promise.all([
-            withTimeout(loadUserProfile(session.user.id), SESSION_DATA_TIMEOUT_MS, 'loadUserProfile'),
-            withTimeout(checkAdminStatus(session.user.id), SESSION_DATA_TIMEOUT_MS, 'checkAdminStatus')
-          ])
-        } catch (err) {
-          console.error('Error loading user data:', err)
+        let profileLoaded = false
+        for (let attempt = 0; attempt <= PROFILE_LOAD_RETRIES; attempt++) {
+          try {
+            await Promise.all([
+              withTimeout(loadUserProfile(session.user.id), SESSION_DATA_TIMEOUT_MS, 'loadUserProfile'),
+              withTimeout(checkAdminStatus(session.user.id), SESSION_DATA_TIMEOUT_MS, 'checkAdminStatus')
+            ])
+            profileLoaded = true
+            break
+          } catch (err) {
+            console.error(`Error loading user data (attempt ${attempt + 1}):`, err)
+            if (attempt < PROFILE_LOAD_RETRIES) {
+              await new Promise(r => setTimeout(r, 1000))
+            }
+          }
+        }
+        if (!profileLoaded && isMounted) {
+          setProfileLoadFailed(true)
         }
       } else {
         setProfile(null)
@@ -236,11 +250,28 @@ export const AuthProvider = ({ children }) => {
     return { data, error }
   }
 
+  const retryProfileLoad = async () => {
+    if (!user) return
+    setLoading(true)
+    setProfileLoadFailed(false)
+    try {
+      await Promise.all([
+        withTimeout(loadUserProfile(user.id), SESSION_DATA_TIMEOUT_MS, 'loadUserProfile'),
+        withTimeout(checkAdminStatus(user.id), SESSION_DATA_TIMEOUT_MS, 'checkAdminStatus')
+      ])
+    } catch (err) {
+      console.error('Error retrying profile load:', err)
+      setProfileLoadFailed(true)
+    }
+    setLoading(false)
+  }
+
   const value = {
     user,
     profile,
     loading,
     isAdmin,
+    profileLoadFailed,
     signIn,
     signUp,
     signOut,
@@ -248,7 +279,8 @@ export const AuthProvider = ({ children }) => {
     updateProfile,
     resetPassword,
     updatePassword,
-    refreshProfile: () => loadUserProfile(user?.id)
+    refreshProfile: () => loadUserProfile(user?.id),
+    retryProfileLoad
   }
 
   return (

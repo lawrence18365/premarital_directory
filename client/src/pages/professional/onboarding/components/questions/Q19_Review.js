@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import QuestionContainer from '../QuestionContainer'
 import { supabase } from '../../../../../lib/supabaseClient'
 import { getStateNameFromAbbr } from '../../../../../lib/utils'
@@ -17,11 +17,16 @@ const Q19_Review = ({
   refreshProfile,
   navigate
 }) => {
+  const [publishing, setPublishing] = useState(false)
+
   const handlePublish = async () => {
+    if (publishing) return // Prevent double-click
     if (!profileId || !user) {
       setError('Unable to publish profile. Please try again.')
       return
     }
+
+    setPublishing(true)
 
     try {
       // Generate slug for profile URL
@@ -102,6 +107,7 @@ const Q19_Review = ({
     } catch (err) {
       console.error('Error publishing profile:', err)
       setError('Failed to publish profile. Please try again.')
+      setPublishing(false)
     }
   }
 
@@ -115,7 +121,7 @@ const Q19_Review = ({
   return (
     <QuestionContainer
       currentStep={currentStep}
-      saving={saving}
+      saving={saving || publishing}
       error={error}
       onBack={goToPreviousQuestion}
       onContinue={handlePublish}

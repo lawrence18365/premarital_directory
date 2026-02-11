@@ -124,7 +124,7 @@ if (process.env.NODE_ENV === 'development') {
 
 function AppInner() {
   const location = useLocation()
-  const { user, profile, loading, isAdmin } = useAuth()
+  const { user, profile, loading, isAdmin, profileLoadFailed } = useAuth()
   const isHome = ['/', '/therapists', '/coaches', '/clergy'].includes(location.pathname)
   const noChromePrefixes = [
     '/professional/onboarding'
@@ -137,6 +137,7 @@ function AppInner() {
     !loading &&
     user &&
     !isAdmin &&
+    !profileLoadFailed &&
     (!profile || !profile.onboarding_completed)
 
   if (hasIncompleteOnboarding && !isOnboardingRoute) {
