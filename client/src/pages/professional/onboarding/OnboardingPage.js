@@ -98,7 +98,7 @@ const OnboardingPage = () => {
         <div className="onboarding-shell">
           <section className="onboarding-main">
             <div className="signup-header">
-              <h1>Create Your Profile</h1>
+              <h1>{currentStep > 1 ? 'Continue Your Profile' : 'Create Your Profile'}</h1>
             </div>
 
             {renderQuestion()}

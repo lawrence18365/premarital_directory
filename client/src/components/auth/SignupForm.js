@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { profileOperations } from '../../lib/supabaseClient'
 import '../../assets/css/professional-auth.css'
 
@@ -21,9 +21,22 @@ const SignupForm = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [searchParams] = useSearchParams()
+  const [mode, setMode] = useState(searchParams.get('mode') === 'login' ? 'login' : 'signup')
+  const [loginPassword, setLoginPassword] = useState('')
+  const [resetEmailSent, setResetEmailSent] = useState(false)
 
-  const { signUp } = useAuth()
+  const { signUp, signIn, resetPassword, user, profile } = useAuth()
   const navigate = useNavigate()
+
+  // Redirect logged-in users
+  React.useEffect(() => {
+    if (user && profile?.onboarding_completed) {
+      navigate('/professional/dashboard', { replace: true })
+    } else if (user && profile && !profile.onboarding_completed) {
+      navigate('/professional/onboarding', { replace: true })
+    }
+  }, [user, profile, navigate])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -86,7 +99,9 @@ const SignupForm = () => {
     // Detect existing account: Supabase returns user with empty identities array
     // for existing confirmed accounts (security feature to prevent email enumeration)
     if (data?.user && (!data.user.identities || data.user.identities.length === 0)) {
-      setError('EXISTING_ACCOUNT')
+      // Auto-switch to login mode instead of showing a confusing error
+      setMode('login')
+      setError('')
       setLoading(false)
       return
     }
@@ -97,6 +112,72 @@ const SignupForm = () => {
     setTimeout(() => {
       navigate('/professional/confirm-email', { state: { email: formData.email } })
     }, 3000)
+  }
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    const loginEmail = formData.email || ''
+    if (!loginEmail || !loginPassword) {
+      setError('Please enter your email and password')
+      return
+    }
+    setLoading(true)
+    setError('')
+    try {
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Login timed out. Please check your connection and try again.')), 30000)
+      )
+      const { error } = await Promise.race([signIn(loginEmail, loginPassword), timeoutPromise])
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+      navigate('/professional/dashboard', { replace: true })
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.')
+    }
+    setLoading(false)
+  }
+
+  const handleForgotPassword = async () => {
+    const loginEmail = formData.email || ''
+    if (!loginEmail) {
+      setError('Please enter your email address first')
+      return
+    }
+    setLoading(true)
+    setError('')
+    const { error } = await resetPassword(loginEmail)
+    if (error) {
+      setError(error.message)
+    } else {
+      setResetEmailSent(true)
+    }
+    setLoading(false)
+  }
+
+  if (resetEmailSent) {
+    return (
+      <div className="professional-auth professional-auth--success">
+        <div className="professional-auth__success-card">
+          <div className="professional-auth__success-icon">
+            <i className="fa fa-envelope" aria-hidden="true"></i>
+          </div>
+          <p className="section-eyebrow">Password reset sent</p>
+          <h1>Check your email</h1>
+          <p className="professional-auth__success-lead">
+            We've sent a password reset link to <strong>{formData.email}</strong>. Click it to set a new password, then log in.
+          </p>
+          <button
+            className="professional-auth__button professional-auth__button--primary"
+            onClick={() => { setResetEmailSent(false); setMode('login') }}
+          >
+            Back to Login
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (success) {
@@ -149,20 +230,45 @@ const SignupForm = () => {
 
       <section className="professional-auth__content">
         <div className="professional-auth__form-card">
-          <div className="professional-auth__form-header">
-            <h2>Create your free account</h2>
-            <p>Already have an account? <Link to="/professional/login">Sign in</Link></p>
+          {/* Tab switcher */}
+          <div className="professional-auth__tabs" style={{ display: 'flex', borderBottom: '2px solid var(--gray-200, #e5e7eb)', marginBottom: '1.5rem' }}>
+            <button
+              type="button"
+              onClick={() => { setMode('login'); setError('') }}
+              style={{
+                flex: 1, padding: '0.75rem 1rem', border: 'none', background: 'none', cursor: 'pointer',
+                fontWeight: mode === 'login' ? '600' : '400',
+                borderBottom: mode === 'login' ? '2px solid var(--primary, #2563eb)' : '2px solid transparent',
+                color: mode === 'login' ? 'var(--primary, #2563eb)' : 'var(--slate, #64748b)',
+                marginBottom: '-2px', fontSize: '1rem'
+              }}
+            >
+              Log In
+            </button>
+            <button
+              type="button"
+              onClick={() => { setMode('signup'); setError('') }}
+              style={{
+                flex: 1, padding: '0.75rem 1rem', border: 'none', background: 'none', cursor: 'pointer',
+                fontWeight: mode === 'signup' ? '600' : '400',
+                borderBottom: mode === 'signup' ? '2px solid var(--primary, #2563eb)' : '2px solid transparent',
+                color: mode === 'signup' ? 'var(--primary, #2563eb)' : 'var(--slate, #64748b)',
+                marginBottom: '-2px', fontSize: '1rem'
+              }}
+            >
+              Sign Up
+            </button>
           </div>
 
           {error && (
             <div className="professional-auth__alert" role="alert">
               <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-              {error === 'EXISTING_ACCOUNT' || error === 'EXISTING_PROFILE' ? (
+              {error === 'EXISTING_PROFILE' ? (
                 <span>
                   An account with this email already exists.{' '}
-                  <Link to="/professional/login" style={{ color: 'inherit', fontWeight: '600' }}>
-                    Sign in here
-                  </Link>
+                  <button className="link-button" onClick={() => { setMode('login'); setError('') }} style={{ color: 'inherit', fontWeight: '600' }}>
+                    Log in instead
+                  </button>
                 </span>
               ) : (
                 <span>{error}</span>
@@ -170,64 +276,113 @@ const SignupForm = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="professional-auth__form">
-            <div className="form-group">
-              <label htmlFor="email">Email Address *</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="your.email@example.com"
-                required
-                autoComplete="email"
-              />
-            </div>
+          {mode === 'login' ? (
+            <>
+              <div className="professional-auth__form-header">
+                <h2>Welcome back</h2>
+                <p>Log in to continue setting up your profile</p>
+              </div>
+              <form onSubmit={handleLogin} className="professional-auth__form">
+                <div className="form-group">
+                  <label htmlFor="login-email">Email Address</label>
+                  <input
+                    type="email"
+                    id="login-email"
+                    value={formData.email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="your.email@example.com"
+                    required
+                    autoComplete="email"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="login-password">Password</label>
+                  <input
+                    type="password"
+                    id="login-password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    required
+                    autoComplete="current-password"
+                  />
+                </div>
+                <button type="submit" className="professional-auth__button professional-auth__button--primary" disabled={loading}>
+                  {loading ? 'Signing In...' : 'Sign In'}
+                </button>
+                <div style={{ textAlign: 'center', marginTop: '0.75rem' }}>
+                  <button type="button" className="link-button" onClick={handleForgotPassword} disabled={loading} style={{ fontSize: '0.9rem' }}>
+                    Forgot your password?
+                  </button>
+                </div>
+              </form>
+            </>
+          ) : (
+            <>
+              <div className="professional-auth__form-header">
+                <h2>Create your free account</h2>
+                <p>Join the directory and get listed for free</p>
+              </div>
+              <form onSubmit={handleSubmit} className="professional-auth__form">
+                <div className="form-group">
+                  <label htmlFor="email">Email Address *</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="your.email@example.com"
+                    required
+                    autoComplete="email"
+                  />
+                </div>
 
-            <div className="form-group">
-              <label htmlFor="password">Password *</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="At least 6 characters"
-                required
-                autoComplete="new-password"
-              />
-            </div>
+                <div className="form-group">
+                  <label htmlFor="password">Password *</label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="At least 6 characters"
+                    required
+                    autoComplete="new-password"
+                  />
+                </div>
 
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password *</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirm your password"
-                required
-                autoComplete="new-password"
-              />
-            </div>
+                <div className="form-group">
+                  <label htmlFor="confirmPassword">Confirm Password *</label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm your password"
+                    required
+                    autoComplete="new-password"
+                  />
+                </div>
 
-            <label className="professional-auth__checkbox">
-              <input
-                type="checkbox"
-                name="agreeToTerms"
-                checked={formData.agreeToTerms}
-                onChange={handleChange}
-                required
-              />
-              <span>I agree to the <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link></span>
-            </label>
+                <label className="professional-auth__checkbox">
+                  <input
+                    type="checkbox"
+                    name="agreeToTerms"
+                    checked={formData.agreeToTerms}
+                    onChange={handleChange}
+                    required
+                  />
+                  <span>I agree to the <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link></span>
+                </label>
 
-            <button type="submit" className="professional-auth__button professional-auth__button--primary" disabled={loading}>
-              {loading ? 'Creating your account...' : 'Create Free Account'}
-            </button>
-          </form>
+                <button type="submit" className="professional-auth__button professional-auth__button--primary" disabled={loading}>
+                  {loading ? 'Creating your account...' : 'Create Free Account'}
+                </button>
+              </form>
+            </>
+          )}
         </div>
 
         <aside className="professional-auth__aside">
