@@ -124,13 +124,46 @@ export const AuthProvider = ({ children }) => {
         return
       }
 
-      if (!profileData) {
-        console.log('No profile found for user:', userId)
-        setProfile(null)
+      if (profileData) {
+        setProfile(profileData)
         return
       }
 
-      setProfile(profileData)
+      // No profile found by user_id — check for a claimed profile with matching
+      // email that was never linked (e.g. admin approved claim without setting user_id)
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      if (authUser?.email) {
+        const { data: unlinkedProfile, error: unlinkedError } = await supabase
+          .from('profiles')
+          .select('*')
+          .is('user_id', null)
+          .eq('is_claimed', true)
+          .ilike('email', authUser.email)
+          .maybeSingle()
+
+        if (!unlinkedError && unlinkedProfile) {
+          // Auto-link: set user_id on the orphaned profile
+          // (RLS policy "Users can claim unclaimed profiles matching their email" allows this)
+          const { data: linkedProfile, error: linkError } = await supabase
+            .from('profiles')
+            .update({ user_id: userId, last_login: new Date().toISOString() })
+            .eq('id', unlinkedProfile.id)
+            .is('user_id', null)
+            .select()
+            .single()
+
+          if (!linkError && linkedProfile) {
+            console.log('Auto-linked orphaned claimed profile to user:', userId)
+            setProfile(linkedProfile)
+            return
+          } else {
+            console.warn('Failed to auto-link profile:', linkError?.message)
+          }
+        }
+      }
+
+      console.log('No profile found for user:', userId)
+      setProfile(null)
     } catch (error) {
       console.error('Error in loadUserProfile:', error)
       setProfile(null)
@@ -225,7 +258,15 @@ export const AuthProvider = ({ children }) => {
 
       if (error) throw error
 
-      // Update local profile state
+      // Verify rows were actually updated — RLS may silently block writes
+      if (!data || data.length === 0) {
+        throw new Error(
+          'Unable to save changes. Your profile may not be linked to your account. ' +
+          'Please contact support at hello@weddingcounselors.com for assistance.'
+        )
+      }
+
+      // Update local profile state only after confirmed write
       setProfile(prev => ({ ...prev, ...updates }))
 
       return { data, error: null }
@@ -238,7 +279,7 @@ export const AuthProvider = ({ children }) => {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`
     })
-    
+
     return { data, error }
   }
 
@@ -246,7 +287,7 @@ export const AuthProvider = ({ children }) => {
     const { data, error } = await supabase.auth.updateUser({
       password: newPassword
     })
-    
+
     return { data, error }
   }
 

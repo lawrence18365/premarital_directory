@@ -47,13 +47,36 @@ const ClaimReviewDashboard = () => {
 
       if (claim.profile_id) {
         // Existing profile - update it with claim data
+        // Try to find the auth user matching the claimant's email so we can link user_id
+        let claimantUserId = null
+        try {
+          const { data: matchingProfile } = await supabase
+            .from('profiles')
+            .select('user_id')
+            .eq('id', claim.profile_id)
+            .single()
+
+          // If profile already has a user_id from token-based claim, keep it
+          if (matchingProfile?.user_id) {
+            claimantUserId = matchingProfile.user_id
+          }
+        } catch (lookupErr) {
+          console.warn('Could not look up existing user_id:', lookupErr)
+        }
+
+        const updatePayload = {
+          ...claim.claim_data,
+          is_claimed: true,
+          updated_at: new Date().toISOString()
+        }
+        // Only set user_id if we found one (don't overwrite with null)
+        if (claimantUserId) {
+          updatePayload.user_id = claimantUserId
+        }
+
         const { error: updateError } = await supabase
           .from('profiles')
-          .update({
-            ...claim.claim_data,
-            is_claimed: true,
-            updated_at: new Date().toISOString()
-          })
+          .update(updatePayload)
           .eq('id', claim.profile_id)
 
         if (updateError) throw updateError
