@@ -26,6 +26,8 @@ const BUILD_DIR = path.join(__dirname, '..', 'build')
 const PORT = 45678 // Unlikely to conflict
 const CONCURRENCY = 4 // Parallel browser tabs
 const RENDER_TIMEOUT = 15000 // Max ms to wait for page to settle
+const ORIGIN = 'https://www.weddingcounselors.com'
+const DEFAULT_DESCRIPTION = 'Find qualified premarital counselors, therapists, and coaches near you.'
 
 // ---------------------------------------------------------------------------
 // 1. Static file server (serves the CRA build output)
@@ -173,14 +175,36 @@ async function renderRoute(browser, route) {
       { timeout: 5000 }
     ).catch(() => {})
 
-    // Wait for react-helmet to update <head> tags (canonical is a reliable signal)
-    await page.waitForFunction(
-      () => {
-        const helmet = document.querySelector('link[rel="canonical"][data-react-helmet="true"]')
-        return helmet && helmet.getAttribute('href') !== ''
+    // Compute the expected canonical URL for this route
+    const normalizedRoute = route === '/' ? '/' : route.replace(/\/+$/, '')
+    const expectedCanonical = normalizedRoute === '/'
+      ? `${ORIGIN}/`
+      : `${ORIGIN}${normalizedRoute}`
+
+    // Wait for react-helmet to set the CORRECT canonical (not the default "/" one)
+    const helmetReady = await page.waitForFunction(
+      (expected, defaultDesc) => {
+        const canon = document.querySelector('link[rel="canonical"][data-react-helmet="true"]')
+        if (!canon) return false
+        const href = canon.getAttribute('href') || ''
+        // For homepage, just check it exists; for other routes, href must contain the route path
+        const canonOk = expected.endsWith('/') || href.includes(expected.replace('https://www.weddingcounselors.com', ''))
+
+        const desc = document.querySelector('meta[name="description"][data-react-helmet="true"]')
+        // Description must exist and not be the generic homepage fallback (unless we ARE the homepage)
+        const descOk = expected.endsWith('/')
+          || (desc && !desc.getAttribute('content')?.startsWith(defaultDesc))
+
+        return canonOk && descOk
       },
-      { timeout: 3000 }
-    ).catch(() => {})
+      { timeout: 5000 },
+      expectedCanonical,
+      DEFAULT_DESCRIPTION
+    ).catch(() => null)
+
+    if (!helmetReady && route !== '/') {
+      console.warn(`\n  WARN: react-helmet did not set correct meta for ${route} (timed out)`)
+    }
 
     // Small buffer for any remaining async helmet updates (OG, twitter, etc.)
     await new Promise(r => setTimeout(r, 200))

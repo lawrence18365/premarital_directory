@@ -268,10 +268,18 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
 
   if (loading) {
     return (
-      <div className="loading">
-        <div className="loading-spinner"></div>
-        <p>Loading profile...</p>
-      </div>
+      <>
+        <SEOHelmet
+          title="Loading Profile | Premarital Counseling"
+          canonicalUrl={`https://www.weddingcounselors.com${window.location.pathname.replace(/\/+$/, '') || '/'}`}
+          url={window.location.pathname}
+          noindex={false}
+        />
+        <div className="loading">
+          <div className="loading-spinner"></div>
+          <p>Loading profile...</p>
+        </div>
+      </>
     )
   }
 

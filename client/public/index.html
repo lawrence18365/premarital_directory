@@ -20,10 +20,9 @@
   <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#2563eb" />
-  <meta name="description" data-react-helmet="true"
-    content="Find premarital & marriage counselors near you. Compare licensed therapists (LMFT, LPC), Christian counselors & clergy. See pricing, read reviews, contact directly." />
-  <meta name="keywords" data-react-helmet="true"
-    content="premarital counseling, marriage counseling, premarital counseling near me, marriage therapist, wedding preparation, pre marriage counseling, christian premarital counseling" />
+  <!-- SEO meta tags (title, description, canonical, OG, Twitter) are managed
+       entirely by react-helmet via SEOHelmet component. No defaults here —
+       prerendering bakes the correct per-page values into the HTML. -->
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
@@ -38,13 +37,8 @@
     integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <title data-react-helmet="true">Find Premarital & Marriage Counseling Near You | WeddingCounselors.com</title>
-
-  <!-- Additional SEO Meta Tags — data-react-helmet allows per-page override -->
-  <meta name="author" data-react-helmet="true" content="Wedding Counselors" />
-  <meta name="robots" data-react-helmet="true" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <!-- Non-SEO meta (not managed by react-helmet) -->
   <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-  <link rel="canonical" data-react-helmet="true" href="https://www.weddingcounselors.com/" />
 
   <!-- Language and Geo Tags -->
   <meta name="language" content="en-US" />
@@ -54,21 +48,6 @@
   <!-- Verification Tags -->
   <meta name="google-site-verification" content="%REACT_APP_GOOGLE_SITE_VERIFICATION%" />
   <meta name="msvalidate.01" content="%REACT_APP_BING_VERIFICATION%" />
-
-  <!-- Open Graph Meta Tags — data-react-helmet allows per-page override -->
-  <meta property="og:type" data-react-helmet="true" content="website" />
-  <meta property="og:title" data-react-helmet="true" content="Find Premarital & Marriage Counseling Near You" />
-  <meta property="og:description" data-react-helmet="true"
-    content="Compare licensed marriage & premarital counselors. Find LMFT, LPC therapists, Christian counselors & clergy. See pricing and contact directly." />
-  <meta property="og:url" data-react-helmet="true" content="https://www.weddingcounselors.com" />
-  <meta property="og:image" data-react-helmet="true" content="https://www.weddingcounselors.com/media/og-image.jpg" />
-  <meta property="og:site_name" data-react-helmet="true" content="Premarital Counseling Directory" />
-
-  <!-- Twitter Card Meta Tags — data-react-helmet allows per-page override -->
-  <meta name="twitter:card" data-react-helmet="true" content="summary_large_image" />
-  <meta name="twitter:title" data-react-helmet="true" content="Premarital Counseling Directory" />
-  <meta name="twitter:description" data-react-helmet="true"
-    content="Find qualified premarital counseling professionals to help build strong foundations for marriage." />
 
   <style>
     /* Critical CSS for font loading */
@@ -245,45 +224,7 @@
     })();
   </script>
 
-  <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Wedding Counselors",
-        "alternateName": "Premarital Counseling Directory",
-        "url": "https://www.weddingcounselors.com/",
-        "description": "Find qualified premarital counselors, therapists, and coaches near you. Complete directory of wedding counseling professionals.",
-        "publisher": {
-          "@type": "Organization",
-          "name": "Wedding Counselors",
-          "url": "https://www.weddingcounselors.com/"
-        },
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://www.weddingcounselors.com/professionals?search={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
-
-  <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Wedding Counselors",
-        "url": "https://www.weddingcounselors.com/",
-        "logo": "https://www.weddingcounselors.com/logo192.png",
-        "contactPoint": [{
-          "@type": "ContactPoint",
-          "contactType": "customer support",
-          "email": "hello@weddingcounselors.com"
-        }]
-      }
-    </script>
-
+  <!-- JSON-LD structured data is managed by react-helmet via SEOHelmet component -->
 
   <script>
     // Prevent flash of unstyled content + ensure preloader is visible for a minimum time
