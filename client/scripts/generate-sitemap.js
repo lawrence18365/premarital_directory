@@ -74,7 +74,10 @@ const CORE_PAGES = [
 const BLOG_POSTS = [
   { slug: 'financial-questions-before-marriage', priority: 0.8 },
   { slug: 'wedding-planning-fights', priority: 0.8 },
-  { slug: 'inlaw-boundaries', priority: 0.8 }
+  { slug: 'inlaw-boundaries', priority: 0.8 },
+  { slug: 'premarital-counseling-cost', priority: 0.9 },
+  { slug: 'prepare-enrich-explained', priority: 0.9 },
+  { slug: 'how-to-choose-premarital-counselor', priority: 0.9 }
 ]
 
 // Specialty slugs from specialtyConfig.js
