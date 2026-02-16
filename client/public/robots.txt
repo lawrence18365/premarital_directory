@@ -4,7 +4,17 @@ Allow: /
 # Sitemap
 Sitemap: https://www.weddingcounselors.com/sitemap.xml
 
-# Disallow crawling of admin, auth, and API paths
+# Block admin and API
 Disallow: /admin/
-Disallow: /professional/
 Disallow: /api/
+
+# Block private professional areas (dashboards, editing, analytics)
+# But allow public auth pages (signup, login) — they have noindex meta tags
+Disallow: /professional/dashboard
+Disallow: /professional/profile/edit
+Disallow: /professional/leads
+Disallow: /professional/analytics
+Disallow: /professional/subscription
+Disallow: /professional/onboarding
+Disallow: /professional/profile-created
+Disallow: /professional/profile-pending

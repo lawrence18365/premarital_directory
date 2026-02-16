@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { useAuth } from '../../contexts/AuthContext'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 
@@ -89,6 +90,8 @@ const LoginForm = () => {
   }
 
   return (
+    <>
+    <Helmet><meta name="robots" content="noindex, follow" /></Helmet>
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
@@ -165,6 +168,7 @@ const LoginForm = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

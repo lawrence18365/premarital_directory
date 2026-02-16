@@ -389,8 +389,10 @@ async function main() {
     
     // Check if it's an anchor city in CITY_CONFIG
     const isAnchor = CITY_CONFIG[city.stateSlug]?.[city.citySlug]?.is_anchor === true
-    const includeCityPage = hasProfileCoverage ? profileCount > 0 : isAnchor
-    if (!includeCityPage) return
+    // Match CityPage noindex logic: exclude non-anchor cities with <3 profiles
+    // CityPage.js:808: shouldNoindex = profiles.length === 0 || (!isAnchor && profiles.length < 3)
+    const wouldBeNoindex = profileCount === 0 || (!isAnchor && profileCount < 3)
+    if (wouldBeNoindex) return
     
     const priority = calculatePriority(profileCount, maxProfileCount, isAnchor)
     
@@ -418,7 +420,7 @@ async function main() {
   let includedSpecialtyCityPages = 0
 
   if (!hasSpecialtyDepthData) {
-    console.log('⚠️  Specialty depth data unavailable; using anchor-city fallback for non-Catholic specialty sitemap')
+    console.log('⚠️  Specialty depth data unavailable; skipping non-Catholic specialty sitemap to avoid noindex mismatches')
   }
 
   // For each specialty
@@ -433,6 +435,7 @@ async function main() {
         const citySlug = getCitySlug(cityName)
         return CITY_CONFIG[stateSlug]?.[citySlug]?.is_anchor === true
       })
+      // Match SpecialtyStatePage noindex: catholic checks programs, others need >= 3 profiles
       const includeStatePage = specialty === 'catholic'
         ? (
           hasCatholicProgramCoverage &&
@@ -441,7 +444,7 @@ async function main() {
         : (
           hasSpecialtyDepthData
             ? specialtyProfilesInState >= MIN_SPECIALTY_STATE_PROFILES
-            : stateHasAnchorCity
+            : false  // Don't guess — skip if we can't verify profile count
         )
 
       if (includeStatePage) {
@@ -460,6 +463,7 @@ async function main() {
         const specialtyProfilesInCity = specialtyCityCounts[cityKey] || 0
         const catholicProgramsInCity = catholicProgramCityCounts[`${stateSlug}|${citySlug}`] || 0
         const isAnchorCity = CITY_CONFIG[stateSlug]?.[citySlug]?.is_anchor === true
+        // Match SpecialtyCityPage noindex: catholic checks programs, others need >= 2 (or >= 1 for anchor)
         const includeCityPage = specialty === 'catholic'
           ? (
             hasCatholicProgramCoverage &&
@@ -471,7 +475,7 @@ async function main() {
                 specialtyProfilesInCity >= MIN_SPECIALTY_CITY_PROFILES ||
                 (isAnchorCity && specialtyProfilesInCity >= MIN_SPECIALTY_ANCHOR_CITY_PROFILES)
               )
-              : isAnchorCity
+              : false  // Don't guess — skip if we can't verify profile count
           )
 
         if (!includeCityPage) return

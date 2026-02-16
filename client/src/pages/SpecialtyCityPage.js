@@ -230,7 +230,9 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
       <SEOHelmet
         title={metaTitle}
         description={metaDescription}
-        url={`/premarital-counseling/${specialtySlug}/${stateSlug}/${citySlug}`}
+        url={shouldNoindex
+          ? `/premarital-counseling/${stateSlug}/${citySlug}`
+          : `/premarital-counseling/${specialtySlug}/${stateSlug}/${citySlug}`}
         breadcrumbs={breadcrumbItems}
         noindex={shouldNoindex}
       />

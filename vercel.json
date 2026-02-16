@@ -4,11 +4,23 @@
   "installCommand": "npm install --prefix client",
   "buildCommand": "npm run build --prefix client",
   "outputDirectory": "client/build",
+  "redirects": [
+    { "source": "/(.*)/", "destination": "/$1", "statusCode": 308 },
+    { "source": "/therapists", "destination": "/", "statusCode": 301 },
+    { "source": "/coaches", "destination": "/", "statusCode": 301 },
+    { "source": "/clergy", "destination": "/", "statusCode": 301 }
+  ],
   "rewrites": [
     { "source": "/auth/v1/:path*", "destination": "https://bkjwctlolhoxhnoospwp.supabase.co/auth/v1/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
+    {
+      "source": "/profile/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, follow" }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [

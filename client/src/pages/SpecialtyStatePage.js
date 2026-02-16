@@ -204,7 +204,9 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
       <SEOHelmet
         title={metaTitle}
         description={metaDescription}
-        url={`/premarital-counseling/${specialtySlug}/${stateSlug}`}
+        url={shouldNoindex
+          ? `/premarital-counseling/${stateSlug}`
+          : `/premarital-counseling/${specialtySlug}/${stateSlug}`}
         breadcrumbs={breadcrumbItems}
         noindex={shouldNoindex}
       />

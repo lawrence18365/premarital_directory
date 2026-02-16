@@ -203,9 +203,7 @@ function AppInner() {
                 <Route path="/claim-program/:token" element={<ClaimProgramPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
-                <Route path="/therapists" element={<HomePage />} />
-                <Route path="/coaches" element={<HomePage />} />
-                <Route path="/clergy" element={<HomePage />} />
+                {/* /therapists, /coaches, /clergy → 301 to / via Vercel edge redirect */}
                 <Route path="/features" element={<FeaturesPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/support" element={<SupportPage />} />

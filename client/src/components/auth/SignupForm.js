@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { useAuth } from '../../contexts/AuthContext'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { profileOperations } from '../../lib/supabaseClient'
@@ -209,6 +210,8 @@ const SignupForm = () => {
   }
 
   return (
+    <>
+    <Helmet><meta name="robots" content="noindex, follow" /></Helmet>
     <div className="professional-auth">
       <div className="professional-auth__hero">
         <div className="professional-auth__hero-copy">
@@ -399,6 +402,7 @@ const SignupForm = () => {
         </aside>
       </section>
     </div>
+    </>
   )
 }
 
