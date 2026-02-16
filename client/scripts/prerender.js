@@ -173,16 +173,69 @@ async function renderRoute(browser, route) {
       { timeout: 5000 }
     ).catch(() => {})
 
-    // Short extra wait for react-helmet to update <head>
-    await new Promise(r => setTimeout(r, 500))
+    // Wait for react-helmet to update <head> tags (canonical is a reliable signal)
+    await page.waitForFunction(
+      () => {
+        const helmet = document.querySelector('link[rel="canonical"][data-react-helmet="true"]')
+        return helmet && helmet.getAttribute('href') !== ''
+      },
+      { timeout: 3000 }
+    ).catch(() => {})
 
-    // Remove the preloader element from the snapshot
+    // Small buffer for any remaining async helmet updates (OG, twitter, etc.)
+    await new Promise(r => setTimeout(r, 200))
+
+    // Remove the preloader and clean up duplicate/stale head tags
     await page.evaluate(() => {
       const preloader = document.getElementById('wc-preloader')
       if (preloader) preloader.remove()
       // Ensure body is visible
       document.body.classList.add('prerendered', 'loaded')
       document.body.style.opacity = '1'
+
+      // --- Clean up duplicate meta tags ---
+      // react-helmet tags have data-react-helmet="true"; remove any
+      // non-helmet duplicates that share the same name/property attribute
+      const helmetMetas = document.querySelectorAll('meta[data-react-helmet="true"]')
+      const helmetKeys = new Set()
+      helmetMetas.forEach(el => {
+        const key = el.getAttribute('name') || el.getAttribute('property')
+        if (key) helmetKeys.add(key)
+      })
+      // Remove non-helmet meta tags that have a helmet duplicate
+      document.querySelectorAll('meta:not([data-react-helmet])').forEach(el => {
+        const key = el.getAttribute('name') || el.getAttribute('property')
+        if (key && helmetKeys.has(key)) el.remove()
+      })
+
+      // --- Clean up duplicate canonical links ---
+      const helmetCanonical = document.querySelector('link[rel="canonical"][data-react-helmet="true"]')
+      if (helmetCanonical) {
+        document.querySelectorAll('link[rel="canonical"]:not([data-react-helmet])').forEach(el => el.remove())
+      }
+
+      // --- Clean up duplicate title tags ---
+      const titles = document.querySelectorAll('title')
+      if (titles.length > 1) {
+        // Keep the last one (react-helmet's)
+        for (let i = 0; i < titles.length - 1; i++) titles[i].remove()
+      }
+
+      // --- Clean up hardcoded JSON-LD that duplicates react-helmet's ---
+      // react-helmet adds its own JSON-LD with data-react-helmet; remove
+      // non-helmet JSON-LD Organization blocks to avoid duplication
+      const helmetJsonLd = document.querySelector('script[type="application/ld+json"][data-react-helmet="true"]')
+      if (helmetJsonLd) {
+        document.querySelectorAll('script[type="application/ld+json"]:not([data-react-helmet])').forEach(el => {
+          try {
+            const data = JSON.parse(el.textContent)
+            // Remove if it's an Organization or WebSite schema (SEOHelmet handles these)
+            if (data['@type'] === 'Organization' || data['@type'] === 'WebSite') {
+              el.remove()
+            }
+          } catch { /* skip malformed JSON-LD */ }
+        })
+      }
     })
 
     // Get the final HTML
@@ -266,13 +319,18 @@ function verifyResults(results) {
       const hasCustomTitle = !title.startsWith('Find Premarital')
       const canonicalMatch = html.match(/rel="canonical"\s+href="([^"]*)"/)
       const canonical = canonicalMatch ? canonicalMatch[1] : '(none)'
+      const canonicalCount = (html.match(/rel="canonical"/g) || []).length
+      const descMatch = html.match(/<meta[^>]*name="description"[^>]*content="([^"]*)"/)
+      const desc = descMatch ? descMatch[1].substring(0, 80) + '...' : '(none)'
       const hasJsonLd = (html.match(/application\/ld\+json/g) || []).length
       const hasProfileContent = html.length > 5000
+      const isCanonicalCorrect = canonical.includes(sampleProfile.route.replace(/\/$/, ''))
 
       console.log('\n  Sample prerendered page verification:')
       console.log(`    Route:     ${sampleProfile.route}`)
       console.log(`    Title:     ${hasCustomTitle ? 'OK' : 'GENERIC'} — "${title}"`)
-      console.log(`    Canonical: ${canonical}`)
+      console.log(`    Canonical: ${isCanonicalCorrect ? 'OK' : 'WRONG'} — "${canonical}" (${canonicalCount} tag(s))`)
+      console.log(`    Desc:      ${desc}`)
       console.log(`    JSON-LD:   ${hasJsonLd} block(s)`)
       console.log(`    Size:      ${(sampleProfile.size / 1024).toFixed(1)} KB`)
       console.log(`    Content:   ${hasProfileContent ? 'OK' : 'THIN'}`)
