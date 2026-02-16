@@ -153,8 +153,8 @@ async function renderRoute(browser, route) {
     const url = req.url()
     if (url.startsWith(`http://localhost:${PORT}`)) {
       req.continue()
-    } else if (url.includes('supabase.co')) {
-      // Allow Supabase API calls (needed for data)
+    } else if (url.includes('supabase.co') && !url.includes('/realtime/')) {
+      // Allow Supabase REST API calls (needed for data) but block realtime WebSocket
       req.continue()
     } else {
       req.abort()
@@ -163,7 +163,7 @@ async function renderRoute(browser, route) {
 
   try {
     await page.goto(`http://localhost:${PORT}${route}`, {
-      waitUntil: 'networkidle0',
+      waitUntil: 'networkidle2',  // Allow 2 lingering connections (Supabase keepalive)
       timeout: RENDER_TIMEOUT
     })
 
