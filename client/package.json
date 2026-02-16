@@ -22,6 +22,7 @@
     "start": "react-scripts start",
     "prebuild": "node scripts/generate-sitemap.js",
     "build": "react-scripts build",
+    "postbuild": "node scripts/prerender.js",
     "build:sitemap": "node scripts/generate-sitemap.js",
     "audit:contrast": "node scripts/a11y-contrast-audit.js",
     "audit:contrast:full": "node scripts/a11y-contrast-audit.js --full",
@@ -52,6 +53,7 @@
     ]
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.2"
+    "@playwright/test": "^1.58.2",
+    "puppeteer": "^24.37.3"
   }
 }

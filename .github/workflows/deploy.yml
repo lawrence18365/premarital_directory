@@ -1,0 +1,168 @@
+name: Build, Prerender & Deploy
+
+# This workflow builds the CRA app, pre-renders all SEO pages using Puppeteer
+# (Chrome is pre-installed on GitHub Actions runners), and deploys the
+# fully-baked static HTML to Vercel.
+#
+# Why GitHub Actions instead of Vercel's build?
+# Vercel's build containers cannot run headless Chrome, so the Puppeteer
+# prerender step silently fails there. GitHub Actions runners have Chrome
+# pre-installed, making prerendering reliable.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Rebuild daily at 5 AM UTC (midnight ET) to pick up new profiles
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual deploy'
+        required: false
+        default: 'Manual rebuild'
+
+# Cancel in-progress runs on the same branch
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --prefix client
+
+      # CRA build pipeline: prebuild (sitemap) → build (webpack) → postbuild (prerender)
+      - name: Build with prerendering
+        run: npm run build --prefix client
+        env:
+          # Required for data fetching (sitemap generation + prerender)
+          REACT_APP_SUPABASE_URL: ${{ secrets.REACT_APP_SUPABASE_URL }}
+          REACT_APP_SUPABASE_ANON_KEY: ${{ secrets.REACT_APP_SUPABASE_ANON_KEY }}
+          # SEO metadata
+          REACT_APP_SITE_URL: https://www.weddingcounselors.com
+          REACT_APP_SITE_NAME: Wedding Counselors
+          REACT_APP_SITE_DESCRIPTION: "Find premarital & marriage counselors near you. Compare licensed therapists, Christian counselors & clergy."
+          # Search engine verification
+          REACT_APP_GOOGLE_SITE_VERIFICATION: ${{ secrets.REACT_APP_GOOGLE_SITE_VERIFICATION }}
+          REACT_APP_BING_VERIFICATION: ${{ secrets.REACT_APP_BING_VERIFICATION }}
+          # Analytics (baked into HTML but skipped during prerender via ReactSnap UA check)
+          REACT_APP_GA4_MEASUREMENT_ID: ${{ secrets.REACT_APP_GA4_MEASUREMENT_ID }}
+          REACT_APP_FACEBOOK_PIXEL_ID: ${{ secrets.REACT_APP_FACEBOOK_PIXEL_ID }}
+          REACT_APP_GOOGLE_ADS_ID: ${{ secrets.REACT_APP_GOOGLE_ADS_ID }}
+          # Signal to prerender script that we're in CI (fail loudly)
+          CI: true
+
+      # Quick sanity check: verify a profile page was actually prerendered
+      - name: Verify prerender output
+        run: |
+          echo "=== Prerender Verification ==="
+
+          # Check that profile directories exist
+          PROFILE_DIRS=$(find client/build/premarital-counseling -mindepth 3 -name "index.html" -type f 2>/dev/null | head -5)
+          if [ -z "$PROFILE_DIRS" ]; then
+            echo "::error::No prerendered profile pages found! Prerender may have failed."
+            exit 1
+          fi
+
+          echo "Sample prerendered profiles:"
+          echo "$PROFILE_DIRS"
+
+          # Check that one of them has actual content (not just the SPA shell)
+          SAMPLE=$(echo "$PROFILE_DIRS" | head -1)
+          SAMPLE_SIZE=$(wc -c < "$SAMPLE")
+          echo "Sample file size: $SAMPLE_SIZE bytes"
+
+          if [ "$SAMPLE_SIZE" -lt 5000 ]; then
+            echo "::error::Prerendered file is too small ($SAMPLE_SIZE bytes). Likely just the SPA shell."
+            exit 1
+          fi
+
+          # Check for a custom title (not the generic fallback)
+          if grep -q '<title>Find Premarital' "$SAMPLE"; then
+            echo "::warning::Sample page has generic title — profile data may not have loaded"
+          else
+            TITLE=$(grep -oP '<title>\K[^<]+' "$SAMPLE" | head -1)
+            echo "Title: $TITLE"
+          fi
+
+          # Check for JSON-LD structured data
+          JSONLD_COUNT=$(grep -c 'application/ld+json' "$SAMPLE" || true)
+          echo "JSON-LD blocks: $JSONLD_COUNT"
+
+          echo "=== Verification passed ==="
+
+      # Prepare the Vercel prebuilt output directory structure
+      - name: Prepare Vercel output
+        run: |
+          mkdir -p .vercel/output/static
+          cp -r client/build/* .vercel/output/static/
+
+          cat > .vercel/output/config.json << 'VCONFIG'
+          {
+            "version": 3,
+            "routes": [
+              {
+                "src": "/static/(.*)",
+                "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
+                "continue": true
+              },
+              {
+                "src": "/(sitemap.*\\.xml|robots\\.txt)",
+                "headers": { "Cache-Control": "public, max-age=3600" },
+                "continue": true
+              },
+              {
+                "src": "/(.*)",
+                "headers": {
+                  "X-Content-Type-Options": "nosniff",
+                  "Referrer-Policy": "strict-origin-when-cross-origin"
+                },
+                "continue": true
+              },
+              {
+                "handle": "filesystem"
+              },
+              {
+                "src": "/auth/v1/(.*)",
+                "dest": "https://bkjwctlolhoxhnoospwp.supabase.co/auth/v1/$1"
+              },
+              {
+                "src": "/(.*)",
+                "dest": "/index.html"
+              }
+            ]
+          }
+          VCONFIG
+
+      - name: Deploy to Vercel
+        run: npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Summary
+        run: |
+          PROFILE_COUNT=$(find client/build/premarital-counseling -mindepth 3 -name "index.html" -type f 2>/dev/null | wc -l)
+          TOTAL_HTML=$(find client/build -name "index.html" -type f | wc -l)
+          echo "### Deploy Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total prerendered pages:** $TOTAL_HTML" >> $GITHUB_STEP_SUMMARY
+          echo "- **Prerendered profiles:** $PROFILE_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "- **Reason:** ${{ github.event.inputs.reason }}" >> $GITHUB_STEP_SUMMARY
+          fi

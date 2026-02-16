@@ -276,11 +276,11 @@ export const logStructuredDataReport = () => {
 /**
  * Development helper to run tests on page load
  */
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development' && typeof navigator !== 'undefined' && navigator.userAgent !== 'ReactSnap') {
   if (typeof window !== 'undefined') {
     window.testStructuredData = testPageStructuredData
     window.logStructuredDataReport = logStructuredDataReport
-    
+
     // Auto-run tests after page load
     window.addEventListener('load', () => {
       setTimeout(logStructuredDataReport, 1000)

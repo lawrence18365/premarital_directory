@@ -2,13 +2,18 @@
 <html lang="en">
 
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3DMVJVG5VF"></script>
+  <!-- Google tag (gtag.js) — skip during react-snap prerender -->
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-3DMVJVG5VF');
+    if (navigator.userAgent !== 'ReactSnap') {
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-3DMVJVG5VF';
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-3DMVJVG5VF');
+    }
   </script>
 
   <meta charset="utf-8" />
