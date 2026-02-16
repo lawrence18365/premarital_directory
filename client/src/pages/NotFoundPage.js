@@ -1,9 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import SEOHelmet from '../components/analytics/SEOHelmet'
 
 const NotFoundPage = () => {
   return (
     <div style={{ padding: 'var(--space-20) 0', background: 'var(--gray-50)', minHeight: '60vh' }}>
+      <SEOHelmet title="Page Not Found" description="This page could not be found." noindex={true} />
       <div className="container">
         <div style={{ 
           textAlign: 'center', 

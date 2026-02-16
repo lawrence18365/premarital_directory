@@ -5,11 +5,17 @@ import { getSpecialtyBySlug } from '../../data/specialtyConfig'
 // Lazy load target components
 const SpecialtyStatePage = React.lazy(() => import('../../pages/SpecialtyStatePage'))
 const CityOrProfilePage = React.lazy(() => import('./CityOrProfilePage'))
+const MarriageLicenseStatePage = React.lazy(() => import('../../pages/MarriageLicenseStatePage'))
 
 const Segment2Route = () => {
   // We capture generic params from the route definition in App.js
   // Expected route: /premarital-counseling/:param1/:param2
   const { param1, param2 } = useParams()
+
+  // Handle /premarital-counseling/marriage-license-discount/:state
+  if (param1 === 'marriage-license-discount') {
+    return <MarriageLicenseStatePage />
+  }
 
   // Check if param1 is a specialty
   const isSpecialty = !!getSpecialtyBySlug(param1)

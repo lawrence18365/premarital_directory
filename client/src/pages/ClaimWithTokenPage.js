@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
+import SEOHelmet from '../components/analytics/SEOHelmet';
 
 /**
  * One-click claim page for outreach emails
@@ -418,6 +419,7 @@ const ClaimWithTokenPage = () => {
 
   return (
     <div className="auth-page">
+      <SEOHelmet title="Claim Your Profile" description="Claim your professional profile on Wedding Counselors." noindex={true} />
       <div className="auth-container">
         <div className="auth-card">
           <div style={{ textAlign: 'center', marginBottom: 'var(--space-6)' }}>

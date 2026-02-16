@@ -243,6 +243,197 @@ const HomePage = () => {
           </div>
         </section>
 
+        {/* Popular Specialties — Money Pages */}
+        <section className="popular-cities" aria-labelledby="specialties-heading" style={{ background: 'var(--gray-50, #f9fafb)' }}>
+          <div className="container">
+            <div className="popular-cities__header">
+              <p className="section-eyebrow">By specialty</p>
+              <h2 id="specialties-heading">Popular Approaches to Premarital Counseling</h2>
+              <p className="popular-cities__intro">
+                Explore counselors by method, faith tradition, or format.
+              </p>
+            </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+              gap: 'var(--space-4)'
+            }}>
+              {[
+                { slug: 'online', label: 'Online Counseling', desc: 'Virtual sessions from home' },
+                { slug: 'catholic', label: 'Catholic Pre-Cana', desc: 'Parish and diocesan programs' },
+                { slug: 'gottman', label: 'Gottman Method', desc: 'Research-backed approach' },
+                { slug: 'christian', label: 'Christian Counseling', desc: 'Faith-based marriage prep' },
+                { slug: 'affordable', label: 'Affordable Options', desc: 'Sliding scale and low-cost' },
+                { slug: 'prepare-enrich', label: 'PREPARE/ENRICH', desc: 'Premarital assessment tool' }
+              ].map((item) => (
+                <Link
+                  key={item.slug}
+                  to={`/premarital-counseling/${item.slug}`}
+                  style={{
+                    display: 'block',
+                    padding: 'var(--space-5)',
+                    background: 'white',
+                    borderRadius: 'var(--radius-lg)',
+                    border: '1px solid #e5e7eb',
+                    textDecoration: 'none',
+                    transition: 'box-shadow 0.2s, transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = 'none'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  <h3 style={{ fontSize: '1rem', margin: '0 0 4px', color: 'var(--text-primary)' }}>
+                    {item.label}
+                  </h3>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+                    {item.desc}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Marriage License Discounts Block */}
+        <section style={{ padding: 'var(--space-12) 0' }} aria-labelledby="discounts-heading">
+          <div className="container">
+            <div style={{ textAlign: 'center', marginBottom: 'var(--space-8)' }}>
+              <p className="section-eyebrow">Save money</p>
+              <h2 id="discounts-heading">Marriage License Discounts by State</h2>
+              <p style={{ color: 'var(--text-secondary)', maxWidth: 600, margin: '0 auto' }}>
+                Several states offer $25-$75 off your marriage license when you complete premarital counseling.
+              </p>
+            </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+              gap: 'var(--space-3)',
+              maxWidth: 800,
+              margin: '0 auto'
+            }}>
+              {[
+                { state: 'Florida', slug: 'florida', discount: '$32.50 off' },
+                { state: 'Texas', slug: 'texas', discount: '$60 off' },
+                { state: 'Minnesota', slug: 'minnesota', discount: 'Up to $75 off' },
+                { state: 'Tennessee', slug: 'tennessee', discount: '$60 off' },
+                { state: 'Oklahoma', slug: 'oklahoma', discount: '$50 off' },
+                { state: 'Indiana', slug: 'indiana', discount: '$60 off' }
+              ].map((item) => (
+                <Link
+                  key={item.slug}
+                  to={`/premarital-counseling/marriage-license-discount/${item.slug}`}
+                  style={{
+                    padding: 'var(--space-4)',
+                    background: 'var(--gray-50, #f9fafb)',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid #e5e7eb',
+                    textDecoration: 'none',
+                    textAlign: 'center',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--primary)'
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#e5e7eb'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  <p style={{ fontWeight: 600, margin: '0 0 2px', color: 'var(--text-primary)', fontSize: '0.95rem' }}>
+                    {item.state}
+                  </p>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--color-primary)', margin: 0, fontWeight: 500 }}>
+                    {item.discount}
+                  </p>
+                </Link>
+              ))}
+            </div>
+            <div style={{ textAlign: 'center', marginTop: 'var(--space-6)' }}>
+              <Link to="/premarital-counseling/marriage-license-discount" className="btn btn-secondary">
+                View All State Discounts
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Latest Guides — Blog Internal Links */}
+        <section style={{ padding: 'var(--space-12) 0', background: 'var(--gray-50, #f9fafb)' }} aria-labelledby="guides-heading">
+          <div className="container">
+            <div style={{ textAlign: 'center', marginBottom: 'var(--space-8)' }}>
+              <p className="section-eyebrow">Resources</p>
+              <h2 id="guides-heading">Guides for Engaged Couples</h2>
+              <p style={{ color: 'var(--text-secondary)', maxWidth: 600, margin: '0 auto' }}>
+                Practical advice to prepare for your marriage.
+              </p>
+            </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: 'var(--space-4)',
+              maxWidth: 960,
+              margin: '0 auto'
+            }}>
+              {[
+                {
+                  slug: 'financial-questions-before-marriage',
+                  title: 'Financial Questions to Ask Before Marriage',
+                  excerpt: 'Essential money conversations every couple should have before saying "I do."'
+                },
+                {
+                  slug: 'wedding-planning-fights',
+                  title: 'How to Stop Wedding Planning Fights',
+                  excerpt: 'Practical strategies for navigating disagreements during wedding planning.'
+                },
+                {
+                  slug: 'inlaw-boundaries',
+                  title: 'Setting Boundaries with In-Laws',
+                  excerpt: 'How to build healthy relationships with extended family before marriage.'
+                }
+              ].map((post) => (
+                <Link
+                  key={post.slug}
+                  to={`/blog/${post.slug}`}
+                  style={{
+                    display: 'block',
+                    padding: 'var(--space-6)',
+                    background: 'white',
+                    borderRadius: 'var(--radius-lg)',
+                    border: '1px solid #e5e7eb',
+                    textDecoration: 'none',
+                    transition: 'box-shadow 0.2s, transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = 'none'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  <h3 style={{ fontSize: '1.05rem', margin: '0 0 8px', color: 'var(--text-primary)' }}>
+                    {post.title}
+                  </h3>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
+                    {post.excerpt}
+                  </p>
+                </Link>
+              ))}
+            </div>
+            <div style={{ textAlign: 'center', marginTop: 'var(--space-6)' }}>
+              <Link to="/blog" className="btn btn-secondary">
+                Read More Guides
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* FAQ Section */}
         <FAQ
           faqs={premaritalCounselingFAQs.slice(0, 6)}

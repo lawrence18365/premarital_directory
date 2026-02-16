@@ -6,6 +6,7 @@ import Breadcrumbs, { generateBreadcrumbs } from '../components/common/Breadcrum
 import SEOHelmet from '../components/analytics/SEOHelmet';
 import { trackLocationPageView } from '../components/analytics/GoogleAnalytics';
 import { STATE_CONFIG } from '../data/locationConfig';
+import { SPECIALTY_CONFIG } from '../data/specialtyConfig';
 import StateContentGenerator from '../lib/stateContentGenerator';
 import StateAIContent from '../components/state/StateAIContent';
 import ProfileCard from '../components/profiles/ProfileCard';
@@ -202,7 +203,7 @@ const StatePage = () => {
   return (
     <>
       <SEOHelmet
-        title={stateContent?.title || `Marriage & Premarital Counseling ${stateConfig.name} - ${stateData?.totalProfiles || 'Find'} Therapists (2026)`}
+        title={stateContent?.title || `Premarital Counseling ${stateConfig.name} — ${stateData?.totalProfiles || 'Top'} Therapists`}
         description={stateContent?.description || `Find ${stateData?.totalProfiles || 'top'} marriage & premarital counselors in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC), Christian counselors & couples therapy across ${activeCities.length || stateConfig.major_cities.length} cities. Contact directly.`}
         url={`/premarital-counseling/${state}`}
         keywords={`marriage counseling ${stateConfig.name}, premarital counseling ${stateConfig.name}, marriage therapist ${stateConfig.name}, premarital counseling near me ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, christian marriage counseling ${stateConfig.name}`}
@@ -400,6 +401,47 @@ const StatePage = () => {
             showSearch={false}
             showAside={false}
           />
+        </div>
+
+        {/* Specialty Cross-Links */}
+        <div className="state-container" style={{ marginBottom: 'var(--space-12)' }}>
+          <div style={{
+            padding: 'var(--space-8)',
+            background: 'var(--gray-50)',
+            borderRadius: 'var(--radius-lg)'
+          }}>
+            <h3 style={{ marginBottom: 'var(--space-4)' }}>
+              Browse by Specialty in {stateConfig.name}
+            </h3>
+            <p style={{ marginBottom: 'var(--space-6)', color: 'var(--text-secondary)' }}>
+              Find premarital counselors in {stateConfig.name} by method or focus area
+            </p>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+              gap: 'var(--space-3)'
+            }}>
+              {Object.entries(SPECIALTY_CONFIG).slice(0, 8).map(([slug, config]) => (
+                <Link
+                  key={slug}
+                  to={`/premarital-counseling/${slug}/${state}`}
+                  style={{
+                    padding: 'var(--space-3)',
+                    background: 'white',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid #e5e7eb',
+                    textDecoration: 'none',
+                    color: 'var(--color-primary)',
+                    fontSize: '0.875rem',
+                    textAlign: 'center',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {config.name} in {stateConfig.name}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* AI-Generated SEO Content Section */}

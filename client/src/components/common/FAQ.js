@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import SEOHelmet from '../analytics/SEOHelmet'
 
 const FAQ = ({ 
   faqs = [], 
@@ -54,27 +53,11 @@ const FAQ = ({
     setExpandedItems(expandedSet)
   }
 
-  // Generate structured data for SEO (use the full list, not filtered)
-  const faqStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqs.map(faq => ({
-      "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
-  }
-
   if (faqs.length === 0) {
     return null
   }
 
   return (
-    <>
-      <SEOHelmet structuredData={faqStructuredData} />
       <section className={`faq-section ${className}`}>
         <div className="faq-container">
           <div className="faq-header">
@@ -244,7 +227,6 @@ const FAQ = ({
           )}
         </div>
       </section>
-    </>
   )
 }
 

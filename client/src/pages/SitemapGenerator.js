@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import SEOHelmet from '../components/analytics/SEOHelmet'
 import { profileOperations } from '../lib/supabaseClient'
 
 const SitemapGenerator = () => {
@@ -98,6 +99,7 @@ ${allPages.map(page => `  <url>
 
   return (
     <div className="page-container">
+      <SEOHelmet title="Sitemap Generator" description="Internal sitemap generation tool." noindex={true} />
       <div className="container">
         <div className="page-header">
           <h1>Sitemap Generator</h1>

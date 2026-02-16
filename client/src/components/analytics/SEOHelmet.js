@@ -41,7 +41,7 @@ const generateOrganizationStructuredData = (siteUrl) => {
     "@type": "Organization",
     "name": "Wedding Counselors",
     "url": siteUrl,
-    "logo": `${siteUrl}/favicon.ico`,
+    "logo": `${siteUrl}/media/couple_in_counselling_animation.png`,
     "description": "Directory of qualified premarital counselors, therapists, and coaches helping engaged couples prepare for marriage.",
     "sameAs": [
       "https://www.facebook.com/weddingcounselors",

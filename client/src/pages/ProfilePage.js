@@ -8,6 +8,7 @@ import SEOHelmet, { generateProfessionalStructuredData } from '../components/ana
 import { trackProfileView } from '../components/analytics/GoogleAnalytics'
 import { trackFacebookProfileView } from '../components/analytics/FacebookPixel'
 import { STATE_CONFIG } from '../data/locationConfig'
+import { SPECIALTY_CONFIG } from '../data/specialtyConfig'
 
 import { profileOperations, clickTrackingOperations } from '../lib/supabaseClient'
 import UnclaimedProfileBanner from '../components/profiles/UnclaimedProfileBanner'
@@ -139,6 +140,97 @@ const isMissingDescriptor = (value) => {
   if (!value) return true
   const normalized = String(value).trim().toLowerCase()
   return ['not listed', 'not provided', 'availability unverified', 'availability not listed'].includes(normalized)
+}
+
+// Build a CTR-optimized meta title for profile pages (target: under 60 chars)
+const buildProfileMetaTitle = (profile, { hasOnlineOption, stateName }) => {
+  const name = profile?.full_name || 'Professional'
+  const city = profile?.city || ''
+  const stAbbr = profile?.state_province || ''
+
+  // Use em-dash for visual distinction in SERPs
+  let title = `${name} — Premarital Counseling in ${city}, ${stAbbr}`
+
+  // Add online flag if short enough
+  if (hasOnlineOption && title.length < 50) {
+    title = `${name} — Premarital Counseling in ${city}, ${stAbbr} (Online)`
+  }
+
+  // Fallback if no city
+  if (!city) {
+    title = `${name} — Premarital Counselor`
+  }
+
+  return title
+}
+
+// Build a CTR-optimized meta description (target: 150-160 chars, action-oriented)
+const buildProfileMetaDescription = (profile, {
+  pricingLabel,
+  insuranceAccepted,
+  hasOnlineOption,
+  freeConsultationEnabled,
+  treatmentApproaches,
+  slidingScaleEnabled,
+  stateName
+}) => {
+  const parts = []
+  const profession = profile?.profession || 'Premarital Counselor'
+  const city = profile?.city || ''
+  const stAbbr = profile?.state_province || ''
+
+  // Lead with profession + location
+  if (city && stAbbr) {
+    parts.push(`${profession} in ${city}, ${stAbbr}.`)
+  } else {
+    parts.push(`${profession}.`)
+  }
+
+  // Add top method if available
+  const topMethod = treatmentApproaches.find((m) =>
+    /gottman|eft|prepare|enrich|foccus|symbis/i.test(String(m))
+  )
+  if (topMethod) {
+    parts.push(`${topMethod}.`)
+  }
+
+  // Add pricing signal
+  if (pricingLabel && pricingLabel !== 'Not listed') {
+    parts.push(`${pricingLabel}.`)
+  }
+
+  // Insurance or self-pay signal
+  if (insuranceAccepted.length > 0) {
+    parts.push('Insurance accepted.')
+  } else if (slidingScaleEnabled) {
+    parts.push('Sliding scale available.')
+  }
+
+  // Free consultation
+  if (freeConsultationEnabled) {
+    parts.push('Free consultation.')
+  }
+
+  // Online
+  if (hasOnlineOption) {
+    parts.push('Online sessions available.')
+  }
+
+  // CTA
+  parts.push('Book a session today.')
+
+  // Join and trim to ~160 chars
+  let description = parts.join(' ')
+  if (description.length > 160) {
+    // Remove CTA and trim
+    parts.pop()
+    description = parts.join(' ')
+    if (description.length > 157) {
+      description = description.substring(0, 157) + '...'
+    }
+  }
+
+  return description
 }
 
 const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
@@ -478,8 +570,8 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   return (
     <>
       <SEOHelmet
-        title={`${profile?.full_name} - ${profile?.profession}${profile?.city && stateName ? ` in ${profile.city}, ${stateName}` : ''} | Premarital Counseling`}
-        description={`Connect with ${profile?.full_name}, a qualified ${profile?.profession}${profile?.city && stateName ? ` in ${profile.city}, ${stateName}` : ''}. ${profile?.bio ? `${profile.bio.substring(0, 150)}...` : 'Specializing in premarital counseling for engaged couples.'}`}
+        title={buildProfileMetaTitle(profile, { hasOnlineOption, stateName })}
+        description={buildProfileMetaDescription(profile, { pricingLabel, insuranceAccepted, hasOnlineOption, freeConsultationEnabled, treatmentApproaches, slidingScaleEnabled, stateName })}
         url={window.location.pathname}
         type="profile"
         structuredData={profile ? generateProfessionalStructuredData(profile) : null}
@@ -901,6 +993,29 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                       >
                         Browse all {profile.state_province} counselors
                       </Link>
+                      {/* Specialty cross-links based on provider's methods/faith */}
+                      {(() => {
+                        const profileText = [
+                          ...treatmentApproaches,
+                          ...certifications,
+                          ...specialties,
+                          profile.faith_tradition || ''
+                        ].join(' ').toLowerCase()
+                        const matchedSpecialties = Object.entries(SPECIALTY_CONFIG)
+                          .filter(([slug, config]) =>
+                            config.filterTerms.some((term) => profileText.includes(term.toLowerCase()))
+                          )
+                          .slice(0, 3)
+                        return matchedSpecialties.map(([slug, config]) => (
+                          <Link
+                            key={slug}
+                            to={`/premarital-counseling/${slug}/${normalizedStateSlug}`}
+                            className="profile-link-row"
+                          >
+                            {config.name} counseling in {stateName}
+                          </Link>
+                        ))
+                      })()}
                     </div>
                   </section>
                 )}

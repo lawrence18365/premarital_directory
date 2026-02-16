@@ -78,6 +78,7 @@ const StatesIndexPage = React.lazy(() => import('./pages/StatesIndexPage'))
 const Segment2Route = React.lazy(() => import('./components/routing/Segment2Route'))
 const Segment3Route = React.lazy(() => import('./components/routing/Segment3Route'))
 const MarriageLicenseDiscountPage = React.lazy(() => import('./pages/MarriageLicenseDiscountPage'))
+const MarriageLicenseStatePage = React.lazy(() => import('./pages/MarriageLicenseStatePage'))
 
 // Blog pages
 const BlogIndex = React.lazy(() => import('./pages/blog/BlogIndex'))
@@ -115,6 +116,11 @@ const EmailVerifiedPage = React.lazy(() => import('./pages/EmailVerifiedPage'))
 const SEOContentPage = React.lazy(() => import('./pages/SEOContentPage'))
 const ClaimWithTokenPage = React.lazy(() => import('./pages/ClaimWithTokenPage'))
 const ClaimProgramPage = React.lazy(() => import('./pages/ClaimProgramPage'))
+const ForChurchesPage = React.lazy(() => import('./pages/ForChurchesPage'))
+const EmbedFindPage = React.lazy(() => import('./pages/EmbedFindPage'))
+const HowItWorksPage = React.lazy(() => import('./pages/HowItWorksPage'))
+const EditorialStandardsPage = React.lazy(() => import('./pages/EditorialStandardsPage'))
+const CorrectionsPage = React.lazy(() => import('./pages/CorrectionsPage'))
 
 // Test functions for AI content generation (development only)
 if (process.env.NODE_ENV === 'development') {
@@ -127,7 +133,8 @@ function AppInner() {
   const { user, profile, loading, isAdmin, profileLoadFailed } = useAuth()
   const isHome = ['/', '/therapists', '/coaches', '/clergy'].includes(location.pathname)
   const noChromePrefixes = [
-    '/professional/onboarding'
+    '/professional/onboarding',
+    '/embed'
   ]
   const isNoChromeRoute = noChromePrefixes.some(
     (prefix) => location.pathname === prefix || location.pathname.startsWith(`${prefix}/`)
@@ -173,6 +180,7 @@ function AppInner() {
                 {/* Premarital Counseling Directory - SEO-optimized URLs */}
                 <Route path="/premarital-counseling" element={<StatesIndexPage />} />
                 <Route path="/premarital-counseling/marriage-license-discount" element={<MarriageLicenseDiscountPage />} />
+                <Route path="/premarital-counseling/marriage-license-discount/:state" element={<MarriageLicenseStatePage />} />
                 
                 {/* Level 1: State OR Specialty */}
                 <Route path="/premarital-counseling/:state" element={<SpecialtyOrStatePage />} />
@@ -182,6 +190,10 @@ function AppInner() {
                 
                 {/* Level 3: State/City/Profile OR Specialty/State/City */}
                 <Route path="/premarital-counseling/:param1/:param2/:param3" element={<Segment3Route />} />
+
+                {/* Pre-Cana alias → Catholic specialty page */}
+                <Route path="/pre-cana" element={<Navigate to="/premarital-counseling/catholic" replace />} />
+                <Route path="/pre-cana/*" element={<Navigate to="/premarital-counseling/catholic" replace />} />
 
                 {/* 301 Redirects: old URL patterns to new SEO-optimized structure */}
                 <Route path="/states" element={<Navigate to="/premarital-counseling" replace />} />
@@ -208,6 +220,11 @@ function AppInner() {
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/support" element={<SupportPage />} />
                 <Route path="/guidelines" element={<GuidelinesPage />} />
+                <Route path="/for-churches" element={<ForChurchesPage />} />
+                <Route path="/embed/find" element={<EmbedFindPage />} />
+                <Route path="/how-it-works" element={<HowItWorksPage />} />
+                <Route path="/editorial-standards" element={<EditorialStandardsPage />} />
+                <Route path="/corrections" element={<CorrectionsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/blog" element={<BlogIndex />} />

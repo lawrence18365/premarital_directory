@@ -704,7 +704,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
           'addressLocality': profile.city || cityName,
           'addressRegion': profile.state_province || stateConfig?.abbr
         },
-        'url': profile.slug ? `https://www.weddingcounselors.com/premarital-counseling/${state}/${city}/${profile.slug}` : undefined
+        ...(profile.slug ? { 'url': `https://www.weddingcounselors.com/premarital-counseling/${state}/${city}/${profile.slug}` } : {})
       }
     }))
   } : null
@@ -810,7 +810,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   return (
     <div className="city-page">
       <SEOHelmet
-        title={`Premarital & Marriage Counseling ${cityName}, ${stateConfig?.abbr || stateName} - ${profiles.length > 0 ? profiles.length : 'Top'} Professionals (2026)`}
+        title={`Premarital Counseling ${cityName}, ${stateConfig?.abbr || stateName} — ${profiles.length > 0 ? profiles.length : 'Top'} Counselors`}
         description={`Find ${profiles.length || 'top'} premarital counselors in ${cityName}, ${stateName}. Compare ${inventoryDescriptor}, filter by program method and availability, and contact directly. From $${costStartingAt}/session.`}
         keywords={seoKeywords}
         structuredData={structuredData}

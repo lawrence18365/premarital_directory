@@ -82,8 +82,18 @@ const PrivacyPage = () => {
             <section className="policy-section">
               <h2>Cookies and Tracking</h2>
               <p>
-                We use cookies and similar technologies to enhance your experience, analyze usage, 
+                We use cookies and similar technologies to enhance your experience, analyze usage,
                 and provide personalized content. You can control cookie settings through your browser.
+              </p>
+              <p>Specifically, we use the following third-party services:</p>
+              <ul>
+                <li><strong>Google Analytics (GA4)</strong> — to understand how visitors use our site, including page views, session duration, and traffic sources. Google Analytics uses cookies to collect anonymous usage data. You can opt out via the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">Google Analytics Opt-out Browser Add-on</a>.</li>
+                <li><strong>Google Ads</strong> — to measure the effectiveness of our advertising campaigns and deliver relevant ads. Google may use cookies to track conversions and remarket to visitors.</li>
+                <li><strong>Meta (Facebook) Pixel</strong> — to measure advertising effectiveness and build audiences for ad targeting. The pixel collects data about your browsing activity on our site.</li>
+              </ul>
+              <p>
+                These third-party services may collect information about your online activities over time and across different websites.
+                You can manage your ad preferences through <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ad Settings</a> and <a href="https://www.facebook.com/settings/?tab=ads" target="_blank" rel="noopener noreferrer">Facebook Ad Preferences</a>.
               </p>
             </section>
 
@@ -109,14 +119,13 @@ const PrivacyPage = () => {
                 If you have any questions about this privacy policy, please contact us at:
               </p>
               <div className="contact-info">
-                <p>Email: privacy@premaritalcounselingdirectory.com</p>
-                <p>Address: [Your Business Address]</p>
+                <p>Email: <a href="mailto:hello@weddingcounselors.com">hello@weddingcounselors.com</a></p>
               </div>
             </section>
 
             <div className="policy-footer">
               <p><strong>Effective Date:</strong> June 11, 2025</p>
-              <p><strong>Last Updated:</strong> June 11, 2025</p>
+              <p><strong>Last Updated:</strong> February 16, 2026</p>
             </div>
           </div>
         </div>

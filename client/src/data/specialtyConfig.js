@@ -366,6 +366,8 @@ export const SPECIALTY_CONFIG = {
 // State marriage license discount information
 export const STATE_DISCOUNT_CONFIG = {
   'florida': {
+    name: 'Florida',
+    abbr: 'FL',
     discount: '$32.50',
     originalFee: '$93.50',
     discountedFee: '$61.00',
@@ -375,10 +377,29 @@ export const STATE_DISCOUNT_CONFIG = {
       'Course must be taught by a registered provider',
       'Receive a certificate of completion'
     ],
+    steps: [
+      'Find a registered premarital course provider in Florida (licensed therapist, counselor, or clergy)',
+      'Complete at least 4 hours of premarital preparation together as a couple',
+      'Receive your certificate of completion from the provider',
+      'Bring the certificate to the county clerk when applying for your marriage license',
+      'Receive a $32.50 discount and waiver of the 3-day waiting period'
+    ],
+    faqs: [
+      {
+        question: 'Does online premarital counseling qualify for the Florida discount?',
+        answer: 'Yes, Florida accepts online premarital courses as long as they are taught by a registered provider and meet the 4-hour minimum requirement.'
+      },
+      {
+        question: 'How long is the Florida premarital course certificate valid?',
+        answer: 'Florida does not specify an expiration date for the certificate, but it is best to complete the course within a year of your planned wedding date.'
+      }
+    ],
     certificateUrl: null,
     notes: 'Florida offers both a fee reduction AND waiver of the 3-day waiting period for couples who complete premarital counseling.'
   },
   'georgia': {
+    name: 'Georgia',
+    abbr: 'GA',
     discount: '$16-50',
     originalFee: '$56-84 (varies by county)',
     discountedFee: '$40-68',
@@ -388,10 +409,29 @@ export const STATE_DISCOUNT_CONFIG = {
       'Program must be at least 6 hours',
       'Present certificate when applying for license'
     ],
+    steps: [
+      'Find a qualified premarital education provider in Georgia',
+      'Complete at least 6 hours of premarital education as a couple',
+      'Obtain your certificate of completion',
+      'Present the certificate at the county probate court when applying for your marriage license',
+      'Receive a discount of $16-$50 depending on your county'
+    ],
+    faqs: [
+      {
+        question: 'Why does the Georgia discount amount vary?',
+        answer: 'Georgia marriage license fees are set at the county level, so both the base fee and the discount amount vary by county. Contact your local probate court for exact amounts.'
+      },
+      {
+        question: 'What qualifies as a premarital education program in Georgia?',
+        answer: 'Georgia accepts programs of at least 6 hours taught by licensed counselors, therapists, psychologists, or clergy members. Both in-person and online programs may qualify.'
+      }
+    ],
     certificateUrl: null,
     notes: 'Discount amount varies by county in Georgia.'
   },
   'maryland': {
+    name: 'Maryland',
+    abbr: 'MD',
     discount: '$25',
     originalFee: '$55',
     discountedFee: '$30',
@@ -401,10 +441,29 @@ export const STATE_DISCOUNT_CONFIG = {
       'Program must be at least 4 hours',
       'Obtain certificate from provider'
     ],
+    steps: [
+      'Find a licensed premarital counselor or qualified clergy member in Maryland',
+      'Complete at least 4 hours of premarital counseling as a couple',
+      'Receive your certificate of completion',
+      'Present the certificate at the circuit court clerk when applying for your license',
+      'Receive a $25 discount and waiver of the 48-hour waiting period'
+    ],
+    faqs: [
+      {
+        question: 'Does Maryland waive the waiting period with premarital counseling?',
+        answer: 'Yes, Maryland waives the standard 48-hour waiting period for couples who complete at least 4 hours of premarital counseling and present a certificate.'
+      },
+      {
+        question: 'Who can provide qualifying premarital counseling in Maryland?',
+        answer: 'Licensed professional counselors, therapists, psychologists, social workers, and ordained clergy members can provide qualifying premarital counseling in Maryland.'
+      }
+    ],
     certificateUrl: null,
     notes: 'Maryland also waives the 48-hour waiting period with completion of premarital counseling.'
   },
   'minnesota': {
+    name: 'Minnesota',
+    abbr: 'MN',
     discount: 'Up to $75',
     originalFee: '$115',
     discountedFee: '$40',
@@ -414,10 +473,29 @@ export const STATE_DISCOUNT_CONFIG = {
       'Course must cover communication, conflict resolution, and commitment',
       'Submit certificate to county'
     ],
+    steps: [
+      'Find a qualified premarital education provider in Minnesota',
+      'Complete at least 12 hours of premarital education covering communication, conflict resolution, and commitment',
+      'Receive your certificate of completion from the provider',
+      'Submit the certificate to your county when applying for a marriage license',
+      'Receive up to $75 off your marriage license fee and waiver of the 5-day waiting period'
+    ],
+    faqs: [
+      {
+        question: 'Why does Minnesota require 12 hours of premarital education?',
+        answer: 'Minnesota has one of the most comprehensive requirements because it also offers the largest discount (up to $75). The 12 hours must cover communication skills, conflict resolution, and commitment to the marriage.'
+      },
+      {
+        question: 'Does Minnesota waive the waiting period with premarital education?',
+        answer: 'Yes, completing the 12-hour premarital education requirement waives the standard 5-day waiting period in Minnesota.'
+      }
+    ],
     certificateUrl: null,
     notes: 'Minnesota offers one of the largest discounts in the country for premarital education.'
   },
   'oklahoma': {
+    name: 'Oklahoma',
+    abbr: 'OK',
     discount: '$50',
     originalFee: '$50',
     discountedFee: '$5 (court fee only)',
@@ -427,10 +505,29 @@ export const STATE_DISCOUNT_CONFIG = {
       'Use a licensed counselor or clergy',
       'Provide documentation to clerk'
     ],
+    steps: [
+      'Find a licensed counselor or clergy member in Oklahoma',
+      'Complete a premarital counseling program together',
+      'Obtain documentation of completion from your provider',
+      'Present the documentation to the county clerk when applying for your marriage license',
+      'Pay only the $5 court fee instead of the full $50 license fee'
+    ],
+    faqs: [
+      {
+        question: 'How much can you save on a marriage license in Oklahoma?',
+        answer: 'Oklahoma offers one of the best deals in the country. With premarital counseling, the $50 license fee drops to just $5 (the court fee), saving you $45.'
+      },
+      {
+        question: 'What type of counseling qualifies in Oklahoma?',
+        answer: 'Oklahoma requires counseling from a licensed professional (LMFT, LPC, LCSW, psychologist) or ordained clergy member. There is no specific hour requirement set by the state.'
+      }
+    ],
     certificateUrl: null,
     notes: 'Oklahoma effectively makes the marriage license nearly free with premarital counseling.'
   },
   'tennessee': {
+    name: 'Tennessee',
+    abbr: 'TN',
     discount: '$60',
     originalFee: '$97.50',
     discountedFee: '$37.50',
@@ -440,10 +537,29 @@ export const STATE_DISCOUNT_CONFIG = {
       'Course taught by qualified instructor',
       'Present certificate of completion'
     ],
+    steps: [
+      'Find a qualified premarital preparation instructor in Tennessee',
+      'Complete at least 4 hours of premarital preparation as a couple',
+      'Receive your certificate of completion',
+      'Present the certificate to the county clerk when applying for your marriage license',
+      'Receive a $60 discount on the standard $97.50 license fee'
+    ],
+    faqs: [
+      {
+        question: 'How much does a marriage license cost in Tennessee with premarital counseling?',
+        answer: 'With the $60 discount, a Tennessee marriage license costs $37.50 instead of the standard $97.50. The discount applies to the state portion of the fee.'
+      },
+      {
+        question: 'Who qualifies as a premarital preparation instructor in Tennessee?',
+        answer: 'Tennessee accepts preparation from licensed therapists, counselors, psychologists, and ordained clergy. The program must be at least 4 hours.'
+      }
+    ],
     certificateUrl: null,
     notes: 'Tennessee provides a significant discount for couples who invest in their marriage preparation.'
   },
   'texas': {
+    name: 'Texas',
+    abbr: 'TX',
     discount: '$60',
     originalFee: '$82',
     discountedFee: '$22',
@@ -453,10 +569,29 @@ export const STATE_DISCOUNT_CONFIG = {
       'Course must be from Twogether in Texas or similar program',
       'Certificate valid for 1 year'
     ],
+    steps: [
+      'Find an approved Twogether in Texas provider or similar 8-hour premarital education course',
+      'Complete the full 8-hour course together as a couple',
+      'Receive your Twogether in Texas certificate of completion',
+      'Present the certificate at the county clerk within 1 year of completion',
+      'Receive a $60 discount and waiver of the 72-hour waiting period'
+    ],
+    faqs: [
+      {
+        question: 'What is the Twogether in Texas program?',
+        answer: 'Twogether in Texas is a state-sponsored program that provides a $60 discount on marriage license fees and waives the 72-hour waiting period for couples who complete an approved 8-hour premarital education course.'
+      },
+      {
+        question: 'How long is the Texas premarital counseling certificate valid?',
+        answer: 'The Twogether in Texas certificate is valid for 1 year from the date of course completion. You must apply for your marriage license within that window to receive the discount.'
+      }
+    ],
     certificateUrl: 'https://www.twogetherintexas.com/',
     notes: 'Texas also waives the 72-hour waiting period with the "Twogether in Texas" program.'
   },
   'indiana': {
+    name: 'Indiana',
+    abbr: 'IN',
     discount: '$60',
     originalFee: '$78',
     discountedFee: '$18',
@@ -465,6 +600,23 @@ export const STATE_DISCOUNT_CONFIG = {
       'Complete premarital counseling with a licensed professional or clergy',
       'Have your counselor sign the Certificate of Completion',
       'Present the certificate when applying for your marriage license'
+    ],
+    steps: [
+      'Find a licensed professional or clergy member in Indiana for premarital counseling',
+      'Complete the premarital counseling program together as a couple',
+      'Have your counselor sign the official Indiana Certificate of Completion form',
+      'Present the signed certificate at the county clerk when applying for your marriage license',
+      'Receive a $60 discount, reducing the license fee from $78 to $18'
+    ],
+    faqs: [
+      {
+        question: 'Where can I get the Indiana premarital counseling certificate form?',
+        answer: 'The official Certificate of Completion form is available from the Indiana Courts website. Your counselor should be familiar with it, or you can download it and bring it to your sessions.'
+      },
+      {
+        question: 'Is there a minimum number of hours for Indiana premarital counseling?',
+        answer: 'Indiana does not specify a minimum number of hours. The requirement is completion of premarital counseling with a licensed professional or clergy member who signs the certificate.'
+      }
     ],
     certificateUrl: 'https://www.in.gov/courts/files/form-completion-premarital-counseling.pdf',
     notes: 'Indiana offers a substantial discount, making the license fee minimal after counseling.'

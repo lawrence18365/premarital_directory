@@ -134,7 +134,7 @@ const TermsPage = () => {
             <section className="policy-section">
               <h2>Governing Law</h2>
               <p>
-                These terms shall be governed by and construed in accordance with the laws of [Your State/Country], 
+                These terms shall be governed by and construed in accordance with the laws of the United States,
                 without regard to conflict of law principles.
               </p>
             </section>
@@ -154,14 +154,13 @@ const TermsPage = () => {
                 If you have any questions about these terms, please contact us at:
               </p>
               <div className="contact-info">
-                <p>Email: legal@premaritalcounselingdirectory.com</p>
-                <p>Address: [Your Business Address]</p>
+                <p>Email: <a href="mailto:hello@weddingcounselors.com">hello@weddingcounselors.com</a></p>
               </div>
             </section>
 
             <div className="policy-footer">
               <p><strong>Effective Date:</strong> June 11, 2025</p>
-              <p><strong>Last Updated:</strong> June 11, 2025</p>
+              <p><strong>Last Updated:</strong> February 16, 2026</p>
             </div>
           </div>
         </div>

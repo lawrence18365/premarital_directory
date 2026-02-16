@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
+import SEOHelmet from '../components/analytics/SEOHelmet'
 
 const ClaimProgramPage = () => {
   const { token } = useParams()
@@ -85,6 +86,7 @@ const ClaimProgramPage = () => {
 
   return (
     <div className="auth-page">
+      <SEOHelmet title="Claim Program" description="Claim your program listing on Wedding Counselors." noindex={true} />
       <div className="auth-container">
         <div className="auth-card">
           <h1 style={{ marginBottom: 'var(--space-3)' }}>Verify Program Listing</h1>
