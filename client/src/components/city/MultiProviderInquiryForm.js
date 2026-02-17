@@ -66,7 +66,7 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
         throw new Error(`Please select no more than ${MAX_SELECTABLE} counselors.`)
       }
 
-      const { error: insertError } = await supabase
+      const { data: inserted, error: insertError } = await supabase
         .from('city_inquiries')
         .insert({
           couple_name: formData.name || null,
@@ -83,40 +83,9 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
 
       if (insertError) throw insertError
 
-      for (const provider of selectedProviders) {
-        if (!provider.email) continue
-        await supabase.functions.invoke('send-email', {
-          body: {
-            to: provider.email,
-            subject: `New inquiry from a couple in ${cityName}`,
-            template: 'inquiry_to_provider',
-            data: {
-              providerName: provider.full_name?.split(' ')[0] || 'there',
-              city: cityName,
-              state: stateName,
-              coupleName: formData.name || 'A couple',
-              coupleEmail: formData.email,
-              message: formData.message,
-              dashboardUrl: 'https://www.weddingcounselors.com/professional/analytics'
-            }
-          }
-        })
-      }
-
-      await supabase.functions.invoke('send-email', {
-        body: {
-          to: formData.email,
-          subject: `Your message was sent to ${selectedProviders.length} counselors`,
-          template: 'inquiry_confirmation',
-          data: {
-            coupleName: formData.name || 'there',
-            providerCount: selectedProviders.length,
-            city: cityName,
-            state: stateName,
-            stateSlug,
-            citySlug
-          }
-        }
+      // Send all emails server-side via edge function (no provider emails exposed client-side)
+      await supabase.functions.invoke('send-inquiry-notifications', {
+        body: { inquiryId: inserted.id }
       })
 
       setSubmitted(true)

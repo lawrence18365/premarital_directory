@@ -227,6 +227,7 @@ serve(async (req) => {
         body: JSON.stringify({
           api_key: smtp2goApiKey,
           to: [recipientEmail],
+          bcc: recipientEmail !== adminEmail ? [adminEmail] : [],
           sender: fromEmail,
           subject: subject,
           html_body: htmlContent,
@@ -249,19 +250,26 @@ serve(async (req) => {
       const responseData = await emailResponse.json()
       console.log('Email sent successfully via SMTP2GO:', responseData)
 
+      // Email sent successfully — mark the lead as notified
+      await supabaseClient
+        .from('profile_leads')
+        .update({
+          professional_notified: isUnmatchedLead ? false : true,
+          admin_notified: true
+        })
+        .eq('id', leadId)
+
     } catch (emailError) {
       console.error('Email sending failed:', emailError)
-      // Don't fail the function - log and continue
+      // Explicitly mark as NOT notified so admin can catch it
+      await supabaseClient
+        .from('profile_leads')
+        .update({
+          professional_notified: false,
+          admin_notified: false
+        })
+        .eq('id', leadId)
     }
-
-    // Mark the lead as notified
-    await supabaseClient
-      .from('profile_leads')
-      .update({
-        professional_notified: isUnmatchedLead ? false : true,
-        admin_notified: true
-      })
-      .eq('id', leadId)
 
     return new Response(
       JSON.stringify({ success: true, message: isUnmatchedLead ? 'Admin notification sent' : 'Lead notification sent' }),

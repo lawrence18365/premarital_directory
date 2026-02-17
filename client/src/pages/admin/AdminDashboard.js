@@ -19,6 +19,7 @@ const AdminDashboard = () => {
     professionalsByLocation: []
   })
   const [recentActivity, setRecentActivity] = useState([])
+  const [unnotifiedCount, setUnnotifiedCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
   const loadAdminData = useCallback(async () => {
@@ -26,12 +27,15 @@ const AdminDashboard = () => {
 
     try {
       // Load basic stats
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+
       const [
         { count: totalProfessionals },
         { count: totalLeads },
         { data: subscriptions },
         { data: leads },
-        { data: profiles }
+        { data: profiles },
+        { count: unnotifiedLeadsCount }
       ] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('profile_leads').select('*', { count: 'exact', head: true }),
@@ -40,8 +44,14 @@ const AdminDashboard = () => {
           plan:subscription_plans(*)
         `).eq('status', 'active'),
         supabase.from('profile_leads').select('*').order('created_at', { ascending: false }),
-        supabase.from('profiles').select('*').order('created_at', { ascending: false })
+        supabase.from('profiles').select('*').order('created_at', { ascending: false }),
+        supabase.from('profile_leads').select('*', { count: 'exact', head: true })
+          .eq('professional_notified', false)
+          .eq('status', 'new')
+          .lt('created_at', oneHourAgo)
       ])
+
+      setUnnotifiedCount(unnotifiedLeadsCount || 0)
 
       // Calculate revenue
       const monthlyRevenue = subscriptions?.reduce((sum, sub) => {
@@ -213,6 +223,40 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+      {/* Unnotified Leads Alert */}
+      {unnotifiedCount > 0 && (
+        <div style={{
+          background: '#fef2f2',
+          border: '1px solid #fecaca',
+          borderRadius: '8px',
+          padding: '16px 20px',
+          marginBottom: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <i className="fa fa-exclamation-triangle" aria-hidden="true" style={{ color: '#dc2626', fontSize: '1.2rem' }}></i>
+            <div>
+              <strong style={{ color: '#991b1b' }}>
+                {unnotifiedCount} lead{unnotifiedCount === 1 ? '' : 's'} may not have been delivered
+              </strong>
+              <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#7f1d1d' }}>
+                These leads are older than 1 hour and the professional was never notified.
+              </p>
+            </div>
+          </div>
+          <a
+            href="/admin/leads?notified=unnotified&status=new"
+            className="btn btn-primary"
+            style={{ whiteSpace: 'nowrap', background: '#dc2626' }}
+          >
+            Review Now
+          </a>
+        </div>
+      )}
+
       {/* Key Metrics */}
       <div className="admin-stats-grid">
         <div className="stat-card stat-primary">
@@ -349,7 +393,7 @@ const AdminDashboard = () => {
             <i className="fa fa-envelope" aria-hidden="true"></i>
             <h4>View All Leads</h4>
             <p>Monitor couple inquiries and lead quality</p>
-            <button className="btn btn-primary">View Leads</button>
+            <button className="btn btn-primary" onClick={() => window.location.href = '/admin/leads'}>View Leads</button>
           </div>
 
           <div className="action-card">
