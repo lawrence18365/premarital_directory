@@ -301,10 +301,12 @@ function generateStep2HTML(profile: any, stats: any): string {
   return wrapEmail(content, profile.id)
 }
 
-// Step 3 (Day 14): Tips for getting more inquiries
+// Step 3 (Day 14): Tips for getting more inquiries + badge CTA
 function generateStep3HTML(profile: any): string {
   const firstName = profile.full_name?.split(',')[0]?.split(' ')[0] || 'there'
   const editUrl = `${BASE_URL}/professional/profile/edit`
+  const dashboardUrl = `${BASE_URL}/professional/dashboard`
+  const badgeUrl = `${BASE_URL}/assets/badges/badge-featured-on-weddingcounselors-premarital-transparent-v1.png`
 
   const content = `
     <div style="padding: 24px;">
@@ -333,6 +335,20 @@ function generateStep3HTML(profile: any): string {
       <p style="text-align: center; margin: 24px 0;">
         <a href="${editUrl}" style="${buttonStyle}">Optimize Your Profile</a>
       </p>
+
+      <!-- Badge / Backlink CTA -->
+      <div style="background: #f0fdf4; border: 1px solid #d1fae5; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center;">
+        <img src="${badgeUrl}" alt="Featured on WeddingCounselors.com" width="120" style="display: inline-block; margin-bottom: 12px;" />
+        <p style="margin: 0 0 8px; font-size: 15px; font-weight: 600; color: #0b3e3e;">
+          Bonus: Add our badge to your website
+        </p>
+        <p style="margin: 0 0 12px; font-size: 14px; color: #374151;">
+          Place our "Featured on WeddingCounselors.com" badge on your site and we'll verify your profile. Verified counselors rank higher in search results and get a trust badge visible to couples.
+        </p>
+        <a href="${dashboardUrl}" style="display: inline-block; padding: 10px 20px; background: #0b5e5e; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
+          Get the Badge
+        </a>
+      </div>
 
       <p style="font-size: 14px; color: #6b7280;">
         Questions? Just reply to this email.

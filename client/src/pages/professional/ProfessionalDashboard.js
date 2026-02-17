@@ -43,6 +43,10 @@ const ProfessionalDashboard = () => {
   const [removeLoading, setRemoveLoading] = useState(false)
   const [removeSuccess, setRemoveSuccess] = useState(false)
   const [showAccountSettings, setShowAccountSettings] = useState(false)
+  const [badgeSubmission, setBadgeSubmission] = useState(null)
+  const [badgeSourceUrl, setBadgeSourceUrl] = useState('')
+  const [badgeSubmitting, setBadgeSubmitting] = useState(false)
+  const [badgeCopied, setBadgeCopied] = useState(null)
 
   useEffect(() => {
     if (profile) {
@@ -142,6 +146,18 @@ const ProfessionalDashboard = () => {
         last7d: clicksData?.filter(c => new Date(c.created_at) >= last7d).length || 0,
         last30d: clicksData?.filter(c => new Date(c.created_at) >= last30d).length || 0
       })
+
+      // Load existing badge submission
+      const { data: badgeData } = await supabase
+        .from('badge_submissions')
+        .select('*')
+        .eq('provider_id', profile.id)
+        .neq('status', 'rejected')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (badgeData) setBadgeSubmission(badgeData)
 
     } catch (err) {
       console.error('Error loading dashboard data:', err)
@@ -259,6 +275,52 @@ const ProfessionalDashboard = () => {
     const stateSlug = getStateNameFromAbbr(profile.state_province) || String(profile.state_province || '').toLowerCase().replace(/\s+/g, '-')
     const citySlug = String(profile.city || '').toLowerCase().replace(/\s+/g, '-')
     return `/premarital-counseling/${stateSlug}/${citySlug}/${profile.slug || profile.id}`
+  }
+
+  const getFullProfileUrl = () => {
+    return `https://www.weddingcounselors.com${getPublicProfileUrl()}`
+  }
+
+  const handleCopyBadge = async (type) => {
+    const profileUrl = getFullProfileUrl()
+    const badgeUrl = 'https://www.weddingcounselors.com/assets/badges/badge-featured-on-weddingcounselors-premarital-transparent-v1.png'
+    const text = type === 'embed'
+      ? `<a href="${profileUrl}" target="_blank" rel="noopener"><img src="${badgeUrl}" alt="Featured on WeddingCounselors.com" width="200" /></a>`
+      : profileUrl
+
+    try {
+      await navigator.clipboard.writeText(text)
+      setBadgeCopied(type)
+      setTimeout(() => setBadgeCopied(null), 2000)
+    } catch {
+      alert('Failed to copy. Please copy manually.')
+    }
+  }
+
+  const handleBadgeSubmit = async (e) => {
+    e.preventDefault()
+    if (!badgeSourceUrl.trim() || !profile) return
+
+    setBadgeSubmitting(true)
+    try {
+      const { data, error } = await supabase
+        .from('badge_submissions')
+        .insert({
+          provider_id: profile.id,
+          profile_url: getFullProfileUrl(),
+          source_url: badgeSourceUrl.trim()
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+      setBadgeSubmission(data)
+      setBadgeSourceUrl('')
+    } catch (err) {
+      console.error('Badge submission error:', err)
+      alert('Failed to submit. Please try again.')
+    }
+    setBadgeSubmitting(false)
   }
 
   // Wait for auth to load
@@ -418,6 +480,83 @@ const ProfessionalDashboard = () => {
       <p className="text-muted text-small" style={{ marginBottom: 'var(--space-6)' }}>
         Response rate uses the last {RESPONSE_WINDOW_DAYS} days and counts leads marked contacted, scheduled, converted, or booked elsewhere ({stats.respondedLeads}/{stats.responseEligibleLeads}).
       </p>
+
+      <section className="profdash-badge-section">
+        <div className="profdash-badge-header">
+          <h2>
+            <i className="fa fa-shield-alt" aria-hidden="true"></i>{' '}
+            Get Verified (Rank Higher)
+          </h2>
+          {profile?.badge_verified && (
+            <span className="profdash-badge-verified-pill">Verified</span>
+          )}
+        </div>
+
+        {profile?.badge_verified ? (
+          <p className="profdash-badge-confirmed">
+            Your profile is verified. You receive a rank boost in search results and a verified badge on your profile.
+          </p>
+        ) : (
+          <>
+            <p className="profdash-badge-explainer">
+              Add our badge to your website to earn a <strong>Verified</strong> badge and rank higher in search results. Place the badge on any page of your site, then submit the URL for review.
+            </p>
+
+            <div className="profdash-badge-preview">
+              <img
+                src="/assets/badges/badge-featured-on-weddingcounselors-premarital-transparent-v1.png"
+                alt="Featured on WeddingCounselors.com"
+                width="160"
+              />
+            </div>
+
+            <div className="profdash-badge-copy-row">
+              <button
+                onClick={() => handleCopyBadge('embed')}
+                className="profdash-copy-btn"
+              >
+                {badgeCopied === 'embed' ? 'Copied!' : 'Copy Badge Embed'}
+              </button>
+              <button
+                onClick={() => handleCopyBadge('link')}
+                className="profdash-copy-btn"
+              >
+                {badgeCopied === 'link' ? 'Copied!' : 'Copy Text Link'}
+              </button>
+            </div>
+
+            {badgeSubmission ? (
+              <div className="profdash-badge-status">
+                <p>
+                  <strong>Status:</strong>{' '}
+                  {badgeSubmission.status === 'pending' && 'Submitted — we\'ll review within 48 hours.'}
+                  {badgeSubmission.status === 'verified' && 'Verified!'}
+                </p>
+                <p className="profdash-badge-source">
+                  Submitted URL: <a href={badgeSubmission.source_url} target="_blank" rel="noopener noreferrer">{badgeSubmission.source_url}</a>
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleBadgeSubmit} className="profdash-badge-form">
+                <label htmlFor="badge-source-url">Paste the page on your website where you added the badge</label>
+                <div className="profdash-badge-form-row">
+                  <input
+                    id="badge-source-url"
+                    type="url"
+                    placeholder="https://yoursite.com/page-with-badge"
+                    value={badgeSourceUrl}
+                    onChange={(e) => setBadgeSourceUrl(e.target.value)}
+                    required
+                  />
+                  <button type="submit" disabled={badgeSubmitting} className="btn btn-outline">
+                    {badgeSubmitting ? 'Submitting...' : 'Request Verification'}
+                  </button>
+                </div>
+              </form>
+            )}
+          </>
+        )}
+      </section>
 
       <section className="profdash-grid">
         <div className="profdash-panel">

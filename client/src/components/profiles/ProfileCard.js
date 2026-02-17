@@ -165,7 +165,7 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
             <i className="fa fa-star"></i> Featured
           </div>
         )}
-        {profile.is_verified && !profile.is_sponsored && (
+        {(profile.is_verified || profile.badge_verified) && !profile.is_sponsored && (
           <div className="profile-badge verified">
             <i className="fa fa-shield-alt"></i> Verified
           </div>

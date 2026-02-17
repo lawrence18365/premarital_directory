@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
@@ -7,14 +7,13 @@ import SEOHelmet from '../components/analytics/SEOHelmet';
 import { trackLocationPageView } from '../components/analytics/GoogleAnalytics';
 import { STATE_CONFIG } from '../data/locationConfig';
 import { SPECIALTY_CONFIG } from '../data/specialtyConfig';
-import StateContentGenerator from '../lib/stateContentGenerator';
-import StateAIContent from '../components/state/StateAIContent';
 import ProfileCard from '../components/profiles/ProfileCard';
 import SpecialtiesList from '../components/common/SpecialtiesList';
 import LocationInsights from '../components/common/LocationInsights';
+import CityDataSummary from '../components/city/CityDataSummary';
+import { enrichPremaritalSignals, computeCityStats } from '../lib/profileAnalytics';
 
 import LeadContactForm from '../components/leads/LeadContactForm';
-import LocalContent from '../components/common/LocalContent';
 import FAQ from '../components/common/FAQ';
 import { profileOperations } from '../lib/supabaseClient';
 import '../assets/css/state-page.css';
@@ -23,8 +22,6 @@ const StatePage = () => {
   const { state } = useParams()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [stateContent, setStateContent] = useState(null)
-  const [contentLoading, setContentLoading] = useState(true)
   const [showGetMatchedForm, setShowGetMatchedForm] = useState(false)
   const [stateData, setStateData] = useState(null)
 
@@ -33,7 +30,6 @@ const StatePage = () => {
   useEffect(() => {
     if (stateConfig) {
       setLoading(true)
-      loadStateContent()
       loadStateData().finally(() => setLoading(false))
     } else {
       setError('State not found')
@@ -48,25 +44,6 @@ const StatePage = () => {
       trackLocationPageView(stateConfig.name)
     }
   }, [stateConfig])
-
-  const loadStateContent = async () => {
-    setContentLoading(true)
-
-    try {
-      const contentGenerator = new StateContentGenerator()
-      const content = await contentGenerator.getOrGenerateStateContent(
-        state,
-        stateConfig
-      )
-
-      setStateContent(content)
-    } catch (error) {
-      console.error('AI state content generation failed:', error)
-      setStateContent(null)
-    }
-
-    setContentLoading(false)
-  }
 
   const loadStateData = async () => {
     try {
@@ -113,7 +90,8 @@ const StatePage = () => {
         stateSlug: state,
         cities,
         totalProfiles: profiles?.length || 0,
-        featuredProfiles
+        featuredProfiles,
+        allProfiles: profiles || []
       })
     } catch (error) {
       console.error('Error loading state data:', error)
@@ -126,6 +104,13 @@ const StatePage = () => {
     }
   }
 
+
+  const stateStats = useMemo(() => {
+    const allProfiles = stateData?.allProfiles || []
+    if (allProfiles.length === 0) return null
+    const enriched = allProfiles.map((p) => enrichPremaritalSignals(p))
+    return computeCityStats(enriched)
+  }, [stateData?.allProfiles])
 
   if (!stateConfig) {
     return (
@@ -203,8 +188,8 @@ const StatePage = () => {
   return (
     <>
       <SEOHelmet
-        title={stateContent?.title || `Premarital Counseling ${stateConfig.name} — ${stateData?.totalProfiles || 'Top'} Therapists`}
-        description={stateContent?.description || `Find ${stateData?.totalProfiles || 'top'} marriage & premarital counselors in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC), Christian counselors & couples therapy across ${activeCities.length || stateConfig.major_cities.length} cities. Contact directly.`}
+        title={`Premarital Counseling ${stateConfig.name} — ${stateData?.totalProfiles || 'Top'} Therapists`}
+        description={`Find ${stateData?.totalProfiles || 'top'} marriage & premarital counselors in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC), Christian counselors & couples therapy across ${activeCities.length || stateConfig.major_cities.length} cities. Contact directly.`}
         url={`/premarital-counseling/${state}`}
         keywords={`marriage counseling ${stateConfig.name}, premarital counseling ${stateConfig.name}, marriage therapist ${stateConfig.name}, premarital counseling near me ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, christian marriage counseling ${stateConfig.name}`}
         breadcrumbs={breadcrumbItems}
@@ -221,11 +206,11 @@ const StatePage = () => {
             <div className="state-header-content">
 
               <h1 className="state-title">
-                {stateContent?.h1 || `Premarital Counseling in ${stateConfig.name}`}
+                Premarital Counseling in {stateConfig.name}
               </h1>
 
               <p className="state-subtitle">
-                {stateContent?.description || `Find premarital counseling in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples across ${activeCities.length || stateConfig.major_cities.length} cities. See methods (Gottman, PREPARE-ENRICH), pricing, and availability.`}
+                Find premarital counseling in {stateConfig.name}. Compare licensed therapists (LMFT, LPC, LCSW), Christian and faith-based counselors, clergy, and online options for engaged couples across {activeCities.length || stateConfig.major_cities.length} cities. See methods (Gottman, PREPARE-ENRICH), pricing, and availability.
               </p>
 
               <p style={{
@@ -305,7 +290,14 @@ const StatePage = () => {
           <div className="state-featured-section">
             <div className="state-container">
               {/* Money SERP Insights Box */}
-              <LocationInsights stateSlug={state} />
+              <LocationInsights stateSlug={state} profiles={stateData?.featuredProfiles || []} />
+
+              <CityDataSummary
+                stats={stateStats}
+                cityName={stateConfig.name}
+                stateName={stateConfig.name}
+                stateSlug={state}
+              />
 
               <div className="mb-6">
                 <h2 className="state-results-title">
@@ -444,16 +436,6 @@ const StatePage = () => {
           </div>
         </div>
 
-        {/* AI-Generated SEO Content Section */}
-        <div className="state-seo-section">
-          <div className="state-container">
-            <div className="state-seo-inner">
-              <h2 className="state-seo-title">Premarital Counseling & Marriage Preparation in {stateConfig.name}</h2>
-              <StateAIContent stateName={stateConfig.name} content={stateContent} loading={contentLoading} />
-              <LocalContent locationName={stateConfig.name} content={stateContent?.local_content} />
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Get Matched Modal */}

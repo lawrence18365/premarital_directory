@@ -69,9 +69,11 @@ const LocationInsights = ({ stateSlug, citySlug, specialty, costEstimateOverride
     .replace(/per\s+session/ig, '')
     .trim()
   const costEstimate = profileBackedEstimate?.rangeLabel || fallbackCostEstimate
-  const cityName = citySlug 
+  const cityName = citySlug
     ? citySlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-    : 'Local'
+    : stateSlug
+      ? stateSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+      : 'your area'
   const costSubtext = profileBackedEstimate?.sourceLabel || `Market estimate for ${cityName}`
 
   return (

@@ -617,6 +617,11 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     {profile.tier === 'area_spotlight' ? 'Area Spotlight' : `Featured in ${profile.city}`}
                   </span>
                 )}
+                {(profile.is_verified || profile.badge_verified) && (
+                  <span className="profile-premium-badge" style={{ background: 'rgba(14, 130, 14, 0.1)', color: '#0b5e0b', border: '1px solid rgba(14, 130, 14, 0.3)' }}>
+                    <i className="fa fa-shield-alt" aria-hidden="true"></i> Verified
+                  </span>
+                )}
               </div>
 
               <div className="profile-premium-identity">

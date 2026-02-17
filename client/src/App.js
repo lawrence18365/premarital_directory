@@ -105,6 +105,7 @@ const ClaimReviewDashboard = React.lazy(() => import('./pages/admin/ClaimReviewD
 const ProfileModerationDashboard = React.lazy(() => import('./pages/admin/ProfileModerationDashboard'))
 const MetricsDashboard = React.lazy(() => import('./pages/admin/MetricsDashboard'))
 const CityHealthDashboard = React.lazy(() => import('./pages/admin/CityHealthDashboard'))
+const BadgeReviewDashboard = React.lazy(() => import('./pages/admin/BadgeReviewDashboard'))
 const SitemapGenerator = React.lazy(() => import('./pages/SitemapGenerator'))
 
 // Missing pages that exist but weren't routed
@@ -328,6 +329,14 @@ function AppInner() {
                   element={
                     <ProtectedRoute requireAdmin={true}>
                       <ClaimReviewDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/badges"
+                  element={
+                    <ProtectedRoute requireAdmin={true}>
+                      <BadgeReviewDashboard />
                     </ProtectedRoute>
                   }
                 />

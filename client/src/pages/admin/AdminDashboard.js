@@ -194,6 +194,10 @@ const AdminDashboard = () => {
             <i className="fa fa-user-check" aria-hidden="true"></i>
             Review Claims
           </a>
+          <a href="/admin/badges" className="btn btn-outline">
+            <i className="fa fa-shield-alt" aria-hidden="true"></i>
+            Badge Review
+          </a>
           <a href="/admin/campaigns" className="btn btn-outline">
             <i className="fa fa-envelope" aria-hidden="true"></i>
             Email Campaigns

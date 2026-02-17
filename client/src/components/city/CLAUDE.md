@@ -7,5 +7,5 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
-| #2370 | 1:50 PM | 🔵 | Professional lead management interface with conversion tracking | ~492 |
+| #2391 | 1:57 PM | 🔵 | Multi-provider inquiry form sends emails directly via edge function | ~472 |
 </claude-mem-context>

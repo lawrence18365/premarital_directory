@@ -7,5 +7,5 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
-| #2370 | 1:50 PM | 🔵 | Professional lead management interface with conversion tracking | ~492 |
+| #2405 | 1:58 PM | 🔵 | Weekly digest email function exists but was never deployed to production | ~510 |
 </claude-mem-context>

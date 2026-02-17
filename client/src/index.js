@@ -1,5 +1,5 @@
 import React from 'react'
-import { createRoot, hydrateRoot } from 'react-dom/client'
+import { createRoot } from 'react-dom/client'
 import App from './App'
 import './utils/webVitals' // Initialize Web Vitals monitoring
 import './utils/structuredDataValidator' // Initialize structured data validation
@@ -11,12 +11,9 @@ const app = (
   </React.StrictMode>
 )
 
-// Use hydrate if pre-rendered HTML exists (react-snap), otherwise render fresh
-if (rootElement.hasChildNodes()) {
-  hydrateRoot(rootElement, app)
-} else {
-  createRoot(rootElement).render(app)
-}
+// Always use createRoot — prerendered HTML from react-snap still serves Googlebot,
+// but hydrateRoot causes mismatches due to differing client state (auth, data timing)
+createRoot(rootElement).render(app)
 
 // Cleanly hide the HTML preloader once React mounts, ensuring a minimum visible time
 try {

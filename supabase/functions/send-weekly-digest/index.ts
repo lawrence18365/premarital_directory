@@ -86,6 +86,14 @@ serve(async (req) => {
 
     const alreadySentIds = new Set((alreadySent || []).map(d => d.profile_id))
 
+    // Get badge-verified status for badge CTA
+    const { data: badgeVerifiedProfiles } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('badge_verified', true)
+
+    const badgeVerifiedIds = new Set((badgeVerifiedProfiles || []).map(p => p.id))
+
     // Filter eligible profiles
     const eligible = profiles.filter(p => {
       // Check do_not_contact
@@ -152,6 +160,8 @@ serve(async (req) => {
 
     const toSend = eligible.slice(0, maxEmails)
 
+    let skippedZeroActivity = 0
+
     for (const profile of toSend) {
       const views7d = viewsByProfile7d[profile.id] || 0
       const views30d = viewsByProfile30d[profile.id] || 0
@@ -159,8 +169,15 @@ serve(async (req) => {
       const inquiries30d = leadsByProfile30d[profile.id] || 0
       const daysListed = Math.floor((now.getTime() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24))
 
+      // Don't send "0 views" emails — bad experience and not useful
+      if (views7d === 0 && views30d === 0 && inquiries7d === 0 && inquiries30d === 0) {
+        skippedZeroActivity++
+        continue
+      }
+
+      const showBadgeCta = !badgeVerifiedIds.has(profile.id)
       const stats = { views7d, views30d, inquiries7d, inquiries30d, daysListed }
-      const html = generateDigestHTML(profile, stats)
+      const html = generateDigestHTML(profile, stats, showBadgeCta)
 
       const recipient = testMode && testEmail ? testEmail : profile.email
 
@@ -213,6 +230,7 @@ serve(async (req) => {
       success: true,
       sent,
       failed,
+      skipped_zero_activity: skippedZeroActivity,
       eligible: eligible.length,
       total_profiles: profiles.length,
       period: { start: periodStartStr, end: periodEndStr },
@@ -232,12 +250,14 @@ serve(async (req) => {
 
 function generateDigestHTML(
   profile: { full_name: string; city: string; state_province: string; id: string },
-  stats: { views7d: number; views30d: number; inquiries7d: number; inquiries30d: number; daysListed: number }
+  stats: { views7d: number; views30d: number; inquiries7d: number; inquiries30d: number; daysListed: number },
+  showBadgeCta: boolean = false
 ): string {
   const baseUrl = 'https://www.weddingcounselors.com'
   const dashboardUrl = `${baseUrl}/professional/dashboard`
   const editUrl = `${baseUrl}/professional/profile/edit`
   const unsubscribeUrl = `${baseUrl}/api/unsubscribe?profile_id=${profile.id}&type=weekly_digest`
+  const badgeUrl = `${baseUrl}/assets/badges/badge-featured-on-weddingcounselors-premarital-transparent-v1.png`
 
   const hasActivity = stats.views7d > 0 || stats.inquiries7d > 0
 
@@ -311,6 +331,26 @@ function generateDigestHTML(
           </a>
         </div>
       </div>
+
+      ${showBadgeCta ? `
+      <!-- Badge / Backlink CTA -->
+      <div style="padding: 20px 24px; border: 1px solid #e5e7eb; border-top: none; background: #f0fdf4;">
+        <div style="text-align: center; margin-bottom: 12px;">
+          <img src="${badgeUrl}" alt="Featured on WeddingCounselors.com" width="140" style="display: inline-block;" />
+        </div>
+        <p style="margin: 0 0 8px; font-size: 15px; font-weight: 600; color: #0b3e3e; text-align: center;">
+          Get verified &mdash; rank higher in search
+        </p>
+        <p style="margin: 0 0 16px; font-size: 14px; color: #374151; text-align: center;">
+          Add our badge to your website and we'll mark your profile as <strong>Verified</strong>. Verified profiles rank higher and get a trust badge visible to couples.
+        </p>
+        <div style="text-align: center;">
+          <a href="${dashboardUrl}" style="display: inline-block; padding: 10px 24px; background: #0b5e5e; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
+            Get the Badge
+          </a>
+        </div>
+      </div>
+      ` : ''}
 
       <!-- Footer -->
       <div style="padding: 16px 24px; font-size: 12px; color: #9ca3af; text-align: center; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px; background: #f9fafb;">
