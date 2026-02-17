@@ -381,6 +381,12 @@ function verifyResults(results) {
 async function main() {
   console.log('\n=== Prerender: baking SEO content into static HTML ===')
 
+  // Allow skipping prerender entirely (e.g. push-triggered CI builds that don't deploy)
+  if (parseBooleanEnv(process.env.SKIP_PRERENDER, false)) {
+    console.log('  SKIP_PRERENDER=true — skipping prerender step.')
+    return
+  }
+
   if (!fs.existsSync(BUILD_DIR)) {
     console.error('Build directory not found. Run "npm run build" first.')
     process.exit(1)
@@ -395,6 +401,25 @@ async function main() {
   if (limit < routes.length) {
     console.log(`  --limit ${limit}: only prerendering first ${limit} routes`)
     routes = routes.slice(0, limit)
+  }
+
+  // Incremental mode: skip routes whose cached HTML already exists in the build dir.
+  // A previous run's output can be restored via GitHub Actions cache.
+  // Set FULL_PRERENDER=true to force re-rendering all routes.
+  const forceFullPrerender = parseBooleanEnv(process.env.FULL_PRERENDER, false)
+  if (!forceFullPrerender) {
+    const before = routes.length
+    routes = routes.filter(route => {
+      const cleanRoute = route === '/' ? '/' : route.replace(/\/$/, '')
+      const htmlPath = path.join(BUILD_DIR, cleanRoute === '/' ? '' : cleanRoute, 'index.html')
+      // The root index.html always exists (CRA shell), so always re-prerender '/'
+      if (route === '/') return true
+      return !fs.existsSync(htmlPath)
+    })
+    const skipped = before - routes.length
+    if (skipped > 0) {
+      console.log(`  Incremental mode: skipping ${skipped} cached routes, ${routes.length} new routes to render`)
+    }
   }
 
   if (routes.length === 0) {

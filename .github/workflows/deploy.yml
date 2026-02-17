@@ -4,9 +4,10 @@ name: Build, Prerender & Deploy
 # (Chrome is pre-installed on GitHub Actions runners), and deploys the
 # static HTML bundle to Vercel.
 #
-# To stay within Vercel free-tier upload limits:
-# - push runs: lean prerender only (no Vercel deploy)
-# - schedule/manual runs: full profile prerender + deploy
+# To stay within free-tier limits (GitHub Actions + Vercel):
+# - push runs: build-only (no prerender, no deploy) — validates compilation
+# - schedule runs (Mon & Thu): full prerender + deploy with incremental caching
+# - manual runs: full prerender + deploy (use for immediate updates)
 #
 # Why GitHub Actions instead of Vercel's build?
 # Vercel's build containers cannot run headless Chrome, so the Puppeteer
@@ -17,8 +18,9 @@ on:
   push:
     branches: [main]
   schedule:
-    # Rebuild daily at 5 AM UTC (midnight ET) to pick up new profiles
-    - cron: '0 5 * * *'
+    # Rebuild twice a week (Mon & Thu at 5 AM UTC) to pick up new profiles
+    # while staying well within GitHub Actions free-tier minutes
+    - cron: '0 5 * * 1,4'
   workflow_dispatch:
     inputs:
       reason:
@@ -36,8 +38,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      # Full profile prerender is expensive on Vercel free tier.
-      # Keep it for scheduled/manual runs; skip on push runs.
+      # Push runs: skip prerender entirely (no deploy happens, so prerender is wasted minutes).
+      # Schedule/manual runs: full prerender + deploy.
+      SKIP_PRERENDER: ${{ github.event_name == 'push' }}
       PRERENDER_INCLUDE_PROFILES: ${{ github.event_name != 'push' }}
       SHOULD_DEPLOY_VERCEL: ${{ github.event_name != 'push' }}
 
@@ -55,32 +58,99 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefix client
 
-      # CRA build pipeline: prebuild (sitemap) → build (webpack) → postbuild (prerender)
-      - name: Build with prerendering
-        run: npm run build --prefix client
+      # Split build into separate steps so we can inject the prerender cache
+      # between the webpack build and prerender. CRA wipes build/ on each run,
+      # so we must restore cached HTML after webpack finishes.
+
+      - name: Generate sitemaps
+        run: node scripts/generate-sitemap.js
+        working-directory: client
         env:
-          # Required for data fetching (sitemap generation + prerender)
           REACT_APP_SUPABASE_URL: ${{ secrets.REACT_APP_SUPABASE_URL }}
           REACT_APP_SUPABASE_ANON_KEY: ${{ secrets.REACT_APP_SUPABASE_ANON_KEY }}
-          # SEO metadata
+
+      - name: Webpack build (CRA)
+        run: npx react-scripts build
+        working-directory: client
+        # Note: running react-scripts directly (not `npm run build`) to skip
+        # pre/postbuild hooks — we handle sitemap + prerender as separate steps.
+        env:
+          REACT_APP_SUPABASE_URL: ${{ secrets.REACT_APP_SUPABASE_URL }}
+          REACT_APP_SUPABASE_ANON_KEY: ${{ secrets.REACT_APP_SUPABASE_ANON_KEY }}
           REACT_APP_SITE_URL: https://www.weddingcounselors.com
           REACT_APP_SITE_NAME: Wedding Counselors
           REACT_APP_SITE_DESCRIPTION: "Find premarital & marriage counselors near you. Compare licensed therapists, Christian counselors & clergy."
-          # Search engine verification
           REACT_APP_GOOGLE_SITE_VERIFICATION: ${{ secrets.REACT_APP_GOOGLE_SITE_VERIFICATION }}
           REACT_APP_BING_VERIFICATION: ${{ secrets.REACT_APP_BING_VERIFICATION }}
-          # Analytics (baked into HTML but skipped during prerender via ReactSnap UA check)
           REACT_APP_GA4_MEASUREMENT_ID: ${{ secrets.REACT_APP_GA4_MEASUREMENT_ID }}
           REACT_APP_FACEBOOK_PIXEL_ID: ${{ secrets.REACT_APP_FACEBOOK_PIXEL_ID }}
           REACT_APP_GOOGLE_ADS_ID: ${{ secrets.REACT_APP_GOOGLE_ADS_ID }}
-          # Signal to prerender script that we're in CI (fail loudly)
           CI: true
+
+      # Restore cached prerendered HTML from the last successful deploy.
+      # The prerender script skips routes whose HTML already exists, so
+      # only NEW pages get rendered — cutting run time dramatically.
+      - name: Restore prerender cache
+        if: env.SKIP_PRERENDER != 'true'
+        uses: actions/cache@v4
+        with:
+          path: client/.prerender-cache
+          key: prerender-${{ runner.os }}-${{ hashFiles('client/scripts/prerender.js') }}
+          restore-keys: |
+            prerender-${{ runner.os }}-
+
+      - name: Copy cached prerendered pages into build
+        if: env.SKIP_PRERENDER != 'true'
+        run: |
+          if [ -d client/.prerender-cache ]; then
+            CACHED=$(find client/.prerender-cache -name "index.html" -type f | wc -l)
+            echo "Restoring $CACHED cached prerendered pages"
+            cp -rn client/.prerender-cache/* client/build/ 2>/dev/null || true
+          else
+            echo "No prerender cache found — full prerender will run"
+          fi
+
+      - name: Prerender SEO pages
+        if: env.SKIP_PRERENDER != 'true'
+        run: node scripts/prerender.js
+        working-directory: client
+        env:
+          REACT_APP_SUPABASE_URL: ${{ secrets.REACT_APP_SUPABASE_URL }}
+          REACT_APP_SUPABASE_ANON_KEY: ${{ secrets.REACT_APP_SUPABASE_ANON_KEY }}
+          CI: true
+
+      - name: Update prerender cache
+        if: env.SKIP_PRERENDER != 'true'
+        run: |
+          rm -rf client/.prerender-cache
+          mkdir -p client/.prerender-cache
+          # Cache only prerendered subdirectories (not static assets — those change every build)
+          for dir in premarital-counseling about blog contact features pricing support; do
+            if [ -d "client/build/$dir" ]; then
+              cp -r "client/build/$dir" "client/.prerender-cache/$dir"
+            fi
+          done
+          CACHED=$(find client/.prerender-cache -name "index.html" -type f | wc -l)
+          echo "Cached $CACHED prerendered pages for next run"
 
       # Quick sanity check: verify a profile page was actually prerendered
       - name: Verify prerender output
         run: |
           echo "=== Prerender Verification ==="
+          echo "SKIP_PRERENDER=$SKIP_PRERENDER"
           echo "PRERENDER_INCLUDE_PROFILES=$PRERENDER_INCLUDE_PROFILES"
+
+          # Push runs skip prerender entirely — just verify the build succeeded
+          if [ "$SKIP_PRERENDER" = "true" ]; then
+            if [ -f client/build/index.html ]; then
+              echo "Build output exists. Prerender skipped (push run, no deploy)."
+              echo "=== Verification passed (build-only) ==="
+            else
+              echo "::error::Build output missing!"
+              exit 1
+            fi
+            exit 0
+          fi
 
           # In lean mode (push deploys), we intentionally skip profile prerendering.
           if [ "$PRERENDER_INCLUDE_PROFILES" != "true" ]; then
