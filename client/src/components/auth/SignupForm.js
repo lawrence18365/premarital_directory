@@ -17,7 +17,8 @@ const SignupForm = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    agreeToTerms: false
+    agreeToTerms: false,
+    marketingOptIn: true
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -89,7 +90,9 @@ const SignupForm = () => {
     // If profile exists but is unclaimed (imported), let them sign up -
     // CreateProfilePage will auto-claim it after email verification
 
-    const { data, error } = await signUp(formData.email, formData.password)
+    const { data, error } = await signUp(formData.email, formData.password, {
+      marketing_opt_in: formData.marketingOptIn
+    })
 
     if (error) {
       setError(error.message)
@@ -378,6 +381,16 @@ const SignupForm = () => {
                     required
                   />
                   <span>I agree to the <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link></span>
+                </label>
+
+                <label className="professional-auth__checkbox">
+                  <input
+                    type="checkbox"
+                    name="marketingOptIn"
+                    checked={formData.marketingOptIn}
+                    onChange={handleChange}
+                  />
+                  <span>Send me tips to get more couples and directory updates (you can unsubscribe anytime)</span>
                 </label>
 
                 <button type="submit" className="professional-auth__button professional-auth__button--primary" disabled={loading}>

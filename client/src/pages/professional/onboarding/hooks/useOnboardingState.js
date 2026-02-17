@@ -175,6 +175,7 @@ export const useOnboardingState = () => {
           setSearchParams(newParams, { replace: true })
         } else {
           // No profile - create draft profile
+          const marketingOptIn = user.user_metadata?.marketing_opt_in !== false
           const { data: newProfile, error: createError } = await supabase
             .from('profiles')
             .insert({
@@ -191,7 +192,12 @@ export const useOnboardingState = () => {
               signup_source: utmParams.signup_source || 'organic',
               utm_source: utmParams.utm_source || null,
               utm_medium: utmParams.utm_medium || null,
-              utm_campaign: utmParams.utm_campaign || null
+              utm_campaign: utmParams.utm_campaign || null,
+              email_preferences: {
+                weekly_digest: true,
+                inquiry_notifications: true,
+                marketing: marketingOptIn
+              }
             })
             .select()
             .single()
