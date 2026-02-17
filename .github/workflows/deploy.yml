@@ -1,8 +1,12 @@
 name: Build, Prerender & Deploy
 
-# This workflow builds the CRA app, pre-renders all SEO pages using Puppeteer
+# This workflow builds the CRA app, pre-renders SEO pages using Puppeteer
 # (Chrome is pre-installed on GitHub Actions runners), and deploys the
-# fully-baked static HTML to Vercel.
+# static HTML bundle to Vercel.
+#
+# To stay within Vercel free-tier upload limits:
+# - push runs skip profile prerendering (lean mode)
+# - schedule/manual runs prerender profiles too (full mode)
 #
 # Why GitHub Actions instead of Vercel's build?
 # Vercel's build containers cannot run headless Chrome, so the Puppeteer
@@ -31,6 +35,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      # Full profile prerender is expensive on Vercel free tier.
+      # Keep it for scheduled/manual runs; skip on push runs.
+      PRERENDER_INCLUDE_PROFILES: ${{ github.event_name != 'push' }}
 
     steps:
       - name: Checkout code
@@ -39,7 +47,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: npm
           cache-dependency-path: client/package-lock.json
 
@@ -71,9 +79,23 @@ jobs:
       - name: Verify prerender output
         run: |
           echo "=== Prerender Verification ==="
+          echo "PRERENDER_INCLUDE_PROFILES=$PRERENDER_INCLUDE_PROFILES"
+
+          # In lean mode (push deploys), we intentionally skip profile prerendering.
+          if [ "$PRERENDER_INCLUDE_PROFILES" != "true" ]; then
+            NON_ROOT_PAGES=$(find client/build -mindepth 2 -name "index.html" -type f 2>/dev/null | head -5)
+            if [ -z "$NON_ROOT_PAGES" ]; then
+              echo "::error::No nested prerendered SEO pages found in lean mode."
+              exit 1
+            fi
+            echo "Lean-mode sample prerendered pages:"
+            echo "$NON_ROOT_PAGES"
+            echo "=== Verification passed (lean mode) ==="
+            exit 0
+          fi
 
           # Check that profile directories exist
-          PROFILE_DIRS=$(find client/build/premarital-counseling -mindepth 3 -name "index.html" -type f 2>/dev/null | head -5)
+          PROFILE_DIRS=$(find client/build/premarital-counseling -mindepth 4 -name "index.html" -type f 2>/dev/null | head -5)
           if [ -z "$PROFILE_DIRS" ]; then
             echo "::error::No prerendered profile pages found! Prerender may have failed."
             exit 1
@@ -111,6 +133,9 @@ jobs:
         run: |
           mkdir -p .vercel/output/static
           cp -r client/build/* .vercel/output/static/
+          STATIC_FILE_COUNT=$(find .vercel/output/static -type f | wc -l)
+          echo "Static files in .vercel/output/static: $STATIC_FILE_COUNT"
+          echo "STATIC_FILE_COUNT=$STATIC_FILE_COUNT" >> $GITHUB_ENV
 
           cat > .vercel/output/config.json << 'VCONFIG'
           {
@@ -182,11 +207,13 @@ jobs:
 
       - name: Summary
         run: |
-          PROFILE_COUNT=$(find client/build/premarital-counseling -mindepth 3 -name "index.html" -type f 2>/dev/null | wc -l)
+          PROFILE_COUNT=$(find client/build/premarital-counseling -mindepth 4 -name "index.html" -type f 2>/dev/null | wc -l)
           TOTAL_HTML=$(find client/build -name "index.html" -type f | wc -l)
           echo "### Deploy Summary" >> $GITHUB_STEP_SUMMARY
           echo "- **Total prerendered pages:** $TOTAL_HTML" >> $GITHUB_STEP_SUMMARY
           echo "- **Prerendered profiles:** $PROFILE_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Profile prerender mode:** $PRERENDER_INCLUDE_PROFILES" >> $GITHUB_STEP_SUMMARY
+          echo "- **Static files uploaded:** ${STATIC_FILE_COUNT:-unknown}" >> $GITHUB_STEP_SUMMARY
           echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "- **Reason:** ${{ github.event.inputs.reason }}" >> $GITHUB_STEP_SUMMARY

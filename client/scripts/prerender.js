@@ -29,6 +29,13 @@ const RENDER_TIMEOUT = 15000 // Max ms to wait for page to settle
 const ORIGIN = 'https://www.weddingcounselors.com'
 const DEFAULT_DESCRIPTION = 'Find qualified premarital counselors, therapists, and coaches near you.'
 
+function parseBooleanEnv(value, fallback = true) {
+  if (value === undefined || value === null || value === '') return fallback
+  return ['1', 'true', 'yes', 'on'].includes(String(value).toLowerCase())
+}
+
+const INCLUDE_PROFILE_ROUTES = parseBooleanEnv(process.env.PRERENDER_INCLUDE_PROFILES, true)
+
 // ---------------------------------------------------------------------------
 // 1. Static file server (serves the CRA build output)
 // ---------------------------------------------------------------------------
@@ -115,12 +122,17 @@ function buildRouteList() {
     // Add it once the core prerender is proven stable.
   ]
 
+  const selectedSitemaps = INCLUDE_PROFILE_ROUTES
+    ? sitemapFiles
+    : sitemapFiles.filter(file => file !== 'sitemap-profiles.xml')
+
   const routes = new Set()
   routes.add('/')
 
   console.log('\n  Reading sitemap files for prerender routes...')
+  console.log(`  Include profile routes: ${INCLUDE_PROFILE_ROUTES ? 'yes' : 'no'}`)
 
-  for (const file of sitemapFiles) {
+  for (const file of selectedSitemaps) {
     const filePath = path.join(BUILD_DIR, file)
     const urls = extractUrlsFromSitemap(filePath)
     urls.forEach(url => routes.add(url))
