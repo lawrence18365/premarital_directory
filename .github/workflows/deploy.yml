@@ -5,8 +5,8 @@ name: Build, Prerender & Deploy
 # static HTML bundle to Vercel.
 #
 # To stay within Vercel free-tier upload limits:
-# - push runs skip profile prerendering (lean mode)
-# - schedule/manual runs prerender profiles too (full mode)
+# - push runs: lean prerender only (no Vercel deploy)
+# - schedule/manual runs: full profile prerender + deploy
 #
 # Why GitHub Actions instead of Vercel's build?
 # Vercel's build containers cannot run headless Chrome, so the Puppeteer
@@ -39,6 +39,7 @@ jobs:
       # Full profile prerender is expensive on Vercel free tier.
       # Keep it for scheduled/manual runs; skip on push runs.
       PRERENDER_INCLUDE_PROFILES: ${{ github.event_name != 'push' }}
+      SHOULD_DEPLOY_VERCEL: ${{ github.event_name != 'push' }}
 
     steps:
       - name: Checkout code
@@ -130,6 +131,7 @@ jobs:
 
       # Prepare the Vercel prebuilt output directory structure
       - name: Prepare Vercel output
+        if: env.SHOULD_DEPLOY_VERCEL == 'true'
         run: |
           mkdir -p .vercel/output/static
           cp -r client/build/* .vercel/output/static/
@@ -200,12 +202,20 @@ jobs:
           VCONFIG
 
       - name: Deploy to Vercel
+        if: env.SHOULD_DEPLOY_VERCEL == 'true'
         run: npx vercel deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
+      - name: Skip deploy on push
+        if: env.SHOULD_DEPLOY_VERCEL != 'true'
+        run: |
+          echo "Skipping Vercel deploy on push to avoid free-tier upload throttling."
+          echo "Use workflow_dispatch (manual run) for immediate deploy."
+
       - name: Summary
+        if: always()
         run: |
           PROFILE_COUNT=$(find client/build/premarital-counseling -mindepth 4 -name "index.html" -type f 2>/dev/null | wc -l)
           TOTAL_HTML=$(find client/build -name "index.html" -type f | wc -l)
@@ -213,6 +223,7 @@ jobs:
           echo "- **Total prerendered pages:** $TOTAL_HTML" >> $GITHUB_STEP_SUMMARY
           echo "- **Prerendered profiles:** $PROFILE_COUNT" >> $GITHUB_STEP_SUMMARY
           echo "- **Profile prerender mode:** $PRERENDER_INCLUDE_PROFILES" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deploy attempted:** $SHOULD_DEPLOY_VERCEL" >> $GITHUB_STEP_SUMMARY
           echo "- **Static files uploaded:** ${STATIC_FILE_COUNT:-unknown}" >> $GITHUB_STEP_SUMMARY
           echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
