@@ -77,7 +77,10 @@ const BLOG_POSTS = [
   { slug: 'inlaw-boundaries', priority: 0.8 },
   { slug: 'premarital-counseling-cost', priority: 0.9 },
   { slug: 'prepare-enrich-explained', priority: 0.9 },
-  { slug: 'how-to-choose-premarital-counselor', priority: 0.9 }
+  { slug: 'how-to-choose-premarital-counselor', priority: 0.9 },
+  { slug: 'symbis-explained', priority: 0.9 },
+  { slug: 'foccus-explained', priority: 0.9 },
+  { slug: 'what-to-expect-premarital-counseling', priority: 0.9 }
 ]
 
 // Specialty slugs from specialtyConfig.js
