@@ -113,12 +113,12 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
             }
           })
         } else {
-          // Email for UNCLAIMED profiles - notify the professional and admin
-          const targetEmail = profile?.email || 'hello@weddingcounselors.com'
-
+          // Email for UNCLAIMED profiles - edge function looks up email server-side
+          // (anon role cannot read email column after the revoke migration)
           await supabase.functions.invoke('email-unclaimed-profile-owner', {
             body: {
-              profileEmail: targetEmail,
+              profileId: profileId,
+              profileSlug: profile?.slug,
               professionalName: professionalName,
               coupleName: coupleName,
               coupleEmail: formData.couple_email,
@@ -126,7 +126,6 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
               city: profile?.city,
               state: profile?.state_province,
               claimUrl: `${window.location.origin}/claim-profile/${profile?.slug || profileId}?utm_source=email&utm_medium=lead_intercept&utm_campaign=claim_profile`,
-              profileSlug: profile?.slug || profileId
             }
           })
         }

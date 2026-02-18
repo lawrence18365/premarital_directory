@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 import { getAllowedOrigins, getCorsHeaders, getRequestIp, isOriginAllowed } from "../_shared/auth.ts"
 import { enforceRateLimit } from "../_shared/rateLimit.ts"
 
@@ -40,7 +41,8 @@ serve(async (req) => {
     }
 
     const {
-      profileEmail,
+      profileId,
+      profileSlug,
       professionalName,
       coupleName,
       coupleEmail,
@@ -48,13 +50,12 @@ serve(async (req) => {
       city,
       state,
       claimUrl,
-      profileSlug
     } = await req.json()
 
     // Validation
-    if (!profileEmail || !professionalName || !coupleName) {
+    if ((!profileId && !profileSlug) || !professionalName || !coupleName) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields' }),
+        JSON.stringify({ error: 'Missing required fields: profileId or profileSlug, professionalName, coupleName' }),
         { status: 400, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
       )
     }
@@ -63,10 +64,38 @@ serve(async (req) => {
       throw new Error('RESEND_API_KEY not configured')
     }
 
+    // Look up the professional's email server-side using service role key.
+    // The anon role cannot read email/phone columns (revoked), so the client
+    // cannot pass a trustworthy email — we must fetch it here.
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    let profileEmail: string | null = null
+    {
+      let query = supabaseClient.from('profiles').select('email')
+      if (profileId) {
+        query = query.eq('id', profileId)
+      } else {
+        query = query.eq('slug', profileSlug)
+      }
+      const { data: profileRow, error: profileError } = await query.single()
+      if (!profileError && profileRow?.email) {
+        profileEmail = profileRow.email
+      }
+    }
+
+    const adminEmail = 'hello@weddingcounselors.com'
+    if (!profileEmail) {
+      // Profile has no email on file — notify admin so they can manually forward
+      console.log(`No email for profile ${profileId || profileSlug}; routing to admin`)
+      profileEmail = adminEmail
+    }
+
     const greetingName = professionalName?.trim() || 'there'
     const locationText = coupleLocation || (city ? `${city}, ${state}` : 'your area')
 
-    // Plain text email (no HTML spam design)
     const emailText = `Hi ${greetingName},
 
 New inquiry received via your listing on WeddingCounselors.com.
@@ -103,6 +132,7 @@ https://www.weddingcounselors.com`
       body: JSON.stringify({
         from: 'Wedding Counselors <hello@weddingcounselors.com>',
         to: [profileEmail],
+        bcc: profileEmail !== adminEmail ? [adminEmail] : [],
         reply_to: 'hello@weddingcounselors.com',
         subject: `New inquiry received via your listing - ${coupleName}`,
         text: emailText,
