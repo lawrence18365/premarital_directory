@@ -447,6 +447,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
         structuredData={structuredData}
         faqs={cityFAQs}
         noindex={shouldNoindex}
+        canonicalUrl={`/premarital-counseling/${state}/${city}`}
       />
 
       {/* City Header - Short & Focused on Conversion */}

@@ -377,7 +377,12 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
 
   if (error) {
     return (
-      <div className="container" style={{ padding: 'var(--space-20) 0', textAlign: 'center' }}>
+      <>
+        <SEOHelmet
+          noindex={true}
+          canonicalUrl={window.location.pathname}
+        />
+        <div className="container" style={{ padding: 'var(--space-20) 0', textAlign: 'center' }}>
         <h2>Profile Not Found</h2>
         <p className="text-secondary mb-8">
           {error === 'Profile not found'
@@ -388,6 +393,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
           Browse All Professionals
         </Link>
       </div>
+      </>
     )
   }
 

@@ -44,10 +44,6 @@ const CORE_PAGES = [
   { url: '/privacy', priority: 0.5, changefreq: 'monthly' },
   { url: '/terms', priority: 0.5, changefreq: 'monthly' },
   { url: '/pricing', priority: 0.7, changefreq: 'monthly' },
-  { url: '/sitemap', priority: 0.3, changefreq: 'weekly' },
-  { url: '/professionals-search', priority: 0.6, changefreq: 'daily' },
-  { url: '/professional/signup', priority: 0.8, changefreq: 'monthly' },
-  { url: '/professional/login', priority: 0.6, changefreq: 'monthly' },
   // Money keyword specialty pages (high priority)
   { url: '/premarital-counseling/marriage-license-discount', priority: 0.9, changefreq: 'monthly' },
   { url: '/premarital-counseling/marriage-license-discount/florida', priority: 0.85, changefreq: 'monthly' },

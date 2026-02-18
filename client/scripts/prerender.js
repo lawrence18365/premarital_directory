@@ -117,9 +117,8 @@ function buildRouteList() {
     'sitemap-core.xml',
     'sitemap-cities.xml',
     'sitemap-blog.xml',
-    'sitemap-profiles.xml'
-    // Skip sitemap-specialties.xml initially — too many routes.
-    // Add it once the core prerender is proven stable.
+    'sitemap-profiles.xml',
+    'sitemap-specialties.xml'
   ]
 
   const selectedSitemaps = INCLUDE_PROFILE_ROUTES
