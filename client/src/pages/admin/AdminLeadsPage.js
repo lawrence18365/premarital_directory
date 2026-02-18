@@ -21,7 +21,7 @@ const AdminLeadsPage = () => {
         .from('profile_leads')
         .select(`
           *,
-          profile:profiles(id, full_name, slug, city, state)
+          profile:profiles(id, full_name, slug, city, state_province)
         `)
         .order('created_at', { ascending: false })
 
@@ -125,9 +125,14 @@ const AdminLeadsPage = () => {
           >
             <option value="all">All Statuses</option>
             <option value="new">New</option>
+            <option value="pending_claim">Pending Claim</option>
             <option value="contacted">Contacted</option>
+            <option value="scheduled">Scheduled</option>
             <option value="converted">Converted</option>
-            <option value="closed">Closed</option>
+            <option value="booked_elsewhere">Booked Elsewhere</option>
+            <option value="no_response">No Response</option>
+            <option value="spam">Spam</option>
+            <option value="archived">Archived</option>
           </select>
         </div>
 
@@ -189,13 +194,15 @@ const AdminLeadsPage = () => {
               </tr>
             ) : (
               leads.map((lead) => {
-                const isUnnotified = !lead.professional_notified
+                // Red = admin was NOT notified (email failure). Unmatched leads (no profile_id)
+                // intentionally have professional_notified=false, so don't flag those as broken.
+                const isNotificationFailed = !lead.admin_notified
                 return (
                   <tr
                     key={lead.id}
                     style={{
                       borderBottom: '1px solid #f3f4f6',
-                      background: isUnnotified ? '#fef2f2' : 'transparent'
+                      background: isNotificationFailed ? '#fef2f2' : 'transparent'
                     }}
                   >
                     <td style={{ padding: '10px 8px', whiteSpace: 'nowrap' }}>
@@ -212,7 +219,7 @@ const AdminLeadsPage = () => {
                     <td style={{ padding: '10px 8px' }}>
                       {lead.profile ? (
                         <Link
-                          to={`/premarital-counseling/${lead.profile.state?.toLowerCase().replace(/\s+/g, '-')}/${lead.profile.city?.toLowerCase().replace(/\s+/g, '-')}/${lead.profile.slug}`}
+                          to={`/premarital-counseling/${lead.profile.state_province?.toLowerCase().replace(/\s+/g, '-')}/${lead.profile.city?.toLowerCase().replace(/\s+/g, '-')}/${lead.profile.slug}`}
                           style={{ color: '#0d9488', textDecoration: 'underline' }}
                         >
                           {lead.profile.full_name}
@@ -235,10 +242,16 @@ const AdminLeadsPage = () => {
                       </span>
                     </td>
                     <td style={{ padding: '10px 8px' }}>
-                      {lead.professional_notified ? (
-                        <span style={{ color: '#059669', fontWeight: 600 }}>Yes</span>
+                      {lead.profile_id === null ? (
+                        // Unmatched lead — show admin notified status
+                        lead.admin_notified
+                          ? <span style={{ color: '#059669', fontWeight: 600 }}>Admin ✓</span>
+                          : <span style={{ color: '#dc2626', fontWeight: 600 }}>Admin ✗</span>
                       ) : (
-                        <span style={{ color: '#dc2626', fontWeight: 600 }}>No</span>
+                        // Matched lead — show professional notified status
+                        lead.professional_notified
+                          ? <span style={{ color: '#059669', fontWeight: 600 }}>Pro ✓</span>
+                          : <span style={{ color: '#dc2626', fontWeight: 600 }}>Pro ✗</span>
                       )}
                     </td>
                   </tr>

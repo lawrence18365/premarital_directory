@@ -61,6 +61,11 @@ serve(async (req) => {
           })
     }
 
+    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
+    if (!RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY not configured')
+    }
+
     const { leadId, profileId, coupleData, isUnmatchedLead, matchContext }: LeadNotificationRequest = await req.json()
 
     // Verify lead exists
@@ -77,7 +82,8 @@ serve(async (req) => {
       )
     }
 
-    if (leadRecord.professional_notified) {
+    // Idempotency: skip if professional already notified (unmatched leads always have false here, so they can re-trigger)
+    if (!isUnmatchedLead && leadRecord.professional_notified) {
       return new Response(
         JSON.stringify({ success: true, message: 'Lead already notified' }),
         { headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
@@ -97,21 +103,23 @@ serve(async (req) => {
     })
     const inquiryReference = `INQ-${leadId.slice(0, 8).toUpperCase()}`
     const adminEmail = 'hello@weddingcounselors.com'
+    const fromEmail = 'Wedding Counselors <leads@weddingcounselors.com>'
 
     let recipientEmail: string
     let subject: string
     let emailHeadline: string
     let emailFooterLinks: string
+    let bccEmail: string | null = null
 
     if (isUnmatchedLead) {
       // Unmatched lead - send to admin for manual routing
       recipientEmail = adminEmail
-      subject = `[ACTION NEEDED] New unmatched lead from ${coupleData.name} (${matchContext || 'General'}) - ${inquiryReference}`
-      emailHeadline = `New unmatched inquiry - needs manual routing`
+      subject = `[ACTION NEEDED] New unmatched lead from ${coupleData.name} (${matchContext || 'General'}) — ${inquiryReference}`
+      emailHeadline = `New unmatched inquiry — needs manual routing`
       emailFooterLinks = `
         <div style="margin: 30px 0; text-align: center;">
           <a href="mailto:${coupleData.email}?subject=Re: Premarital Counseling Inquiry" style="display: inline-block; background: #111827; color: white; padding: 12px 22px; text-decoration: none; border-radius: 6px; font-weight: 600; margin-right: 8px;">Reply to couple</a>
-          <a href="${siteUrl}/admin" style="display: inline-block; background: white; color: #111827; border: 1px solid #d1d5db; padding: 12px 22px; text-decoration: none; border-radius: 6px; font-weight: 600;">Open admin</a>
+          <a href="${siteUrl}/admin/leads" style="display: inline-block; background: white; color: #111827; border: 1px solid #d1d5db; padding: 12px 22px; text-decoration: none; border-radius: 6px; font-weight: 600;">Open admin leads</a>
         </div>
       `
     } else {
@@ -142,7 +150,8 @@ serve(async (req) => {
         )
       }
 
-      subject = `New inquiry from ${coupleData.name} - ${inquiryReference}`
+      bccEmail = adminEmail
+      subject = `New inquiry from ${coupleData.name} — ${inquiryReference}`
       emailHeadline = `New inquiry from your listing`
       emailFooterLinks = `
         <div style="margin: 30px 0; text-align: center;">
@@ -189,68 +198,59 @@ serve(async (req) => {
     `
 
     const textContent = `
-      New inquiry from ${coupleData.name}
-      ${isUnmatchedLead ? `Source: ${matchContext || 'General'} page (no specific counselor selected)\n` : ''}
-      ${inquiryReference}
-      Received: ${inquiryTimestampLabel}
+New inquiry from ${coupleData.name}
+${isUnmatchedLead ? `Source: ${matchContext || 'General'} page (no specific counselor selected)\n` : ''}
+${inquiryReference}
+Received: ${inquiryTimestampLabel}
 
-      Couple Information:
-      Names: ${coupleData.name}
-      Email: ${coupleData.email}
-      ${coupleData.phone ? `Phone: ${coupleData.phone}` : ''}
-      ${coupleData.wedding_date ? `Wedding Date: ${new Date(coupleData.wedding_date).toLocaleDateString()}` : ''}
-      ${coupleData.timeline ? `Timeline: ${coupleData.timeline}` : ''}
-      ${coupleData.location ? `Location: ${coupleData.location}` : ''}
+Couple Information:
+Names: ${coupleData.name}
+Email: ${coupleData.email}
+${coupleData.phone ? `Phone: ${coupleData.phone}` : ''}
+${coupleData.wedding_date ? `Wedding Date: ${new Date(coupleData.wedding_date).toLocaleDateString()}` : ''}
+${coupleData.timeline ? `Timeline: ${coupleData.timeline}` : ''}
+${coupleData.location ? `Location: ${coupleData.location}` : ''}
 
-      Message:
-      "${coupleData.message}"
+Message:
+"${coupleData.message}"
 
-      Reply directly to this email to respond to ${coupleData.name}.
-      Questions? Contact hello@weddingcounselors.com
+Reply directly to this email to respond to ${coupleData.name}.
+Questions? Contact hello@weddingcounselors.com
     `
 
-    // Send email using SMTP2GO
+    // Send email via Resend
     try {
-      const smtp2goApiKey = Deno.env.get('SMTP2GO_API_KEY')
-      const fromEmail = Deno.env.get('SMTP2GO_FROM_EMAIL') || 'leads@weddingcounselors.com'
-
-      if (!smtp2goApiKey) {
-        throw new Error('SMTP2GO_API_KEY not configured')
+      const emailPayload: Record<string, unknown> = {
+        from: fromEmail,
+        to: [recipientEmail],
+        subject,
+        html: htmlContent,
+        text: textContent,
+        reply_to: coupleData.email,
       }
 
-      const emailResponse = await fetch('https://api.smtp2go.com/v3/email/send', {
+      if (bccEmail) {
+        emailPayload.bcc = [bccEmail]
+      }
+
+      const emailResponse = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
           'Content-Type': 'application/json',
-          'X-Smtp2go-Api-Key': smtp2goApiKey
         },
-        body: JSON.stringify({
-          api_key: smtp2goApiKey,
-          to: [recipientEmail],
-          bcc: recipientEmail !== adminEmail ? [adminEmail] : [],
-          sender: fromEmail,
-          subject: subject,
-          html_body: htmlContent,
-          text_body: textContent,
-          reply_to: coupleData.email,
-          custom_headers: [
-            {
-              header: 'X-Lead-Source',
-              value: 'Premarital Directory'
-            }
-          ]
-        })
+        body: JSON.stringify(emailPayload),
       })
 
       if (!emailResponse.ok) {
-        const errorData = await emailResponse.json()
-        throw new Error(`SMTP2GO API error: ${emailResponse.status} - ${JSON.stringify(errorData)}`)
+        const errorData = await emailResponse.text()
+        throw new Error(`Resend API error: ${emailResponse.status} — ${errorData}`)
       }
 
       const responseData = await emailResponse.json()
-      console.log('Email sent successfully via SMTP2GO:', responseData)
+      console.log('Email sent successfully via Resend:', responseData)
 
-      // Email sent successfully — mark the lead as notified
+      // Mark the lead as notified
       await supabaseClient
         .from('profile_leads')
         .update({
@@ -261,7 +261,7 @@ serve(async (req) => {
 
     } catch (emailError) {
       console.error('Email sending failed:', emailError)
-      // Explicitly mark as NOT notified so admin can catch it
+      // Mark admin_notified=false so the admin dashboard surfaces this lead in red
       await supabaseClient
         .from('profile_leads')
         .update({
@@ -269,6 +269,8 @@ serve(async (req) => {
           admin_notified: false
         })
         .eq('id', leadId)
+
+      throw emailError
     }
 
     return new Response(
