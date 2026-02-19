@@ -29,36 +29,36 @@ const MarriageLicenseDiscountPage = () => {
       .catch(() => {})
   }, [])
 
-  // Merge: DB rows take precedence; static config fills in states not yet in DB
+  // Stable-order merge: keep static key order, enrich with DB data in place.
+  // This prevents grid reordering when DB data arrives (eliminates CLS).
   const staticStateKeys = getStatesWithDiscounts()
-  const dbStateKeys = new Set(dbStates.map(r => r.jurisdiction_id))
-  const staticOnlyKeys = staticStateKeys.filter(k => !dbStateKeys.has(k))
+  const dbByKey = Object.fromEntries(dbStates.map(r => [r.jurisdiction_id, r]))
 
-  // Build a unified list: DB states first (verified), then static-only fallback states
-  const allStates = [
-    ...dbStates.map(rec => ({
-      key:        rec.jurisdiction_id,
-      name:       rec.jurisdiction_name,
-      savings:    formatDollars(rec.savings_amount_cents) || '—',
-      waitingNote: rec.waiting_period_waived ? 'Waiting period waived' : null,
-      benefitTypes: rec.benefit_types || [],
-      verified:   true,
-      lastVerifiedAt: rec.last_verified_at,
-    })),
-    ...staticOnlyKeys.map(key => {
-      const cfg = STATE_DISCOUNT_CONFIG[key]
-      const sc  = STATE_CONFIG[key]
+  const allStates = staticStateKeys.map(key => {
+    const rec = dbByKey[key]
+    const cfg = STATE_DISCOUNT_CONFIG[key]
+    const sc  = STATE_CONFIG[key]
+    if (rec) {
       return {
         key,
-        name:        cfg.name || sc?.name || key,
-        savings:     cfg.discount,
-        waitingNote: cfg.waitingPeriod !== 'No waiting period impact' ? cfg.waitingPeriod : null,
-        benefitTypes: ['discount'],
-        verified:    false,
-        lastVerifiedAt: null,
+        name:          rec.jurisdiction_name,
+        savings:       formatDollars(rec.savings_amount_cents) || (cfg?.discount || '—'),
+        waitingNote:   rec.waiting_period_waived ? 'Waiting period waived' : null,
+        benefitTypes:  rec.benefit_types || [],
+        verified:      true,
+        lastVerifiedAt: rec.last_verified_at,
       }
-    }),
-  ]
+    }
+    return {
+      key,
+      name:        cfg.name || sc?.name || key,
+      savings:     cfg.discount,
+      waitingNote: cfg.waitingPeriod !== 'No waiting period impact' ? cfg.waitingPeriod : null,
+      benefitTypes: ['discount'],
+      verified:    false,
+      lastVerifiedAt: null,
+    }
+  })
 
   const discountStates = getStatesWithDiscounts()  // kept for structured data
 
