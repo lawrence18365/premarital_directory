@@ -148,8 +148,9 @@ const MarriageLicenseDiscountPage = () => {
               </h1>
 
               <p className="discount-subtitle">
-                8 states reward couples who invest in their marriage. Complete premarital counseling
-                and save on your marriage license fee — plus some states waive the waiting period.
+                Complete an approved premarital counseling course to reduce your marriage license fee
+                — and in some states waive the waiting period entirely. Choose your state to see
+                exact requirements and find a qualified counselor.
               </p>
 
               <div className="discount-cta">
@@ -168,87 +169,104 @@ const MarriageLicenseDiscountPage = () => {
         {/* States Grid */}
         <div className="discount-states-section">
           <div className="discount-container">
-            <h2 className="section-title">States Offering Marriage License Discounts</h2>
+            <h2 className="section-title">8 States Offering Marriage License Discounts</h2>
             <p className="section-subtitle">
-              Click on your state to see specific requirements and find qualified counselors.
+              Select your state to see exact requirements and find approved counselors near you.
             </p>
 
             <div className="discount-states-grid">
               {allStates.map(entry => {
-                const discount    = STATE_DISCOUNT_CONFIG[entry.key] || {}
+                const discount = STATE_DISCOUNT_CONFIG[entry.key] || {}
+                const reqs     = (discount.requirements || []).slice(0, 3)
+                const savingsIsVague = !entry.savings || entry.savings === '—' || entry.savings === 'Varies by county'
+                const originalFee   = discount.originalFee || null
+                const discountedFee = discount.discountedFee || null
 
                 return (
-                  <div key={entry.key} className={`discount-state-card ${entry.verified ? 'verified-card' : ''}`}>
-                    <div className="discount-state-header">
-                      <h3>
-                        {entry.name}
-                        {entry.verified && (
-                          <span className="state-verified-badge" title={`Last verified ${entry.lastVerifiedAt ? new Date(entry.lastVerifiedAt).toLocaleDateString() : ''}`}>
-                            Verified
-                          </span>
-                        )}
-                      </h3>
-                      <span className="discount-amount">Save {entry.savings}</span>
-                    </div>
+                  <div key={entry.key} className="discount-state-card">
 
-                    <div className="discount-state-details">
-                      {discount.originalFee && (
-                        <div className="discount-detail">
-                          <span className="detail-label">Original Fee:</span>
-                          <span className="detail-value">{discount.originalFee}</span>
-                        </div>
-                      )}
-                      {discount.discountedFee && (
-                        <div className="discount-detail">
-                          <span className="detail-label">With Counseling:</span>
-                          <span className="detail-value highlight">{discount.discountedFee}</span>
-                        </div>
-                      )}
-                      {entry.waitingNote && (
-                        <div className="discount-detail bonus">
-                          <i className="fa fa-clock"></i>
-                          <span>{entry.waitingNote}</span>
-                        </div>
+                    {/* 1 — State name + verified chip (separate, never concatenated) */}
+                    <div className="card-name-row">
+                      <h3 className="card-state-name">{entry.name}</h3>
+                      {entry.verified && (
+                        <span
+                          className="card-verified-chip"
+                          title={`Data verified${entry.lastVerifiedAt ? ' ' + new Date(entry.lastVerifiedAt).toLocaleDateString() : ''}`}
+                        >
+                          Verified
+                        </span>
                       )}
                     </div>
 
-                    {discount.requirements && (
-                      <div className="discount-requirements">
-                        <h4>Requirements:</h4>
-                        <ul>
-                          {discount.requirements.map((req, i) => (
-                            <li key={i}>
-                              <i className="fa fa-check"></i>
-                              {req}
-                            </li>
-                          ))}
-                        </ul>
+                    {/* 2 — Savings hero (always present) */}
+                    <div className="card-savings-hero">
+                      {savingsIsVague ? (
+                        <span className="card-savings-amount card-savings-vague">Discount varies</span>
+                      ) : (
+                        <span className="card-savings-amount">Save {entry.savings}</span>
+                      )}
+                      {(originalFee || discountedFee) && (
+                        <span className="card-fee-arrow">
+                          {originalFee && <span className="card-fee-original">{originalFee}</span>}
+                          {originalFee && discountedFee && <span className="card-fee-sep"> to </span>}
+                          {discountedFee && <span className="card-fee-discounted">{discountedFee}</span>}
+                        </span>
+                      )}
+                      {savingsIsVague && (
+                        <span className="card-savings-note">Amount set by county — confirm with clerk</span>
+                      )}
+                    </div>
+
+                    {/* 3 — Waiting period (only if waived) */}
+                    {entry.waitingNote && (
+                      <div className="card-waiting-chip">
+                        <i className="fa fa-clock"></i>
+                        {entry.waitingNote}
                       </div>
                     )}
 
-                    {discount.notes && (
-                      <p className="discount-note">{discount.notes}</p>
+                    {/* 4 — Key requirements (max 3) */}
+                    {reqs.length > 0 && (
+                      <ul className="card-reqs">
+                        {reqs.map((req, i) => (
+                          <li key={i}>{req}</li>
+                        ))}
+                      </ul>
                     )}
 
-                    <div className="discount-state-actions">
+                    {/* 5 — Good to know (1 line, only if meaningful) */}
+                    {discount.notes && !savingsIsVague && (
+                      <p className="card-good-to-know">
+                        <strong>Good to know:</strong> {discount.notes}
+                      </p>
+                    )}
+                    {savingsIsVague && discount.notes && (
+                      <p className="card-good-to-know">
+                        <strong>Good to know:</strong> {discount.notes}
+                      </p>
+                    )}
+
+                    {/* 6 — CTA pinned to bottom: one primary button + optional text link */}
+                    <div className="card-actions">
                       <Link
                         to={`/premarital-counseling/marriage-license-discount/${entry.key}`}
-                        className="btn btn-primary"
+                        className="btn btn-primary card-primary-cta"
                       >
-                        {entry.verified ? `${entry.name} Details` : `Find Counselors in ${entry.name}`}
+                        See {entry.name} Requirements
                       </Link>
                       {discount.certificateUrl && (
                         <a
                           href={discount.certificateUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="btn btn-outline"
+                          className="card-secondary-link"
                         >
-                          <i className="fa fa-external-link"></i>
-                          Official Info
+                          Official state info
+                          <i className="fa fa-arrow-up-right-from-square"></i>
                         </a>
                       )}
                     </div>
+
                   </div>
                 )
               })}

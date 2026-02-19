@@ -516,17 +516,20 @@
   margin-right: auto;
 }
 
-/* State cards grid */
+/* ── State cards grid ────────────────────────────────────────────────────── */
+
 .discount-states-section {
   padding: var(--space-12) 0;
 }
 
 .discount-states-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-5);
+  align-items: stretch;
 }
 
+/* Card — flex column so CTA always pins to bottom */
 .discount-state-card {
   background: var(--white);
   border-radius: var(--radius-xl);
@@ -534,6 +537,9 @@
   border: 1px solid rgba(14, 94, 94, 0.1);
   box-shadow: 0 2px 10px rgba(14, 94, 94, 0.07);
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .discount-state-card:hover {
@@ -542,139 +548,185 @@
   border-color: rgba(14, 94, 94, 0.22);
 }
 
-.discount-state-header {
+/* 1 — Name row: state name + verified chip never concatenated */
+.card-name-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
+  gap: var(--space-2);
   padding-bottom: var(--space-4);
   border-bottom: 1px solid rgba(14, 94, 94, 0.08);
 }
 
-.discount-state-header h3 {
-  font-size: 1.15rem;
+.card-state-name {
+  font-size: 1.12rem;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
+  flex: 1;
 }
 
-.discount-amount {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.24rem 0.68rem;
+.card-verified-chip {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #0a5c45;
+  background: rgba(16, 124, 96, 0.08);
+  border: 1px solid rgba(16, 124, 96, 0.22);
+  padding: 0.18rem 0.52rem;
   border-radius: var(--radius-full);
-  font-size: 0.73rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  background: rgba(14, 94, 94, 0.08);
-  border: 1px solid rgba(14, 94, 94, 0.2);
-  color: var(--primary-dark);
-}
-
-.discount-state-details {
-  margin-bottom: var(--space-4);
-}
-
-.discount-detail {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 0.45rem 0;
-}
-
-.discount-detail.bonus {
-  margin-top: var(--space-2);
-  background: var(--gray-light);
-  border: 1px solid rgba(14, 94, 94, 0.1);
-  padding: 0.45rem 0.62rem;
-  border-radius: var(--radius-sm);
-  justify-content: flex-start;
-  gap: var(--space-2);
-  color: var(--text-primary);
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.discount-detail.bonus i {
-  color: var(--primary);
-}
-
-.detail-label {
-  color: var(--text-secondary);
-  font-size: 0.86rem;
-}
-
-.detail-value {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.detail-value.highlight {
-  color: var(--primary);
-}
-
-.discount-requirements {
-  margin-bottom: var(--space-4);
-}
-
-.discount-requirements h4 {
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--gray-medium);
-  margin-bottom: var(--space-2);
-}
-
-.discount-requirements ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.discount-requirements li {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.42rem;
-  padding: 0.2rem 0;
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-  line-height: 1.55;
-}
-
-.discount-requirements li i {
-  color: var(--primary);
-  margin-top: 0.24rem;
+  white-space: nowrap;
   flex-shrink: 0;
-  font-size: 0.7rem;
 }
 
-.discount-note {
-  font-size: 0.82rem;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-4);
-  padding: 0.65rem;
-  background: var(--gray-light);
-  border: 1px dashed rgba(14, 94, 94, 0.2);
-  border-radius: var(--radius-sm);
-}
-
-.discount-state-actions {
+/* 2 — Savings hero: this is the headline of the card */
+.card-savings-hero {
   display: flex;
-  gap: var(--space-3);
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.card-savings-amount {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.card-savings-amount.card-savings-vague {
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+}
+
+.card-fee-arrow {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
   flex-wrap: wrap;
 }
 
-.discount-state-actions .btn {
-  flex: 1;
-  min-width: 148px;
+.card-fee-original {
+  text-decoration: line-through;
+  color: var(--gray-medium);
+}
+
+.card-fee-sep {
+  color: var(--gray-medium);
+}
+
+.card-fee-discounted {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.card-savings-note {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+/* 3 — Waiting period chip (only shown when waived) */
+.card-waiting-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #0a5c45;
+  background: rgba(16, 124, 96, 0.07);
+  border: 1px solid rgba(16, 124, 96, 0.2);
+  padding: 0.32rem 0.7rem;
+  border-radius: var(--radius-full);
+  width: fit-content;
+}
+
+.card-waiting-chip i {
+  font-size: 0.72rem;
+}
+
+/* 4 — Requirements (max 3) */
+.card-reqs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.card-reqs li {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  padding-left: 1.1rem;
+  position: relative;
+}
+
+.card-reqs li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.52em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: 0.6;
+}
+
+/* 5 — Good to know (1 line) */
+.card-good-to-know {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+  padding: 0.5rem 0.65rem;
+  background: var(--gray-light);
+  border-left: 3px solid rgba(14, 94, 94, 0.25);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.card-good-to-know strong {
+  color: var(--text-primary);
+}
+
+/* 6 — Actions pinned to bottom */
+.card-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid rgba(14, 94, 94, 0.07);
+}
+
+.card-primary-cta {
+  width: 100%;
   text-align: center;
   justify-content: center;
-  min-height: 40px;
+}
+
+.card-secondary-link {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.card-secondary-link:hover {
+  color: var(--primary);
+}
+
+.card-secondary-link i {
+  font-size: 0.65rem;
 }
 
 /* How It Works */
@@ -808,17 +860,9 @@
 
 /* ── Responsive ──────────────────────────────────────────────── */
 
-@media (max-width: 900px) {
+@media (max-width: 700px) {
   .discount-states-grid {
     grid-template-columns: 1fr;
-  }
-
-  .discount-state-actions {
-    flex-direction: column;
-  }
-
-  .discount-state-actions .btn {
-    width: 100%;
   }
 }
 
