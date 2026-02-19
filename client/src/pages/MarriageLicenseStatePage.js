@@ -170,31 +170,46 @@ const MarriageLicenseStatePage = () => {
   // eslint-disable-next-line no-unused-vars
   const isDbVerified     = dbRecord?.verification_status === 'verified'
 
-  // FAQs — merge DB if available, fall back to static + add standard ones
+  // FAQs — merge DB if available, fall back to static + add standard generated ones.
+  // Deduplicate: skip a generated question if the static FAQs already cover that topic.
   const staticFaqs = staticConfig?.faqs || []
-  const faqs = [
-    ...staticFaqs,
-    {
+  const staticFaqText = staticFaqs.map(f => f.question.toLowerCase()).join(' ')
+
+  const generatedFaqs = []
+
+  // Cost question — skip if static FAQs already discuss fees/cost/discount amount
+  if (!/how much|fee|cost|discount/.test(staticFaqText)) {
+    generatedFaqs.push({
       question: `How much does a marriage license cost in ${stateName} with the discount?`,
       answer: discFee
         ? `With the premarital counseling discount, the ${stateName} marriage license costs ${discFee} instead of the standard ${stdFee}. That is a savings of ${savings}.`
         : `${stateName} offers a discount on marriage license fees for couples who complete premarital counseling. Contact your county clerk for exact amounts.`,
-    },
-    {
+    })
+  }
+
+  // Online question — skip if static FAQs already cover it
+  if (!/online/.test(staticFaqText)) {
+    generatedFaqs.push({
       question: `Can we do premarital counseling online and still get the ${stateName} discount?`,
       answer: acceptedFormats.length > 0
         ? acceptedFormats.includes('online')
           ? `Yes, ${stateName} accepts online premarital counseling${acceptedNote ? '. ' + acceptedNote : '.'}`
           : `${stateName} currently requires in-person premarital counseling for the license discount. Online-only programs may not qualify. Confirm with your county clerk.`
         : `Requirements vary. Contact your county clerk in ${stateName} to confirm whether online premarital counseling certificates are accepted for the marriage license discount.`,
-    },
-    {
+    })
+  }
+
+  // Provider question — skip if static FAQs already discuss who qualifies
+  if (!/who can|provider|qualif/.test(staticFaqText)) {
+    generatedFaqs.push({
       question: `Who qualifies to provide premarital counseling in ${stateName}?`,
       answer: acceptedTypes.length > 0
         ? `${stateName} accepts premarital counseling from: ${acceptedTypes.map(t => PROVIDER_LABELS[t] || t).join(', ')}.${providerRules.state_registration_required ? ' Providers must be registered with the state.' : ''}`
         : `${stateName} accepts premarital counseling from licensed professionals (LMFT, LPC, LCSW, psychologists) and ordained clergy.`,
-    },
-  ]
+    })
+  }
+
+  const faqs = [...staticFaqs, ...generatedFaqs]
 
   // Structured data
   const howToStructuredData = staticConfig?.steps ? {

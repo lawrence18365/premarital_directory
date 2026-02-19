@@ -369,9 +369,9 @@ export const STATE_DISCOUNT_CONFIG = {
     name: 'Florida',
     abbr: 'FL',
     discount: '$32.50',
-    originalFee: '$93.50',
-    discountedFee: '$61.00',
-    waitingPeriod: '3-day waiting period waived',
+    originalFee: '$86–$93.50 (varies by county)',
+    discountedFee: '$61.00 (most counties)',
+    waitingPeriod: '3-day wait waived (FL residents)',
     requirements: [
       'Complete a premarital preparation course of at least 4 hours',
       'Course must be taught by a registered provider',
@@ -382,20 +382,28 @@ export const STATE_DISCOUNT_CONFIG = {
       'Complete at least 4 hours of premarital preparation together as a couple',
       'Receive your certificate of completion from the provider',
       'Bring the certificate to the county clerk when applying for your marriage license',
-      'Receive a $32.50 discount and waiver of the 3-day waiting period'
+      'Receive the $32.50 statutory discount — and if you are a Florida resident, the 3-day waiting period is also waived'
     ],
     faqs: [
       {
+        question: 'How much is the Florida marriage license discount?',
+        answer: 'Florida Statute § 741.0305 sets the discount at exactly $32.50. Most county clerks list the discounted fee as $61.00, though the base fee varies slightly by county ($86–$93.50 depending on add-ons). The $32.50 reduction is statewide and fixed by statute — confirm the exact total with your county clerk.'
+      },
+      {
         question: 'Does online premarital counseling qualify for the Florida discount?',
-        answer: 'Yes, Florida accepts online premarital courses as long as they are taught by a registered provider and meet the 4-hour minimum requirement.'
+        answer: 'Yes, Florida accepts online premarital courses as long as they are taught by a registered provider and meet the 4-hour minimum requirement. Confirm the provider is registered before enrolling.'
+      },
+      {
+        question: 'Is the 3-day waiting period waived for everyone in Florida?',
+        answer: 'No. The 3-day waiting period applies to Florida residents only. Non-residents are already exempt from the waiting period regardless of whether they complete premarital counseling. Residents who present a valid premarital course certificate have the waiting period waived under FL § 741.0305.'
       },
       {
         question: 'How long is the Florida premarital course certificate valid?',
-        answer: 'Florida does not specify an expiration date for the certificate, but it is best to complete the course within a year of your planned wedding date.'
+        answer: 'Florida does not specify a statutory expiration date for the certificate. In practice, complete the course close to your wedding date — most county clerks accept certificates without issue when the course was completed within the past year.'
       }
     ],
-    certificateUrl: null,
-    notes: 'Florida offers both a fee reduction AND waiver of the 3-day waiting period for couples who complete premarital counseling.'
+    certificateUrl: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799%2F0741%2FSections%2F0741.0305.html',
+    notes: 'Per FL § 741.0305. Base fee varies by county ($86–$93.50); the $32.50 reduction is statutory. The 3-day wait is waived for Florida residents only. Confirm totals with your county clerk.'
   },
   'georgia': {
     name: 'Georgia',
