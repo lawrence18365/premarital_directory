@@ -195,6 +195,8 @@ export const useOnboardingState = () => {
               utm_source: utmParams.utm_source || null,
               utm_medium: utmParams.utm_medium || null,
               utm_campaign: utmParams.utm_campaign || null,
+              marketing_opt_in: marketingOptIn,
+              marketing_opt_in_at: new Date().toISOString(),
               email_preferences: {
                 weekly_digest: true,
                 inquiry_notifications: true,

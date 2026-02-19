@@ -78,7 +78,7 @@ serve(async (req) => {
 
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
-      .select('id, email, full_name, city, state_province, slug, created_at, claimed_at, is_claimed, photo_url, bio, specialties, certifications, faith_tradition, email_preferences')
+      .select('id, email, full_name, city, state_province, slug, created_at, claimed_at, is_claimed, photo_url, bio, specialties, certifications, faith_tradition, email_preferences, marketing_opt_in')
       .eq('is_hidden', false)
       .eq('moderation_status', 'approved')
       .not('email', 'is', null)
@@ -128,9 +128,11 @@ serve(async (req) => {
       // Skip DNC
       if (dncEmails.has(profile.email.toLowerCase())) { skipped++; continue }
 
-      // Check email preference
-      const prefs = profile.email_preferences || {}
-      if (prefs.marketing === false) { skipped++; continue }
+      // Check marketing opt-in — use dedicated column, fall back to JSONB
+      const optedIn = profile.marketing_opt_in !== undefined
+        ? profile.marketing_opt_in
+        : (profile.email_preferences || {}).marketing !== false
+      if (!optedIn) { skipped++; continue }
 
       const profileSentSteps = sentSteps[profile.id] || new Set()
       const referenceDate = new Date(profile.claimed_at || profile.created_at)
