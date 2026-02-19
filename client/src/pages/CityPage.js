@@ -17,6 +17,7 @@ import CityDataSummary from '../components/city/CityDataSummary';
 import {
   enrichPremaritalSignals,
   groupProfilesByRole,
+  getProfileRole,
   getDirectoryPriceInsights,
   getSessionTypes,
   getPriceMidpoint,
@@ -39,6 +40,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   const [error, setError] = useState(null)
   const [sortBy, setSortBy] = useState('best-premarital')
   const [directoryFilters, setDirectoryFilters] = useState({
+    providerType: 'all',
     faith: 'all',
     sessionType: 'all',
     price: 'all',
@@ -132,6 +134,10 @@ const CityPage = ({ stateOverride, cityOverride }) => {
 
   const filteredProfiles = useMemo(() => {
     return profilesWithSignals.filter((profile) => {
+      if (directoryFilters.providerType !== 'all' && getProfileRole(profile) !== directoryFilters.providerType) {
+        return false
+      }
+
       if (directoryFilters.faith !== 'all' && profile.faith_tradition !== directoryFilters.faith) {
         return false
       }
@@ -142,12 +148,17 @@ const CityPage = ({ stateOverride, cityOverride }) => {
       }
 
       if (directoryFilters.price !== 'all') {
+        const isDonationBased = profile?.pricing_range === 'Free / Donation-based'
         const priceMidpoint = getPriceMidpoint(profile)
-        if (!priceMidpoint && directoryFilters.price !== 'unknown') return false
-        if (directoryFilters.price === 'under150' && !(priceMidpoint < 150)) return false
-        if (directoryFilters.price === '150to250' && !(priceMidpoint >= 150 && priceMidpoint <= 250)) return false
-        if (directoryFilters.price === '250plus' && !(priceMidpoint > 250)) return false
-        if (directoryFilters.price === 'unknown' && priceMidpoint) return false
+        if (directoryFilters.price === 'free' && !isDonationBased) return false
+        if (directoryFilters.price !== 'free') {
+          if (!priceMidpoint && !isDonationBased && directoryFilters.price !== 'unknown') return false
+          if (isDonationBased && directoryFilters.price !== 'unknown') return false
+          if (directoryFilters.price === 'under150' && !(priceMidpoint < 150)) return false
+          if (directoryFilters.price === '150to250' && !(priceMidpoint >= 150 && priceMidpoint <= 250)) return false
+          if (directoryFilters.price === '250plus' && !(priceMidpoint > 250)) return false
+          if (directoryFilters.price === 'unknown' && (priceMidpoint || isDonationBased)) return false
+        }
       }
 
       if (directoryFilters.insurance === 'accepts' && !hasInsurance(profile)) {
@@ -244,6 +255,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
 
   const clearDirectoryFilters = () => {
     setDirectoryFilters({
+      providerType: 'all',
       faith: 'all',
       sessionType: 'all',
       price: 'all',
@@ -589,6 +601,19 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                     </label>
 
                     <label className="city-filters__field">
+                      <span>Provider type</span>
+                      <select
+                        value={directoryFilters.providerType}
+                        onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, providerType: event.target.value }))}
+                      >
+                        <option value="all">Any type</option>
+                        <option value="clergy">Clergy &amp; Faith-Based</option>
+                        <option value="therapist">Licensed Therapists</option>
+                        <option value="coach">Coaches &amp; Facilitators</option>
+                      </select>
+                    </label>
+
+                    <label className="city-filters__field">
                       <span>Faith</span>
                       <select
                         value={directoryFilters.faith}
@@ -646,6 +671,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                         onChange={(event) => setDirectoryFilters((prev) => ({ ...prev, price: event.target.value }))}
                       >
                         <option value="all">Any price</option>
+                        <option value="free">Free / Donation-based</option>
                         <option value="under150">Under $150</option>
                         <option value="150to250">$150-$250</option>
                         <option value="250plus">$250+</option>

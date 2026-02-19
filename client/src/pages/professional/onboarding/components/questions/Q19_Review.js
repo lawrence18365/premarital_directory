@@ -3,6 +3,7 @@ import QuestionContainer from '../QuestionContainer'
 import { supabase } from '../../../../../lib/supabaseClient'
 import { getStateNameFromAbbr } from '../../../../../lib/utils'
 import { sendProfileCreatedEmail, sendAdminNewSignupAlert } from '../../../../../lib/emailNotifications'
+import { CLERGY_PROFESSIONS } from '../../constants'
 
 const Q19_Review = ({
   currentStep,
@@ -18,6 +19,7 @@ const Q19_Review = ({
   navigate
 }) => {
   const [publishing, setPublishing] = useState(false)
+  const isClergy = CLERGY_PROFESSIONS.includes(profileData.profession)
 
   const handlePublish = async () => {
     if (publishing) return // Prevent double-click
@@ -161,22 +163,22 @@ const Q19_Review = ({
       </div>
 
       <div className="review-section">
-        <h3 className="review-heading">About Your Practice</h3>
+        <h3 className="review-heading">{isClergy ? 'About Your Ministry' : 'About Your Practice'}</h3>
         {profileData.bio_approach && (
           <div className="review-item">
-            <span className="review-label">Your Approach:</span>
+            <span className="review-label">{isClergy ? 'Your Approach:' : 'Your Approach:'}</span>
             <span className="review-value">{profileData.bio_approach}</span>
           </div>
         )}
         {profileData.bio_ideal_client && (
           <div className="review-item">
-            <span className="review-label">Ideal Client:</span>
+            <span className="review-label">{isClergy ? 'Couples You Serve:' : 'Ideal Client:'}</span>
             <span className="review-value">{profileData.bio_ideal_client}</span>
           </div>
         )}
         {profileData.bio_outcomes && (
           <div className="review-item">
-            <span className="review-label">Expected Outcomes:</span>
+            <span className="review-label">{isClergy ? 'What Couples Receive:' : 'Expected Outcomes:'}</span>
             <span className="review-value">{profileData.bio_outcomes}</span>
           </div>
         )}
@@ -206,17 +208,19 @@ const Q19_Review = ({
         </div>
       </div>
 
-      {(profileData.session_fee_min || profileData.session_fee_max) && (
+      {(profileData.donation_based || profileData.session_fee_min || profileData.session_fee_max) && (
         <div className="review-section">
-          <h3 className="review-heading">Pricing</h3>
+          <h3 className="review-heading">{isClergy ? 'Fees' : 'Pricing'}</h3>
           <div className="review-item">
-            <span className="review-label">Session Fees:</span>
+            <span className="review-label">{isClergy ? 'Fees:' : 'Session Fees:'}</span>
             <span className="review-value">
-              {profileData.session_fee_min && profileData.session_fee_max
-                ? `$${profileData.session_fee_min} - $${profileData.session_fee_max}`
-                : profileData.session_fee_min
-                ? `$${profileData.session_fee_min}`
-                : 'Not provided'}
+              {profileData.donation_based
+                ? 'Free / Donation-based'
+                : profileData.session_fee_min && profileData.session_fee_max
+                  ? `$${profileData.session_fee_min} - $${profileData.session_fee_max}`
+                  : profileData.session_fee_min
+                    ? `$${profileData.session_fee_min}`
+                    : 'Not provided'}
             </span>
           </div>
           {profileData.offers_free_consultation && (

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import QuestionContainer from '../QuestionContainer'
+import { CLERGY_PROFESSIONS } from '../../constants'
 
 const Q14_LicenseAndCredentials = ({
   currentStep,
@@ -11,6 +12,7 @@ const Q14_LicenseAndCredentials = ({
   goToPreviousQuestion
 }) => {
   const [credentialInput, setCredentialInput] = useState('')
+  const isClergy = CLERGY_PROFESSIONS.includes(profileData.profession)
 
   const handleContinue = async () => {
     await goToNextQuestion(currentStep)
@@ -40,6 +42,18 @@ const Q14_LicenseAndCredentials = ({
     }
   }
 
+  const label = isClergy
+    ? 'What ordination or ministry credentials do you hold?'
+    : 'What licenses or credentials do you hold?'
+
+  const subtitle = isClergy
+    ? 'e.g., Ordained Minister, Diocese Certified, Rabbinical Ordination, Chaplain Board Certified'
+    : 'Examples: LMFT, LPC, LCSW, PhD, PsyD, etc.'
+
+  const placeholder = isClergy
+    ? 'e.g., Ordained Presbyterian Minister'
+    : 'e.g., LMFT License #12345'
+
   return (
     <QuestionContainer
       currentStep={currentStep}
@@ -52,16 +66,16 @@ const Q14_LicenseAndCredentials = ({
     >
       <div className="form-group">
         <label className="form-label">
-          What licenses or credentials do you hold?
+          {label}
           <span className="form-label-subtitle">
-            Examples: LMFT, LPC, LCSW, PhD, PsyD, etc.
+            {subtitle}
           </span>
         </label>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <input
             type="text"
             className="form-input"
-            placeholder="e.g., LMFT License #12345"
+            placeholder={placeholder}
             value={credentialInput}
             onChange={(e) => setCredentialInput(e.target.value)}
             onKeyPress={handleKeyPress}

@@ -1,6 +1,6 @@
 import React from 'react'
 import QuestionContainer from '../QuestionContainer'
-import { faithTraditionOptions } from '../../constants'
+import { faithTraditionOptions, CLERGY_PROFESSIONS } from '../../constants'
 
 const Q7_FaithTradition = ({
   currentStep,
@@ -11,6 +11,8 @@ const Q7_FaithTradition = ({
   goToNextQuestion,
   goToPreviousQuestion
 }) => {
+  const isClergy = CLERGY_PROFESSIONS.includes(profileData.profession)
+
   const handleContinue = async () => {
     await goToNextQuestion(currentStep)
   }
@@ -26,14 +28,16 @@ const Q7_FaithTradition = ({
       error={error}
       onBack={goToPreviousQuestion}
       onContinue={handleContinue}
-      onSkip={handleSkip}
-      canSkip={true}
+      onSkip={isClergy ? undefined : handleSkip}
+      canSkip={!isClergy}
     >
       <div className="form-group">
         <label className="form-label">
-          What's your faith tradition?
+          {isClergy ? 'What faith tradition do you represent?' : "What's your faith tradition?"}
           <span className="form-label-subtitle">
-            This helps couples find counselors who align with their beliefs
+            {isClergy
+              ? 'Couples searching for faith-based preparation will filter by this'
+              : 'This helps couples find counselors who align with their beliefs'}
           </span>
         </label>
         <div className="radio-group">
@@ -54,6 +58,12 @@ const Q7_FaithTradition = ({
             </div>
           ))}
         </div>
+        {isClergy && (
+          <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--slate)' }}>
+            <i className="fa fa-info-circle" style={{ marginRight: '0.4rem', color: 'var(--primary)' }}></i>
+            Couples can filter the directory by faith tradition — selecting yours helps them find you.
+          </p>
+        )}
       </div>
     </QuestionContainer>
   )

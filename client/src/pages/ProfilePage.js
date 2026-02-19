@@ -434,6 +434,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   const paymentMethods = uniqueValues(asArray(profile?.payment_methods))
   const faithTraditionLabel = formatFaithTradition(profile?.faith_tradition)
   const hasOnlineOption = sessionTypesRaw.some((sessionType) => /online|virtual|hybrid/i.test(String(sessionType)))
+  const isClergy = /pastor|priest|rabbi|chaplain|pre-cana|minister|reverend|deacon/i.test(profile?.profession || '')
   const slidingScaleEnabled = toBooleanFlag(profile?.sliding_scale)
   const freeConsultationEnabled = toBooleanFlag(profile?.offers_free_consultation)
 
@@ -447,7 +448,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   ].filter((group) => group.items.length > 0)
 
   const credentialGroups = [
-    { label: 'Credentials', items: credentials },
+    { label: isClergy ? 'Ordination & Credentials' : 'Credentials', items: credentials },
     { label: 'Certifications', items: certifications },
     { label: 'Education', items: education }
   ].filter((group) => group.items.length > 0)
@@ -501,6 +502,8 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   const licenseLabel = credentials.length > 0 ? credentials.join(', ') : 'Not listed'
   const professionLabel = (() => {
     const profession = profile?.profession || 'Premarital Counselor'
+    // Clergy don't hold licenses — never append "(license not listed)"
+    if (isClergy) return profession
     if (!licenseType) {
       if (/licensed therapist/i.test(profession)) return 'Therapist (license not listed)'
       if (/therapist|counselor|psychologist|social worker/i.test(profession)) {
@@ -529,17 +532,19 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     { key: 'topics', label: 'Topics covered', value: listedTopics, missingLabel: 'topics covered' },
     { key: 'session-format', label: 'Session format', value: isMissingDescriptor(sessionFormatLabel) ? null : sessionFormatLabel, missingLabel: 'session format' },
     { key: 'pricing', label: 'Pricing', value: isMissingDescriptor(pricingLabel) ? null : pricingLabel, missingLabel: 'session fees' },
-    { key: 'insurance', label: 'Insurance', value: isMissingDescriptor(insuranceLabel) ? null : insuranceLabel, missingLabel: 'insurance' },
+    // Clergy don't accept insurance — omit the insurance row for them
+    ...(!isClergy ? [{ key: 'insurance', label: 'Insurance', value: isMissingDescriptor(insuranceLabel) ? null : insuranceLabel, missingLabel: 'insurance' }] : []),
     { key: 'availability', label: 'Availability', value: isMissingDescriptor(availabilityLabel) ? null : availabilityLabel, missingLabel: 'availability' },
-    { key: 'license', label: 'License / credential', value: isMissingDescriptor(licenseLabel) ? null : licenseLabel, missingLabel: 'license' }
+    { key: 'license', label: isClergy ? 'Ordination / credential' : 'License / credential', value: isMissingDescriptor(licenseLabel) ? null : licenseLabel, missingLabel: isClergy ? 'ordination' : 'license' }
   ]
 
   const providedLogisticsItems = logisticsItems.filter((item) => !isMissingDescriptor(item.value))
   const quickFacts = [
-    { label: 'License type', value: licenseTypeLabel },
+    // Clergy don't have license types — omit "License type" quick fact for them
+    ...(!isClergy ? [{ label: 'License type', value: licenseTypeLabel }] : []),
     { label: 'Session format', value: sessionFormatLabel },
     { label: 'Typical pricing', value: pricingLabel },
-    { label: 'Insurance', value: insuranceAccepted.length > 0 ? 'Accepted' : null }
+    ...(!isClergy ? [{ label: 'Insurance', value: insuranceAccepted.length > 0 ? 'Accepted' : null }] : [])
   ].filter((fact) => !isMissingDescriptor(fact.value))
 
   const sidebarFacts = [
@@ -547,7 +552,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     !isMissingDescriptor(availabilityLabel) ? { label: 'Status', value: availabilityLabel } : null,
     !isMissingDescriptor(sessionFormatLabel) ? { label: 'Session format', value: sessionFormatLabel } : null,
     !isMissingDescriptor(pricingLabel) ? { label: 'Pricing', value: pricingLabel } : null,
-    insuranceAccepted.length > 0 ? { label: 'Insurance', value: 'Accepted plans listed' } : null
+    (!isClergy && insuranceAccepted.length > 0) ? { label: 'Insurance', value: 'Accepted plans listed' } : null
   ].filter(Boolean)
 
   const shouldCollapseLogistics = providedLogisticsItems.length < 3
@@ -809,11 +814,11 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
 
                 {hasPricingSection && (
                   <section className="profile-premium-card">
-                    <h2>Pricing & Availability</h2>
+                    <h2>{isClergy ? 'Fees & Availability' : 'Pricing & Availability'}</h2>
                     <div className="profile-detail-stack">
                       {profile.pricing_range && (
                         <div className="profile-detail-row">
-                          <span>Session Fees</span>
+                          <span>{isClergy ? 'Fees' : 'Session Fees'}</span>
                           <strong>{profile.pricing_range}</strong>
                         </div>
                       )}

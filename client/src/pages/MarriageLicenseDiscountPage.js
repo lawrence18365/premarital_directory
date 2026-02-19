@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import Breadcrumbs from '../components/common/Breadcrumbs'
@@ -6,12 +6,61 @@ import FAQ from '../components/common/FAQ'
 import LeadContactForm from '../components/leads/LeadContactForm'
 import { STATE_DISCOUNT_CONFIG, getStatesWithDiscounts } from '../data/specialtyConfig'
 import { STATE_CONFIG } from '../data/locationConfig'
+import { supabase } from '../lib/supabaseClient'
 import '../assets/css/discount-page.css'
+
+function formatDollars(cents) {
+  if (cents == null) return null
+  return `$${(cents / 100).toFixed(2)}`
+}
 
 const MarriageLicenseDiscountPage = () => {
   const [showGetMatchedForm, setShowGetMatchedForm] = useState(false)
+  const [dbStates, setDbStates] = useState([])
 
-  const discountStates = getStatesWithDiscounts()
+  // Load DB-indexed states to merge with static config
+  useEffect(() => {
+    supabase
+      .from('jurisdiction_benefits_public')
+      .select('jurisdiction_id, jurisdiction_name, state_abbr, benefit_types, savings_amount_cents, waiting_period_waived, last_verified_at, is_indexed')
+      .eq('jurisdiction_type', 'state')
+      .eq('is_indexed', true)
+      .then(({ data }) => setDbStates(data || []))
+      .catch(() => {})
+  }, [])
+
+  // Merge: DB rows take precedence; static config fills in states not yet in DB
+  const staticStateKeys = getStatesWithDiscounts()
+  const dbStateKeys = new Set(dbStates.map(r => r.jurisdiction_id))
+  const staticOnlyKeys = staticStateKeys.filter(k => !dbStateKeys.has(k))
+
+  // Build a unified list: DB states first (verified), then static-only fallback states
+  const allStates = [
+    ...dbStates.map(rec => ({
+      key:        rec.jurisdiction_id,
+      name:       rec.jurisdiction_name,
+      savings:    formatDollars(rec.savings_amount_cents) || '—',
+      waitingNote: rec.waiting_period_waived ? 'Waiting period waived' : null,
+      benefitTypes: rec.benefit_types || [],
+      verified:   true,
+      lastVerifiedAt: rec.last_verified_at,
+    })),
+    ...staticOnlyKeys.map(key => {
+      const cfg = STATE_DISCOUNT_CONFIG[key]
+      const sc  = STATE_CONFIG[key]
+      return {
+        key,
+        name:        cfg.name || sc?.name || key,
+        savings:     cfg.discount,
+        waitingNote: cfg.waitingPeriod !== 'No waiting period impact' ? cfg.waitingPeriod : null,
+        benefitTypes: ['discount'],
+        verified:    false,
+        lastVerifiedAt: null,
+      }
+    }),
+  ]
+
+  const discountStates = getStatesWithDiscounts()  // kept for structured data
 
   const breadcrumbItems = [
     { name: 'Home', url: '/' },
@@ -125,46 +174,57 @@ const MarriageLicenseDiscountPage = () => {
             </p>
 
             <div className="discount-states-grid">
-              {discountStates.map(stateSlug => {
-                const discount = STATE_DISCOUNT_CONFIG[stateSlug]
-                const stateConfig = STATE_CONFIG[stateSlug]
-                const stateName = stateConfig?.name || stateSlug.charAt(0).toUpperCase() + stateSlug.slice(1)
+              {allStates.map(entry => {
+                const discount    = STATE_DISCOUNT_CONFIG[entry.key] || {}
 
                 return (
-                  <div key={stateSlug} className="discount-state-card">
+                  <div key={entry.key} className={`discount-state-card ${entry.verified ? 'verified-card' : ''}`}>
                     <div className="discount-state-header">
-                      <h3>{stateName}</h3>
-                      <span className="discount-amount">Save {discount.discount}</span>
+                      <h3>
+                        {entry.name}
+                        {entry.verified && (
+                          <span className="state-verified-badge" title={`Last verified ${entry.lastVerifiedAt ? new Date(entry.lastVerifiedAt).toLocaleDateString() : ''}`}>
+                            ✓
+                          </span>
+                        )}
+                      </h3>
+                      <span className="discount-amount">Save {entry.savings}</span>
                     </div>
 
                     <div className="discount-state-details">
-                      <div className="discount-detail">
-                        <span className="detail-label">Original Fee:</span>
-                        <span className="detail-value">{discount.originalFee}</span>
-                      </div>
-                      <div className="discount-detail">
-                        <span className="detail-label">With Counseling:</span>
-                        <span className="detail-value highlight">{discount.discountedFee}</span>
-                      </div>
-                      {discount.waitingPeriod !== 'No waiting period impact' && (
+                      {discount.originalFee && (
+                        <div className="discount-detail">
+                          <span className="detail-label">Original Fee:</span>
+                          <span className="detail-value">{discount.originalFee}</span>
+                        </div>
+                      )}
+                      {discount.discountedFee && (
+                        <div className="discount-detail">
+                          <span className="detail-label">With Counseling:</span>
+                          <span className="detail-value highlight">{discount.discountedFee}</span>
+                        </div>
+                      )}
+                      {entry.waitingNote && (
                         <div className="discount-detail bonus">
                           <i className="fa fa-clock"></i>
-                          <span>{discount.waitingPeriod}</span>
+                          <span>{entry.waitingNote}</span>
                         </div>
                       )}
                     </div>
 
-                    <div className="discount-requirements">
-                      <h4>Requirements:</h4>
-                      <ul>
-                        {discount.requirements.map((req, i) => (
-                          <li key={i}>
-                            <i className="fa fa-check"></i>
-                            {req}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    {discount.requirements && (
+                      <div className="discount-requirements">
+                        <h4>Requirements:</h4>
+                        <ul>
+                          {discount.requirements.map((req, i) => (
+                            <li key={i}>
+                              <i className="fa fa-check"></i>
+                              {req}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
                     {discount.notes && (
                       <p className="discount-note">{discount.notes}</p>
@@ -172,10 +232,10 @@ const MarriageLicenseDiscountPage = () => {
 
                     <div className="discount-state-actions">
                       <Link
-                        to={`/premarital-counseling/${stateSlug}`}
+                        to={`/premarital-counseling/marriage-license-discount/${entry.key}`}
                         className="btn btn-primary"
                       >
-                        Find Counselors in {stateName}
+                        {entry.verified ? `${entry.name} Details` : `Find Counselors in ${entry.name}`}
                       </Link>
                       {discount.certificateUrl && (
                         <a

@@ -1,6 +1,8 @@
 // Field options reused from CreateProfilePage.js
 // Centralized here for the onboarding flow
 
+export const CLERGY_PROFESSIONS = ['Pastor', 'Priest', 'Rabbi', 'Chaplain', 'Pre-Cana Instructor']
+
 export const professionOptions = [
   // Licensed Professionals
   { value: 'Marriage & Family Therapist', label: 'Marriage & Family Therapist (LMFT)', category: 'licensed' },
@@ -60,7 +62,13 @@ export const certificationOptions = [
   'Emotionally Focused (EFT) Certified',
   'Twogether in Texas Provider',
   'Pre-Cana Certified',
-  'Marriage License Discount Provider'
+  'Marriage License Discount Provider',
+  // Faith-based / clergy
+  'Ordained Minister',
+  'Diocese Certified Marriage Prep',
+  'Rabbinical Marriage Counseling Training',
+  'Chaplain Certified',
+  'Marriage Enrichment Leader'
 ]
 
 export const faithTraditionOptions = [
@@ -139,7 +147,8 @@ export const paymentMethodOptions = [
   'American Express',
   'HSA / FSA',
   'PayPal / Venmo',
-  'Zelle'
+  'Zelle',
+  'Donation / Offering'
 ]
 
 export const languageOptions = [

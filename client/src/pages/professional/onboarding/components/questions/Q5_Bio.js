@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import QuestionContainer from '../QuestionContainer'
+import { CLERGY_PROFESSIONS } from '../../constants'
 
 const getInitialSubStep = (profileData) => {
   if (!profileData.bio_approach?.trim()) return 0
@@ -7,20 +8,31 @@ const getInitialSubStep = (profileData) => {
   return 2
 }
 
-const Q5_Bio = ({
-  currentStep,
-  profileData,
-  updateField,
-  saveProgress,
-  saving,
-  error,
-  setError,
-  goToNextQuestion,
-  goToPreviousQuestion
-}) => {
-  const [subStep, setSubStep] = useState(() => getInitialSubStep(profileData))
+const getStepConfig = (isClergy) => {
+  if (isClergy) {
+    return [
+      {
+        title: 'Your Ministry Approach',
+        label: 'How do you guide couples through marriage preparation?',
+        field: 'bio_approach',
+        placeholder: '2-3 sentences about your approach — e.g., the sessions you offer, the faith tradition you draw from, and what makes your preparation meaningful.'
+      },
+      {
+        title: 'Couples You Serve',
+        label: 'Who are you a great fit for?',
+        field: 'bio_ideal_client',
+        placeholder: 'Describe the couples you work with best — e.g., couples within your congregation, interfaith couples, couples of any background seeking faith-grounded preparation.'
+      },
+      {
+        title: 'What Couples Receive',
+        label: 'What can couples expect after working with you?',
+        field: 'bio_outcomes',
+        placeholder: 'Describe what couples walk away with — e.g., a deeper foundation of shared values, clarity on communication, a meaningful pre-wedding ritual or blessing.'
+      }
+    ]
+  }
 
-  const stepConfig = [
+  return [
     {
       title: 'Your Approach',
       label: 'How do you work with couples?',
@@ -40,6 +52,22 @@ const Q5_Bio = ({
       placeholder: 'Describe the transformation or results.'
     }
   ]
+}
+
+const Q5_Bio = ({
+  currentStep,
+  profileData,
+  updateField,
+  saveProgress,
+  saving,
+  error,
+  setError,
+  goToNextQuestion,
+  goToPreviousQuestion
+}) => {
+  const isClergy = CLERGY_PROFESSIONS.includes(profileData.profession)
+  const stepConfig = getStepConfig(isClergy)
+  const [subStep, setSubStep] = useState(() => getInitialSubStep(profileData))
 
   const activeStep = stepConfig[subStep]
   const isFinalSubStep = subStep === stepConfig.length - 1

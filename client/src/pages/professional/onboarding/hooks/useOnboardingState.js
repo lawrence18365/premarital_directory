@@ -69,6 +69,7 @@ export const useOnboardingState = () => {
     // Pricing
     offers_free_consultation: false,
     sliding_scale: false,
+    donation_based: false,
     session_fee_min: '',
     session_fee_max: '',
     insurance_accepted: [],
@@ -153,6 +154,7 @@ export const useOnboardingState = () => {
             education: existingProfile.education || [],
             offers_free_consultation: toBooleanFlag(existingProfile.offers_free_consultation),
             sliding_scale: toBooleanFlag(existingProfile.sliding_scale),
+            donation_based: existingProfile.pricing_range === 'Free / Donation-based',
             session_fee_min: existingProfile.session_fee_min ? (existingProfile.session_fee_min / 100).toString() : '',
             session_fee_max: existingProfile.session_fee_max ? (existingProfile.session_fee_max / 100).toString() : '',
             insurance_accepted: existingProfile.insurance_accepted || [],
@@ -289,13 +291,15 @@ export const useOnboardingState = () => {
         education: mergedData.education.length > 0 ? mergedData.education : null,
         offers_free_consultation: toBooleanFlag(mergedData.offers_free_consultation),
         sliding_scale: toBooleanFlag(mergedData.sliding_scale) ? true : null,
-        session_fee_min: mergedData.session_fee_min ? parseInt(mergedData.session_fee_min) * 100 : null,
-        session_fee_max: mergedData.session_fee_max ? parseInt(mergedData.session_fee_max) * 100 : null,
-        pricing_range: mergedData.session_fee_min
-          ? mergedData.session_fee_max
-            ? `$${mergedData.session_fee_min}-$${mergedData.session_fee_max}`
-            : `$${mergedData.session_fee_min}`
-          : null,
+        session_fee_min: mergedData.donation_based ? null : (mergedData.session_fee_min ? parseInt(mergedData.session_fee_min) * 100 : null),
+        session_fee_max: mergedData.donation_based ? null : (mergedData.session_fee_max ? parseInt(mergedData.session_fee_max) * 100 : null),
+        pricing_range: mergedData.donation_based
+          ? 'Free / Donation-based'
+          : mergedData.session_fee_min
+            ? mergedData.session_fee_max
+              ? `$${mergedData.session_fee_min}-$${mergedData.session_fee_max}`
+              : `$${mergedData.session_fee_min}`
+            : null,
         insurance_accepted: mergedData.insurance_accepted.length > 0 ? mergedData.insurance_accepted : null,
         payment_methods: mergedData.payment_methods.length > 0 ? mergedData.payment_methods : null,
         faqs: mergedData.faqs && mergedData.faqs.length > 0 ? mergedData.faqs : null,

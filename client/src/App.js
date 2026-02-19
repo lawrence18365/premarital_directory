@@ -106,6 +106,7 @@ const ProfileModerationDashboard = React.lazy(() => import('./pages/admin/Profil
 const MetricsDashboard = React.lazy(() => import('./pages/admin/MetricsDashboard'))
 const CityHealthDashboard = React.lazy(() => import('./pages/admin/CityHealthDashboard'))
 const BadgeReviewDashboard = React.lazy(() => import('./pages/admin/BadgeReviewDashboard'))
+const BenefitsReviewDashboard = React.lazy(() => import('./pages/admin/BenefitsReviewDashboard'))
 const AdminLeadsPage = React.lazy(() => import('./pages/admin/AdminLeadsPage'))
 const SitemapGenerator = React.lazy(() => import('./pages/SitemapGenerator'))
 
@@ -338,6 +339,14 @@ function AppInner() {
                   element={
                     <ProtectedRoute requireAdmin={true}>
                       <BadgeReviewDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/benefits"
+                  element={
+                    <ProtectedRoute requireAdmin={true}>
+                      <BenefitsReviewDashboard />
                     </ProtectedRoute>
                   }
                 />

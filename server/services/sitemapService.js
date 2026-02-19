@@ -42,18 +42,21 @@ class SitemapService {
       url: `https://weddingcounselors.com/premarital-counseling/${specialty.slug}`,
       lastmod: new Date().toISOString().split('T')[0],
       changefreq: 'weekly',
-      priority: '0.8' // High priority for money keyword pages
+      priority: '0.8'
     }))
 
-    // Marriage license discount page (high-value conversion page)
-    const discountUrl = {
-      url: 'https://weddingcounselors.com/premarital-counseling/marriage-license-discount',
+    // Marriage license discount hub (high-value conversion page)
+    const discountHubUrl = {
+      url: 'https://www.weddingcounselors.com/premarital-counseling/marriage-license-discount',
       lastmod: new Date().toISOString().split('T')[0],
       changefreq: 'monthly',
-      priority: '0.9' // Very high priority - conversion page
+      priority: '0.9'
     }
 
-    const allUrls = [discountUrl, ...specialtyUrls]
+    // DB-indexed discount state pages — only is_indexed=true rows appear in sitemap
+    const discountStateUrls = await this.generateDiscountStateUrls()
+
+    const allUrls = [discountHubUrl, ...discountStateUrls, ...specialtyUrls]
     const sitemapContent = this.buildXmlSitemap(allUrls)
 
     await fs.writeFile(
@@ -61,8 +64,33 @@ class SitemapService {
       sitemapContent
     )
 
-    console.log(`Generated specialty sitemap with ${allUrls.length} URLs (${specialties.length} specialties + discount page)`)
+    console.log(`Generated specialty sitemap with ${allUrls.length} URLs (${specialties.length} specialties + ${discountStateUrls.length} discount state pages + hub)`)
     return allUrls.length
+  }
+
+  async generateDiscountStateUrls() {
+    try {
+      const { data, error } = await this.supabase
+        .from('jurisdiction_benefits_public')
+        .select('jurisdiction_id, jurisdiction_type, updated_at, last_verified_at')
+        .eq('jurisdiction_type', 'state')
+        .eq('is_indexed', true)
+
+      if (error || !data) return []
+
+      return data.map(row => {
+        const lastmod = row.last_verified_at || row.updated_at
+        return {
+          url: `https://www.weddingcounselors.com/premarital-counseling/marriage-license-discount/${row.jurisdiction_id}`,
+          lastmod: new Date(lastmod).toISOString().split('T')[0],
+          changefreq: 'monthly',
+          priority: '0.8'
+        }
+      })
+    } catch (err) {
+      console.warn('Could not load discount state URLs for sitemap:', err.message)
+      return []
+    }
   }
 
   async generateProfileSitemap() {

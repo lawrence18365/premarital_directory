@@ -1,12 +1,424 @@
-/* Marriage License Discount Page - Dashboard-Aligned Monochrome Theme */
+/* ============================================================
+   Marriage License Discount — State Page
+   Tokens: all --ds-* replaced with real brand tokens from main.css
+   ============================================================ */
+
+/* ── Layout ─────────────────────────────────────────────────── */
 
 .discount-page {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 100% 0, rgba(14, 94, 94, 0.1), rgba(14, 94, 94, 0) 34%),
-    linear-gradient(180deg, #f5fbfb 0%, #eef6f6 100%);
-  color: var(--ds-ink);
+    radial-gradient(circle at 100% 0, rgba(14, 94, 94, 0.07), transparent 34%),
+    linear-gradient(180deg, var(--neutral-light) 0%, #eef6f6 100%);
+  color: var(--text-primary);
 }
+
+.discount-page .container-narrow {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* ── Page header ─────────────────────────────────────────────── */
+
+.discount-page .page-header {
+  padding: var(--space-10) 0 var(--space-6);
+  border-bottom: 1px solid rgba(14, 94, 94, 0.1);
+  margin-bottom: var(--space-8);
+}
+
+.discount-page .page-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 700;
+  color: var(--primary-dark);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-3);
+}
+
+.discount-page .page-header .lead {
+  font-size: 1.08rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 68ch;
+  margin: 0;
+}
+
+/* ── At-a-glance savings box ─────────────────────────────────── */
+
+.benefit-summary-box {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  background: var(--white);
+  border: 1px solid rgba(14, 94, 94, 0.14);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 4px 24px rgba(14, 94, 94, 0.1);
+  overflow: hidden;
+  margin-bottom: var(--space-8);
+  position: relative;
+}
+
+/* accent line top */
+.benefit-summary-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+.benefit-stat {
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+  border-right: 1px solid rgba(14, 94, 94, 0.08);
+  position: relative;
+}
+
+.benefit-stat:last-child {
+  border-right: none;
+}
+
+.benefit-stat.highlight {
+  background: rgba(14, 94, 94, 0.05);
+}
+
+.benefit-stat.bonus {
+  grid-column: 1 / -1;
+  border-right: none;
+  border-top: 1px solid rgba(14, 94, 94, 0.08);
+  background: rgba(14, 94, 94, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+}
+
+.benefit-stat.bonus .stat-label,
+.benefit-stat.bonus .stat-value {
+  font-size: 0.9rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  line-height: 1;
+}
+
+.stat-value.strikethrough {
+  text-decoration: line-through;
+  color: var(--gray-medium);
+}
+
+.benefit-stat.highlight .stat-value {
+  color: var(--primary);
+  font-size: 2.1rem;
+}
+
+@media (max-width: 600px) {
+  .benefit-summary-box {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .benefit-stat:nth-child(2) {
+    border-right: none;
+  }
+
+  .benefit-stat:nth-child(3) {
+    grid-column: 1 / -1;
+    border-right: none;
+    border-top: 1px solid rgba(14, 94, 94, 0.08);
+  }
+}
+
+/* ── Fast-path callout ───────────────────────────────────────── */
+
+.fast-path-box {
+  background: rgba(14, 94, 94, 0.06);
+  border: 1px solid rgba(14, 94, 94, 0.2);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.fast-path-box h3 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: var(--space-2);
+}
+
+.fast-path-box p {
+  font-size: 1rem;
+  color: var(--text-primary);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ── Content sections (requirements, steps, etc.) ────────────── */
+
+.discount-page .content-section {
+  background: var(--white);
+  border: 1px solid rgba(14, 94, 94, 0.1);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-7) var(--space-8);
+  margin-bottom: var(--space-6);
+  box-shadow: 0 2px 12px rgba(14, 94, 94, 0.06);
+}
+
+.discount-page .content-section h2 {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  letter-spacing: -0.015em;
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid rgba(14, 94, 94, 0.08);
+}
+
+.discount-page .content-section h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: var(--space-5) 0 var(--space-2);
+  letter-spacing: -0.01em;
+}
+
+.discount-page .content-section p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: var(--space-3);
+}
+
+.discount-page .content-section ul,
+.discount-page .content-section ol {
+  padding-left: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.discount-page .content-section li {
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: var(--space-2);
+}
+
+.discount-page .content-section a {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .discount-page .content-section {
+    padding: var(--space-5) var(--space-5);
+    border-radius: var(--radius-xl);
+  }
+}
+
+/* ── Format callout (online vs in-person) ────────────────────── */
+
+.format-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.format-callout.online-ok {
+  background: rgba(16, 124, 96, 0.07);
+  border: 1px solid rgba(16, 124, 96, 0.22);
+  color: #0a5c45;
+}
+
+.format-callout.inperson-only {
+  background: rgba(180, 120, 0, 0.07);
+  border: 1px solid rgba(180, 120, 0, 0.22);
+  color: #7a5200;
+}
+
+.format-callout strong {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+/* ── Citations block ─────────────────────────────────────────── */
+
+.citations-block {
+  margin-top: var(--space-10);
+  padding-top: var(--space-8);
+  border-top: 1px solid rgba(14, 94, 94, 0.1);
+}
+
+.citations-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.citations-header h3 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.verification-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  background: rgba(14, 94, 94, 0.08);
+  border: 1px solid rgba(14, 94, 94, 0.18);
+  color: var(--primary-dark);
+}
+
+.verification-badge.verified {
+  background: rgba(16, 124, 96, 0.08);
+  border-color: rgba(16, 124, 96, 0.22);
+  color: #0a5c45;
+}
+
+.verification-badge.unverified {
+  background: var(--gray-light);
+  border-color: var(--neutral-mid);
+  color: var(--gray-medium);
+}
+
+.citations-list {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.citation-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--white);
+  border: 1px solid rgba(14, 94, 94, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.citation-item.citation-statute {
+  background: rgba(14, 94, 94, 0.04);
+  border-color: rgba(14, 94, 94, 0.18);
+}
+
+.citation-type-badge {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--primary-dark);
+  background: rgba(14, 94, 94, 0.08);
+  border: 1px solid rgba(14, 94, 94, 0.15);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+.citation-statute .citation-type-badge {
+  background: var(--primary);
+  border-color: var(--primary-dark);
+  color: var(--white);
+}
+
+.citation-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.citation-link {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-word;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.citation-link:hover {
+  color: var(--primary-dark);
+}
+
+.citation-ext-icon {
+  font-size: 0.7rem;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.citation-text {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+  font-family: var(--font-display);
+}
+
+.citation-retrieved {
+  font-size: 0.75rem;
+  color: var(--gray-medium);
+}
+
+.citations-empty {
+  font-size: 0.88rem;
+  color: var(--gray-medium);
+  margin-bottom: var(--space-4);
+}
+
+.citations-footer {
+  font-size: 0.8rem;
+  color: var(--gray-medium);
+  line-height: 1.6;
+}
+
+.citations-footer a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+
+.citations-footer a:hover {
+  color: var(--primary-dark);
+}
+
+/* ── Discount index page (list of states) ────────────────────── */
 
 .discount-container {
   max-width: 1320px;
@@ -16,12 +428,12 @@
 
 /* Hero Section */
 .discount-hero {
-  border-bottom: 1px solid var(--ds-border);
+  border-bottom: 1px solid rgba(14, 94, 94, 0.1);
   padding: var(--space-10) 0 var(--space-14);
   position: relative;
   background:
-    radial-gradient(circle at 100% 0, rgba(14, 94, 94, 0.09), rgba(14, 94, 94, 0) 38%),
-    linear-gradient(180deg, #f9fcfc 0%, #f1f8f8 100%);
+    radial-gradient(circle at 100% 0, rgba(14, 94, 94, 0.09), transparent 38%),
+    linear-gradient(180deg, var(--neutral-light) 0%, #f1f8f8 100%);
 }
 
 .discount-hero-content {
@@ -37,11 +449,11 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  background: var(--ds-accent-soft);
-  border: 1px solid var(--ds-border-strong);
-  color: var(--ds-ink);
+  background: rgba(14, 94, 94, 0.08);
+  border: 1px solid rgba(14, 94, 94, 0.2);
+  color: var(--primary-dark);
   padding: 0.45rem 0.8rem;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.85rem;
   font-weight: 700;
   margin-bottom: var(--space-5);
@@ -51,21 +463,22 @@
 
 .discount-badge i {
   font-size: 0.95rem;
-  color: var(--ds-accent);
+  color: var(--primary);
 }
 
 .discount-title {
+  font-family: var(--font-display);
   font-size: clamp(1.8rem, 2.8vw, 2.6rem);
   font-weight: 700;
   margin-bottom: var(--space-4);
   line-height: 1.15;
-  color: var(--ds-ink);
+  color: var(--primary-dark);
   letter-spacing: -0.02em;
 }
 
 .discount-subtitle {
   font-size: clamp(0.98rem, 1.2vw, 1.08rem);
-  color: var(--ds-ink-muted);
+  color: var(--text-secondary);
   margin-bottom: var(--space-7);
   line-height: 1.68;
   max-width: 72ch;
@@ -84,9 +497,10 @@
 
 /* Shared Section Titles */
 .section-title {
+  font-family: var(--font-display);
   font-size: clamp(1.35rem, 2vw, 1.85rem);
   font-weight: 700;
-  color: var(--ds-ink);
+  color: var(--primary-dark);
   text-align: center;
   margin-bottom: var(--space-3);
   letter-spacing: -0.02em;
@@ -94,7 +508,7 @@
 
 .section-subtitle {
   font-size: 1rem;
-  color: var(--ds-ink-muted);
+  color: var(--text-secondary);
   text-align: center;
   margin-bottom: var(--space-8);
   max-width: 72ch;
@@ -102,7 +516,7 @@
   margin-right: auto;
 }
 
-/* States Section */
+/* State cards grid */
 .discount-states-section {
   padding: var(--space-12) 0;
 }
@@ -114,18 +528,18 @@
 }
 
 .discount-state-card {
-  background: var(--ds-surface);
-  border-radius: var(--ds-radius-xl);
+  background: var(--white);
+  border-radius: var(--radius-xl);
   padding: var(--space-6);
-  border: 1px solid var(--ds-border);
-  box-shadow: var(--ds-shadow-soft);
-  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  border: 1px solid rgba(14, 94, 94, 0.1);
+  box-shadow: 0 2px 10px rgba(14, 94, 94, 0.07);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .discount-state-card:hover {
-  box-shadow: var(--ds-shadow-card);
+  box-shadow: 0 6px 24px rgba(14, 94, 94, 0.13);
   transform: translateY(-2px);
-  border-color: var(--ds-border-strong);
+  border-color: rgba(14, 94, 94, 0.22);
 }
 
 .discount-state-header {
@@ -135,13 +549,13 @@
   gap: var(--space-3);
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--ds-border);
+  border-bottom: 1px solid rgba(14, 94, 94, 0.08);
 }
 
 .discount-state-header h3 {
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--ds-ink);
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -150,14 +564,14 @@
   align-items: center;
   justify-content: center;
   padding: 0.24rem 0.68rem;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.73rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  background: var(--ds-accent-soft);
-  border: 1px solid var(--ds-border-strong);
-  color: var(--ds-ink);
+  background: rgba(14, 94, 94, 0.08);
+  border: 1px solid rgba(14, 94, 94, 0.2);
+  color: var(--primary-dark);
 }
 
 .discount-state-details {
@@ -174,33 +588,33 @@
 
 .discount-detail.bonus {
   margin-top: var(--space-2);
-  background: var(--ds-surface-muted);
-  border: 1px solid var(--ds-border);
+  background: var(--gray-light);
+  border: 1px solid rgba(14, 94, 94, 0.1);
   padding: 0.45rem 0.62rem;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   justify-content: flex-start;
   gap: var(--space-2);
-  color: var(--ds-ink);
+  color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 600;
 }
 
 .discount-detail.bonus i {
-  color: var(--ds-accent);
+  color: var(--primary);
 }
 
 .detail-label {
-  color: var(--ds-ink-muted);
+  color: var(--text-secondary);
   font-size: 0.86rem;
 }
 
 .detail-value {
   font-weight: 600;
-  color: var(--ds-ink);
+  color: var(--text-primary);
 }
 
 .detail-value.highlight {
-  color: var(--ds-accent);
+  color: var(--primary);
 }
 
 .discount-requirements {
@@ -212,7 +626,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--ds-ink-muted);
+  color: var(--gray-medium);
   margin-bottom: var(--space-2);
 }
 
@@ -228,12 +642,12 @@
   gap: 0.42rem;
   padding: 0.2rem 0;
   font-size: 0.88rem;
-  color: var(--ds-ink-muted);
+  color: var(--text-secondary);
   line-height: 1.55;
 }
 
 .discount-requirements li i {
-  color: var(--ds-accent);
+  color: var(--primary);
   margin-top: 0.24rem;
   flex-shrink: 0;
   font-size: 0.7rem;
@@ -241,12 +655,12 @@
 
 .discount-note {
   font-size: 0.82rem;
-  color: var(--ds-ink-muted);
+  color: var(--text-secondary);
   margin-bottom: var(--space-4);
   padding: 0.65rem;
-  background: var(--ds-surface-muted);
-  border: 1px dashed var(--ds-border-strong);
-  border-radius: 10px;
+  background: var(--gray-light);
+  border: 1px dashed rgba(14, 94, 94, 0.2);
+  border-radius: var(--radius-sm);
 }
 
 .discount-state-actions {
@@ -263,15 +677,11 @@
   min-height: 40px;
 }
 
-.discount-state-actions .btn-outline {
-  background: var(--ds-surface-muted);
-}
-
 /* How It Works */
 .discount-how-section {
   background: transparent;
   padding: var(--space-12) 0;
-  border-top: 1px solid var(--ds-border);
+  border-top: 1px solid rgba(14, 94, 94, 0.1);
 }
 
 .how-steps {
@@ -284,18 +694,18 @@
 .how-step {
   text-align: left;
   padding: var(--space-5);
-  border-radius: var(--ds-radius-lg);
-  border: 1px solid var(--ds-border);
-  background: var(--ds-surface);
-  box-shadow: var(--ds-shadow-soft);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(14, 94, 94, 0.1);
+  background: var(--white);
+  box-shadow: 0 2px 10px rgba(14, 94, 94, 0.06);
 }
 
 .step-number {
   width: 36px;
   height: 36px;
-  background: var(--ds-accent-soft);
-  color: var(--ds-accent-strong);
-  border: 1px solid var(--ds-border-strong);
+  background: rgba(14, 94, 94, 0.08);
+  color: var(--primary-dark);
+  border: 1px solid rgba(14, 94, 94, 0.2);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -308,13 +718,13 @@
 .how-step h3 {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--ds-ink);
+  color: var(--text-primary);
   margin-bottom: var(--space-2);
 }
 
 .how-step p {
   font-size: 0.9rem;
-  color: var(--ds-ink-muted);
+  color: var(--text-secondary);
   line-height: 1.62;
   margin: 0;
 }
@@ -322,66 +732,67 @@
 /* FAQ Section */
 .discount-faq-section {
   padding: var(--space-12) 0;
-  border-top: 1px solid var(--ds-border);
+  border-top: 1px solid rgba(14, 94, 94, 0.1);
   background: rgba(255, 255, 255, 0.58);
 }
 
 /* CTA Section */
 .discount-cta-section {
   padding: var(--space-12) 0;
-  border-top: 1px solid var(--ds-border);
-  background: transparent;
+  border-top: 1px solid rgba(14, 94, 94, 0.1);
 }
 
 .cta-box {
   background:
-    radial-gradient(circle at 100% 0, rgba(14, 94, 94, 0.12), rgba(14, 94, 94, 0) 46%),
+    radial-gradient(circle at 100% 0, rgba(14, 94, 94, 0.1), transparent 46%),
     linear-gradient(180deg, #ffffff 0%, #f4f9f9 100%);
-  color: var(--ds-ink);
+  color: var(--text-primary);
   padding: var(--space-9);
-  border-radius: var(--ds-radius-xl);
+  border-radius: var(--radius-2xl);
   text-align: center;
-  border: 1px solid var(--ds-border);
-  box-shadow: var(--ds-shadow-card);
+  border: 1px solid rgba(14, 94, 94, 0.12);
+  box-shadow: 0 6px 28px rgba(14, 94, 94, 0.1);
 }
 
 .cta-box h2 {
+  font-family: var(--font-display);
   font-size: clamp(1.35rem, 2vw, 1.85rem);
   font-weight: 700;
+  color: var(--primary-dark);
   margin-bottom: var(--space-3);
   letter-spacing: -0.02em;
 }
 
 .cta-box p {
   font-size: 0.98rem;
-  color: var(--ds-ink-muted);
+  color: var(--text-secondary);
   margin-bottom: var(--space-6);
   max-width: 64ch;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Modal treatment */
+/* Modal */
 .get-matched-modal {
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-lg);
-  box-shadow: var(--ds-shadow-card);
+  border: 1px solid rgba(14, 94, 94, 0.12);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(14, 94, 94, 0.12);
 }
 
 .get-matched-modal .modal-header {
-  border-bottom: 1px solid var(--ds-border);
-  background: var(--ds-surface-muted);
+  border-bottom: 1px solid rgba(14, 94, 94, 0.1);
+  background: var(--neutral-light);
 }
 
 .get-matched-modal .modal-header h3 {
-  color: var(--ds-ink);
+  color: var(--text-primary);
 }
 
 .get-matched-modal .modal-body p {
-  color: var(--ds-ink-muted);
+  color: var(--text-secondary);
 }
 
-/* Breadcrumbs on hero */
+/* Breadcrumbs */
 .discount-hero .breadcrumbs {
   margin-bottom: var(--space-4);
 }
@@ -392,10 +803,11 @@
 }
 
 .discount-hero .breadcrumbs a:hover {
-  color: var(--ds-accent);
+  color: var(--primary);
 }
 
-/* Responsive */
+/* ── Responsive ──────────────────────────────────────────────── */
+
 @media (max-width: 900px) {
   .discount-states-grid {
     grid-template-columns: 1fr;
@@ -429,5 +841,15 @@
 
   .cta-box {
     padding: var(--space-6);
+  }
+
+  .citations-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .citation-item {
+    flex-direction: column;
+    gap: var(--space-2);
   }
 }
