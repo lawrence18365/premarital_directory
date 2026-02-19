@@ -1,36 +1,28 @@
 # Dependencies
-/node_modules
-/client/node_modules
+node_modules/
+/client/node_modules/
 
 # Build artifacts
-/client/build
+/client/build/
 
 # Supabase
-/supabase/.temp
+/supabase/.temp/
+
+# Environment variables — never commit secrets
 .env
 .env.local
+.env.*.local
 
-# OS-specific
-.DS_Store
+# Vercel
 .vercel
 
-# Data files (CSV, logs)
-*.csv
-*.log
-/data/*.csv
-/data/*.json
+# Output / generated files
+/output/
+PLAN.md
 
-# Temporary analysis files
-analyze_*.js
-page_analysis_results.json
-
-# Python cache
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-*.egg-info/
+# OS
+.DS_Store
+Thumbs.db
 
 # IDE
 .vscode/
@@ -39,12 +31,10 @@ __pycache__/
 *.swo
 *~
 
-# Test files (keep test scripts, ignore outputs)
-test_output/
-coverage/
+# Logs
+*.log
+npm-debug.log*
 
-# Exclude everything outside this directory
-../
-../../
-Desktop/
-Users/
+# Data / CSV dumps
+*.csv
+/data/
