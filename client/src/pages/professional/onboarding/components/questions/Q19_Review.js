@@ -157,7 +157,7 @@ const Q19_Review = ({
         <div className="review-item">
           <span className="review-label">Photo:</span>
           <span className="review-value">
-            {profileData.photo_url ? 'Uploaded ✓' : 'Not provided'}
+            {profileData.photo_url ? 'Uploaded' : 'Not provided'}
           </span>
         </div>
       </div>
@@ -225,12 +225,12 @@ const Q19_Review = ({
           </div>
           {profileData.offers_free_consultation && (
             <div className="review-item">
-              <span className="review-value">✓ Offers free consultation</span>
+              <span className="review-value">Offers free consultation</span>
             </div>
           )}
           {profileData.sliding_scale && (
             <div className="review-item">
-              <span className="review-value">✓ Offers sliding scale fees</span>
+              <span className="review-value">Offers sliding scale fees</span>
             </div>
           )}
         </div>

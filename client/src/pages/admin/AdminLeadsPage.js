@@ -245,13 +245,13 @@ const AdminLeadsPage = () => {
                       {lead.profile_id === null ? (
                         // Unmatched lead — show admin notified status
                         lead.admin_notified
-                          ? <span style={{ color: '#059669', fontWeight: 600 }}>Admin ✓</span>
-                          : <span style={{ color: '#dc2626', fontWeight: 600 }}>Admin ✗</span>
+                          ? <span style={{ color: '#059669', fontWeight: 600 }}>Admin Sent</span>
+                          : <span style={{ color: '#dc2626', fontWeight: 600 }}>Admin Pending</span>
                       ) : (
                         // Matched lead — show professional notified status
                         lead.professional_notified
-                          ? <span style={{ color: '#059669', fontWeight: 600 }}>Pro ✓</span>
-                          : <span style={{ color: '#dc2626', fontWeight: 600 }}>Pro ✗</span>
+                          ? <span style={{ color: '#059669', fontWeight: 600 }}>Pro Sent</span>
+                          : <span style={{ color: '#dc2626', fontWeight: 600 }}>Pro Pending</span>
                       )}
                     </td>
                   </tr>

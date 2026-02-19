@@ -590,7 +590,7 @@ const ProfileEditor = () => {
                   {formData.bio.length} characters 
                   {formData.bio.length < 50 && '(minimum 50)'}
                   {formData.bio.length >= 50 && formData.bio.length < 150 && '(150+ recommended for SEO)'}
-                  {formData.bio.length >= 150 && '✓ Great for SEO!'}
+                  {formData.bio.length >= 150 && 'Great for SEO!'}
                 </div>
                 {errors.bio && <div className="field-error">{errors.bio}</div>}
               </div>

@@ -331,8 +331,8 @@ const MarriageLicenseStatePage = () => {
                   <div className={`format-callout ${acceptedFormats.includes('online') ? 'online-ok' : 'inperson-only'}`}>
                     <strong>
                       {acceptedFormats.includes('online')
-                        ? '✅ Online counseling accepted'
-                        : '⚠️ In-person required'}
+                        ? 'Online counseling accepted'
+                        : 'In-person required'}
                     </strong>
                     {acceptedNote && <span> — {acceptedNote}</span>}
                     {!acceptedNote && acceptedFormats.length > 1 && (

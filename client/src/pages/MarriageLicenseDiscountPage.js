@@ -184,7 +184,7 @@ const MarriageLicenseDiscountPage = () => {
                         {entry.name}
                         {entry.verified && (
                           <span className="state-verified-badge" title={`Last verified ${entry.lastVerifiedAt ? new Date(entry.lastVerifiedAt).toLocaleDateString() : ''}`}>
-                            ✓
+                            Verified
                           </span>
                         )}
                       </h3>

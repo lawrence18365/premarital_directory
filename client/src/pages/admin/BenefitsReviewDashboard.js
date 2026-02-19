@@ -100,7 +100,7 @@ const BenefitsReviewDashboard = () => {
 
     if (error) { alert('Error: ' + error.message) }
     else {
-      alert(`✅ ${record.jurisdiction_name} marked verified. Page will be indexed on next build.`)
+      alert(`${record.jurisdiction_name} marked verified. Page will be indexed on next build.`)
       await loadRecords()
       setSelected(null)
     }
@@ -209,14 +209,14 @@ const BenefitsReviewDashboard = () => {
               onClick={() => handleApprove(selected)}
               title={score < 70 ? `Readiness score ${score}/100 is below 70 threshold` : ''}
             >
-              {actionLoading ? 'Saving...' : '✅ Approve & Verify'}
+              {actionLoading ? 'Saving...' : 'Approve & Verify'}
             </button>
             <button
               className="btn btn-outline"
               disabled={actionLoading}
               onClick={() => handleFlagForReview(selected)}
             >
-              🚩 Flag Issue
+              Flag Issue
             </button>
           </div>
         </div>
@@ -224,12 +224,12 @@ const BenefitsReviewDashboard = () => {
         {/* Readiness score breakdown */}
         <div className="review-readiness">
           <div className="review-readiness-score" style={{ color: score >= 70 ? '#1a7a4a' : '#c0392b' }}>
-            Readiness: {score}/100 {score >= 70 ? '✅' : '❌ (must be ≥ 70 to approve)'}
+            Readiness: {score}/100 {score >= 70 ? '' : '(must be >= 70 to approve)'}
           </div>
           <div className="review-readiness-breakdown">
             {Object.entries(breakdown).map(([check, pts]) => (
               <span key={check} className={`readiness-check ${pts > 0 ? 'pass' : 'fail'}`}>
-                {pts > 0 ? '✅' : '○'} {check.replace(/_/g, ' ')}
+                {check.replace(/_/g, ' ')}
               </span>
             ))}
           </div>
