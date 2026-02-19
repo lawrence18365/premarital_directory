@@ -140,6 +140,7 @@ const MarriageLicenseStatePage = () => {
   // Waiting period
   const waitingWaived    = dbRecord?.waiting_period_waived ?? false
   const waitingHours     = dbRecord?.standard_waiting_period_hours
+  // eslint-disable-next-line no-unused-vars
   const waitingLabel     = staticConfig?.waitingPeriod  // fallback text
 
   // Program requirements
@@ -166,6 +167,7 @@ const MarriageLicenseStatePage = () => {
 
   // Page readiness: use is_indexed from DB; for static-only fallback, assume renderable
   const isIndexed        = dbRecord ? dbRecord.is_indexed : Boolean(staticConfig)
+  // eslint-disable-next-line no-unused-vars
   const isDbVerified     = dbRecord?.verification_status === 'verified'
 
   // FAQs — merge DB if available, fall back to static + add standard ones

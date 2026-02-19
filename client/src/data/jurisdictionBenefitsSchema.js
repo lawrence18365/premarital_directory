@@ -416,7 +416,7 @@ export const SECTION_FIELD_REQUIREMENTS = {
   ],
 }
 
-export default {
+const JurisdictionBenefitsSchema = {
   JURISDICTION_TYPES,
   BENEFIT_TYPES,
   ACCEPTED_FORMATS,
@@ -433,3 +433,5 @@ export default {
   computeReadinessScore,
   validateJurisdictionBenefit,
 }
+
+export default JurisdictionBenefitsSchema

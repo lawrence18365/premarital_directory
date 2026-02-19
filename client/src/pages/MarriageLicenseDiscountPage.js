@@ -72,7 +72,7 @@ const MarriageLicenseDiscountPage = () => {
   const faqs = [
     {
       question: 'Which states offer marriage license discounts for premarital counseling?',
-      answer: `Several states offer discounts on marriage license fees for couples who complete premarital counseling: Florida ($32.50 off), Texas ($60 off), Minnesota (up to $75 off), Tennessee ($60 off), Oklahoma ($50 off), Georgia ($16-50 off), Maryland ($25 off), and Indiana ($60 off). Some states also waive waiting periods.`
+      answer: `Several states offer discounts on marriage license fees for couples who complete premarital counseling: Florida ($32.50 off), Texas ($60 off), Minnesota (up to $75 off), Tennessee ($60 off), Oklahoma ($50 off), Georgia ($16–50 off), Maryland (amount varies by county), and Indiana ($60 off). Some states also waive waiting periods.`
     },
     {
       question: 'How do I get the marriage license discount?',

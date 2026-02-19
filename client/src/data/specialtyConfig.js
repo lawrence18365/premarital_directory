@@ -432,34 +432,39 @@ export const STATE_DISCOUNT_CONFIG = {
   'maryland': {
     name: 'Maryland',
     abbr: 'MD',
-    discount: '$25',
-    originalFee: '$55',
-    discountedFee: '$30',
-    waitingPeriod: '48-hour waiting period waived',
+    discount: 'Varies by county',
+    originalFee: null,
+    discountedFee: null,
+    waitingPeriod: 'No waiting period impact',
     requirements: [
-      'Complete a premarital counseling program',
+      'Complete a premarital preparation course',
       'Program must be at least 4 hours',
-      'Obtain certificate from provider'
+      'Course must be completed within 1 year before applying',
+      'Obtain certificate from a licensed professional or approved clergy'
     ],
     steps: [
-      'Find a licensed premarital counselor or qualified clergy member in Maryland',
-      'Complete at least 4 hours of premarital counseling as a couple',
+      'Find a licensed premarital counselor or qualifying clergy member in Maryland',
+      'Complete at least 4 hours of premarital preparation as a couple',
       'Receive your certificate of completion',
-      'Present the certificate at the circuit court clerk when applying for your license',
-      'Receive a $25 discount and waiver of the 48-hour waiting period'
+      'Present the certificate at your county circuit court clerk when applying for your license',
+      'The clerk applies the county-set discount to your license fee'
     ],
     faqs: [
       {
+        question: 'How much is the Maryland marriage license discount?',
+        answer: 'Maryland law allows counties to set their own discount amount for couples who complete a qualifying premarital preparation course. Fees and discount amounts vary by county — check with your local circuit court clerk for the exact figures.'
+      },
+      {
         question: 'Does Maryland waive the waiting period with premarital counseling?',
-        answer: 'Yes, Maryland waives the standard 48-hour waiting period for couples who complete at least 4 hours of premarital counseling and present a certificate.'
+        answer: 'No. Maryland\'s 48-hour waiting period (the license becomes effective at 6 a.m. on the second calendar day) is a statewide rule and is not waived by completing premarital counseling. A waiver requires a court order for reasons unrelated to counseling.'
       },
       {
         question: 'Who can provide qualifying premarital counseling in Maryland?',
-        answer: 'Licensed professional counselors, therapists, psychologists, social workers, and ordained clergy members can provide qualifying premarital counseling in Maryland.'
+        answer: 'Licensed professional counselors, therapists, psychologists, social workers, and certain ordained clergy or other approved providers can provide qualifying premarital preparation in Maryland.'
       }
     ],
-    certificateUrl: null,
-    notes: 'Maryland also waives the 48-hour waiting period with completion of premarital counseling.'
+    certificateUrl: 'https://law.justia.com/codes/maryland/family-law/title-2/subtitle-4/section-2-404-1/',
+    notes: 'Maryland marriage license fees and discount amounts vary by county. Contact your local circuit court clerk for exact pricing. The 48-hour waiting period is not waived by counseling.'
   },
   'minnesota': {
     name: 'Minnesota',
