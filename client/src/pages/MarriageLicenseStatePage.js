@@ -231,19 +231,31 @@ const MarriageLicenseStatePage = () => {
         noindex={!dbLoading && !isIndexed}
       />
 
-      <div className="page-container discount-page">
-        <div className="container">
-          <Breadcrumbs items={breadcrumbItems} />
+      <div className="discount-page">
 
-          <div className="container-narrow">
-            <div className="page-header">
-              <h1>{stateName} Marriage License Discount</h1>
-              <p className="lead">
-                {savings
-                  ? `Save ${savings} on your marriage license by completing premarital counseling in ${stateName}`
-                  : `${stateName} rewards couples who complete premarital counseling with a marriage license benefit`}
+        {/* ── Hero ─────────────────────────────────────────────────────── */}
+        <div className="discount-hero">
+          <div className="discount-container">
+            <Breadcrumbs items={breadcrumbItems} variant="on-hero" />
+            <div className="discount-hero-content">
+              <div className="discount-badge">
+                <i className="fa fa-piggy-bank"></i>
+                Marriage License Savings · {stAbbr}
+              </div>
+              <h1 className="discount-title">{stateName} Marriage License Discount</h1>
+              <p className="discount-subtitle">
+                {savings && savings !== 'Varies by county'
+                  ? `Save ${savings} on your ${stateName} marriage license by completing premarital counseling.`
+                  : `${stateName} rewards couples who complete premarital counseling with a marriage license fee reduction.`}
+                {waitingWaived ? ' The waiting period is also waived.' : ''}
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* ── Main content ─────────────────────────────────────────────── */}
+        <div className="discount-container">
+          <div className="container-narrow" style={{ paddingTop: 'var(--space-10)', paddingBottom: 'var(--space-12)' }}>
 
             {/* ── At-a-glance summary box ──────────────────────────────── */}
             {sectionReady(dbRecord, 'savings_summary_box') && (
@@ -274,20 +286,24 @@ const MarriageLicenseStatePage = () => {
             )}
 
             {/* Static fee box fallback when DB not ready */}
-            {!sectionReady(dbRecord, 'savings_summary_box') && staticConfig && (
+            {!sectionReady(dbRecord, 'savings_summary_box') && staticConfig && staticConfig.discount && (
               <div className="benefit-summary-box">
-                <div className="benefit-stat">
-                  <p className="stat-label">Standard Fee</p>
-                  <p className="stat-value strikethrough">{staticConfig.originalFee}</p>
-                </div>
-                <div className="benefit-stat highlight">
+                {staticConfig.originalFee && (
+                  <div className="benefit-stat">
+                    <p className="stat-label">Standard Fee</p>
+                    <p className="stat-value strikethrough">{staticConfig.originalFee}</p>
+                  </div>
+                )}
+                <div className={`benefit-stat${staticConfig.originalFee ? ' highlight' : ''}`}>
                   <p className="stat-label">You Save</p>
                   <p className="stat-value">{staticConfig.discount}</p>
                 </div>
-                <div className="benefit-stat">
-                  <p className="stat-label">With Counseling</p>
-                  <p className="stat-value">{staticConfig.discountedFee}</p>
-                </div>
+                {staticConfig.discountedFee && (
+                  <div className="benefit-stat">
+                    <p className="stat-label">With Counseling</p>
+                    <p className="stat-value">{staticConfig.discountedFee}</p>
+                  </div>
+                )}
                 {staticConfig.waitingPeriod && staticConfig.waitingPeriod !== 'No waiting period impact' && (
                   <div className="benefit-stat bonus">
                     <p className="stat-label">Bonus</p>
@@ -488,5 +504,6 @@ const MarriageLicenseStatePage = () => {
     </>
   )
 }
+
 
 export default MarriageLicenseStatePage
