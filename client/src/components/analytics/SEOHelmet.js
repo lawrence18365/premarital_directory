@@ -1,6 +1,7 @@
 
 import React from 'react'
 import { Helmet } from 'react-helmet'
+import { getStateNameFromAbbr } from '../../lib/utils'
 
 // Enhanced SEO utilities
 const generateBreadcrumbStructuredData = (breadcrumbs, siteUrl = 'https://www.weddingcounselors.com') => {
@@ -217,9 +218,9 @@ const SEOHelmet = ({
 export const generateProfessionalStructuredData = (professional) => {
   const baseUrl = process.env.REACT_APP_SITE_URL || 'https://www.weddingcounselors.com';
 
-  // Build canonical profile URL
+  // Build canonical profile URL — always use full state name, never abbreviation
   const stateSlug = professional.state_province
-    ? professional.state_province.toLowerCase().replace(/\s+/g, '-')
+    ? (getStateNameFromAbbr(professional.state_province) || professional.state_province.toLowerCase().replace(/\s+/g, '-'))
     : null
   const citySlug = professional.city
     ? professional.city.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')

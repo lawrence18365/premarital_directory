@@ -35,6 +35,31 @@ export const SPECIALTY_CONFIG = {
         question: 'Is Christian premarital counseling only for religious couples?',
         answer: 'While designed for couples who want faith integrated into their preparation, many Christian counselors also offer secular approaches if preferred.'
       }
+    ],
+    bodyContent: [
+      {
+        paragraphs: [
+          'Christian premarital counseling weaves Biblical principles and spiritual formation into the practical work of preparing for marriage. Where secular counseling focuses on communication frameworks and compatibility, Christian counseling adds a third dimension: the covenant model of marriage as described in Scripture, and the couple\'s shared relationship with God as the foundation of their union.'
+        ]
+      },
+      {
+        heading: 'Two Tracks: Pastoral and Licensed Christian Therapists',
+        paragraphs: [
+          'Most couples choose between two types of Christian counselors. Pastoral counselors — pastors, deacons, or church-trained lay leaders — provide guidance rooted in their denomination\'s theology and typically offer free or low-cost sessions through a local church. Licensed Christian therapists are state-licensed mental health professionals (LMFTs, LPCs, or psychologists) who integrate faith into clinically-grounded practice. Many couples do both: a few sessions with their pastor for denominational preparation, and additional sessions with a licensed therapist for deeper relationship work.'
+        ]
+      },
+      {
+        heading: 'What Topics Are Covered',
+        paragraphs: [
+          'Christian premarital counseling typically addresses biblical roles and expectations in marriage, communication and conflict resolution through a scriptural lens, prayer and spiritual intimacy, sexual ethics within marriage, financial stewardship, raising children in the faith, and navigating extended family relationships. Many programs use structured inventories like PREPARE/ENRICH alongside pastoral discussion.'
+        ]
+      },
+      {
+        heading: 'Denominations and Requirements',
+        paragraphs: [
+          'Requirements vary by denomination. Catholic couples need Pre-Cana (typically 6–12 months of preparation). Many evangelical and mainline Protestant churches require 4–8 sessions with a pastor before the wedding. Non-denominational churches often have fewer formal requirements but encourage couples to engage with a counselor who shares their faith values. Even if your church has no formal requirement, proactively choosing a Christian counselor can strengthen the foundation you\'re building together.'
+        ]
+      }
     ]
   },
 
@@ -82,11 +107,11 @@ export const SPECIALTY_CONFIG = {
     metaDescription: 'Find LGBTQ+ affirming premarital counselors who celebrate and support same-sex couples and queer relationships. Inclusive, welcoming marriage preparation.',
     h1: 'LGBTQ+ Affirming Premarital Counseling',
     subtitle: 'Inclusive marriage preparation that celebrates your relationship',
-    keywords: ['lgbtq premarital counseling', 'gay couples counseling', 'same-sex marriage preparation', 'queer affirming therapist', 'lgbtq friendly counselor'],
-    filterTerms: ['LGBTQ+', 'LGBTQ', 'Gay', 'Lesbian', 'Queer', 'Affirming', 'Same-Sex', 'Inclusive'],
+    keywords: ['lgbtq premarital counseling', 'lgbtqia premarital counseling', 'gay couples counseling', 'same-sex marriage preparation', 'queer affirming therapist', 'lgbtq friendly counselor'],
+    filterTerms: ['LGBTQ+', 'LGBTQ', 'LGBTQIA', 'Gay', 'Lesbian', 'Queer', 'Affirming', 'Same-Sex', 'Inclusive'],
     icon: 'fa-rainbow',
     color: '#0e5e5e',
-    intro: `LGBTQ+ affirming premarital counseling provides inclusive, celebratory support for same-sex couples and queer relationships. These counselors understand the unique experiences, strengths, and challenges LGBTQ+ couples face and create a welcoming space for marriage preparation.`,
+    intro: `LGBTQ+ and LGBTQIA affirming premarital counseling provides inclusive, celebratory support for same-sex couples and queer relationships. These counselors understand the unique experiences, strengths, and challenges LGBTQ+ couples face and create a welcoming space for marriage preparation.`,
     benefits: [
       'Affirming, celebratory approach',
       'Understanding of LGBTQ+ experiences',
@@ -107,6 +132,31 @@ export const SPECIALTY_CONFIG = {
         question: 'Do we need a counselor who is also LGBTQ+?',
         answer: 'Not necessarily. Many excellent affirming counselors are allies who have specialized training in LGBTQ+ issues. The most important factor is finding someone whose approach feels supportive and understanding.'
       }
+    ],
+    bodyContent: [
+      {
+        paragraphs: [
+          'LGBTQ+ affirming premarital counseling goes beyond simple acceptance. An affirming counselor doesn\'t just tolerate LGBTQ+ relationships — they actively celebrate them, understand the specific contexts in which they form, and bring specialized knowledge of the challenges queer couples navigate on the path to marriage.'
+        ]
+      },
+      {
+        heading: 'What "Affirming" Actually Means',
+        paragraphs: [
+          'The term "affirming" means a counselor views LGBTQ+ identities as natural and valid — not as something to manage, overcome, or remain clinically neutral about. True affirmation shows up in language (using correct pronouns without being asked), in assessment tools (not defaulting to heteronormative frameworks), and in the complete absence of any conversion-adjacent approaches. When interviewing a potential counselor, it\'s reasonable to ask directly: "Do you actively affirm same-sex relationships and queer identities?" A genuinely affirming counselor will answer without hesitation.'
+        ]
+      },
+      {
+        heading: 'Unique Topics Covered',
+        paragraphs: [
+          'LGBTQ+ premarital counseling addresses themes that don\'t come up in standard couples work: navigating family rejection and chosen family dynamics, managing mixed levels of being "out" between partners, the legal landscape of same-sex marriage across different states, unique stressors around adoption and family building, and communication patterns specific to same-sex relationships. For trans and non-binary partners, counselors may also address gender affirmation timelines and how they intersect with relationship dynamics.'
+        ]
+      },
+      {
+        heading: 'Finding a Counselor Who\'s the Right Fit',
+        paragraphs: [
+          'Look for counselors who list LGBTQ+ affirmation explicitly in their profiles, who have clinical training in LGBTQ+ mental health, and who come recommended by queer-affirming community organizations or other LGBTQ+ couples. Many affirming counselors offer virtual sessions, which expands your options significantly — particularly helpful if you\'re in an area with limited LGBTQ+-friendly providers. Browse profiles above and filter by "LGBTQ+ Affirming" to find counselors near you.'
+        ]
+      }
     ]
   },
 
@@ -116,6 +166,9 @@ export const SPECIALTY_CONFIG = {
     title: 'Online Premarital Counseling',
     metaTitle: 'Online Premarital Counseling | Virtual Marriage Preparation',
     metaDescription: 'Find online premarital counseling and virtual marriage preparation programs. Video sessions, flexible scheduling, and couples anywhere can participate.',
+    stateMetaTitle: (stateName) => `Online Premarital Counseling in ${stateName} — Video Sessions Available`,
+    stateMetaDescription: (stateName, count) =>
+      `Yes — ${stateName} couples can do premarital counseling online with licensed therapists via video. Browse ${count > 0 ? count + ' verified' : 'vetted'} counselors offering flexible virtual sessions in ${stateName}.`,
     h1: 'Online Premarital Counseling',
     subtitle: 'Virtual marriage preparation from the comfort of your home',
     keywords: ['online premarital counseling', 'virtual marriage counseling', 'telehealth couples therapy', 'remote premarital preparation', 'video premarital counseling'],
@@ -142,6 +195,37 @@ export const SPECIALTY_CONFIG = {
       {
         question: 'Can we do online counseling if we\'re in a long-distance relationship?',
         answer: 'Absolutely! Online counseling is ideal for long-distance couples. You can each join from your own location, or join together when visiting each other.'
+      }
+    ],
+    bodyContent: [
+      {
+        paragraphs: [
+          'Online premarital counseling has become one of the most popular ways for engaged couples to prepare for marriage. Rather than coordinating around a single in-office time slot, virtual sessions let you and your partner meet from wherever you are — your apartment, a coffee shop, or separate cities if you\'re in a long-distance relationship.'
+        ]
+      },
+      {
+        heading: 'What to Expect in a Virtual Session',
+        paragraphs: [
+          'A typical online session runs 50–60 minutes via a secure video platform — most counselors use Zoom, SimplePractice, or a HIPAA-compliant telehealth tool. You\'ll need a device with a camera and microphone, a reliable internet connection, and a private space where you can speak openly. Many couples find the home setting actually makes it easier to be candid than a clinical office.'
+        ]
+      },
+      {
+        heading: 'Is Online Counseling as Effective?',
+        paragraphs: [
+          'Yes. Multiple peer-reviewed studies, including research published in the Journal of Affective Disorders, have found that teletherapy for couples produces outcomes equivalent to in-person sessions. The quality of the therapeutic relationship matters far more than whether you\'re in the same room as your counselor.'
+        ]
+      },
+      {
+        heading: 'Who Benefits Most from Virtual Sessions',
+        paragraphs: [
+          'Online counseling is especially well-suited for long-distance couples who need to join from separate locations, busy professionals who need evening or weekend availability, couples in rural areas without access to specialized counselors (Gottman-trained, LGBTQ+ affirming, faith-based, etc.), and partners who travel frequently for work. The wider pool of available counselors online also makes it easier to find someone who specializes in your specific needs.'
+        ]
+      },
+      {
+        heading: 'Marriage License Discounts Through Online Counseling',
+        paragraphs: [
+          'If you live in Texas, Florida, Oklahoma, Indiana, Tennessee, Minnesota, or Georgia, completing an online premarital course may qualify you for a discount of $16–$75 on your marriage license fee — and in some states, the waiting period is waived as well. Most states accept virtual programs as long as the provider holds a valid license in your state. Browse our state-by-state discount guide to confirm eligibility requirements before enrolling.'
+        ]
       }
     ]
   },
@@ -368,9 +452,9 @@ export const STATE_DISCOUNT_CONFIG = {
   'florida': {
     name: 'Florida',
     abbr: 'FL',
-    discount: '$32.50',
-    originalFee: '$86–$93.50 (varies by county)',
-    discountedFee: '$61.00 (most counties)',
+    discount: '$33',
+    originalFee: '$86–$94 (varies by county)',
+    discountedFee: '$61 (most counties)',
     waitingPeriod: '3-day wait waived (FL residents)',
     requirements: [
       'Complete a premarital preparation course of at least 4 hours',
@@ -403,7 +487,7 @@ export const STATE_DISCOUNT_CONFIG = {
       }
     ],
     certificateUrl: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799%2F0741%2FSections%2F0741.0305.html',
-    notes: 'Per FL § 741.0305. Base fee varies by county ($86–$93.50); the $32.50 reduction is statutory. The 3-day wait is waived for Florida residents only. Confirm totals with your county clerk.'
+    notes: 'Statutory reduction under FL § 741.0305 — confirm exact totals with your county clerk.'
   },
   'georgia': {
     name: 'Georgia',
@@ -435,7 +519,7 @@ export const STATE_DISCOUNT_CONFIG = {
       }
     ],
     certificateUrl: null,
-    notes: 'Discount amount varies by county in Georgia.'
+    notes: 'Discount varies by county — confirm the exact amount with your probate court.'
   },
   'maryland': {
     name: 'Maryland',
@@ -463,6 +547,10 @@ export const STATE_DISCOUNT_CONFIG = {
         answer: 'Maryland law allows counties to set their own discount amount for couples who complete a qualifying premarital preparation course. Fees and discount amounts vary by county — check with your local circuit court clerk for the exact figures.'
       },
       {
+        question: 'Are there online premarital counseling options in Maryland?',
+        answer: 'Yes. Maryland accepts online and virtual premarital counseling programs for the marriage license fee reduction, as long as the provider is a licensed professional counselor, therapist, psychologist, social worker, or qualifying clergy member. Look for counselors who list "Online" or "Telehealth" as a session type. The 4-hour minimum requirement and certificate of completion still apply regardless of whether sessions are in-person or virtual.'
+      },
+      {
         question: 'Does Maryland waive the waiting period with premarital counseling?',
         answer: 'No. Maryland\'s 48-hour waiting period (the license becomes effective at 6 a.m. on the second calendar day) is a statewide rule and is not waived by completing premarital counseling. A waiver requires a court order for reasons unrelated to counseling.'
       },
@@ -472,7 +560,7 @@ export const STATE_DISCOUNT_CONFIG = {
       }
     ],
     certificateUrl: 'https://law.justia.com/codes/maryland/family-law/title-2/subtitle-4/section-2-404-1/',
-    notes: 'Maryland marriage license fees and discount amounts vary by county. Contact your local circuit court clerk for exact pricing. The 48-hour waiting period is not waived by counseling.'
+    notes: 'Fee and discount vary by county. The 48-hour waiting period is not waived by counseling.'
   },
   'minnesota': {
     name: 'Minnesota',
@@ -504,14 +592,14 @@ export const STATE_DISCOUNT_CONFIG = {
       }
     ],
     certificateUrl: null,
-    notes: 'Minnesota offers one of the largest discounts in the country for premarital education.'
+    notes: 'One of the largest discounts in the country — up to $75 off the license fee.'
   },
   'oklahoma': {
     name: 'Oklahoma',
     abbr: 'OK',
     discount: '$50',
     originalFee: '$50',
-    discountedFee: '$5 (court fee only)',
+    discountedFee: '$5',
     waitingPeriod: 'No waiting period impact',
     requirements: [
       'Complete a premarital counseling program',
@@ -536,14 +624,14 @@ export const STATE_DISCOUNT_CONFIG = {
       }
     ],
     certificateUrl: null,
-    notes: 'Oklahoma effectively makes the marriage license nearly free with premarital counseling.'
+    notes: 'Counseling drops the fee to just $5 — the license is nearly free.'
   },
   'tennessee': {
     name: 'Tennessee',
     abbr: 'TN',
     discount: '$60',
-    originalFee: '$97.50',
-    discountedFee: '$37.50',
+    originalFee: '$98',
+    discountedFee: '$38',
     waitingPeriod: 'No waiting period impact',
     requirements: [
       'Complete 4 hours of premarital preparation',
@@ -568,7 +656,7 @@ export const STATE_DISCOUNT_CONFIG = {
       }
     ],
     certificateUrl: null,
-    notes: 'Tennessee provides a significant discount for couples who invest in their marriage preparation.'
+    notes: 'Complete a 4-hour course and earn a $60 reduction off the standard fee.'
   },
   'texas': {
     name: 'Texas',
@@ -600,7 +688,7 @@ export const STATE_DISCOUNT_CONFIG = {
       }
     ],
     certificateUrl: 'https://www.twogetherintexas.com/',
-    notes: 'Texas also waives the 72-hour waiting period with the "Twogether in Texas" program.'
+    notes: 'Twogether in Texas also waives the 72-hour waiting period — see program details.'
   },
   'indiana': {
     name: 'Indiana',
@@ -632,7 +720,7 @@ export const STATE_DISCOUNT_CONFIG = {
       }
     ],
     certificateUrl: 'https://www.in.gov/courts/files/form-completion-premarital-counseling.pdf',
-    notes: 'Indiana offers a substantial discount, making the license fee minimal after counseling.'
+    notes: 'Use the official Indiana courts certificate form to claim the $60 discount.'
   }
 }
 

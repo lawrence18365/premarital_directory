@@ -8,6 +8,7 @@ import SEOHelmet from '../components/analytics/SEOHelmet';
 import { trackLocationPageView } from '../components/analytics/GoogleAnalytics';
 import { profileOperations } from '../lib/supabaseClient';
 import { STATE_CONFIG, CITY_CONFIG, isAnchorCity } from '../data/locationConfig';
+import { STATE_DISCOUNT_CONFIG } from '../data/specialtyConfig';
 import SpecialtiesList from '../components/common/SpecialtiesList';
 import LocationInsights from '../components/common/LocationInsights';
 import FAQ from '../components/common/FAQ';
@@ -518,6 +519,32 @@ const CityPage = ({ stateOverride, cityOverride }) => {
           </div>
         </div>
       </section>
+
+      {/* Marriage License Discount Callout */}
+      {STATE_DISCOUNT_CONFIG[state] && (
+        <div className="discount-callout-banner">
+          <div className="discount-callout-inner">
+            <div className="discount-callout-icon">
+              <i className="fa fa-piggy-bank"></i>
+            </div>
+            <div className="discount-callout-body">
+              <strong>
+                {stateConfig?.name} couples save {STATE_DISCOUNT_CONFIG[state].discount} on their marriage license
+                {STATE_DISCOUNT_CONFIG[state].waitingPeriod && STATE_DISCOUNT_CONFIG[state].waitingPeriod !== 'No waiting period impact'
+                  ? ` — and the waiting period is waived`
+                  : ''}
+              </strong>
+              {' '}when they complete premarital counseling with a licensed professional. Any counselor below can issue your certificate.
+            </div>
+            <Link
+              to={`/premarital-counseling/marriage-license-discount/${state}`}
+              className="discount-callout-link"
+            >
+              See requirements <i className="fa fa-arrow-right"></i>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* City Content */}
       <div className="container">

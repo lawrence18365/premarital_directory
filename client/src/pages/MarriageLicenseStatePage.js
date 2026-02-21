@@ -42,6 +42,17 @@ const PROVIDER_LABELS = {
   approved_program:   'State-approved program provider',
 }
 
+// Short labels for the at-a-glance strip — fits inside the narrow cell
+const PROVIDER_LABELS_SHORT = {
+  lmft:               'LMFT',
+  lpc:                'LPC',
+  lcsw:               'LCSW',
+  psychologist:       'Psychologist',
+  clergy:             'Clergy',
+  certified_educator: 'Educator',
+  approved_program:   'Approved program',
+}
+
 // ─── DB → display adapters ────────────────────────────────────────────────────
 
 /**
@@ -340,79 +351,126 @@ const MarriageLicenseStatePage = () => {
             {dbRecord && (
               <div className="content-section">
                 <h2>Requirements</h2>
+                <p className="req-intro">
+                  Complete a qualifying premarital counseling program, then present your
+                  certificate at the county clerk's office when applying for your license.
+                </p>
 
-                {/* Online/In-person callout */}
-                {acceptedFormats.length > 0 && (
-                  <div className={`format-callout ${acceptedFormats.includes('online') ? 'online-ok' : 'inperson-only'}`}>
-                    <strong>
-                      {acceptedFormats.includes('online')
-                        ? 'Online counseling accepted'
-                        : 'In-person required'}
-                    </strong>
-                    {acceptedNote && <span> — {acceptedNote}</span>}
-                    {!acceptedNote && acceptedFormats.length > 1 && (
-                      <span> · Formats: {acceptedFormats.map(f => FORMAT_LABELS[f] || f).join(', ')}</span>
-                    )}
+                {/* At-a-glance strip */}
+                <div className="req-glance">
+                  <div className="req-glance-item">
+                    <span className="req-glance-label">Min. hours</span>
+                    <span className="req-glance-value">
+                      {hoursRequired != null ? `${hoursRequired} hrs` : 'Confirm with clerk'}
+                    </span>
                   </div>
+                  {acceptedFormats.length > 0 && (
+                    <div className="req-glance-item">
+                      <span className="req-glance-label">Formats</span>
+                      <span className="req-glance-value">
+                        {acceptedFormats.map(f => FORMAT_LABELS[f] || f).join(' · ')}
+                      </span>
+                    </div>
+                  )}
+                  {acceptedTypes.length > 0 && (
+                    <div className="req-glance-item">
+                      <span className="req-glance-label">Providers</span>
+                      <span className="req-glance-value">
+                        {acceptedTypes.slice(0, 3).map(t => PROVIDER_LABELS_SHORT[t] || t).join(' · ')}
+                        {acceptedTypes.length > 3 && ` +${acceptedTypes.length - 3}`}
+                      </span>
+                    </div>
+                  )}
+                  <div className="req-glance-item">
+                    <span className="req-glance-label">Certificate</span>
+                    <span className="req-glance-value">
+                      {stateIssuedForm ? 'State form required' : 'Custom form OK'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Format note (replaces old green/amber banner) */}
+                {acceptedNote && (
+                  <p className="req-formats-note">
+                    <i className="fa fa-circle-info"></i>
+                    {acceptedNote}
+                  </p>
                 )}
 
-                {/* Hours */}
-                {hoursRequired != null && (
-                  <p><strong>Minimum hours:</strong> {hoursRequired} hours of premarital counseling</p>
-                )}
-                {hoursRequired == null && dbRecord.premarital_program_required && (
-                  <p><strong>Minimum hours:</strong> Not specified by state statute — confirm with your county clerk</p>
-                )}
-
-                {/* Provider types */}
+                {/* Accepted providers — two-column check-icon list */}
                 {acceptedTypes.length > 0 && (
                   <>
-                    <h3>Accepted providers</h3>
-                    <ul>
-                      {acceptedTypes.map(t => <li key={t}>{PROVIDER_LABELS[t] || t}</li>)}
+                    <h3 className="req-section-title">Accepted providers</h3>
+                    <ul className="req-provider-grid">
+                      {acceptedTypes.map(t => (
+                        <li key={t}>
+                          <i className="fa fa-check"></i>
+                          {PROVIDER_LABELS[t] || t}
+                        </li>
+                      ))}
                     </ul>
                     {providerRules.state_registration_required && (
-                      <p><strong>Note:</strong> Providers must be registered with {stateName}.</p>
+                      <p className="req-note">
+                        <i className="fa fa-circle-info"></i>
+                        Providers must be registered with {stateName}.
+                      </p>
                     )}
                     {providerRules.approved_list_url && (
-                      <p>
-                        <a href={providerRules.approved_list_url} target="_blank" rel="noopener noreferrer">
-                          View official approved provider list
-                        </a>
+                      <a href={providerRules.approved_list_url} target="_blank" rel="noopener noreferrer" className="req-text-link">
+                        View official approved provider list
+                        <i className="fa fa-arrow-up-right-from-square"></i>
+                      </a>
+                    )}
+                  </>
+                )}
+
+                {/* Certificate — scannable micro-list */}
+                <h3 className="req-section-title">Certificate requirements</h3>
+                <ul className="req-cert-list">
+                  <li><i className="fa fa-check"></i>Both partners' full names</li>
+                  <li><i className="fa fa-check"></i>Completion date</li>
+                  <li><i className="fa fa-check"></i>Provider name and credentials</li>
+                  <li><i className="fa fa-check"></i>Total hours completed</li>
+                  {stateIssuedForm && (
+                    <li><i className="fa fa-check"></i>Must use the official {stateName} state form</li>
+                  )}
+                </ul>
+                <p className="req-note">
+                  <i className="fa fa-clock"></i>
+                  {certValidDays != null
+                    ? `Certificate valid for ${certValidDays} days from completion date.`
+                    : 'No stated expiration — complete counseling close to your wedding date.'}
+                </p>
+
+                {/* Submission */}
+                {sectionReady(dbRecord, 'submission_process') && (
+                  <>
+                    <h3 className="req-section-title">Where to submit</h3>
+                    <p><strong>Where:</strong> {submission.where}</p>
+                    {submission.how && <p><strong>How:</strong> {submission.how}</p>}
+                    {submission.deadline_window && <p><strong>When:</strong> {submission.deadline_window}</p>}
+                    {submission.online_submission_allowed === false && (
+                      <p className="req-note">
+                        <i className="fa fa-circle-info"></i>
+                        Online submission not accepted — you must appear in person.
                       </p>
                     )}
                   </>
                 )}
 
-                {/* Certificate */}
-                <h3>Certificate requirements</h3>
-                {stateIssuedForm
-                  ? <p>You must use the official {stateName} Certificate of Completion form.</p>
-                  : <p>Your counselor may issue their own certificate. It must include both partners' names, completion date, provider name and credentials, and hours completed.</p>
-                }
-                {certValidDays != null && (
-                  <p><strong>Certificate validity:</strong> {certValidDays} days from date of completion</p>
-                )}
-                {certValidDays == null && (
-                  <p><strong>Certificate validity:</strong> No stated expiration — complete counseling close to your wedding date</p>
-                )}
+                {/* Download CTA */}
                 {officialFormUrl && (
-                  <a href={officialFormUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ display: 'inline-block', marginTop: 'var(--space-2)' }}>
-                    Download {stateName} Certificate Form
-                  </a>
-                )}
-
-                {/* Submission */}
-                {sectionReady(dbRecord, 'submission_process') && (
-                  <>
-                    <h3>Where to submit</h3>
-                    <p><strong>Where:</strong> {submission.where}</p>
-                    {submission.how && <p><strong>How:</strong> {submission.how}</p>}
-                    {submission.deadline_window && <p><strong>When:</strong> {submission.deadline_window}</p>}
-                    {submission.online_submission_allowed === false && (
-                      <p><em>Online submission is not accepted — you must appear in person.</em></p>
-                    )}
-                  </>
+                  <div className="req-cta-row">
+                    <a
+                      href={officialFormUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary"
+                    >
+                      <i className="fa fa-download"></i>
+                      Download {stateName} Certificate Form
+                    </a>
+                  </div>
                 )}
               </div>
             )}
@@ -504,14 +562,26 @@ const MarriageLicenseStatePage = () => {
             )}
 
             {/* ── Related links ─────────────────────────────────────────── */}
-            <div style={{ marginTop: 'var(--space-8)' }}>
-              <h3>Related Pages</h3>
-              <ul>
-                <li><Link to={`/premarital-counseling/${state}`}>Premarital Counseling in {stateName}</Link></li>
-                <li><Link to="/premarital-counseling/marriage-license-discount">All States with Marriage License Discounts</Link></li>
-                <li><Link to="/premarital-counseling/affordable">Affordable Premarital Counseling</Link></li>
-                <li><Link to="/premarital-counseling/online">Online Premarital Counseling</Link></li>
-              </ul>
+            <div className="related-pages-section">
+              <p className="related-pages-label">Related pages</p>
+              <div className="related-pages-grid">
+                <Link to={`/premarital-counseling/${state}`} className="related-page-link">
+                  <i className="fa fa-arrow-right"></i>
+                  Premarital Counseling in {stateName}
+                </Link>
+                <Link to="/premarital-counseling/marriage-license-discount" className="related-page-link">
+                  <i className="fa fa-arrow-right"></i>
+                  All States with Marriage License Discounts
+                </Link>
+                <Link to="/premarital-counseling/affordable" className="related-page-link">
+                  <i className="fa fa-arrow-right"></i>
+                  Affordable Premarital Counseling
+                </Link>
+                <Link to="/premarital-counseling/online" className="related-page-link">
+                  <i className="fa fa-arrow-right"></i>
+                  Online Premarital Counseling
+                </Link>
+              </div>
             </div>
           </div>
         </div>

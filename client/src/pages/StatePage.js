@@ -6,7 +6,7 @@ import Breadcrumbs, { generateBreadcrumbs } from '../components/common/Breadcrum
 import SEOHelmet from '../components/analytics/SEOHelmet';
 import { trackLocationPageView } from '../components/analytics/GoogleAnalytics';
 import { STATE_CONFIG } from '../data/locationConfig';
-import { SPECIALTY_CONFIG } from '../data/specialtyConfig';
+import { SPECIALTY_CONFIG, STATE_DISCOUNT_CONFIG } from '../data/specialtyConfig';
 import ProfileCard from '../components/profiles/ProfileCard';
 import SpecialtiesList from '../components/common/SpecialtiesList';
 import LocationInsights from '../components/common/LocationInsights';
@@ -284,6 +284,32 @@ const StatePage = () => {
         </div>
 
 
+
+        {/* Marriage License Discount Callout */}
+        {STATE_DISCOUNT_CONFIG[state] && (
+          <div className="discount-callout-banner">
+            <div className="discount-callout-inner">
+              <div className="discount-callout-icon">
+                <i className="fa fa-piggy-bank"></i>
+              </div>
+              <div className="discount-callout-body">
+                <strong>
+                  {stateConfig.name} couples save {STATE_DISCOUNT_CONFIG[state].discount} on their marriage license
+                  {STATE_DISCOUNT_CONFIG[state].waitingPeriod && STATE_DISCOUNT_CONFIG[state].waitingPeriod !== 'No waiting period impact'
+                    ? ` — and the waiting period is waived`
+                    : ''}
+                </strong>
+                {' '}by completing a qualifying premarital counseling program. Any of the counselors below can issue your certificate.
+              </div>
+              <Link
+                to={`/premarital-counseling/marriage-license-discount/${state}`}
+                className="discount-callout-link"
+              >
+                See requirements <i className="fa fa-arrow-right"></i>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Featured Professionals Section - Immediate Results */}
         {stateData && stateData.featuredProfiles && stateData.featuredProfiles.length > 0 && (

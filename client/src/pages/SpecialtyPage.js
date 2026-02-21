@@ -245,6 +245,22 @@ const SpecialtyPage = () => {
           </div>
         )}
 
+        {/* Body Content Section */}
+        {specialty.bodyContent && specialty.bodyContent.length > 0 && (
+          <div className="specialty-body-section">
+            <div className="specialty-container">
+              {specialty.bodyContent.map((section, index) => (
+                <div key={index} className="specialty-body-block">
+                  {section.heading && <h2 className="specialty-body-heading">{section.heading}</h2>}
+                  {section.paragraphs && section.paragraphs.map((para, pIndex) => (
+                    <p key={pIndex} className="specialty-body-para">{para}</p>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Profiles Section */}
         <div className="specialty-profiles-section">
           <div className="specialty-container">

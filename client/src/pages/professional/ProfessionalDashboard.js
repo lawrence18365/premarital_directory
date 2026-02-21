@@ -46,6 +46,7 @@ const ProfessionalDashboard = () => {
   const [badgeSubmission, setBadgeSubmission] = useState(null)
   const [badgeSourceUrl, setBadgeSourceUrl] = useState('')
   const [badgeSubmitting, setBadgeSubmitting] = useState(false)
+  const [badgeError, setBadgeError] = useState(null)
   const [badgeCopied, setBadgeCopied] = useState(null)
 
   useEffect(() => {
@@ -281,12 +282,21 @@ const ProfessionalDashboard = () => {
     return `https://www.weddingcounselors.com${getPublicProfileUrl()}`
   }
 
+  const getCityPageUrl = () => {
+    if (!profile) return '#'
+    const stateSlug = getStateNameFromAbbr(profile.state_province) || String(profile.state_province || '').toLowerCase().replace(/\s+/g, '-')
+    const citySlug = String(profile.city || '').toLowerCase().replace(/\s+/g, '-')
+    return `https://www.weddingcounselors.com/premarital-counseling/${stateSlug}/${citySlug}`
+  }
+
   const handleCopyBadge = async (type) => {
-    const profileUrl = getFullProfileUrl()
+    const embedUrl = getCityPageUrl()
     const badgeUrl = 'https://www.weddingcounselors.com/assets/badges/badge-featured-on-weddingcounselors-premarital-transparent-v1.png'
+    const cityName = profile?.city ? ` in ${profile.city}` : ''
+    const altText = `Premarital Counselors${cityName} on WeddingCounselors.com`
     const text = type === 'embed'
-      ? `<a href="${profileUrl}" target="_blank" rel="noopener"><img src="${badgeUrl}" alt="Featured on WeddingCounselors.com" width="200" /></a>`
-      : profileUrl
+      ? `<a href="${embedUrl}" target="_blank" rel="noopener"><img src="${badgeUrl}" alt="${altText}" width="200" /></a>`
+      : embedUrl
 
     try {
       await navigator.clipboard.writeText(text)
@@ -302,23 +312,36 @@ const ProfessionalDashboard = () => {
     if (!badgeSourceUrl.trim() || !profile) return
 
     setBadgeSubmitting(true)
-    try {
-      const { data, error } = await supabase
-        .from('badge_submissions')
-        .insert({
-          provider_id: profile.id,
-          profile_url: getFullProfileUrl(),
-          source_url: badgeSourceUrl.trim()
-        })
-        .select()
-        .single()
+    setBadgeError(null)
 
-      if (error) throw error
-      setBadgeSubmission(data)
-      setBadgeSourceUrl('')
+    try {
+      // Create a submission record optimistically or wait for function?
+      // Wait for function to do everything
+      const { data, error } = await supabase.functions.invoke('verify-badge', {
+        body: { sourceUrl: badgeSourceUrl.trim() }
+      })
+
+      if (error) {
+        throw error
+      }
+
+      if (data?.success) {
+        // Verification succeeded!
+        setBadgeSubmission({ status: 'verified', source_url: badgeSourceUrl.trim() })
+        setBadgeSourceUrl('')
+
+        // Force a dashboard reload to pull updated profile data (specifically badge_verified)
+        // Or update it optimistically:
+        // window.location.reload()
+      } else {
+        // Verification failed (badge not found)
+        setBadgeError(data?.error || 'Badge not found on the provided page.')
+        setBadgeSubmission({ status: 'rejected', source_url: badgeSourceUrl.trim() })
+      }
+
     } catch (err) {
       console.error('Badge submission error:', err)
-      alert('Failed to submit. Please try again.')
+      setBadgeError(err.message || 'Failed to verify badge. Please try again.')
     }
     setBadgeSubmitting(false)
   }
@@ -457,6 +480,16 @@ const ProfessionalDashboard = () => {
             Listed for {profileAge} day{profileAge === 1 ? '' : 's'} in {profile?.city || 'your city'}.
           </p>
         )}
+
+        {isProfileLive && !profile?.badge_verified && (
+          <div className="profdash-alert-banner" style={{ background: '#fef3c7', border: '1px solid #f59e0b', padding: '16px', borderRadius: '8px', marginTop: '20px' }}>
+            <p style={{ margin: 0, color: '#92400e', fontSize: '15px', fontWeight: '500' }}>
+              <i className="fa fa-exclamation-triangle" style={{ marginRight: '8px' }}></i>
+              You are missing out on a search ranking boost.{' '}
+              <a href="#verified-badge" style={{ color: '#b45309', textDecoration: 'underline', fontWeight: 'bold' }}>Add the verified badge to your website.</a>
+            </p>
+          </div>
+        )}
       </section>
 
       <section className="profdash-metrics">
@@ -481,7 +514,7 @@ const ProfessionalDashboard = () => {
         Response rate uses the last {RESPONSE_WINDOW_DAYS} days and counts leads marked contacted, scheduled, converted, or booked elsewhere ({stats.respondedLeads}/{stats.responseEligibleLeads}).
       </p>
 
-      <section className="profdash-badge-section">
+      <section className="profdash-badge-section" id="verified-badge">
         <div className="profdash-badge-header">
           <h2>
             <i className="fa fa-shield-alt" aria-hidden="true"></i>{' '}
@@ -525,12 +558,10 @@ const ProfessionalDashboard = () => {
               </button>
             </div>
 
-            {badgeSubmission ? (
+            {badgeSubmission && badgeSubmission.status === 'verified' ? (
               <div className="profdash-badge-status">
                 <p>
-                  <strong>Status:</strong>{' '}
-                  {badgeSubmission.status === 'pending' && 'Submitted — we\'ll review within 48 hours.'}
-                  {badgeSubmission.status === 'verified' && 'Verified!'}
+                  <strong>Status:</strong> Verified!
                 </p>
                 <p className="profdash-badge-source">
                   Submitted URL: <a href={badgeSubmission.source_url} target="_blank" rel="noopener noreferrer">{badgeSubmission.source_url}</a>
@@ -539,6 +570,14 @@ const ProfessionalDashboard = () => {
             ) : (
               <form onSubmit={handleBadgeSubmit} className="profdash-badge-form">
                 <label htmlFor="badge-source-url">Paste the page on your website where you added the badge</label>
+
+                {badgeError && (
+                  <div className="alert alert-error" style={{ marginBottom: '8px', padding: '12px', fontSize: '14px', borderRadius: '6px' }}>
+                    <i className="fa fa-exclamation-circle" style={{ marginRight: '6px' }}></i>
+                    {badgeError}
+                  </div>
+                )}
+
                 <div className="profdash-badge-form-row">
                   <input
                     id="badge-source-url"
@@ -548,8 +587,12 @@ const ProfessionalDashboard = () => {
                     onChange={(e) => setBadgeSourceUrl(e.target.value)}
                     required
                   />
-                  <button type="submit" disabled={badgeSubmitting} className="btn btn-outline">
-                    {badgeSubmitting ? 'Submitting...' : 'Request Verification'}
+                  <button type="submit" disabled={badgeSubmitting} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '160px', justifyContent: 'center' }}>
+                    {badgeSubmitting ? (
+                      <>
+                        <i className="fa fa-spinner fa-spin"></i> Verifying...
+                      </>
+                    ) : 'Verify Badge'}
                   </button>
                 </div>
               </form>

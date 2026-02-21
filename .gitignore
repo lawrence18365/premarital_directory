@@ -38,3 +38,6 @@ npm-debug.log*
 # Data / CSV dumps
 *.csv
 /data/
+
+# GSC output — raw data and analysis reports (may contain sensitive traffic data)
+/scripts/gsc/output/

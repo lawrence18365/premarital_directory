@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3"
 import { getCorsHeaders, requireInternalKey } from "../_shared/auth.ts"
 
 interface EmailRequest {
@@ -54,8 +55,30 @@ serve(async (req) => {
       )
     }
 
-    // Generate claim URL
-    const claimUrl = `https://weddingcounselors.com/claim-profile/${profileId}`
+    // Generate claim URL pointing to our new magic-login proxy
+    // We need the claim_token which should be loaded or passed in. Look up profile or generate?
+    // Wait, the request payload doesn't pass claim_token, it just passes profileId.
+    // We need to fetch the claim_token from the DB using profileId before generating the URL.
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+
+    const { data: profileData, error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .select('claim_token')
+      .eq('id', profileId)
+      .single()
+
+    if (profileError || !profileData?.claim_token) {
+      console.error('Failed to get claim_token for profile:', profileId)
+      return new Response(
+        JSON.stringify({ error: 'Profile claim token not found' }),
+        { status: 500, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const claimUrl = `https://bkjwctlolhoxhnoospwp.supabase.co/functions/v1/magic-login?token=${profileData.claim_token}`
     const searchUrl = `https://weddingcounselors.com/professionals?search=${encodeURIComponent(name)}`
 
     // Create email content
@@ -125,6 +148,11 @@ serve(async (req) => {
 
                 <p><strong>Why This Matters:</strong> Couples search for premarital counselors every day on WeddingCounselors.com. Verified profiles get 3x more inquiries than unverified ones.</p>
 
+                <div style="background: #f0fdf4; border: 1px solid #d1fae5; border-radius: 6px; padding: 16px; margin: 20px 0; text-align: center;">
+                    <p style="margin: 0 0 8px 0; color: #0b3e3e; font-size: 15px; font-weight: 600;">Bonus: Want to rank at the top in ${city}?</p>
+                    <p style="margin: 0 0 12px 0; color: #374151; font-size: 14px;">We give a <strong>massive search ranking boost</strong> to counselors who add our "Verified Provider" badge to their website. Claim your profile today to get the embed code and start ranking higher.</p>
+                </div>
+
                 <p>Don't let potential clients pass you by. Your colleagues are already claiming their profiles and getting more leads.</p>
 
                 <div style="text-align: center; margin: 20px 0;">
@@ -168,6 +196,9 @@ Claim your profile in 60 seconds to:
 Claim your profile now (FREE): ${claimUrl}
 
 Why this matters: Couples search for premarital counselors every day on WeddingCounselors.com. Verified profiles get 3x more inquiries than unverified ones.
+
+Bonus: Want to rank at the top in ${city}?
+We give a massive search ranking boost to counselors who add our "Verified Provider" badge to their website. Claim your profile today to get the embed code and start ranking higher!
 
 This takes 60 seconds and is completely free with no hidden fees.
 

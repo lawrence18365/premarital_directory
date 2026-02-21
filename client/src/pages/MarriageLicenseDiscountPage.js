@@ -11,7 +11,7 @@ import '../assets/css/discount-page.css'
 
 function formatDollars(cents) {
   if (cents == null) return null
-  return `$${(cents / 100).toFixed(2)}`
+  return `$${Math.round(cents / 100)}`
 }
 
 const MarriageLicenseDiscountPage = () => {
@@ -72,11 +72,11 @@ const MarriageLicenseDiscountPage = () => {
   const faqs = [
     {
       question: 'Which states offer marriage license discounts for premarital counseling?',
-      answer: `Several states offer discounts on marriage license fees for couples who complete premarital counseling: Florida ($32.50 off), Texas ($60 off), Minnesota (up to $75 off), Tennessee ($60 off), Oklahoma ($50 off), Georgia ($16–50 off), Maryland (amount varies by county), and Indiana ($60 off). Some states also waive waiting periods.`
+      answer: `Several states offer discounts on marriage license fees for couples who complete premarital counseling: Florida (~$33 off), Texas ($60 off), Minnesota (up to $75 off), Tennessee ($60 off), Oklahoma ($50 off), Georgia ($16–50 off), Maryland (varies by county), and Indiana ($60 off). Some states also waive waiting periods.`
     },
     {
       question: 'How do I get the marriage license discount?',
-      answer: 'Complete a qualifying premarital counseling program and receive a certificate of completion. Present this certificate when applying for your marriage license at the county clerk\'s office. Requirements vary by state regarding program length and provider qualifications.'
+      answer: 'Complete a qualifying premarital counseling program and receive a certificate of completion (sometimes called a marriage certificate discount certificate). Present this certificate when applying for your marriage license at the county clerk\'s office. Requirements vary by state regarding program length and provider qualifications.'
     },
     {
       question: 'How long does premarital counseling need to be for the discount?',
@@ -121,10 +121,10 @@ const MarriageLicenseDiscountPage = () => {
   return (
     <>
       <SEOHelmet
-        title="Marriage License Discounts for Premarital Counseling | Save $25-$75"
-        description="Save money on your marriage license! 8 states offer $25-$75 discounts for couples who complete premarital counseling. Florida, Texas, Minnesota & more. Find qualified counselors."
+        title="Save Up to $75 on Your Marriage License | Premarital Counseling Discounts in Texas, Florida, Oklahoma & More"
+        description="8 states discount your marriage license fee when you complete premarital counseling. Save $60 in Texas & Indiana, pay just $5 in Oklahoma, save up to $75 in Minnesota. Find a qualified counselor near you."
         url="/premarital-counseling/marriage-license-discount"
-        keywords="marriage license discount, premarital counseling discount, save money marriage license, florida marriage license discount, texas marriage license discount, minnesota marriage license discount"
+        keywords="marriage license discount, marriage certificate discount, premarital counseling discount, save money marriage license, florida marriage license discount, texas marriage license discount, oklahoma marriage license discount, minnesota marriage license discount, indiana premarital counseling"
         breadcrumbs={breadcrumbItems}
         structuredData={pageStructuredData}
         faqs={faqs}
@@ -198,32 +198,28 @@ const MarriageLicenseDiscountPage = () => {
                       )}
                     </div>
 
-                    {/* 2 — Savings hero (always present) */}
+                    {/* 2 — Savings headline (same font size on every card) */}
                     <div className="card-savings-hero">
-                      {savingsIsVague ? (
-                        <span className="card-savings-amount card-savings-vague">Discount varies</span>
-                      ) : (
-                        <span className="card-savings-amount">Save {entry.savings}</span>
-                      )}
-                      {(originalFee || discountedFee) && (
-                        <span className="card-fee-arrow">
-                          {originalFee && <span className="card-fee-original">{originalFee}</span>}
-                          {originalFee && discountedFee && <span className="card-fee-sep"> to </span>}
-                          {discountedFee && <span className="card-fee-discounted">{discountedFee}</span>}
+                      <span className={`card-savings-amount${savingsIsVague ? ' card-savings-vague' : ''}`}>
+                        {savingsIsVague ? 'Discount varies' : `Save ${entry.savings}`}
+                      </span>
+                      {/* Before/After fee slot — always the same two-part structure */}
+                      <span className="card-fee-arrow">
+                        <span className="card-fee-original">
+                          {originalFee || 'Varies by county'}
                         </span>
-                      )}
-                      {savingsIsVague && (
-                        <span className="card-savings-note">Amount set by county — confirm with clerk</span>
-                      )}
+                        <span className="card-fee-sep"> → </span>
+                        <span className={discountedFee ? 'card-fee-discounted' : 'card-fee-note'}>
+                          {discountedFee || 'Confirm with clerk'}
+                        </span>
+                      </span>
                     </div>
 
-                    {/* 3 — Waiting period (only if waived) */}
-                    {entry.waitingNote && (
-                      <div className="card-waiting-chip">
-                        <i className="fa fa-clock"></i>
-                        {entry.waitingNote}
-                      </div>
-                    )}
+                    {/* 3 — Waiting period (always present — green when waived, neutral when not) */}
+                    <div className={`card-waiting-chip${entry.waitingNote ? '' : ' card-waiting-absent'}`}>
+                      <i className="fa fa-clock"></i>
+                      Waiting period: <strong>{entry.waitingNote ? 'Waived' : 'Not waived'}</strong>
+                    </div>
 
                     {/* 4 — Key requirements (max 3) */}
                     {reqs.length > 0 && (
@@ -234,27 +230,15 @@ const MarriageLicenseDiscountPage = () => {
                       </ul>
                     )}
 
-                    {/* 5 — Good to know (1 line, only if meaningful) */}
-                    {discount.notes && !savingsIsVague && (
-                      <p className="card-good-to-know">
-                        <strong>Good to know:</strong> {discount.notes}
-                      </p>
-                    )}
-                    {savingsIsVague && discount.notes && (
-                      <p className="card-good-to-know">
-                        <strong>Good to know:</strong> {discount.notes}
-                      </p>
+                    {/* 5 — Good to know (clamped to 2 lines; full text on detail page) */}
+                    {discount.notes && (
+                      <p className="card-good-to-know">{discount.notes}</p>
                     )}
 
-                    {/* 6 — CTA pinned to bottom: one primary button + optional text link */}
+                    {/* 6 — Footer: secondary link always rendered (ghost when no URL) so
+                         the button sits at an identical vertical position on every card */}
                     <div className="card-actions">
-                      <Link
-                        to={`/premarital-counseling/marriage-license-discount/${entry.key}`}
-                        className="btn btn-primary card-primary-cta"
-                      >
-                        See {entry.name} Requirements
-                      </Link>
-                      {discount.certificateUrl && (
+                      {discount.certificateUrl ? (
                         <a
                           href={discount.certificateUrl}
                           target="_blank"
@@ -264,7 +248,18 @@ const MarriageLicenseDiscountPage = () => {
                           Official state info
                           <i className="fa fa-arrow-up-right-from-square"></i>
                         </a>
+                      ) : (
+                        <span className="card-secondary-link card-secondary-link--ghost" aria-hidden="true">
+                          Official state info
+                          <i className="fa fa-arrow-up-right-from-square"></i>
+                        </span>
                       )}
+                      <Link
+                        to={`/premarital-counseling/marriage-license-discount/${entry.key}`}
+                        className="btn btn-primary card-primary-cta"
+                      >
+                        See Requirements
+                      </Link>
                     </div>
 
                   </div>

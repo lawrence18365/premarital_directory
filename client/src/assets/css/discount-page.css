@@ -230,6 +230,209 @@
   }
 }
 
+/* ── Requirements section redesign ──────────────────────────── */
+
+/* Intro sentence — narrow max-width so it reads like a caption, not a paragraph */
+.discount-page .content-section .req-intro {
+  font-size: 0.93rem;
+  max-width: 60ch;
+  margin-bottom: var(--space-5);
+}
+
+/* At-a-glance strip */
+.req-glance {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  background: rgba(14, 94, 94, 0.04);
+  border: 1px solid rgba(14, 94, 94, 0.12);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--space-6);
+}
+
+.req-glance-item {
+  padding: var(--space-4) var(--space-5);
+  border-right: 1px solid rgba(14, 94, 94, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.req-glance-item:last-child {
+  border-right: none;
+}
+
+.req-glance-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.req-glance-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+  line-height: 1.3;
+}
+
+/* Format note — replaces old green/amber alert banner */
+.discount-page .content-section p.req-formats-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  background: rgba(14, 94, 94, 0.04);
+  border-left: 3px solid rgba(14, 94, 94, 0.18);
+  padding: var(--space-3) var(--space-4);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-top: calc(-1 * var(--space-2));
+  margin-bottom: var(--space-6);
+}
+
+.discount-page .content-section p.req-formats-note i {
+  flex-shrink: 0;
+  color: var(--primary);
+  margin-top: 0.2em;
+  font-size: 0.8rem;
+}
+
+/* Sub-section label — overrides the default content-section h3 */
+.discount-page .content-section h3.req-section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin: var(--space-6) 0 var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid rgba(14, 94, 94, 0.08);
+}
+
+/* Provider two-column check-icon grid — max 2 cols so long labels never wrap 3-wide */
+.req-provider-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-4);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-2) var(--space-5);
+}
+
+.discount-page .content-section .req-provider-grid li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 0.87rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-bottom: 0;
+}
+
+/* Lightweight tick — small teal check, no heavy filled circle */
+.req-provider-grid li i,
+.req-cert-list li i {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(14, 94, 94, 0.1);
+  color: var(--primary);
+  font-size: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.18em;
+}
+
+/* Certificate micro-list */
+.req-cert-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.discount-page .content-section .req-cert-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.87rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-bottom: 0;
+}
+
+/* Note line (clock / info icon + muted text) */
+.discount-page .content-section p.req-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 0.82rem;
+  color: var(--gray-medium);
+  line-height: 1.5;
+  margin-bottom: var(--space-4);
+}
+
+.discount-page .content-section p.req-note i {
+  flex-shrink: 0;
+  margin-top: 0.15em;
+  font-size: 0.76rem;
+}
+
+/* Inline text link with trailing icon */
+.req-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  margin-bottom: var(--space-4);
+}
+
+.req-text-link:hover {
+  color: var(--primary-dark);
+}
+
+.req-text-link i {
+  font-size: 0.65rem;
+}
+
+/* Download CTA row */
+.req-cta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid rgba(14, 94, 94, 0.08);
+}
+
+@media (max-width: 600px) {
+  .req-glance {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .req-provider-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .req-cta-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+}
+
 /* ── Format callout (online vs in-person) ────────────────────── */
 
 .format-callout {
@@ -596,7 +799,6 @@
 }
 
 .card-savings-amount.card-savings-vague {
-  font-size: 1.3rem;
   color: var(--text-secondary);
 }
 
@@ -610,7 +812,6 @@
 }
 
 .card-fee-original {
-  text-decoration: line-through;
   color: var(--gray-medium);
 }
 
@@ -623,13 +824,19 @@
   color: var(--primary);
 }
 
+/* Used when the "after" slot is an instruction, not a price — no green, no bold */
+.card-fee-note {
+  color: var(--text-secondary);
+}
+
 .card-savings-note {
   font-size: 0.78rem;
   color: var(--text-secondary);
   line-height: 1.45;
 }
 
-/* 3 — Waiting period chip (only shown when waived) */
+
+/* 3 — Waiting period chip (always rendered; .card-waiting-absent = neutral when not waived) */
 .card-waiting-chip {
   display: inline-flex;
   align-items: center;
@@ -648,7 +855,14 @@
   font-size: 0.72rem;
 }
 
-/* 4 — Requirements (max 3) */
+.card-waiting-chip.card-waiting-absent {
+  color: var(--gray-medium);
+  background: var(--gray-light);
+  border-color: rgba(14, 94, 94, 0.1);
+}
+
+/* 4 — Requirements (max 3). flex: 1 fills available space so the dead gap
+   appears within this zone (bullets pinned to top), not before the footer. */
 .card-reqs {
   list-style: none;
   padding: 0;
@@ -656,6 +870,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  flex: 1;
+  align-content: start;
 }
 
 .card-reqs li {
@@ -678,7 +894,8 @@
   opacity: 0.6;
 }
 
-/* 5 — Good to know (1 line) */
+/* 5 — Good to know: fixed 2-line zone so every card has the same footprint.
+   Short notes fill 1 line + whitespace; long notes get ellipsis at line 2. */
 .card-good-to-know {
   font-size: 0.82rem;
   color: var(--text-secondary);
@@ -688,6 +905,13 @@
   background: var(--gray-light);
   border-left: 3px solid rgba(14, 94, 94, 0.25);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  /* Fixed zone: 2 lines of text (0.82 × 1.5 × 2) + top/bottom padding (0.5 × 2) */
+  height: 3.46rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .card-good-to-know strong {
@@ -727,6 +951,64 @@
 
 .card-secondary-link i {
   font-size: 0.65rem;
+}
+
+/* Ghost: preserves identical footer height on cards with no official URL */
+.card-secondary-link--ghost {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Card CTA — highest-specificity block so nothing (incl. browser :visited) can override.
+   All four classes + each link pseudo-class declared explicitly.             ────────────── */
+
+/* Default + unvisited + VISITED: always solid. The :visited rule is critical — without it
+   browsers apply their own visited-link colour to <Link> elements (renders as outlined). */
+.discount-state-card .btn.btn-primary.card-primary-cta,
+.discount-state-card .btn.btn-primary.card-primary-cta:link,
+.discount-state-card .btn.btn-primary.card-primary-cta:visited {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  box-shadow: none;
+  transform: none;
+  text-decoration: none;
+}
+
+/* Hover + visited:hover: darker + subtle lift, still fully solid.
+   Both selectors are required: :hover for fresh links, :visited:hover for
+   previously-visited links (browsers double-paint visited anchors, and a
+   global @media(hover:hover) .btn:hover{…!important} block in main.css
+   can bleed through for visited links without the explicit combination).
+   !important on the three visual props beats the global rule (our 5-class
+   specificity outranks the global 2-class specificity when both are !important). */
+.discount-state-card .btn.btn-primary.card-primary-cta:hover,
+.discount-state-card .btn.btn-primary.card-primary-cta:visited:hover {
+  background: var(--primary-dark) !important;
+  color: var(--white) !important;
+  border-color: var(--primary-dark) !important;
+  box-shadow: 0 4px 14px rgba(14, 94, 94, 0.22);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+/* Focus-visible: accessible ring on top of the solid button, not instead of it */
+.discount-state-card .btn.btn-primary.card-primary-cta:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+  background: var(--primary-dark) !important;
+  color: var(--white) !important;
+  border-color: var(--primary-dark) !important;
+}
+
+/* Active: press snap-back, solid */
+.discount-state-card .btn.btn-primary.card-primary-cta:active {
+  transform: none;
+  box-shadow: none;
+  background: var(--primary-dark) !important;
+  color: var(--white) !important;
+  border-color: var(--primary-dark) !important;
 }
 
 /* How It Works */
@@ -896,4 +1178,55 @@
     flex-direction: column;
     gap: var(--space-2);
   }
+}
+
+/* ── Related pages grid ──────────────────────────────────────── */
+
+.related-pages-section {
+  margin-top: var(--space-8);
+  padding-top: var(--space-8);
+  border-top: 1px solid rgba(14, 94, 94, 0.1);
+}
+
+.related-pages-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.related-pages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-2);
+}
+
+.related-page-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--white);
+  border: 1px solid rgba(14, 94, 94, 0.1);
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--primary-dark);
+  text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.related-page-link:hover {
+  border-color: rgba(14, 94, 94, 0.28);
+  background: rgba(14, 94, 94, 0.03);
+  color: var(--primary-dark);
+  text-decoration: none;
+}
+
+.related-page-link i {
+  font-size: 0.6rem;
+  color: var(--primary);
+  flex-shrink: 0;
 }

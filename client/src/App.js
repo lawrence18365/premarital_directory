@@ -118,6 +118,7 @@ const ConfirmEmailPage = React.lazy(() => import('./pages/ConfirmEmailPage'))
 const EmailVerifiedPage = React.lazy(() => import('./pages/EmailVerifiedPage'))
 const SEOContentPage = React.lazy(() => import('./pages/SEOContentPage'))
 const ClaimWithTokenPage = React.lazy(() => import('./pages/ClaimWithTokenPage'))
+const ClaimSuccessPage = React.lazy(() => import('./pages/ClaimSuccessPage'))
 const ClaimProgramPage = React.lazy(() => import('./pages/ClaimProgramPage'))
 const ForChurchesPage = React.lazy(() => import('./pages/ForChurchesPage'))
 const EmbedFindPage = React.lazy(() => import('./pages/EmbedFindPage'))
@@ -157,247 +158,248 @@ function AppInner() {
   const showSiteChrome = !isNoChromeRoute
 
   return (
-          <div className={`App ${isHome ? 'App--no-offset' : ''} ${isNoChromeRoute ? 'App--workspace' : ''}`}>
-            {/* Analytics Tracking */}
-            <GoogleAnalytics />
-            <FacebookPixel />
-            <GoogleAds />
-            <LaunchTracker />
-            <ScrollToTop />
-            <PageTransitionLoader />
-            {showSiteChrome && (
-              <a href="#main-content" className="skip-to-content">
-                Skip to main content
-              </a>
-            )}
-            {showSiteChrome && <Navbar />}
-            <main
-              id="main-content"
-              className="main-content"
-              style={!showSiteChrome ? { paddingTop: 0 } : undefined}
-            >
-              <Suspense fallback={<PremiumLoader />}>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<HomeOrDashboard />} />
-                {/* Premarital Counseling Directory - SEO-optimized URLs */}
-                <Route path="/premarital-counseling" element={<StatesIndexPage />} />
-                <Route path="/premarital-counseling/marriage-license-discount" element={<MarriageLicenseDiscountPage />} />
-                <Route path="/premarital-counseling/marriage-license-discount/:state" element={<MarriageLicenseStatePage />} />
-                
-                {/* Level 1: State OR Specialty */}
-                <Route path="/premarital-counseling/:state" element={<SpecialtyOrStatePage />} />
-                
-                {/* Level 2: State/City OR Specialty/State */}
-                <Route path="/premarital-counseling/:param1/:param2" element={<Segment2Route />} />
-                
-                {/* Level 3: State/City/Profile OR Specialty/State/City */}
-                <Route path="/premarital-counseling/:param1/:param2/:param3" element={<Segment3Route />} />
+    <div className={`App ${isHome ? 'App--no-offset' : ''} ${isNoChromeRoute ? 'App--workspace' : ''}`}>
+      {/* Analytics Tracking */}
+      <GoogleAnalytics />
+      <FacebookPixel />
+      <GoogleAds />
+      <LaunchTracker />
+      <ScrollToTop />
+      <PageTransitionLoader />
+      {showSiteChrome && (
+        <a href="#main-content" className="skip-to-content">
+          Skip to main content
+        </a>
+      )}
+      {showSiteChrome && <Navbar />}
+      <main
+        id="main-content"
+        className="main-content"
+        style={!showSiteChrome ? { paddingTop: 0 } : undefined}
+      >
+        <Suspense fallback={<PremiumLoader />}>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<HomeOrDashboard />} />
+            {/* Premarital Counseling Directory - SEO-optimized URLs */}
+            <Route path="/premarital-counseling" element={<StatesIndexPage />} />
+            <Route path="/premarital-counseling/marriage-license-discount" element={<MarriageLicenseDiscountPage />} />
+            <Route path="/premarital-counseling/marriage-license-discount/:state" element={<MarriageLicenseStatePage />} />
 
-                {/* Pre-Cana alias → Catholic specialty page */}
-                <Route path="/pre-cana" element={<Navigate to="/premarital-counseling/catholic" replace />} />
-                <Route path="/pre-cana/*" element={<Navigate to="/premarital-counseling/catholic" replace />} />
+            {/* Level 1: State OR Specialty */}
+            <Route path="/premarital-counseling/:state" element={<SpecialtyOrStatePage />} />
 
-                {/* 301 Redirects: old URL patterns to new SEO-optimized structure */}
-                <Route path="/states" element={<Navigate to="/premarital-counseling" replace />} />
-                <Route path="/states/:state/:city/:profileSlug" element={<ProfileRedirect />} />
-                <Route path="/states/:state/:cityOrSlug" element={<CityRedirect />} />
-                <Route path="/states/:state" element={<StateRedirect />} />
-                <Route path="/professionals" element={<Navigate to="/premarital-counseling" replace />} />
-                <Route path="/professionals-list" element={<Navigate to="/professionals-search" replace />} />
-                <Route path="/find-counselor" element={<Navigate to="/premarital-counseling" replace />} />
-                <Route path="/find-counselors" element={<Navigate to="/premarital-counseling" replace />} />
-                <Route path="/counselors" element={<Navigate to="/premarital-counseling" replace />} />
-                <Route path="/professionals/:state/:city/:profileSlug" element={<ProfileRedirect />} />
-                <Route path="/professionals/:state/:cityOrSlug" element={<CityRedirect />} />
-                <Route path="/professionals/:state" element={<StateRedirect />} />
-                <Route path="/profile/:slugOrId" element={<ProfilePage />} />
-                <Route path="/claim-profile" element={<ClaimProfilePage />} />
-                <Route path="/claim-profile/:slugOrId" element={<ClaimProfilePage />} />
-                <Route path="/claim/:token" element={<ClaimWithTokenPage />} />
-                <Route path="/claim-program/:token" element={<ClaimProgramPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                {/* /therapists, /coaches, /clergy → 301 to / via Vercel edge redirect */}
-                <Route path="/features" element={<FeaturesPage />} />
-                <Route path="/pricing" element={<PricingPage />} />
-                <Route path="/support" element={<SupportPage />} />
-                <Route path="/guidelines" element={<GuidelinesPage />} />
-                <Route path="/for-churches" element={<ForChurchesPage />} />
-                <Route path="/embed/find" element={<EmbedFindPage />} />
-                <Route path="/how-it-works" element={<HowItWorksPage />} />
-                <Route path="/editorial-standards" element={<EditorialStandardsPage />} />
-                <Route path="/corrections" element={<CorrectionsPage />} />
-                <Route path="/privacy" element={<PrivacyPage />} />
-                <Route path="/terms" element={<TermsPage />} />
-                <Route path="/blog" element={<BlogIndex />} />
-                <Route path="/blog/:slug" element={<BlogPostPage />} />
-                <Route path="/seo/:slug" element={<SEOContentPage />} />
-                <Route path="/sitemap" element={<SitemapPage />} />
-                <Route path="/thank-you" element={<ThankYouPage />} />
-                <Route path="/professionals-search" element={<ProfessionalsPage />} />
-                
-                {/* Authentication Routes */}
-                <Route path="/professional/login" element={<LoginForm />} />
-                <Route path="/professional/signup" element={<SignupForm />} />
-                <Route path="/professional/confirm-email" element={<ConfirmEmailPage />} />
-                <Route path="/professional/email-verified" element={<EmailVerifiedPage />} />
-                <Route
-                  path="/professional/onboarding"
-                  element={
-                    <ProtectedRoute>
-                      <OnboardingPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/professional/profile-created"
-                  element={
-                    <ProtectedRoute>
-                      <ProfileCreatedPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/professional/profile-pending"
-                  element={
-                    <ProtectedRoute>
-                      <ProfilePendingPage />
-                    </ProtectedRoute>
-                  }
-                />
+            {/* Level 2: State/City OR Specialty/State */}
+            <Route path="/premarital-counseling/:param1/:param2" element={<Segment2Route />} />
 
-                {/* Protected Professional Routes */}
-                <Route 
-                  path="/professional/dashboard" 
-                  element={
-                    <ProtectedRoute>
-                      <ProfessionalDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/professional/profile/edit" 
-                  element={
-                    <ProtectedRoute>
-                      <ProfileEditor />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/professional/leads" 
-                  element={
-                    <ProtectedRoute>
-                      <LeadsPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route
-                  path="/professional/analytics"
-                  element={
-                    <ProtectedRoute>
-                      <AnalyticsDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/professional/subscription"
-                  element={
-                    <ProtectedRoute>
-                      <SubscriptionPage />
-                    </ProtectedRoute>
-                  }
-                />
+            {/* Level 3: State/City/Profile OR Specialty/State/City */}
+            <Route path="/premarital-counseling/:param1/:param2/:param3" element={<Segment3Route />} />
 
-                {/* Protected Admin Routes */}
-                <Route 
-                  path="/admin/dashboard" 
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route
-                  path="/admin/campaigns"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <CampaignDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/claims"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <ClaimReviewDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/badges"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <BadgeReviewDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/benefits"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <BenefitsReviewDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/moderation"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <ProfileModerationDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/sitemap"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <SitemapGenerator />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/metrics"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <MetricsDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/leads"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <AdminLeadsPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/cities"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <CityHealthDashboard />
-                    </ProtectedRoute>
-                  }
-                />
+            {/* Pre-Cana alias → Catholic specialty page */}
+            <Route path="/pre-cana" element={<Navigate to="/premarital-counseling/catholic" replace />} />
+            <Route path="/pre-cana/*" element={<Navigate to="/premarital-counseling/catholic" replace />} />
 
-                {/* 404 Route */}
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-              </Suspense>
-            </main>
-            {showSiteChrome && <Footer />}
-          </div>
+            {/* 301 Redirects: old URL patterns to new SEO-optimized structure */}
+            <Route path="/states" element={<Navigate to="/premarital-counseling" replace />} />
+            <Route path="/states/:state/:city/:profileSlug" element={<ProfileRedirect />} />
+            <Route path="/states/:state/:cityOrSlug" element={<CityRedirect />} />
+            <Route path="/states/:state" element={<StateRedirect />} />
+            <Route path="/professionals" element={<Navigate to="/premarital-counseling" replace />} />
+            <Route path="/professionals-list" element={<Navigate to="/professionals-search" replace />} />
+            <Route path="/find-counselor" element={<Navigate to="/premarital-counseling" replace />} />
+            <Route path="/find-counselors" element={<Navigate to="/premarital-counseling" replace />} />
+            <Route path="/counselors" element={<Navigate to="/premarital-counseling" replace />} />
+            <Route path="/professionals/:state/:city/:profileSlug" element={<ProfileRedirect />} />
+            <Route path="/professionals/:state/:cityOrSlug" element={<CityRedirect />} />
+            <Route path="/professionals/:state" element={<StateRedirect />} />
+            <Route path="/profile/:slugOrId" element={<ProfilePage />} />
+            <Route path="/claim-profile" element={<ClaimProfilePage />} />
+            <Route path="/claim-profile/:slugOrId" element={<ClaimProfilePage />} />
+            <Route path="/claim/:token" element={<ClaimWithTokenPage />} />
+            <Route path="/claim-success" element={<ClaimSuccessPage />} />
+            <Route path="/claim-program/:token" element={<ClaimProgramPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            {/* /therapists, /coaches, /clergy → 301 to / via Vercel edge redirect */}
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/support" element={<SupportPage />} />
+            <Route path="/guidelines" element={<GuidelinesPage />} />
+            <Route path="/for-churches" element={<ForChurchesPage />} />
+            <Route path="/embed/find" element={<EmbedFindPage />} />
+            <Route path="/how-it-works" element={<HowItWorksPage />} />
+            <Route path="/editorial-standards" element={<EditorialStandardsPage />} />
+            <Route path="/corrections" element={<CorrectionsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/blog" element={<BlogIndex />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/seo/:slug" element={<SEOContentPage />} />
+            <Route path="/sitemap" element={<SitemapPage />} />
+            <Route path="/thank-you" element={<ThankYouPage />} />
+            <Route path="/professionals-search" element={<ProfessionalsPage />} />
+
+            {/* Authentication Routes */}
+            <Route path="/professional/login" element={<LoginForm />} />
+            <Route path="/professional/signup" element={<SignupForm />} />
+            <Route path="/professional/confirm-email" element={<ConfirmEmailPage />} />
+            <Route path="/professional/email-verified" element={<EmailVerifiedPage />} />
+            <Route
+              path="/professional/onboarding"
+              element={
+                <ProtectedRoute>
+                  <OnboardingPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/professional/profile-created"
+              element={
+                <ProtectedRoute>
+                  <ProfileCreatedPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/professional/profile-pending"
+              element={
+                <ProtectedRoute>
+                  <ProfilePendingPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Protected Professional Routes */}
+            <Route
+              path="/professional/dashboard"
+              element={
+                <ProtectedRoute>
+                  <ProfessionalDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/professional/profile/edit"
+              element={
+                <ProtectedRoute>
+                  <ProfileEditor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/professional/leads"
+              element={
+                <ProtectedRoute>
+                  <LeadsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/professional/analytics"
+              element={
+                <ProtectedRoute>
+                  <AnalyticsDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/professional/subscription"
+              element={
+                <ProtectedRoute>
+                  <SubscriptionPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Protected Admin Routes */}
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/campaigns"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <CampaignDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/claims"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <ClaimReviewDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/badges"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <BadgeReviewDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/benefits"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <BenefitsReviewDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/moderation"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <ProfileModerationDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/sitemap"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <SitemapGenerator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/metrics"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <MetricsDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/leads"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AdminLeadsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/cities"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <CityHealthDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* 404 Route */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
+      </main>
+      {showSiteChrome && <Footer />}
+    </div>
   )
 }
 

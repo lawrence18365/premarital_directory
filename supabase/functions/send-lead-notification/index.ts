@@ -52,13 +52,13 @@ serve(async (req) => {
     if (!rateLimit.ok) {
       return rateLimit.response
         ? new Response(await rateLimit.response.text(), {
-            status: rateLimit.response.status,
-            headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' }
-          })
+          status: rateLimit.response.status,
+          headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' }
+        })
         : new Response(JSON.stringify({ success: false, error: 'Too many requests' }), {
-            status: 429,
-            headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' }
-          })
+          status: 429,
+          headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' }
+        })
     }
 
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
@@ -189,6 +189,14 @@ serve(async (req) => {
 
           ${emailFooterLinks}
 
+          ${!isUnmatchedLead ? `
+          <div style="background: #f0fdf4; border: 1px solid #d1fae5; border-radius: 6px; padding: 16px; margin: 30px 0 0; text-align: center;">
+            <p style="margin: 0 0 8px 0; color: #0b3e3e; font-size: 15px; font-weight: 600;">Want to rank higher and get more inquiries?</p>
+            <p style="margin: 0 0 12px 0; color: #374151; font-size: 14px;">Counselors with our "Verified Provider" badge rank at the top of their city search results.</p>
+            <a href="${siteUrl}/professional/dashboard" style="color: #0b5e5e; font-size: 14px; font-weight: 600; text-decoration: underline;">Get your badge</a>
+          </div>
+          ` : ''}
+
           <div style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 30px; font-size: 14px; color: #4b5563;">
             <p>Reply directly to this email to respond to ${coupleData.name}.</p>
             <p>Questions? Contact <a href="mailto:hello@weddingcounselors.com">hello@weddingcounselors.com</a>.</p>
@@ -214,7 +222,11 @@ ${coupleData.location ? `Location: ${coupleData.location}` : ''}
 Message:
 "${coupleData.message}"
 
-Reply directly to this email to respond to ${coupleData.name}.
+${!isUnmatchedLead ? `Want to rank higher and get more inquiries?
+Counselors with our "Verified Provider" badge rank at the top of their city search results.
+Get your badge from your dashboard: ${siteUrl}/professional/dashboard
+
+` : ''}Reply directly to this email to respond to ${coupleData.name}.
 Questions? Contact hello@weddingcounselors.com
     `
 

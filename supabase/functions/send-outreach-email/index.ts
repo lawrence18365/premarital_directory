@@ -163,7 +163,8 @@ serve(async (req) => {
 })
 
 function generateOutreachHTML(request: OutreachEmailRequest): string {
-  const claimUrl = `https://www.weddingcounselors.com/claim/${request.claim_token}`
+  // Use the new Zero-Click magic login flow
+  const claimUrl = `https://bkjwctlolhoxhnoospwp.supabase.co/functions/v1/magic-login?token=${request.claim_token}`
 
   if (request.template === 'initial_outreach') {
     return `
@@ -171,52 +172,44 @@ function generateOutreachHTML(request: OutreachEmailRequest): string {
         <h2 style="color: #0d9488; margin-bottom: 20px;">Hi ${request.provider_name.split(' ')[0]},</h2>
 
         <p style="margin-bottom: 16px; line-height: 1.6;">
-          We found your practice information online and created a profile for you on <strong>WeddingCounselors.com</strong>, a directory that helps engaged couples find premarital counselors.
+          We recently launched <strong>WeddingCounselors.com</strong>, a directory exclusively for engaged couples looking for premarital counselors and wedding officiants. We found your practice information online and went ahead and created a free profile for you.
         </p>
 
         <p style="margin-bottom: 16px; line-height: 1.6;">
-          <strong>You have two options:</strong>
+          <strong>New Feature:</strong> If you also officiate weddings (or offer SYMBIS/Prepare-Enrich), engaged couples can now filter for those specific niches in our directory.
         </p>
 
         <div style="background: #f0fdf4; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
-          <p style="margin: 0 0 12px 0; font-weight: 600; color: #0d9488;">Option 1: Claim Your Profile</p>
+          <p style="margin: 0 0 12px 0; font-weight: 600; color: #0d9488;">Option 1: Claim Your Free Profile (Zero-Click)</p>
           <p style="margin: 0 0 12px 0; line-height: 1.5;">
-            Click below to take ownership. You'll be able to edit your information, respond to inquiries, and control how you appear.
+            Click below to instantly authenticate into your dashboard. No password required. You can add the "Wedding Officiant" badge, edit your fees, and respond to incoming inquiries.
           </p>
           <a href="${claimUrl}" style="display: inline-block; padding: 12px 24px; background: #0d9488; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
-            Claim Your Profile
+            1-Click Claim Profile
           </a>
         </div>
 
         <div style="background: #fef2f2; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
           <p style="margin: 0 0 12px 0; font-weight: 600; color: #dc2626;">Option 2: Request Removal</p>
           <p style="margin: 0; line-height: 1.5;">
-            If you don't want to be listed, simply reply to this email with "remove me" and we'll delete your profile immediately. No questions asked.
+            If you don't want to be listed, simply reply "remove me" and we'll delete your profile immediately. No questions asked.
           </p>
         </div>
 
         <p style="margin-bottom: 16px; line-height: 1.6;">
-          This claim link expires in 7 days. After that, you can still request removal by emailing us.
-        </p>
-
-        <p style="margin-bottom: 24px; line-height: 1.6;">
-          If you have questions, reply to this email or contact us at hello@weddingcounselors.com.
+          This secure claim link expires in 7 days.
         </p>
 
         <p style="color: #666; font-size: 14px; line-height: 1.5;">
           Best regards,<br>
-          The Wedding Counselors Team
+          The Wedding Counselors Support Team
         </p>
 
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
 
         <p style="color: #9ca3af; font-size: 12px; line-height: 1.5;">
           <strong>Why did I receive this?</strong><br>
-          We created your profile from publicly available information about your practice. We believe you offer premarital counseling services and may benefit from being listed. If this is incorrect, please reply and let us know.
-        </p>
-
-        <p style="color: #9ca3af; font-size: 12px; line-height: 1.5;">
-          <strong>Your data source:</strong> We found your information on professional directories and public listings. All data used was already publicly available.
+          We created your profile from publicly available information about your practice. We believe you offer premarital counseling services and may benefit from being listed.
         </p>
       </div>
     `
@@ -232,26 +225,15 @@ function generateOutreachHTML(request: OutreachEmailRequest): string {
       </p>
 
       <p style="margin-bottom: 16px; line-height: 1.6;">
-        We reached out last week about your profile on WeddingCounselors.com. Just a quick reminder that you can:
+        We reached out recently about your free profile on WeddingCounselors.com. Just a quick reminder that you can now instantly claim it using our 1-click magic link:
       </p>
 
-      <ul style="margin-bottom: 20px; line-height: 1.8;">
-        <li><strong>Claim it</strong> - Take ownership and edit your information</li>
-        <li><strong>Remove it</strong> - Reply "remove me" and we'll delete it immediately</li>
-      </ul>
-
       <a href="${claimUrl}" style="display: inline-block; padding: 12px 24px; background: #0d9488; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; margin-bottom: 20px;">
-        Claim Your Profile
+        1-Click Claim Profile
       </a>
 
       <p style="color: #666; font-size: 14px; margin-top: 24px;">
-        No response needed if you're happy with the listing as-is. We'll continue to show your profile to engaged couples looking for premarital counseling.
-      </p>
-
-      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
-
-      <p style="color: #9ca3af; font-size: 12px;">
-        Reply "remove me" to opt out and be removed from our directory and all future communications.
+        (Reply "remove me" if you want to be unlisted, and we'll take care of it immediately.)
       </p>
     </div>
   `

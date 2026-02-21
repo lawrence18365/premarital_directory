@@ -20,7 +20,7 @@ const toBooleanFlag = (value) => {
 
 const ProfileEditor = () => {
   const { profile, updateProfile } = useAuth()
-  
+
   const [formData, setFormData] = useState({
     // Basic fields
     full_name: '',
@@ -35,7 +35,7 @@ const ProfileEditor = () => {
     state_province: '',
     postal_code: '',
     country: 'United States',
-    
+
     // Enhanced SEO fields (new)
     certifications: [],
     faith_tradition: '',
@@ -50,9 +50,13 @@ const ProfileEditor = () => {
     sliding_scale: false,
     session_fee_min: '',
     session_fee_max: '',
-    credentials: []
+    credentials: [],
+
+    // Niche Optimizations
+    is_officiant: false,
+    clergy_title: ''
   })
-  
+
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState('')
   const [loading, setLoading] = useState(false)
@@ -225,7 +229,7 @@ const ProfileEditor = () => {
         state_province: profile.state_province || '',
         postal_code: profile.postal_code || '',
         country: profile.country || 'United States',
-        
+
         // Enhanced fields
         certifications: profile.certifications || [],
         faith_tradition: profile.faith_tradition || '',
@@ -240,9 +244,11 @@ const ProfileEditor = () => {
         sliding_scale: toBooleanFlag(profile.sliding_scale),
         session_fee_min: profile.session_fee_min ? String(Math.round(profile.session_fee_min / 100)) : '',
         session_fee_max: profile.session_fee_max ? String(Math.round(profile.session_fee_max / 100)) : '',
-        credentials: profile.credentials || []
+        credentials: profile.credentials || [],
+        is_officiant: toBooleanFlag(profile.is_officiant),
+        clergy_title: profile.clergy_title || ''
       })
-      
+
       if (profile.photo_url) {
         setPhotoPreview(profile.photo_url)
       }
@@ -255,7 +261,7 @@ const ProfileEditor = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }))
-    
+
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: null }))
     }
@@ -277,18 +283,18 @@ const ProfileEditor = () => {
         setErrors(prev => ({ ...prev, photo: 'Please select a valid image file' }))
         return
       }
-      
+
       if (file.size > 5 * 1024 * 1024) {
         setErrors(prev => ({ ...prev, photo: 'Image file must be smaller than 5MB' }))
         return
       }
-      
+
       setPhotoFile(file)
-      
+
       const reader = new FileReader()
       reader.onload = (e) => setPhotoPreview(e.target.result)
       reader.readAsDataURL(file)
-      
+
       if (errors.photo) {
         setErrors(prev => ({ ...prev, photo: null }))
       }
@@ -297,31 +303,31 @@ const ProfileEditor = () => {
 
   const validateForm = () => {
     const newErrors = {}
-    
+
     if (!formData.full_name.trim()) {
       newErrors.full_name = 'Full name is required'
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required'
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address'
     }
-    
+
     if (!formData.bio.trim()) {
       newErrors.bio = 'Bio is required'
     } else if (formData.bio.trim().length < 50) {
       newErrors.bio = 'Bio must be at least 50 characters long'
     }
-    
+
     if (!formData.city.trim()) {
       newErrors.city = 'City is required'
     }
-    
+
     if (!formData.state_province.trim()) {
       newErrors.state_province = 'State/Province is required'
     }
-    
+
     if (formData.specialties.length === 0) {
       newErrors.specialties = 'Please select at least one specialty'
     }
@@ -339,33 +345,33 @@ const ProfileEditor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     const newErrors = validateForm()
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
       window.scrollTo(0, 0)
       return
     }
-    
+
     setLoading(true)
     setSaveSuccess(false)
-    
+
     try {
       let photoUrl = profile?.photo_url
-      
+
       if (photoFile) {
         const { data: uploadData, error: uploadError } = await profileOperations.uploadPhoto(
-          photoFile, 
+          photoFile,
           profile.id
         )
-        
+
         if (uploadError) {
           throw new Error('Failed to upload photo: ' + uploadError.message)
         }
-        
+
         photoUrl = uploadData.publicUrl
       }
-      
+
       // Build update data with proper transformations
       const updateData = {
         ...formData,
@@ -378,9 +384,11 @@ const ProfileEditor = () => {
         sliding_scale: toBooleanFlag(formData.sliding_scale) ? true : null,
         pricing_range: formData.session_fee_min && formData.session_fee_max
           ? `$${formData.session_fee_min}-$${formData.session_fee_max}`
-          : null
+          : null,
+        is_officiant: toBooleanFlag(formData.is_officiant),
+        clergy_title: formData.clergy_title || null
       }
-      
+
       // Auto-approve if profile was pending and now has all required fields
       const hasPhoto = photoUrl || profile?.photo_url
       const hasBio = formData.bio?.trim().length >= 50
@@ -398,13 +406,13 @@ const ProfileEditor = () => {
       setSaveSuccess(true)
       window.scrollTo(0, 0)
       setTimeout(() => setSaveSuccess(false), 3000)
-      
+
     } catch (error) {
       console.error('Error saving profile:', error)
       setErrors(prev => ({ ...prev, submit: error.message }))
       window.scrollTo(0, 0)
     }
-    
+
     setLoading(false)
   }
 
@@ -433,7 +441,7 @@ const ProfileEditor = () => {
           <i className="fa fa-arrow-left" aria-hidden="true"></i>
           Back to Dashboard
         </Link>
-        
+
         <div className="header-content">
           <h1>Edit Your Profile</h1>
           <p>Keep your information up-to-date to attract more couples</p>
@@ -500,7 +508,7 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Profile Photo</h2>
               <p>A professional photo helps couples connect with you (3x more views!)</p>
-              
+
               <div className="photo-upload" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                 <div className="photo-preview" style={{ width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden' }}>
                   {photoPreview ? (
@@ -511,20 +519,20 @@ const ProfileEditor = () => {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="photo-controls">
                   <label className="btn btn-outline">
                     <i className="fa fa-upload" aria-hidden="true"></i>
                     {photoPreview ? 'Change Photo' : 'Upload Photo'}
                     <input type="file" accept="image/*" onChange={handlePhotoChange} style={{ display: 'none' }} />
                   </label>
-                  
+
                   {photoPreview && (
                     <button type="button" className="btn btn-ghost" onClick={() => { setPhotoFile(null); setPhotoPreview(''); }}>
                       Remove
                     </button>
                   )}
-                  
+
                   {errors.photo && <div className="field-error">{errors.photo}</div>}
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
                     Recommended: Professional headshot, 400x400px or larger
@@ -536,7 +544,7 @@ const ProfileEditor = () => {
             {/* Basic Information */}
             <div className="form-section">
               <h2>Basic Information</h2>
-              
+
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="full_name">Full Name *</label>
@@ -578,16 +586,16 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Professional Bio *</h2>
               <p>Tell couples about your approach and experience. <strong>Minimum 50 characters, but 150+ recommended for SEO.</strong></p>
-              
+
               <div className="form-group">
                 <textarea id="bio" name="bio" value={formData.bio} onChange={handleInputChange} placeholder="Share your experience, approach to premarital counseling, and what makes you unique..." rows={6} className={errors.bio ? 'error' : ''} />
-                <div className="character-count" style={{ 
-                  textAlign: 'right', 
-                  fontSize: '0.85rem', 
+                <div className="character-count" style={{
+                  textAlign: 'right',
+                  fontSize: '0.85rem',
                   marginTop: '0.5rem',
                   color: formData.bio.length < 50 ? 'var(--error)' : formData.bio.length < 150 ? 'var(--warning)' : 'var(--success)'
                 }}>
-                  {formData.bio.length} characters 
+                  {formData.bio.length} characters
                   {formData.bio.length < 50 && '(minimum 50)'}
                   {formData.bio.length >= 50 && formData.bio.length < 150 && '(150+ recommended for SEO)'}
                   {formData.bio.length >= 150 && 'Great for SEO!'}
@@ -605,7 +613,7 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Faith Tradition</h2>
               <p>Many couples specifically search for counselors who share their faith background. This is a key differentiator.</p>
-              
+
               <div className="form-group">
                 <label htmlFor="faith_tradition">Your Faith Tradition</label>
                 <select id="faith_tradition" name="faith_tradition" value={formData.faith_tradition} onChange={handleInputChange}>
@@ -620,7 +628,7 @@ const ProfileEditor = () => {
             {/* Years of Experience */}
             <div className="form-section">
               <h2>Experience</h2>
-              
+
               <div className="form-group">
                 <label htmlFor="years_experience">Years of Experience</label>
                 <select id="years_experience" name="years_experience" value={formData.years_experience} onChange={handleInputChange}>
@@ -636,7 +644,7 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Certifications & Training</h2>
               <p>Select all certifications you hold. These build credibility and help with search matching.</p>
-              
+
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '0.5rem' }}>
                 {certificationOptions.map(cert => (
                   <label key={cert} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', cursor: 'pointer', borderRadius: '6px', ':hover': { background: 'var(--gray-50)' } }}>
@@ -647,11 +655,31 @@ const ProfileEditor = () => {
               </div>
             </div>
 
+            {/* Wedding Services (Niche Optimization) */}
+            <div className="form-section">
+              <h2>Wedding Services</h2>
+              <p>Do you offer wedding officiating services in addition to premarital counseling?</p>
+
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: 'var(--gray-50)', padding: '1rem', borderRadius: '8px', border: formData.is_officiant ? '2px solid var(--color-primary)' : '1px solid var(--gray-200)' }}>
+                  <input type="checkbox" name="is_officiant" checked={formData.is_officiant} onChange={handleInputChange} />
+                  <span style={{ fontWeight: formData.is_officiant ? '600' : 'normal' }}>I am available to officiate weddings</span>
+                </label>
+              </div>
+
+              {formData.is_officiant && (
+                <div className="form-group slide-down">
+                  <label htmlFor="clergy_title">Clergy/Officiant Title (Optional)</label>
+                  <input type="text" id="clergy_title" name="clergy_title" value={formData.clergy_title} onChange={handleInputChange} placeholder="e.g. Ordained Minister, Rabbi, Pastor, Officiant" />
+                </div>
+              )}
+            </div>
+
             {/* Treatment Approaches */}
             <div className="form-section">
               <h2>Treatment Approaches</h2>
               <p>Select the methods and assessments you use in your practice.</p>
-              
+
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.5rem' }}>
                 {treatmentApproachOptions.map(approach => (
                   <label key={approach} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', cursor: 'pointer' }}>
@@ -666,7 +694,7 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Specialties & Services *</h2>
               <p>Select all areas where you provide counseling services. <strong>3+ recommended for better matching.</strong></p>
-              
+
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.5rem' }}>
                 {specialtyOptions.map(specialty => (
                   <label key={specialty} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', cursor: 'pointer' }}>
@@ -682,7 +710,7 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Client Focus</h2>
               <p>Who do you work best with? Select all that apply.</p>
-              
+
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.5rem' }}>
                 {clientFocusOptions.map(focus => (
                   <label key={focus} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', cursor: 'pointer' }}>
@@ -702,7 +730,7 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Practice Location</h2>
               <p>Help couples find you by providing your practice location</p>
-              
+
               <div className="form-group">
                 <label htmlFor="address_line1">Street Address</label>
                 <input type="text" id="address_line1" name="address_line1" value={formData.address_line1} onChange={handleInputChange} placeholder="123 Main Street, Suite 100" />
@@ -742,23 +770,23 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Session Types</h2>
               <p>How do you meet with clients?</p>
-              
+
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 {sessionTypeOptions.map(option => (
-                  <label key={option.value} style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '0.5rem', 
+                  <label key={option.value} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
                     padding: '0.75rem 1rem',
                     border: `2px solid ${formData.session_types.includes(option.value) ? 'var(--color-primary)' : 'var(--gray-200)'}`,
                     borderRadius: '8px',
                     cursor: 'pointer',
                     background: formData.session_types.includes(option.value) ? 'var(--primary-light)' : 'white'
                   }}>
-                    <input 
-                      type="checkbox" 
-                      checked={formData.session_types.includes(option.value)} 
-                      onChange={() => handleArrayToggle('session_types', option.value)} 
+                    <input
+                      type="checkbox"
+                      checked={formData.session_types.includes(option.value)}
+                      onChange={() => handleArrayToggle('session_types', option.value)}
                     />
                     <i className={`fa ${option.icon}`} style={{ color: 'var(--color-primary)' }}></i>
                     <span>{option.label}</span>
@@ -771,7 +799,7 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Languages Spoken</h2>
               <p>Select all languages you can provide counseling in.</p>
-              
+
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '0.5rem' }}>
                 {languageOptions.map(lang => (
                   <label key={lang} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', cursor: 'pointer' }}>
@@ -791,7 +819,7 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Pricing Information</h2>
               <p>Transparent pricing helps couples make informed decisions and reduces unnecessary inquiries.</p>
-              
+
               <div className="form-group" style={{ marginBottom: '1rem' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                   <input type="checkbox" name="offers_free_consultation" checked={formData.offers_free_consultation} onChange={handleInputChange} />
@@ -829,7 +857,7 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Insurance Accepted</h2>
               <p>Select all insurance providers you accept, or choose "Self-Pay Only" if you don't take insurance.</p>
-              
+
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.5rem' }}>
                 {insuranceOptions.map(ins => (
                   <label key={ins} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', cursor: 'pointer' }}>
@@ -844,13 +872,13 @@ const ProfileEditor = () => {
             <div className="form-section">
               <h2>Payment Methods</h2>
               <p>Select all payment methods you accept.</p>
-              
+
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 {paymentMethodOptions.map(method => (
-                  <label key={method} style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '0.5rem', 
+                  <label key={method} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
                     padding: '0.5rem 1rem',
                     border: `2px solid ${formData.payment_methods.includes(method) ? 'var(--color-primary)' : 'var(--gray-200)'}`,
                     borderRadius: '6px',
@@ -882,9 +910,9 @@ const ProfileEditor = () => {
         )}
 
         {/* Form Actions */}
-        <div className="form-actions" style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
+        <div className="form-actions" style={{
+          display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
           padding: '1.5rem',
           background: 'var(--gray-50)',
@@ -894,7 +922,7 @@ const ProfileEditor = () => {
           <Link to="/professional/dashboard" className="btn btn-outline">
             Cancel
           </Link>
-          
+
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             {saveSuccess && (
               <span style={{ color: 'var(--success)', fontWeight: '500' }}>

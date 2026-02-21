@@ -143,22 +143,26 @@ const isMissingDescriptor = (value) => {
 }
 
 // Build a CTR-optimized meta title for profile pages (target: under 60 chars)
-const buildProfileMetaTitle = (profile, { hasOnlineOption, stateName }) => {
+const buildProfileMetaTitle = (profile, { hasOnlineOption, stateName, specialties, treatmentApproaches }) => {
   const name = profile?.full_name || 'Professional'
   const city = profile?.city || ''
   const stAbbr = profile?.state_province || ''
 
+  // Detect a notable method to surface in the title (Gottman is highest signal)
+  const allMethods = [...(specialties || []), ...(treatmentApproaches || [])]
+  const gottman = allMethods.some(m => /gottman/i.test(String(m)))
+  const eft = allMethods.some(m => /\beft\b|emotionally focused/i.test(String(m)))
+  const prepEnrich = allMethods.some(m => /prepare|enrich|foccus|symbis/i.test(String(m)))
+  const methodTag = gottman ? 'Gottman' : eft ? 'EFT' : prepEnrich ? 'PREPARE/ENRICH' : null
+
   // Use em-dash for visual distinction in SERPs
-  let title = `${name} — Premarital Counseling in ${city}, ${stAbbr}`
+  let title = city
+    ? `${name} — Premarital Counseling in ${city}, ${stAbbr}`
+    : `${name} — Premarital Counselor`
 
-  // Add online flag if short enough
-  if (hasOnlineOption && title.length < 50) {
-    title = `${name} — Premarital Counseling in ${city}, ${stAbbr} (Online)`
-  }
-
-  // Fallback if no city
-  if (!city) {
-    title = `${name} — Premarital Counselor`
+  // Inject method if it fits and adds signal
+  if (methodTag && city && title.length + methodTag.length + 3 <= 62) {
+    title = `${name} (${methodTag}) — Premarital Counseling in ${city}, ${stAbbr}`
   }
 
   return title
@@ -259,11 +263,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSlug])
 
-  useEffect(() => {
-    if (profile) {
-      document.title = `${profile.full_name} - ${profile.profession} | Premarital Counseling Directory`
-    }
-  }, [profile])
+  // document.title is managed by SEOHelmet — no override here
 
   useEffect(() => {
     if (profile && !state) {
@@ -289,7 +289,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
         city: profile.city || 'unknown',
         state: profile.state_province || 'unknown',
         source: 'profile_page'
-      }).catch(() => {}) // Silent fail - don't break page for tracking
+      }).catch(() => { }) // Silent fail - don't break page for tracking
     }
   }, [profile])
 
@@ -383,16 +383,16 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
           canonicalUrl={window.location.pathname}
         />
         <div className="container" style={{ padding: 'var(--space-20) 0', textAlign: 'center' }}>
-        <h2>Profile Not Found</h2>
-        <p className="text-secondary mb-8">
-          {error === 'Profile not found'
-            ? 'The profile you\'re looking for doesn\'t exist or may have been removed.'
-            : 'We encountered an error while loading this profile.'}
-        </p>
-        <Link to="/" className="btn btn-primary">
-          Browse All Professionals
-        </Link>
-      </div>
+          <h2>Profile Not Found</h2>
+          <p className="text-secondary mb-8">
+            {error === 'Profile not found'
+              ? 'The profile you\'re looking for doesn\'t exist or may have been removed.'
+              : 'We encountered an error while loading this profile.'}
+          </p>
+          <Link to="/" className="btn btn-primary">
+            Browse All Professionals
+          </Link>
+        </div>
       </>
     )
   }
@@ -581,7 +581,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   return (
     <>
       <SEOHelmet
-        title={buildProfileMetaTitle(profile, { hasOnlineOption, stateName })}
+        title={buildProfileMetaTitle(profile, { hasOnlineOption, stateName, specialties, treatmentApproaches })}
         description={buildProfileMetaDescription(profile, { pricingLabel, insuranceAccepted, hasOnlineOption, freeConsultationEnabled, treatmentApproaches, slidingScaleEnabled, stateName })}
         url={window.location.pathname}
         type="profile"
@@ -633,13 +633,18 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     <i className="fa fa-shield-alt" aria-hidden="true"></i> Verified
                   </span>
                 )}
+                {profile.is_officiant && (
+                  <span className="profile-premium-badge" style={{ background: 'var(--ds-accent-soft)', color: 'var(--ds-accent)', border: '1px solid var(--ds-border-strong)' }}>
+                    💒 Wedding Officiant
+                  </span>
+                )}
               </div>
 
               <div className="profile-premium-identity">
                 <p className="profile-premium-eyebrow">Professional Profile</p>
                 <h1>{profile.full_name}</h1>
                 <p className="profile-premium-role">
-                  {professionLabel}
+                  {profile.is_officiant && profile.clergy_title ? `${professionLabel} & ${profile.clergy_title}` : professionLabel}
                   {profile.pronouns ? ` (${profile.pronouns})` : ''}
                 </p>
 
