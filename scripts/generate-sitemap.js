@@ -114,6 +114,8 @@ const generateSitemap = async () => {
     .from('profiles')
     .select('slug, state_province, city, created_at')
     .not('state_province', 'is', null)
+    .eq('is_hidden', false)
+    .or('moderation_status.eq.approved,moderation_status.is.null')
     .order('created_at', { ascending: false, nullsFirst: false })
     .limit(MAX_URLS);
 
