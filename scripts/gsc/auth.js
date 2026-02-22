@@ -42,7 +42,7 @@ const oauth2Client = new google.auth.OAuth2(
 const authUrl = oauth2Client.generateAuthUrl({
   access_type: 'offline',   // gets refresh token
   prompt: 'consent',        // forces refresh token even if already authorized
-  scope: ['https://www.googleapis.com/auth/webmasters.readonly'],
+  scope: ['https://www.googleapis.com/auth/webmasters'],
 });
 
 console.log('\n--- Google Search Console OAuth ---');
