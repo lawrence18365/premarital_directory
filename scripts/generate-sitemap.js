@@ -1,16 +1,33 @@
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config({ path: [path.resolve(__dirname, '../.env.local'), path.resolve(__dirname, '../.env')] });
+require('dotenv').config({ path: [path.resolve(__dirname, '../client/.env.local'), path.resolve(__dirname, '../.env')] });
 
 const BASE_URL = 'https://weddingcounselors.com';
 const PUBLIC_DIR = path.join(__dirname, '../client/public');
 const SITEMAP_PATH = path.join(PUBLIC_DIR, 'sitemap.xml');
-const MAX_URLS = 500; // Keep the sitemap focused on top URLs for now
+const MAX_URLS = 10000; // Increased limit to ensure high-value programmatic pages are caught
+
+// Generate SEO-friendly slug (Matches client/src/lib/utils.js generateSlug)
+const generateSlug = (name) => {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove special characters except hyphens
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .trim();
+};
 
 // Initialize Supabase client
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error("Missing Supabase credentials for sitemap generation.");
+  process.exit(1);
+}
+
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Helper to generate XML for a single URL
@@ -33,63 +50,85 @@ ${urls.join('\n')}
 };
 
 const generateSitemap = async () => {
-  console.log('Starting clean sitemap generation...');
+  console.log('Starting clean sitemap generation (SEO Optimized Phase 3)...');
   const today = new Date().toISOString().split('T')[0];
   const allUrls = [];
 
   // 1. Add static pages with high priority
   const staticPages = [
     '/',
+    '/premarital-counseling',
+    '/locations',
     '/about',
     '/contact',
     '/pricing',
     '/features',
     '/guidelines',
     '/privacy',
-    '/terms',
-    '/states'
+    '/terms'
   ];
   staticPages.forEach(url => {
     allUrls.push(createUrlEntry(`${BASE_URL}${url}`, today, 'weekly', '1.0'));
   });
 
-  // 2. Add state pages
-  const { data: states, error: statesError } = await supabase
-    .from('profiles')
-    .select('state_province', { count: 'exact', head: false });
-
-  if (statesError) {
-    console.error('Error fetching states:', statesError);
-    return;
-  }
-
-  const uniqueStates = [...new Set(states.map(s => s.state_province).filter(Boolean))];
-  uniqueStates.forEach(state => {
-    const stateSlug = state.toLowerCase().replace(/\s+/g, '-');
-    allUrls.push(createUrlEntry(`${BASE_URL}/professionals/${stateSlug}`, today, 'daily', '0.9'));
-  });
-
-  // 3. Add top professional profiles (most recently updated or created)
+  // Fetch all minimal profile data required for programmatic routes
+  console.log('Fetching profile routing data...');
   const { data: profiles, error: profilesError } = await supabase
     .from('profiles')
-    .select('slug, state_province, created_at, updated_at')
-    .order('updated_at', { ascending: false, nullsFirst: false })
-    .limit(MAX_URLS - allUrls.length);
+    .select('slug, state_province, city, created_at')
+    .not('state_province', 'is', null)
+    .order('created_at', { ascending: false, nullsFirst: false })
+    .limit(MAX_URLS);
 
   if (profilesError) {
     console.error('Error fetching profiles:', profilesError);
     return;
   }
 
-  profiles
-    .filter(p => p.slug && p.state_province)
-    .forEach(profile => {
-      const stateSlug = profile.state_province.toLowerCase().replace(/\s+/g, '-');
-      const lastmod = profile.updated_at ? new Date(profile.updated_at).toISOString().split('T')[0] : today;
-      allUrls.push(createUrlEntry(`${BASE_URL}/professionals/${stateSlug}/${profile.slug}`, lastmod, 'monthly', '0.8'));
-    });
+  const uniqueStates = new Set();
+  const uniqueCities = new Set();
 
-  // 4. Write the single, clean sitemap
+  // Parse Unique States and Cities
+  profiles.forEach(p => {
+    if (p.state_province) {
+      const stateSlug = generateSlug(p.state_province);
+      uniqueStates.add(stateSlug);
+
+      if (p.city) {
+        const citySlug = generateSlug(p.city);
+        uniqueCities.add(`${stateSlug}/${citySlug}`);
+      }
+    }
+  });
+
+  console.log(`Discovered ${uniqueStates.size} State URLs and ${uniqueCities.size} City URLs.`);
+
+  // 2. Add State directory pages (e.g., /premarital-counseling/california)
+  uniqueStates.forEach(stateSlug => {
+    allUrls.push(createUrlEntry(`${BASE_URL}/premarital-counseling/${stateSlug}`, today, 'daily', '0.9'));
+  });
+
+  // 3. Add City directory pages (e.g., /premarital-counseling/california/los-angeles)
+  uniqueCities.forEach(stateCityCombo => {
+    allUrls.push(createUrlEntry(`${BASE_URL}/premarital-counseling/${stateCityCombo}`, today, 'daily', '0.8'));
+  });
+
+  // 4. Add Top Professional Profiles
+  let profileCount = 0;
+  profiles.forEach(profile => {
+    if (profile.slug && profile.state_province && profile.city) {
+      const stateSlug = generateSlug(profile.state_province);
+      const citySlug = generateSlug(profile.city);
+      const lastmod = profile.created_at ? new Date(profile.created_at).toISOString().split('T')[0] : today;
+
+      allUrls.push(createUrlEntry(`${BASE_URL}/premarital-counseling/${stateSlug}/${citySlug}/${profile.slug}`, lastmod, 'monthly', '0.6'));
+      profileCount++;
+    }
+  });
+
+  console.log(`Added ${profileCount} Professional Profiles to sitemap.`);
+
+  // Write the single, clean sitemap
   writeSitemapFile(SITEMAP_PATH, allUrls);
   console.log(`Generated clean sitemap.xml with ${allUrls.length} URLs.`);
   console.log('Sitemap generation complete!');

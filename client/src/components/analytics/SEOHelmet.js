@@ -330,7 +330,14 @@ export const generateProfessionalStructuredData = (professional) => {
     professionalData.yearsOfExperience = professional.years_experience
   }
 
-  if (professional.reviews && professional.reviews.length > 0) {
+  // Prioritize external reviews for higher CTR, fallback to internal reviews
+  if (professional.external_review_score && professional.external_review_count > 0) {
+    professionalData.aggregateRating = {
+      "@type": "AggregateRating",
+      "ratingValue": parseFloat(professional.external_review_score).toFixed(1),
+      "reviewCount": parseInt(professional.external_review_count)
+    };
+  } else if (professional.reviews && professional.reviews.length > 0) {
     const totalRating = professional.reviews.reduce((acc, review) => acc + review.rating, 0);
     const averageRating = totalRating / professional.reviews.length;
 

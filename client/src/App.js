@@ -112,6 +112,7 @@ const SitemapGenerator = React.lazy(() => import('./pages/SitemapGenerator'))
 
 // Missing pages that exist but weren't routed
 const SitemapPage = React.lazy(() => import('./pages/SitemapPage'))
+const LocationsDirectoryPage = React.lazy(() => import('./pages/LocationsDirectoryPage'))
 const ThankYouPage = React.lazy(() => import('./pages/ThankYouPage'))
 const ProfessionalsPage = React.lazy(() => import('./pages/ProfessionalsPage'))
 const ConfirmEmailPage = React.lazy(() => import('./pages/ConfirmEmailPage'))
@@ -236,6 +237,7 @@ function AppInner() {
             <Route path="/blog/:slug" element={<BlogPostPage />} />
             <Route path="/seo/:slug" element={<SEOContentPage />} />
             <Route path="/sitemap" element={<SitemapPage />} />
+            <Route path="/locations" element={<LocationsDirectoryPage />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
             <Route path="/professionals-search" element={<ProfessionalsPage />} />
 

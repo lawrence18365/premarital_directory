@@ -38,16 +38,16 @@ export const profileOperations = {
     }
 
     const { data, error } = await query
-    
+
     if (data && data.length > 0) {
       return { data, error }
     }
-    
+
     if (error) {
       // Fallback: Use pagination to get all profiles
       return await this.getAllProfilesPaginated(filters)
     }
-    
+
     return { data, error }
   },
 
@@ -84,25 +84,25 @@ export const profileOperations = {
       }
 
       const { data, error } = await query
-      
+
       if (error) {
         break
       }
-      
+
       if (!data || data.length === 0) {
         break
       }
-      
+
       allProfiles.push(...data)
-      
+
       // If we got less than pageSize, we're done
       if (data.length < pageSize) {
         break
       }
-      
+
       page++
     }
-    
+
     return { data: allProfiles, error: null }
   },
 
@@ -114,7 +114,7 @@ export const profileOperations = {
       .select('*')
       .eq('slug', idOrSlug)
       .single()
-    
+
     // If not found by slug, try by ID
     if (error && error.code === 'PGRST116') {
       const result = await supabase
@@ -125,7 +125,7 @@ export const profileOperations = {
       data = result.data
       error = result.error
     }
-    
+
     return { data, error }
   },
 
@@ -173,6 +173,23 @@ export const profileOperations = {
     return { data, error }
   },
 
+  // Get nearby profiles (same city/state) excluding the current one
+  async getNearbyProfiles(stateAbbr, city, excludeProfileId, limit = 4) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('state_province', stateAbbr)
+      .ilike('city', `%${city}%`)
+      .neq('id', excludeProfileId)
+      .eq('is_hidden', false)
+      .or('moderation_status.eq.approved,moderation_status.is.null')
+      .order('is_sponsored', { ascending: false })
+      .order('sponsored_rank', { ascending: false })
+      .limit(limit)
+
+    return { data, error }
+  },
+
   // Search profiles by text
   async searchProfiles(searchTerm) {
     const { data, error } = await supabase
@@ -194,9 +211,9 @@ export const profileOperations = {
       .select('state_province')
       .eq('is_hidden', false)
       .or('moderation_status.eq.approved,moderation_status.is.null')
-    
+
     if (error) return { data: null, error }
-    
+
     // Count profiles by state
     const stateCounts = {}
     data.forEach(profile => {
@@ -205,7 +222,7 @@ export const profileOperations = {
         stateCounts[state] = (stateCounts[state] || 0) + 1
       }
     })
-    
+
     return { data: stateCounts, error: null }
   },
 
@@ -387,7 +404,7 @@ export const profileOperations = {
 
   // Reject a profile claim
   async rejectProfileClaim(claimId, reviewedBy, notes) {
-    const { data, error} = await supabase
+    const { data, error } = await supabase
       .from('profile_claims')
       .update({
         status: 'rejected',
@@ -408,7 +425,7 @@ export const profileOperations = {
       .from('profiles')
       .upsert(profileData)
       .select()
-    
+
     return { data, error }
   },
 
@@ -440,11 +457,11 @@ export const profileOperations = {
       }
 
       // 3. Return the public URL
-      return { 
-        data: { 
-          publicUrl: uploadConfig.publicUrl 
-        }, 
-        error: null 
+      return {
+        data: {
+          publicUrl: uploadConfig.publicUrl
+        },
+        error: null
       }
 
     } catch (error) {

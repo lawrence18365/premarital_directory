@@ -26,7 +26,7 @@ const MarriageLicenseDiscountPage = () => {
       .eq('jurisdiction_type', 'state')
       .eq('is_indexed', true)
       .then(({ data }) => setDbStates(data || []))
-      .catch(() => {})
+      .catch(() => { })
   }, [])
 
   // Stable-order merge: keep static key order, enrich with DB data in place.
@@ -37,25 +37,25 @@ const MarriageLicenseDiscountPage = () => {
   const allStates = staticStateKeys.map(key => {
     const rec = dbByKey[key]
     const cfg = STATE_DISCOUNT_CONFIG[key]
-    const sc  = STATE_CONFIG[key]
+    const sc = STATE_CONFIG[key]
     if (rec) {
       return {
         key,
-        name:          rec.jurisdiction_name,
-        savings:       formatDollars(rec.savings_amount_cents) || (cfg?.discount || '—'),
-        waitingNote:   rec.waiting_period_waived ? 'Waiting period waived' : null,
-        benefitTypes:  rec.benefit_types || [],
-        verified:      true,
+        name: rec.jurisdiction_name,
+        savings: formatDollars(rec.savings_amount_cents) || (cfg?.discount || '—'),
+        waitingNote: rec.waiting_period_waived ? 'Waiting period waived' : null,
+        benefitTypes: rec.benefit_types || [],
+        verified: true,
         lastVerifiedAt: rec.last_verified_at,
       }
     }
     return {
       key,
-      name:        cfg.name || sc?.name || key,
-      savings:     cfg.discount,
+      name: cfg.name || sc?.name || key,
+      savings: cfg.discount,
       waitingNote: cfg.waitingPeriod !== 'No waiting period impact' ? cfg.waitingPeriod : null,
       benefitTypes: ['discount'],
-      verified:    false,
+      verified: false,
       lastVerifiedAt: null,
     }
   })
@@ -121,10 +121,10 @@ const MarriageLicenseDiscountPage = () => {
   return (
     <>
       <SEOHelmet
-        title="Save Up to $75 on Your Marriage License | Premarital Counseling Discounts in Texas, Florida, Oklahoma & More"
-        description="8 states discount your marriage license fee when you complete premarital counseling. Save $60 in Texas & Indiana, pay just $5 in Oklahoma, save up to $75 in Minnesota. Find a qualified counselor near you."
+        title="How to Get a Marriage License Discount (Save Up to $75) | 2026 Guide"
+        description="Did you know you can save up to $75 on your marriage license or waive the waiting period? Learn exactly how to get your premarital counseling discount in Texas, Florida, Georgia, and more."
         url="/premarital-counseling/marriage-license-discount"
-        keywords="marriage license discount, marriage certificate discount, premarital counseling discount, save money marriage license, florida marriage license discount, texas marriage license discount, oklahoma marriage license discount, minnesota marriage license discount, indiana premarital counseling"
+        keywords="marriage license discount, how to get a marriage license discount, marriage certificate discount, premarital counseling discount, save money marriage license, florida marriage license discount, texas marriage license discount, oklahoma marriage license discount"
         breadcrumbs={breadcrumbItems}
         structuredData={pageStructuredData}
         faqs={faqs}
@@ -177,9 +177,9 @@ const MarriageLicenseDiscountPage = () => {
             <div className="discount-states-grid">
               {allStates.map(entry => {
                 const discount = STATE_DISCOUNT_CONFIG[entry.key] || {}
-                const reqs     = (discount.requirements || []).slice(0, 3)
+                const reqs = (discount.requirements || []).slice(0, 3)
                 const savingsIsVague = !entry.savings || entry.savings === '—' || entry.savings === 'Varies by county'
-                const originalFee   = discount.originalFee || null
+                const originalFee = discount.originalFee || null
                 const discountedFee = discount.discountedFee || null
 
                 return (

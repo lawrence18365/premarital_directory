@@ -56,6 +56,7 @@ const Footer = () => {
               <li><Link to="/premarital-counseling/online">Online Counseling</Link></li>
               <li><Link to="/premarital-counseling/gottman">Gottman Method</Link></li>
               <li><Link to="/premarital-counseling/marriage-license-discount">Marriage License Discounts</Link></li>
+              <li><Link to="/locations">All Locations Directory</Link></li>
             </ul>
           </div>
 

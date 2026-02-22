@@ -12,6 +12,7 @@ import { SPECIALTY_CONFIG } from '../data/specialtyConfig'
 
 import { profileOperations, clickTrackingOperations } from '../lib/supabaseClient'
 import UnclaimedProfileBanner from '../components/profiles/UnclaimedProfileBanner'
+import NearbyProfessionals from '../components/profiles/NearbyProfessionals'
 import '../assets/css/profile-page-enhanced.css'
 
 // Helper: Convert state abbreviation to slug (OH -> ohio)
@@ -281,15 +282,20 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
 
   useEffect(() => {
     if (profile) {
-      trackProfileView(profile.full_name, profile.city, profile.state_province)
-      trackFacebookProfileView(profile.full_name)
-      // Track view in Supabase for professional dashboards
-      clickTrackingOperations.logProfileClick({
-        profileId: profile.id,
-        city: profile.city || 'unknown',
-        state: profile.state_province || 'unknown',
-        source: 'profile_page'
-      }).catch(() => { }) // Silent fail - don't break page for tracking
+      // Prevent the build process (ReactSnap prerendering) from logging ghost clicks
+      const isPrerendering = navigator.userAgent === 'ReactSnap'
+
+      if (!isPrerendering) {
+        trackProfileView(profile.full_name, profile.city, profile.state_province)
+        trackFacebookProfileView(profile.full_name)
+        // Track view in Supabase for professional dashboards
+        clickTrackingOperations.logProfileClick({
+          profileId: profile.id,
+          city: profile.city || 'unknown',
+          state: profile.state_province || 'unknown',
+          source: 'profile_page'
+        }).catch(() => { }) // Silent fail - don't break page for tracking
+      }
     }
   }, [profile])
 
@@ -1067,6 +1073,9 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                 )}
               </aside>
             </div>
+
+            {/* Internal Linking Mesh: Nearby Counselors */}
+            {profile && <NearbyProfessionals currentProfile={profile} />}
           </div>
         </section>
       </div>

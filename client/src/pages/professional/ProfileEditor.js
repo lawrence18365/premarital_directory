@@ -54,7 +54,11 @@ const ProfileEditor = () => {
 
     // Niche Optimizations
     is_officiant: false,
-    clergy_title: ''
+    clergy_title: '',
+
+    // External Reviews
+    external_review_score: '',
+    external_review_count: ''
   })
 
   const [photoFile, setPhotoFile] = useState(null)
@@ -246,7 +250,9 @@ const ProfileEditor = () => {
         session_fee_max: profile.session_fee_max ? String(Math.round(profile.session_fee_max / 100)) : '',
         credentials: profile.credentials || [],
         is_officiant: toBooleanFlag(profile.is_officiant),
-        clergy_title: profile.clergy_title || ''
+        clergy_title: profile.clergy_title || '',
+        external_review_score: profile.external_review_score || '',
+        external_review_count: profile.external_review_count || ''
       })
 
       if (profile.photo_url) {
@@ -386,7 +392,9 @@ const ProfileEditor = () => {
           ? `$${formData.session_fee_min}-$${formData.session_fee_max}`
           : null,
         is_officiant: toBooleanFlag(formData.is_officiant),
-        clergy_title: formData.clergy_title || null
+        clergy_title: formData.clergy_title || null,
+        external_review_score: formData.external_review_score ? parseFloat(formData.external_review_score) : null,
+        external_review_count: formData.external_review_count ? parseInt(formData.external_review_count) : null
       }
 
       // Auto-approve if profile was pending and now has all required fields
@@ -889,6 +897,24 @@ const ProfileEditor = () => {
                     <span style={{ fontSize: '0.9rem' }}>{method}</span>
                   </label>
                 ))}
+              </div>
+            </div>
+
+            {/* External Reviews / Aggregate Rating */}
+            <div className="form-section">
+              <h2>External Reviews (Google/Yelp)</h2>
+              <p>Display your aggregate rating in Google Search results to increase click-through rates. <br /><em>Note: False claims will result in profile removal.</em></p>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="external_review_score">Average Rating Score (1.0 to 5.0)</label>
+                  <input type="number" id="external_review_score" name="external_review_score" value={formData.external_review_score} onChange={handleInputChange} placeholder="5.0" step="0.1" min="1" max="5" />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="external_review_count">Total Number of Reviews</label>
+                  <input type="number" id="external_review_count" name="external_review_count" value={formData.external_review_count} onChange={handleInputChange} placeholder="12" min="0" />
+                </div>
               </div>
             </div>
 

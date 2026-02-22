@@ -39,119 +39,48 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
     setError('')
 
     try {
-      const timelinePrefix = formData.timeline
-        ? `Timeline: ${formData.timeline}\n\n`
-        : ''
-      const outboundMessage = `${timelinePrefix}${formData.message}`
-      const coupleName = formData.partner_two_name
-        ? `${formData.partner_one_name} & ${formData.partner_two_name}`
-        : formData.partner_one_name
-
-      // Determine lead status based on profile claim status
-      const leadStatus = isProfileClaimed ? 'new' : 'pending_claim'
-
-      // Save lead to database
-      const { data: leadData, error: leadError } = await supabase
-        .from('profile_leads')
-        .insert([{
-          profile_id: profileId,
-          couple_name: coupleName,
-          couple_email: formData.couple_email,
-          couple_phone: formData.couple_phone,
-          wedding_date: formData.wedding_date || null,
-          location: formData.location,
-          message: outboundMessage,
-          source: formData.source,
-          status: leadStatus
-        }])
-        .select()
-
-      if (leadError) throw leadError
-
-      // Send email notification based on lead type
-      try {
-        const isUnmatchedLead = !profileId
-        if (isUnmatchedLead) {
-          // Unmatched lead (from state/specialty/discount pages) - notify admin
-          const matchContext = isDiscountMatching ? 'Marriage License Discount'
-            : isSpecialtyMatching ? (specialtyType || 'Specialty')
-            : isStateMatching ? (stateName || 'State')
-            : 'General'
-
-          await supabase.functions.invoke('send-lead-notification', {
-            body: {
-              leadId: leadData[0].id,
-              profileId: null,
-              isUnmatchedLead: true,
-              matchContext,
-              coupleData: {
-                name: coupleName,
-                email: formData.couple_email,
-                phone: formData.couple_phone,
-                wedding_date: formData.wedding_date,
-                timeline: formData.timeline,
-                location: formData.location,
-                message: outboundMessage
-              }
-            }
-          })
-        } else if (isProfileClaimed) {
-          // Standard notification for claimed profiles
-          await supabase.functions.invoke('send-lead-notification', {
-            body: {
-              leadId: leadData[0].id,
-              profileId: profileId,
-              coupleData: {
-                name: coupleName,
-                email: formData.couple_email,
-                phone: formData.couple_phone,
-                wedding_date: formData.wedding_date,
-                timeline: formData.timeline,
-                location: formData.location,
-                message: outboundMessage
-              }
-            }
-          })
-        } else {
-          // Email for UNCLAIMED profiles - edge function looks up email server-side
-          // (anon role cannot read email column after the revoke migration)
-          await supabase.functions.invoke('email-unclaimed-profile-owner', {
-            body: {
-              profileId: profileId,
-              profileSlug: profile?.slug,
-              professionalName: professionalName,
-              coupleName: coupleName,
-              coupleEmail: formData.couple_email,
-              coupleLocation: formData.location,
-              city: profile?.city,
-              state: profile?.state_province,
-              claimUrl: `${window.location.origin}/claim-profile/${profile?.slug || profileId}?utm_source=email&utm_medium=lead_intercept&utm_campaign=claim_profile`,
-            }
-          })
+      // ATOMIC LEAD INSERTION & NOTIFICATION
+      // By calling a single Edge Function, we guarantee the lead won't be saved without being emailed.
+      const payload = {
+        profileId,
+        professionalName,
+        isProfileClaimed,
+        isSpecialtyMatching,
+        isDiscountMatching,
+        isStateMatching,
+        specialtyType,
+        stateName,
+        source: formData.source,
+        coupleData: {
+          partner_one_name: formData.partner_one_name,
+          partner_two_name: formData.partner_two_name,
+          email: formData.couple_email,
+          phone: formData.couple_phone,
+          wedding_date: formData.wedding_date || undefined,
+          timeline: formData.timeline || undefined,
+          location: formData.location || undefined,
+          message: formData.message
         }
-      } catch (emailError) {
-        console.warn('Email notification failed:', emailError)
-        // Don't fail the whole process if email fails
+      }
+
+      const { data, error: functionError } = await supabase.functions.invoke('process-lead-submission', {
+        body: payload
+      })
+
+      if (functionError) {
+        console.error('Edge Function failed:', functionError)
+        throw new Error('Failed to send your message. Please try again.')
+      }
+
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to send your message.')
       }
 
       setSuccess(true)
 
-      // Reset form
-      setFormData({
-        partner_one_name: '',
-        partner_two_name: '',
-        couple_email: '',
-        couple_phone: '',
-        wedding_date: '',
-        timeline: '',
-        location: '',
-        message: '',
-        source: 'directory'
-      })
-
-      // Call success callback
-      if (onSuccess) {
-        onSuccess(leadData[0])
+      // Call success callback with returned lead data
+      if (onSuccess && data?.lead) {
+        onSuccess(data.lead)
       }
 
       // Auto-hide success message
