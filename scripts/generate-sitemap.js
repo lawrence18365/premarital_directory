@@ -3,6 +3,31 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: [path.resolve(__dirname, '../client/.env.local'), path.resolve(__dirname, '../.env')] });
 
+// These match the keys in client/src/data/specialtyConfig.js
+const SPECIALTIES = [
+  'christian',
+  'catholic',
+  'lgbtq',
+  'online',
+  'gottman',
+  'prepare-enrich',
+  'interfaith',
+  'second-marriages',
+  'military',
+  'affordable'
+];
+
+const DISCOUNT_STATES = [
+  'florida',
+  'georgia',
+  'maryland',
+  'minnesota',
+  'oklahoma',
+  'tennessee',
+  'texas',
+  'indiana'
+];
+
 const BASE_URL = 'https://weddingcounselors.com';
 const PUBLIC_DIR = path.join(__dirname, '../client/public');
 const SITEMAP_PATH = path.join(PUBLIC_DIR, 'sitemap.xml');
@@ -54,8 +79,8 @@ const generateSitemap = async () => {
   const today = new Date().toISOString().split('T')[0];
   const allUrls = [];
 
-  // 1. Add static pages with high priority
-  const staticPages = [
+  // 1. Add static pages and programmatic hubs with high priority
+  const baseStaticPages = [
     '/',
     '/premarital-counseling',
     '/locations',
@@ -65,10 +90,22 @@ const generateSitemap = async () => {
     '/features',
     '/guidelines',
     '/privacy',
-    '/terms'
+    '/terms',
+    '/premarital-counseling/marriage-license-discount'
   ];
-  staticPages.forEach(url => {
+
+  baseStaticPages.forEach(url => {
     allUrls.push(createUrlEntry(`${BASE_URL}${url}`, today, 'weekly', '1.0'));
+  });
+
+  // 1b. Add Specialty Hubs
+  SPECIALTIES.forEach(slug => {
+    allUrls.push(createUrlEntry(`${BASE_URL}/premarital-counseling/${slug}`, today, 'weekly', '0.9'));
+  });
+
+  // 1c. Add State Discount Pages
+  DISCOUNT_STATES.forEach(state => {
+    allUrls.push(createUrlEntry(`${BASE_URL}/premarital-counseling/marriage-license-discount/${state}`, today, 'weekly', '0.9'));
   });
 
   // Fetch all minimal profile data required for programmatic routes
