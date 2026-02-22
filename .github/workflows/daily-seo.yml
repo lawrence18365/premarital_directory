@@ -1,0 +1,35 @@
+name: Daily SEO Auto-Updater
+
+on:
+  schedule:
+    # Run at 8:00 AM UTC (3:00 AM EST) every day
+    - cron: '0 8 * * *'
+  workflow_dispatch: # Allows you to manually trigger it from the GitHub UI
+
+jobs:
+  trigger-vercel-rebuild-and-ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Production Build
+        run: |
+          if [ -z "${{ secrets.VERCEL_DEPLOY_HOOK }}" ]; then
+            echo "Error: VERCEL_DEPLOY_HOOK secret is not set."
+            echo "Please create a Deploy Hook in Vercel (Project > Settings > Git > Deploy Hooks)"
+            echo "and add it as a GitHub Repository Secret named VERCEL_DEPLOY_HOOK."
+            exit 1
+          fi
+          
+          echo "Triggering Vercel deployment..."
+          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
+          
+          echo "Deployment triggered successfully! Vercel is now rebuilding the site and generating fresh sitemaps."
+          
+      # Google Search Console Ping
+      # We wait 5 minutes to give Vercel time to finish building and deploying the live site
+      - name: Wait for Vercel Deployment
+        run: sleep 300
+        
+      - name: Ping Google Search Console
+        run: |
+          echo "Notifying Google Search Console about the newly updated sitemaps..."
+          curl -I "https://www.google.com/ping?sitemap=https://www.weddingcounselors.com/sitemap.xml"

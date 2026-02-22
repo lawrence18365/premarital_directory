@@ -181,6 +181,7 @@ async function fetchProfileCounts() {
       .from('profiles')
       .select('id, slug, city, state_province, full_name, bio, specialties, onboarding_last_saved_at, created_at, is_hidden')
       .eq('is_hidden', false)
+      .or('moderation_status.eq.approved,moderation_status.is.null')
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -232,15 +233,15 @@ async function fetchCatholicProgramCounts() {
 
     const stateCounts = {}
     const cityCounts = {}
-    ;(programs || []).forEach((program) => {
-      if (!program?.state_province || !program?.city) return
-      const stateSlug = getStateSlug(program.state_province)
-      const citySlug = getCitySlug(program.city)
-      const stateKey = `${stateSlug}`
-      const cityKey = `${stateSlug}|${citySlug}`
-      stateCounts[stateKey] = (stateCounts[stateKey] || 0) + 1
-      cityCounts[cityKey] = (cityCounts[cityKey] || 0) + 1
-    })
+      ; (programs || []).forEach((program) => {
+        if (!program?.state_province || !program?.city) return
+        const stateSlug = getStateSlug(program.state_province)
+        const citySlug = getCitySlug(program.city)
+        const stateKey = `${stateSlug}`
+        const cityKey = `${stateSlug}|${citySlug}`
+        stateCounts[stateKey] = (stateCounts[stateKey] || 0) + 1
+        cityCounts[cityKey] = (cityCounts[cityKey] || 0) + 1
+      })
 
     return {
       stateCounts,
@@ -364,7 +365,7 @@ async function main() {
       stateProfileCounts[stateSlug] = (stateProfileCounts[stateSlug] || 0) + 1
     })
   }
-  
+
   // Flatten all cities from STATE_CONFIG
   const allCities = []
   let includedStatePages = 0
@@ -405,16 +406,16 @@ async function main() {
   allCities.forEach(city => {
     const key = `${city.cityName.toLowerCase()}|${city.stateSlug}`
     const profileCount = profileCounts ? (profileCounts[key] || 0) : 0
-    
+
     // Check if it's an anchor city in CITY_CONFIG
     const isAnchor = CITY_CONFIG[city.stateSlug]?.[city.citySlug]?.is_anchor === true
     // Match CityPage noindex logic: exclude non-anchor cities with <3 profiles
     // CityPage.js:808: shouldNoindex = profiles.length === 0 || (!isAnchor && profiles.length < 3)
     const wouldBeNoindex = profileCount === 0 || (!isAnchor && profileCount < 3)
     if (wouldBeNoindex) return
-    
+
     const priority = calculatePriority(profileCount, maxProfileCount, isAnchor)
-    
+
     cityUrls.push({
       url: `/premarital-counseling/${city.stateSlug}/${city.citySlug}`,
       priority: priority,

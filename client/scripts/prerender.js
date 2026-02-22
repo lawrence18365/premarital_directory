@@ -34,7 +34,7 @@ function parseBooleanEnv(value, fallback = true) {
   return ['1', 'true', 'yes', 'on'].includes(String(value).toLowerCase())
 }
 
-const INCLUDE_PROFILE_ROUTES = parseBooleanEnv(process.env.PRERENDER_INCLUDE_PROFILES, true)
+const INCLUDE_PROFILE_ROUTES = parseBooleanEnv(process.env.PRERENDER_INCLUDE_PROFILES, false)
 
 // ---------------------------------------------------------------------------
 // 1. Static file server (serves the CRA build output)
@@ -184,7 +184,7 @@ async function renderRoute(browser, route) {
     await page.waitForFunction(
       () => document.getElementById('root')?.children?.length > 0,
       { timeout: 5000 }
-    ).catch(() => {})
+    ).catch(() => { })
 
     // Compute the expected canonical URL for this route
     const normalizedRoute = route === '/' ? '/' : route.replace(/\/+$/, '')
