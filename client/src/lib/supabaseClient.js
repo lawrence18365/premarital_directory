@@ -312,8 +312,6 @@ export const profileOperations = {
     const { data, error } = await supabase
       .from('profile_claims')
       .insert(claimData)
-      .select()
-      .single()
 
     return { data, error }
   },
