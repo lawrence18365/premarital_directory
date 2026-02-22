@@ -103,8 +103,8 @@ const Q19_Review = ({
       // Refresh profile context
       await refreshProfile()
 
-      // Navigate to dashboard
-      navigate('/professional/dashboard')
+      // Navigate to success page
+      navigate('/professional/profile-created', { state: { profileUrl } })
 
     } catch (err) {
       console.error('Error publishing profile:', err)

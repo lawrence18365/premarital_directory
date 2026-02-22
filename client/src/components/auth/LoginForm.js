@@ -19,7 +19,7 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!email || !password) {
       setError('Please enter both email and password')
       return
@@ -32,11 +32,14 @@ const LoginForm = () => {
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Login is taking longer than expected. Please check your connection and try again.')), 30000)
       )
-      const { error } = await Promise.race([signIn(email, password), timeoutPromise])
+      const { data, error } = await Promise.race([signIn(email, password), timeoutPromise])
 
       if (error) {
         setError(error.message)
       } else {
+        // AuthContext automatically fetches the profile in the background after session established.
+        // The safest redirect is still to the dashboard, and let the dashboard's new logic 
+        // cleanly bounce `draft` profiles to the onboarding funnel, rather than introducing race conditions here.
         navigate(from, { replace: true })
       }
     } catch (err) {
@@ -48,7 +51,7 @@ const LoginForm = () => {
 
   const handleResetPassword = async (e) => {
     e.preventDefault()
-    
+
     if (!email) {
       setError('Please enter your email address first')
       return
@@ -77,7 +80,7 @@ const LoginForm = () => {
             <p>We've sent you a password reset link at {email}</p>
           </div>
           <div className="auth-form">
-            <button 
+            <button
               className="btn btn-outline"
               onClick={() => setResetEmailSent(false)}
             >
@@ -91,83 +94,83 @@ const LoginForm = () => {
 
   return (
     <>
-    <Helmet><meta name="robots" content="noindex, follow" /></Helmet>
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h2>Professional Login</h2>
-          <p>Access your professional dashboard and manage your profile</p>
-        </div>
-
-        {error && (
-          <div className="error-message">
-            <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your.email@example.com"
-              required
-              autoComplete="email"
-            />
+      <Helmet><meta name="robots" content="noindex, follow" /></Helmet>
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h2>Professional Login</h2>
+            <p>Access your professional dashboard and manage your profile</p>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              required
-              autoComplete="current-password"
-            />
+          {error && (
+            <div className="error-message">
+              <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your.email@example.com"
+                required
+                autoComplete="email"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+                autoComplete="current-password"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary btn-full"
+              disabled={loading}
+            >
+              {loading ? 'Signing In...' : 'Sign In'}
+            </button>
+          </form>
+
+          <div className="auth-links">
+            <button
+              className="link-button"
+              onClick={handleResetPassword}
+              disabled={loading}
+            >
+              Forgot your password?
+            </button>
           </div>
 
-          <button
-            type="submit"
-            className="btn btn-primary btn-full"
-            disabled={loading}
-          >
-            {loading ? 'Signing In...' : 'Sign In'}
-          </button>
-        </form>
-
-        <div className="auth-links">
-          <button 
-            className="link-button"
-            onClick={handleResetPassword}
-            disabled={loading}
-          >
-            Forgot your password?
-          </button>
-        </div>
-
-        <div className="auth-footer">
-          <p>
-            Don't have an account? 
-            <Link to="/professional/signup" className="auth-link">
-              Sign Up
-            </Link>
-          </p>
-          <p>
-            Looking for counseling? 
-            <Link to="/" className="auth-link">
-              Browse Professionals
-            </Link>
-          </p>
+          <div className="auth-footer">
+            <p>
+              Don't have an account?
+              <Link to="/professional/signup" className="auth-link">
+                Sign Up
+              </Link>
+            </p>
+            <p>
+              Looking for counseling?
+              <Link to="/" className="auth-link">
+                Browse Professionals
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
     </>
   )
 }

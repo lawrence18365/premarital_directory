@@ -353,8 +353,8 @@ const ProfessionalDashboard = () => {
     )
   }
 
-  // Redirect users without profiles to create profile
-  if (user && !profile) {
+  // Redirect users without profiles or with incomplete drafts to create/resume profile
+  if (user && (!profile || profile.moderation_status === 'draft')) {
     return <Navigate to="/professional/onboarding" replace />
   }
 

@@ -67,6 +67,7 @@ const ClaimReviewDashboard = () => {
         const updatePayload = {
           ...claim.claim_data,
           is_claimed: true,
+          moderation_status: 'approved',
           updated_at: new Date().toISOString()
         }
         // Only set user_id if we found one (don't overwrite with null)
