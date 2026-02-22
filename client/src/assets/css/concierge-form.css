@@ -1,0 +1,160 @@
+.concierge-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(10, 25, 47, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 1rem;
+}
+
+.concierge-modal-content {
+  background: white;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2.5rem;
+  position: relative;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+.concierge-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.concierge-modal-close:hover {
+  color: var(--text-primary);
+}
+
+.concierge-modal-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.concierge-modal-header h3 {
+  font-size: 1.8rem;
+  color: var(--ds-accent);
+  margin-bottom: 0.5rem;
+  font-family: var(--font-heading);
+}
+
+.concierge-modal-header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.concierge-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.concierge-form label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.concierge-form input,
+.concierge-form select,
+.concierge-form textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-family: var(--font-body);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.concierge-form input:focus,
+.concierge-form select:focus,
+.concierge-form textarea:focus {
+  outline: none;
+  border-color: var(--color-primary-light);
+  box-shadow: 0 0 0 3px rgba(103, 178, 178, 0.2);
+}
+
+.concierge-submit {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  box-shadow: 0 4px 6px rgba(14, 94, 94, 0.2);
+}
+
+.concierge-error-message {
+  background-color: #fee2e2;
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.concierge-privacy-note {
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: 1.25rem;
+}
+
+.concierge-success-state {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.concierge-success-icon {
+  font-size: 4rem;
+  color: var(--green-600);
+  margin-bottom: 1.5rem;
+}
+
+.concierge-success-state h3 {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.concierge-success-state p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.concierge-success-subtext {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ds-accent);
+}
+
+@media (max-width: 640px) {
+  .concierge-modal-content {
+    padding: 2rem 1.5rem;
+  }
+  
+  .concierge-form .form-row {
+    grid-template-columns: 1fr !important;
+  }
+}

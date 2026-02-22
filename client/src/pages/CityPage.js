@@ -15,6 +15,7 @@ import FAQ from '../components/common/FAQ';
 import HowToChooseSection from '../components/city/HowToChooseSection';
 import MultiProviderInquiryForm from '../components/city/MultiProviderInquiryForm';
 import CityDataSummary from '../components/city/CityDataSummary';
+import ConciergeLeadForm from '../components/leads/ConciergeLeadForm';
 import {
   enrichPremaritalSignals,
   groupProfilesByRole,
@@ -55,6 +56,8 @@ const CityPage = ({ stateOverride, cityOverride }) => {
     neighborhood: 'all',
     availability: 'all'
   })
+
+  const [isConciergeOpen, setIsConciergeOpen] = useState(false)
 
   const stateConfig = STATE_CONFIG[state]
   const cityConfig = CITY_CONFIG[state]?.[city]
@@ -499,20 +502,29 @@ const CityPage = ({ stateOverride, cityOverride }) => {
               <div className="cta-buttons">
                 {showEmptyState ? (
                   <>
-                    <Link to={`/premarital-counseling/${state}`} className="btn btn-primary btn-large">
+                    <button onClick={() => setIsConciergeOpen(true)} className="btn btn-primary btn-large">
+                      Get Matched with a Counselor
+                    </button>
+                    <Link to={`/premarital-counseling/${state}`} className="btn btn-outline btn-large">
                       Browse {stateName} Counselors
-                    </Link>
-                    <Link to="/premarital-counseling" className="btn btn-outline btn-large">
-                      View All Cities
                     </Link>
                   </>
                 ) : (
-                  <button
-                    onClick={() => document.getElementById('providers-list').scrollIntoView({ behavior: 'smooth' })}
-                    className="btn btn-primary btn-large"
-                  >
-                    Browse {profiles.length} Counselors Below
-                  </button>
+                  <>
+                    <button
+                      onClick={() => setIsConciergeOpen(true)}
+                      className="btn btn-primary btn-large"
+                      style={{ boxShadow: '0 4px 6px rgba(14, 94, 94, 0.2)' }}
+                    >
+                      Get Matched with a Counselor
+                    </button>
+                    <button
+                      onClick={() => document.getElementById('providers-list').scrollIntoView({ behavior: 'smooth' })}
+                      className="btn btn-outline btn-large"
+                    >
+                      Browse {profiles.length} Counselors Below
+                    </button>
+                  </>
                 )}
               </div>
             </div>
@@ -1145,6 +1157,12 @@ const CityPage = ({ stateOverride, cityOverride }) => {
           </div>
         </div>
       </div>
+
+      <ConciergeLeadForm
+        isOpen={isConciergeOpen}
+        onClose={() => setIsConciergeOpen(false)}
+        defaultLocation={`${cityName}, ${stateConfig?.abbr || stateName}`}
+      />
     </div>
   )
 }

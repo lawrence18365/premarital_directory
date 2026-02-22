@@ -278,9 +278,6 @@ const ProfessionalDashboard = () => {
     return `/premarital-counseling/${stateSlug}/${citySlug}/${profile.slug || profile.id}`
   }
 
-  const getFullProfileUrl = () => {
-    return `https://www.weddingcounselors.com${getPublicProfileUrl()}`
-  }
 
   const getCityPageUrl = () => {
     if (!profile) return '#'

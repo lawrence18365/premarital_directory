@@ -34,7 +34,7 @@ const ClaimSuccessPage = () => {
 
         // 3. Claim Profile
         claimProfile(token);
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [authLoading, user, location.search, navigate]);
 
     const claimProfile = async (token) => {

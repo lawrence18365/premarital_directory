@@ -13,7 +13,7 @@ import LocationInsights from '../components/common/LocationInsights';
 import CityDataSummary from '../components/city/CityDataSummary';
 import { enrichPremaritalSignals, computeCityStats } from '../lib/profileAnalytics';
 
-import LeadContactForm from '../components/leads/LeadContactForm';
+import ConciergeLeadForm from '../components/leads/ConciergeLeadForm';
 import FAQ from '../components/common/FAQ';
 import { profileOperations } from '../lib/supabaseClient';
 import '../assets/css/state-page.css';
@@ -231,8 +231,7 @@ const StatePage = () => {
                     onClick={() => setShowGetMatchedForm(true)}
                     className="btn btn-primary btn-large"
                   >
-                    <i className="fa fa-heart mr-2"></i>
-                    Find a Premarital Counselor
+                    Get Matched with a Counselor
                   </button>
                   <Link
                     to="/professional/signup"
@@ -465,35 +464,11 @@ const StatePage = () => {
       </div>
 
       {/* Get Matched Modal */}
-      {showGetMatchedForm && (
-        <div className="modal-overlay" onClick={() => setShowGetMatchedForm(false)}>
-          <div className="modal-content get-matched-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Find a Premarital Counselor in {stateConfig.name}</h3>
-              <button
-                onClick={() => setShowGetMatchedForm(false)}
-                className="modal-close"
-                aria-label="Close"
-              >
-                <i className="fa fa-times"></i>
-              </button>
-            </div>
-            <div className="modal-body">
-              <p>Preparing for marriage? We'll connect you with qualified premarital counselors in {stateConfig.name}.</p>
-              <LeadContactForm
-                profileId={null} // Unassigned lead
-                professionalName={`Counselors in ${stateConfig.name}`}
-                stateName={stateConfig.name}
-                isStateMatching={true}
-                onSuccess={() => {
-                  setShowGetMatchedForm(false)
-                  // Could show a success message here
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <ConciergeLeadForm
+        isOpen={showGetMatchedForm}
+        onClose={() => setShowGetMatchedForm(false)}
+        defaultLocation={stateConfig.name}
+      />
     </>
   )
 }

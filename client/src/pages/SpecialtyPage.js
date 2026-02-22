@@ -6,7 +6,7 @@ import Breadcrumbs from '../components/common/Breadcrumbs'
 import ProfileCard from '../components/profiles/ProfileCard'
 import ProgramCard from '../components/programs/ProgramCard'
 import FAQ from '../components/common/FAQ'
-import LeadContactForm from '../components/leads/LeadContactForm'
+import ConciergeLeadForm from '../components/leads/ConciergeLeadForm'
 import { getSpecialtyBySlug, getAllSpecialties } from '../data/specialtyConfig'
 import { STATE_CONFIG } from '../data/locationConfig'
 import { buildCatholicProgramsQuery, isCatholicSpecialty, normalizeProgramRecord } from '../lib/programCatalog'
@@ -437,34 +437,10 @@ const SpecialtyPage = () => {
       </div>
 
       {/* Get Matched Modal */}
-      {showGetMatchedForm && (
-        <div className="modal-overlay" onClick={() => setShowGetMatchedForm(false)}>
-          <div className="modal-content get-matched-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Find a {specialty.name} Counselor</h3>
-              <button
-                onClick={() => setShowGetMatchedForm(false)}
-                className="modal-close"
-                aria-label="Close"
-              >
-                <i className="fa fa-times"></i>
-              </button>
-            </div>
-            <div className="modal-body">
-              <p>Looking for {specialty.name.toLowerCase()} marriage preparation? We'll connect you with qualified counselors.</p>
-              <LeadContactForm
-                profileId={null}
-                professionalName={isCatholic ? 'Catholic Pre-Cana Programs' : `${specialty.name} Counselors`}
-                isSpecialtyMatching={true}
-                specialtyType={specialty.name}
-                onSuccess={() => {
-                  setShowGetMatchedForm(false)
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <ConciergeLeadForm
+        isOpen={showGetMatchedForm}
+        onClose={() => setShowGetMatchedForm(false)}
+      />
     </>
   )
 }
