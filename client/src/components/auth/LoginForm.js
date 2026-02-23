@@ -32,7 +32,7 @@ const LoginForm = () => {
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Login is taking longer than expected. Please check your connection and try again.')), 30000)
       )
-      const { data, error } = await Promise.race([signIn(email, password), timeoutPromise])
+      const { error } = await Promise.race([signIn(email, password), timeoutPromise])
 
       if (error) {
         setError(error.message)
