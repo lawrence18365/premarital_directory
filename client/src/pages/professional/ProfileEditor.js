@@ -586,7 +586,12 @@ const ProfileEditor = () => {
 
               <div className="form-group">
                 <label htmlFor="website">Website</label>
-                <input type="url" id="website" name="website" value={formData.website} onChange={handleInputChange} placeholder="https://yourwebsite.com" />
+                <input type="text" id="website" name="website" value={formData.website} onChange={handleInputChange} onBlur={(e) => {
+                  const val = e.target.value.trim()
+                  if (val && !/^https?:\/\//i.test(val)) {
+                    setFormData(prev => ({ ...prev, website: 'https://' + val }))
+                  }
+                }} placeholder="https://yourwebsite.com" />
               </div>
             </div>
 

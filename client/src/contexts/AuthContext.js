@@ -40,6 +40,15 @@ export const AuthProvider = ({ children }) => {
     const handleSession = async (session) => {
       const requestId = ++activeSessionRequest
       if (!isMounted) return
+
+      // IMPORTANT: Set loading=true BEFORE setting user when there's a session.
+      // This prevents a race condition where the dashboard sees user!=null but
+      // profile==null (still loading) and incorrectly redirects to onboarding.
+      // React 18 batches these updates so the component sees both atomically.
+      if (session?.user) {
+        setLoading(true)
+      }
+
       setUser(session?.user || null)
       setProfileLoadFailed(false)
       if (session?.user) {

@@ -22,7 +22,7 @@ const withTimeout = (promise, label, timeoutMs = DASHBOARD_QUERY_TIMEOUT_MS) => 
 }
 
 const ProfessionalDashboard = () => {
-  const { user, profile, loading: authLoading, signOut } = useAuth()
+  const { user, profile, loading: authLoading, signOut, profileLoadFailed, retryProfileLoad } = useAuth()
   const [leads, setLeads] = useState([])
   const [stats, setStats] = useState({
     totalLeads: 0,
@@ -353,8 +353,20 @@ const ProfessionalDashboard = () => {
     )
   }
 
+  // If profile load failed, show retry instead of incorrectly redirecting to onboarding
+  if (user && profileLoadFailed && !profile) {
+    return (
+      <div className="loading-container">
+        <p>Unable to load your profile. Please try again.</p>
+        <button onClick={retryProfileLoad} className="btn btn-primary" style={{ marginTop: '1rem' }}>
+          Retry
+        </button>
+      </div>
+    )
+  }
+
   // Redirect users without profiles or with incomplete drafts to create/resume profile
-  if (user && (!profile || profile.moderation_status === 'draft')) {
+  if (user && !profileLoadFailed && (!profile || profile.moderation_status === 'draft')) {
     return <Navigate to="/professional/onboarding" replace />
   }
 
@@ -578,10 +590,16 @@ const ProfessionalDashboard = () => {
                 <div className="profdash-badge-form-row">
                   <input
                     id="badge-source-url"
-                    type="url"
+                    type="text"
                     placeholder="https://yoursite.com/page-with-badge"
                     value={badgeSourceUrl}
                     onChange={(e) => setBadgeSourceUrl(e.target.value)}
+                    onBlur={(e) => {
+                      const val = e.target.value.trim()
+                      if (val && !/^https?:\/\//i.test(val)) {
+                        setBadgeSourceUrl('https://' + val)
+                      }
+                    }}
                     required
                   />
                   <button type="submit" disabled={badgeSubmitting} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '160px', justifyContent: 'center' }}>
