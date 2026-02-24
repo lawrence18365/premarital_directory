@@ -20,6 +20,29 @@ const toBooleanFlag = (value) => {
   return Boolean(value)
 }
 
+// Step name mapping for analytics (module-level constant)
+const STEP_NAMES = {
+  1: 'name_profession',
+  2: 'photo_upload',
+  3: 'location',
+  4: 'session_types',
+  5: 'bio_approach',
+  6: 'contact_info',
+  7: 'faith_tradition',
+  8: 'certifications',
+  9: 'specialties',
+  10: 'treatment_approaches',
+  11: 'client_focus',
+  12: 'experience',
+  13: 'pronouns_languages',
+  14: 'credentials_education',
+  15: 'pricing',
+  16: 'insurance',
+  17: 'payment_methods',
+  18: 'faqs',
+  19: 'review'
+}
+
 /**
  * Custom hook for managing onboarding state, auto-save, and navigation
  * Handles loading profile data, updating fields, saving progress, and resuming
@@ -341,29 +364,6 @@ export const useOnboardingState = () => {
       setSaving(false)
     }
   }, [profileId, profileData, user])
-
-  // Step name mapping for analytics
-  const STEP_NAMES = {
-    1: 'name_profession',
-    2: 'photo_upload',
-    3: 'location',
-    4: 'session_types',
-    5: 'bio_approach',
-    6: 'contact_info',
-    7: 'faith_tradition',
-    8: 'certifications',
-    9: 'specialties',
-    10: 'treatment_approaches',
-    11: 'client_focus',
-    12: 'experience',
-    13: 'pronouns_languages',
-    14: 'credentials_education',
-    15: 'pricing',
-    16: 'insurance',
-    17: 'payment_methods',
-    18: 'faqs',
-    19: 'review'
-  }
 
   // Navigate to next question
   const goToNextQuestion = useCallback(async (fromStep, pendingUpdates = null) => {
