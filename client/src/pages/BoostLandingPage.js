@@ -3,8 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import LeadContactForm from '../components/leads/LeadContactForm'
 import { profileOperations } from '../lib/supabaseClient'
-import { formatLocation, formatPhoneNumber } from '../lib/utils'
-import { getAttribution, getSourceLabel } from '../lib/attribution'
+import { formatLocation } from '../lib/utils'
 import '../assets/css/boost-landing.css'
 
 const asArray = (value) => (Array.isArray(value) ? value : [])
