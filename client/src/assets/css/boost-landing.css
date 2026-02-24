@@ -1,0 +1,494 @@
+/* ============================================
+   BOOST LANDING PAGE — Conversion-optimized
+   No clutter, single counselor spotlight,
+   designed for paid traffic (Google Ads)
+   ============================================ */
+
+.boost-page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  color: #1a1a1a;
+  background: #fff;
+  min-height: 100vh;
+}
+
+/* Loading & Error States */
+.boost-loading,
+.boost-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 2rem;
+}
+
+.boost-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #0e5e5e;
+  border-radius: 50%;
+  animation: boost-spin 0.8s linear infinite;
+}
+
+@keyframes boost-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Header — minimal */
+.boost-header {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem 1.5rem;
+}
+
+.boost-header__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.boost-header__logo {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0e5e5e;
+  text-decoration: none;
+}
+
+.boost-header__tagline {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Hero Section */
+.boost-hero {
+  background: linear-gradient(135deg, #0e5e5e 0%, #0a4a4a 100%);
+  color: #fff;
+  padding: 2.5rem 1.5rem;
+}
+
+.boost-hero__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.boost-hero__profile {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 280px;
+}
+
+.boost-hero__photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.boost-hero__photo--placeholder {
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boost-hero__photo--placeholder svg {
+  width: 40%;
+  height: 40%;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.boost-hero__name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  line-height: 1.2;
+}
+
+.boost-hero__profession {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin: 0 0 0.25rem;
+}
+
+.boost-hero__location {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.boost-hero__activity {
+  font-size: 0.8rem;
+  margin: 0.5rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #a7f3d0;
+  font-weight: 500;
+}
+
+.boost-hero__cta {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.boost-hero__response-time {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin: 0.5rem 0 0;
+}
+
+/* Buttons */
+.boost-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  text-decoration: none;
+  font-size: 0.95rem;
+  padding: 0.65rem 1.5rem;
+}
+
+.boost-btn--primary {
+  background: #fff;
+  color: #0e5e5e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.boost-btn--primary:hover {
+  background: #f0fdf4;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.boost-btn--large {
+  padding: 0.85rem 2rem;
+  font-size: 1.05rem;
+}
+
+.boost-btn--outline {
+  background: transparent;
+  color: #0e5e5e;
+  border: 2px solid #0e5e5e;
+}
+
+.boost-btn--outline:hover {
+  background: #0e5e5e;
+  color: #fff;
+}
+
+/* Trust Signals Bar */
+.boost-trust-bar {
+  background: #f8fafb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.5rem;
+  overflow-x: auto;
+}
+
+.boost-trust-bar__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.boost-trust-signal {
+  font-size: 0.85rem;
+  color: #374151;
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.boost-trust-signal::before {
+  content: '✓';
+  color: #0e5e5e;
+  font-weight: 700;
+}
+
+/* Main Content Layout */
+.boost-content {
+  padding: 2rem 1.5rem;
+}
+
+.boost-content__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.boost-content__main {
+  min-width: 0;
+}
+
+.boost-content__sidebar {
+  position: sticky;
+  top: 1.5rem;
+}
+
+/* Sections */
+.boost-section {
+  margin-bottom: 2rem;
+}
+
+.boost-section h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.boost-section__text {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #374151;
+}
+
+/* Credentials */
+.boost-credentials {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.boost-credentials li {
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.boost-credentials li i {
+  color: #0e5e5e;
+  font-size: 0.85rem;
+}
+
+/* Tags */
+.boost-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.boost-tag {
+  background: #f0fdf4;
+  color: #0e5e5e;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid #d1fae5;
+}
+
+/* Session Details Grid */
+.boost-details__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.boost-detail {
+  background: #f9fafb;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.boost-detail__label {
+  display: block;
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.boost-detail__value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* Contact Form Card */
+.boost-form-card {
+  background: #fff;
+  border: 2px solid #0e5e5e;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(14, 94, 94, 0.1);
+}
+
+.boost-form-card__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0e5e5e;
+  margin: 0 0 0.5rem;
+}
+
+.boost-form-card__subtitle {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0 0 1rem;
+  line-height: 1.4;
+}
+
+/* Bottom CTA */
+.boost-bottom-cta {
+  background: #f8fafb;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  border-top: 1px solid #e5e7eb;
+}
+
+.boost-bottom-cta__inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.boost-bottom-cta h2 {
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem;
+  color: #1a1a1a;
+}
+
+.boost-bottom-cta p {
+  color: #6b7280;
+  margin: 0 0 1.25rem;
+}
+
+.boost-bottom-cta .boost-btn--primary {
+  background: #0e5e5e;
+  color: #fff;
+}
+
+.boost-bottom-cta .boost-btn--primary:hover {
+  background: #0a4a4a;
+}
+
+/* Footer — minimal */
+.boost-footer {
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  border-top: 1px solid #e5e7eb;
+}
+
+.boost-footer__inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.boost-footer__link {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-decoration: none;
+}
+
+.boost-footer__link:hover {
+  color: #0e5e5e;
+}
+
+.boost-footer__sep {
+  color: #d1d5db;
+  font-size: 0.75rem;
+}
+
+/* ============================================
+   RESPONSIVE — Mobile First
+   ============================================ */
+
+@media (max-width: 900px) {
+  .boost-content__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .boost-content__sidebar {
+    position: static;
+  }
+
+  .boost-hero__inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .boost-hero__profile {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .boost-hero__location {
+    justify-content: center;
+  }
+
+  .boost-hero__activity {
+    justify-content: center;
+  }
+
+  .boost-hero__name {
+    font-size: 1.5rem;
+  }
+
+  .boost-details__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .boost-hero {
+    padding: 1.5rem 1rem;
+  }
+
+  .boost-hero__photo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .boost-hero__name {
+    font-size: 1.3rem;
+  }
+
+  .boost-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .boost-form-card {
+    padding: 1.25rem;
+  }
+
+  .boost-trust-bar__inner {
+    justify-content: flex-start;
+    gap: 1rem;
+  }
+}

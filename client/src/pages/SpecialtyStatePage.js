@@ -187,13 +187,13 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
   // SEO Meta
   const metaTitle = specialty.stateMetaTitle
     ? specialty.stateMetaTitle(stateName)
-    : `${specialty.name} Premarital Counseling in ${stateName} | ${new Date().getFullYear()}`
+    : `${specialty.name} Premarital Counseling in ${stateName} (${new Date().getFullYear()})`
   const profileCountText = profiles.length > 0 ? profiles.length : 'qualified'
   const metaDescription = isCatholic
     ? `Find verified Catholic Pre-Cana programs in ${stateName}. Browse parish and diocesan marriage preparation options.`
     : specialty.stateMetaDescription
       ? specialty.stateMetaDescription(stateName, profiles.length)
-      : `Find ${specialty.name.toLowerCase()} premarital counselors in ${stateName}. Compare ${profileCountText} therapists and programs specializing in ${specialty.name} marriage preparation.`
+      : `Compare ${profileCountText} ${specialty.name.toLowerCase()} premarital counselors in ${stateName}. Browse profiles, see pricing & availability. Contact a therapist directly.`
   const shouldNoindex = isCatholic
     ? programs.length < MIN_VERIFIED_PROGRAMS_FOR_INDEX
     : profiles.length < 3

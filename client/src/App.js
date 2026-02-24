@@ -29,10 +29,14 @@ import './assets/css/enterprise-theme.css'
 // Analytics Components
 import { GoogleAnalytics, FacebookPixel, GoogleAds } from './components/analytics'
 import LaunchTracker from './components/analytics/LaunchTracker'
+import { captureAttribution } from './lib/attribution'
 
 // Critical pages - loaded immediately
 import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/NotFoundPage'
+
+// Capture UTM params and referrer on app load
+captureAttribution()
 
 // Smart home route - redirects logged-in professionals to dashboard
 const HomeOrDashboard = () => {
@@ -79,6 +83,7 @@ const Segment2Route = React.lazy(() => import('./components/routing/Segment2Rout
 const Segment3Route = React.lazy(() => import('./components/routing/Segment3Route'))
 const MarriageLicenseDiscountPage = React.lazy(() => import('./pages/MarriageLicenseDiscountPage'))
 const MarriageLicenseStatePage = React.lazy(() => import('./pages/MarriageLicenseStatePage'))
+const BoostLandingPage = React.lazy(() => import('./pages/BoostLandingPage'))
 
 // Blog pages
 const BlogIndex = React.lazy(() => import('./pages/blog/BlogIndex'))
@@ -139,7 +144,8 @@ function AppInner() {
   const isHome = ['/', '/therapists', '/coaches', '/clergy'].includes(location.pathname)
   const noChromePrefixes = [
     '/professional/onboarding',
-    '/embed'
+    '/embed',
+    '/go'
   ]
   const isNoChromeRoute = noChromePrefixes.some(
     (prefix) => location.pathname === prefix || location.pathname.startsWith(`${prefix}/`)
@@ -228,6 +234,7 @@ function AppInner() {
             <Route path="/guidelines" element={<GuidelinesPage />} />
             <Route path="/for-churches" element={<ForChurchesPage />} />
             <Route path="/embed/find" element={<EmbedFindPage />} />
+            <Route path="/go/:profileSlug" element={<BoostLandingPage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/editorial-standards" element={<EditorialStandardsPage />} />
             <Route path="/corrections" element={<CorrectionsPage />} />

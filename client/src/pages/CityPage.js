@@ -5,7 +5,8 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import Breadcrumbs, { generateBreadcrumbs } from '../components/common/Breadcrumbs';
 import SEOHelmet from '../components/analytics/SEOHelmet';
-import { trackLocationPageView } from '../components/analytics/GoogleAnalytics';
+import { trackLocationPageView, trackSearch } from '../components/analytics/GoogleAnalytics';
+import { trackFacebookSearch } from '../components/analytics/FacebookPixel';
 import { profileOperations } from '../lib/supabaseClient';
 import { STATE_CONFIG, CITY_CONFIG, isAnchorCity } from '../data/locationConfig';
 import { STATE_DISCOUNT_CONFIG } from '../data/specialtyConfig';
@@ -249,7 +250,16 @@ const CityPage = ({ stateOverride, cityOverride }) => {
 
       if (getTierPriority(a) !== getTierPriority(b)) return getTierPriority(a) - getTierPriority(b)
       if (Boolean(b.badge_verified) !== Boolean(a.badge_verified)) return Number(b.badge_verified) - Number(a.badge_verified)
-      return new Date(b.created_at) - new Date(a.created_at)
+
+      // Composite quality score: completeness (0-100) + engagement + recency
+      const qualityScore = (p) => {
+        const completeness = p.profile_completeness_score || 0
+        const engagement = Math.min((p.contact_reveals_count || 0) * 5, 30) // cap at 30pts
+        const daysSinceCreated = (Date.now() - new Date(p.created_at).getTime()) / 86400000
+        const recency = Math.max(0, 20 - daysSinceCreated * 0.5) // 20pts decaying over 40 days
+        return completeness + engagement + recency
+      }
+      return qualityScore(b) - qualityScore(a)
     })
 
     return sorted
@@ -274,6 +284,20 @@ const CityPage = ({ stateOverride, cityOverride }) => {
       availability: 'all'
     })
   }
+
+  // Track filter usage (debounced to avoid spamming on rapid changes)
+  useEffect(() => {
+    const activeFilters = Object.entries(directoryFilters)
+      .filter(([, v]) => v !== 'all')
+      .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
+    if (Object.keys(activeFilters).length > 0) {
+      const timer = setTimeout(() => {
+        trackSearch(`${cityName}, ${stateName}`, activeFilters)
+        trackFacebookSearch(`${cityName} ${Object.values(activeFilters).join(' ')}`)
+      }, 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [directoryFilters, cityName, stateName])
 
   useEffect(() => {
     loadCityProfiles()
@@ -457,8 +481,8 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   return (
     <div className="city-page">
       <SEOHelmet
-        title={`Premarital Counseling ${cityName}, ${stateConfig?.abbr || stateName} — ${profiles.length > 0 ? profiles.length : 'Top'} Counselors`}
-        description={`Find ${profiles.length || 'top'} premarital counselors in ${cityName}, ${stateName}. Compare ${inventoryDescriptor}, filter by program method and availability, and contact directly. From $${costStartingAt}/session.`}
+        title={`${profiles.length > 0 ? profiles.length : 'Top'} Premarital Counselors in ${cityName}, ${stateConfig?.abbr || stateName} (${new Date().getFullYear()})`}
+        description={`Compare ${profiles.length || 'top'} premarital counselors in ${cityName}, ${stateName} — ${inventoryDescriptor}. Prices from $${costStartingAt}/session. Filter by method, faith & availability. Contact directly today.`}
         keywords={seoKeywords}
         structuredData={structuredData}
         faqs={cityFAQs}
@@ -473,7 +497,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
           <div className="state-header-content">
             <h1>Premarital Counseling in {cityName}, {stateName}</h1>
             <p className="lead city-hero-subtitle">
-              Compare {profiles.length > 0 ? profiles.length : 'qualified'} {formatTypeList(providerTypeLabels)} in {cityName}. Browse profiles, see their focus, and reach out directly.
+              Compare {profiles.length > 0 ? profiles.length : 'qualified'} {formatTypeList(providerTypeLabels)} in {cityName}. Browse profiles, filter by method and price, and contact a counselor today.
             </p>
 
             <div className="city-hero-highlights">
@@ -503,7 +527,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                 {showEmptyState ? (
                   <>
                     <button onClick={() => setIsConciergeOpen(true)} className="btn btn-primary btn-large">
-                      Get Matched with a Counselor
+                      Get Matched Free
                     </button>
                     <Link to={`/premarital-counseling/${state}`} className="btn btn-outline btn-large">
                       Browse {stateName} Counselors
@@ -516,7 +540,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                       className="btn btn-primary btn-large"
                       style={{ boxShadow: '0 4px 6px rgba(14, 94, 94, 0.2)' }}
                     >
-                      Get Matched with a Counselor
+                      Get Matched Free
                     </button>
                     <button
                       onClick={() => document.getElementById('providers-list').scrollIntoView({ behavior: 'smooth' })}
@@ -526,6 +550,11 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                     </button>
                   </>
                 )}
+              {profiles.length > 0 && (
+                <p className="city-hero-microcopy" style={{ marginTop: 'var(--space-4)', fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)' }}>
+                  Most counselors respond within 1-2 business days
+                </p>
+              )}
               </div>
             </div>
           </div>

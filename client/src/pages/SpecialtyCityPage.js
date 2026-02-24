@@ -214,10 +214,11 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
   ]
 
   // SEO Meta
-  const metaTitle = `${specialty.name} Premarital Counseling in ${cityName}, ${stateConfig?.abbr || stateName} | Top Counselors`
+  const specialtyCityCount = profiles.length > 0 ? profiles.length : 'top'
+  const metaTitle = `${specialty.name} Premarital Counseling in ${cityName}, ${stateConfig?.abbr || stateName} (${new Date().getFullYear()})`
   const metaDescription = isCatholic
-    ? `Find verified Catholic Pre-Cana programs in ${cityName}, ${stateConfig?.abbr || stateName}.`
-    : `Find ${specialty.name.toLowerCase()} premarital counselors in ${cityName}, ${stateConfig?.abbr || stateName}. Compare top rated therapists and programs for ${specialty.name} marriage preparation.`
+    ? `Find verified Catholic Pre-Cana programs in ${cityName}, ${stateConfig?.abbr || stateName}. Compare parish and diocesan options for marriage preparation.`
+    : `Compare ${specialtyCityCount} ${specialty.name.toLowerCase()} premarital counselors in ${cityName}, ${stateConfig?.abbr || stateName}. Browse profiles, see pricing, and contact a therapist directly.`
   const isAnchorCity = cityConfig?.is_anchor === true
   const shouldNoindex = isCatholic
     ? programs.length < MIN_VERIFIED_PROGRAMS_FOR_INDEX

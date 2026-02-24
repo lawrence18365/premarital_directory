@@ -5,10 +5,12 @@ import { formatLocation, formatPhoneNumber } from '../lib/utils'
 import LeadContactForm from '../components/leads/LeadContactForm'
 import Breadcrumbs, { generateBreadcrumbs } from '../components/common/Breadcrumbs'
 import SEOHelmet, { generateProfessionalStructuredData } from '../components/analytics/SEOHelmet'
-import { trackProfileView } from '../components/analytics/GoogleAnalytics'
-import { trackFacebookProfileView } from '../components/analytics/FacebookPixel'
+import { trackProfileView, trackContactSubmission } from '../components/analytics/GoogleAnalytics'
+import { trackFacebookProfileView, trackFacebookLead } from '../components/analytics/FacebookPixel'
+import { trackProfessionalContact } from '../components/analytics/GoogleAds'
 import { STATE_CONFIG } from '../data/locationConfig'
 import { SPECIALTY_CONFIG } from '../data/specialtyConfig'
+import { getAttribution } from '../lib/attribution'
 
 import { profileOperations, clickTrackingOperations } from '../lib/supabaseClient'
 import UnclaimedProfileBanner from '../components/profiles/UnclaimedProfileBanner'
@@ -157,13 +159,19 @@ const buildProfileMetaTitle = (profile, { hasOnlineOption, stateName, specialtie
   const methodTag = gottman ? 'Gottman' : eft ? 'EFT' : prepEnrich ? 'PREPARE/ENRICH' : null
 
   // Use em-dash for visual distinction in SERPs
+  // Lead with name, add location + method signals, include action word
   let title = city
-    ? `${name} — Premarital Counseling in ${city}, ${stAbbr}`
+    ? `${name} — Premarital Counseling ${city}, ${stAbbr}`
     : `${name} — Premarital Counselor`
 
   // Inject method if it fits and adds signal
-  if (methodTag && city && title.length + methodTag.length + 3 <= 62) {
-    title = `${name} (${methodTag}) — Premarital Counseling in ${city}, ${stAbbr}`
+  if (methodTag && city && `${name} (${methodTag}) — Premarital Counseling ${city}, ${stAbbr}`.length <= 62) {
+    title = `${name} (${methodTag}) — Premarital Counseling ${city}, ${stAbbr}`
+  }
+
+  // If title is short enough, add "Reviews & Info" for CTR on branded queries
+  if (title.length <= 48) {
+    title = `${title} | Reviews & Info`
   }
 
   return title
@@ -184,11 +192,11 @@ const buildProfileMetaDescription = (profile, {
   const city = profile?.city || ''
   const stAbbr = profile?.state_province || ''
 
-  // Lead with profession + location
+  // Lead with actionable profession + location
   if (city && stAbbr) {
-    parts.push(`${profession} in ${city}, ${stAbbr}.`)
+    parts.push(`${profession} in ${city}, ${stAbbr} specializing in premarital counseling.`)
   } else {
-    parts.push(`${profession}.`)
+    parts.push(`${profession} specializing in premarital counseling.`)
   }
 
   // Add top method if available
@@ -196,7 +204,7 @@ const buildProfileMetaDescription = (profile, {
     /gottman|eft|prepare|enrich|foccus|symbis/i.test(String(m))
   )
   if (topMethod) {
-    parts.push(`${topMethod}.`)
+    parts.push(`${topMethod}-trained.`)
   }
 
   // Add pricing signal
@@ -221,8 +229,8 @@ const buildProfileMetaDescription = (profile, {
     parts.push('Online sessions available.')
   }
 
-  // CTA
-  parts.push('Book a session today.')
+  // CTA — action-oriented for higher CTR
+  parts.push('View profile and contact directly.')
 
   // Join and trim to ~160 chars
   let description = parts.join(' ')
@@ -289,11 +297,16 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
         trackProfileView(profile.full_name, profile.city, profile.state_province)
         trackFacebookProfileView(profile.full_name)
         // Track view in Supabase for professional dashboards
+        const attr = getAttribution()
         clickTrackingOperations.logProfileClick({
           profileId: profile.id,
           city: profile.city || 'unknown',
           state: profile.state_province || 'unknown',
-          source: 'profile_page'
+          source: 'profile_page',
+          partner_ref: attr.ref || null,
+          utm_source: attr.utm_source || null,
+          utm_medium: attr.utm_medium || null,
+          utm_campaign: attr.utm_campaign || null
         }).catch(() => { }) // Silent fail - don't break page for tracking
       }
     }
@@ -347,6 +360,11 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
         page_url: window.location.href,
         referrer: document.referrer || null
       })
+
+      // Fire conversion tracking for contact reveals
+      trackContactSubmission(profile.full_name, type)
+      trackFacebookLead(profile.full_name)
+      trackProfessionalContact(profile.full_name)
 
       if (type === 'phone') setPhoneRevealed(true)
       if (type === 'email') setEmailRevealed(true)

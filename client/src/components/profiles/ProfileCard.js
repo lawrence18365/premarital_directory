@@ -120,6 +120,7 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
   const hasFitScore = Number.isFinite(fitScore) && fitScore > 0
   const professionLabel = getProfessionLabel(profile)
   const isClaimed = Boolean(profile?.is_claimed)
+  const contactReveals = Number(profile?.contact_reveals_count) || 0
   const rateLabel = getRateLabel(profile)
   const insuranceLabel = getInsuranceLabel(profile)
   const availabilityLabel = getAvailabilityLabel(profile)
@@ -202,6 +203,12 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
               Premarital fit {fitScore}
             </div>
           )}
+          {contactReveals >= 3 && (
+            <div className="profile-activity-indicator" style={{ fontSize: '0.75rem', color: '#0e5e5e', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <i className="fa fa-bolt" style={{ fontSize: '0.625rem' }}></i>
+              {contactReveals >= 10 ? 'Frequently contacted' : 'Recently contacted'}
+            </div>
+          )}
         </div>
       </div>
       
@@ -252,11 +259,11 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
       
       <div className="profile-actions">
         <Link to={
-          stateSlug && citySlug 
-            ? `/premarital-counseling/${stateSlug}/${citySlug}/${profileSlug}` 
+          stateSlug && citySlug
+            ? `/premarital-counseling/${stateSlug}/${citySlug}/${profileSlug}`
             : `/profile/${profileSlug}`
         } className="btn btn-primary">
-          View & Contact
+          View Profile & Contact
         </Link>
       </div>
     </div>

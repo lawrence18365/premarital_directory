@@ -188,8 +188,8 @@ const StatePage = () => {
   return (
     <>
       <SEOHelmet
-        title={`Premarital Counseling ${stateConfig.name} — ${stateData?.totalProfiles || 'Top'} Therapists`}
-        description={`Find ${stateData?.totalProfiles || 'top'} marriage & premarital counselors in ${stateConfig.name}. Compare licensed therapists (LMFT, LPC), Christian counselors & couples therapy across ${activeCities.length || stateConfig.major_cities.length} cities. Contact directly.`}
+        title={`${stateData?.totalProfiles || 'Top'} Premarital Counselors in ${stateConfig.name} (${new Date().getFullYear()})`}
+        description={`Compare ${stateData?.totalProfiles || 'top'} premarital counselors across ${activeCities.length || stateConfig.major_cities.length} cities in ${stateConfig.name}. Licensed therapists, Christian counselors & couples therapy. Filter by method, price & availability.`}
         url={`/premarital-counseling/${state}`}
         keywords={`marriage counseling ${stateConfig.name}, premarital counseling ${stateConfig.name}, marriage therapist ${stateConfig.name}, premarital counseling near me ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, christian marriage counseling ${stateConfig.name}`}
         breadcrumbs={breadcrumbItems}
