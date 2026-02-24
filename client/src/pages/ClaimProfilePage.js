@@ -5,6 +5,7 @@ import '../assets/css/claim-wizard.css'
 
 import { profileOperations } from '../lib/supabaseClient'
 import { sendClaimSubmittedEmail } from '../lib/emailNotifications'
+import { normalizeAndValidateUrl } from '../lib/utils'
 
 const ClaimProfilePage = () => {
   const { slugOrId } = useParams() // Optional - for claiming specific profile
@@ -97,6 +98,14 @@ const ClaimProfilePage = () => {
       if (!emailRegex.test(formData.email)) {
         setError('Please enter a valid email address')
         return false
+      }
+      // Validate website URL if provided
+      if (formData.website?.trim()) {
+        const { error: urlError } = normalizeAndValidateUrl(formData.website)
+        if (urlError) {
+          setError(urlError)
+          return false
+        }
       }
     }
 
@@ -445,12 +454,20 @@ const ClaimProfilePage = () => {
                 <div className="form-group">
                   <label htmlFor="website">Website</label>
                   <input
-                    type="url"
+                    type="text"
                     id="website"
                     className="form-control"
                     placeholder="https://yourwebsite.com"
                     value={formData.website}
                     onChange={(e) => handleInputChange('website', e.target.value)}
+                    onBlur={(e) => {
+                      const raw = e.target.value
+                      if (!raw || !raw.trim()) return
+                      const { url, error: urlError } = normalizeAndValidateUrl(raw)
+                      if (!urlError && url) {
+                        handleInputChange('website', url)
+                      }
+                    }}
                   />
                 </div>
               </div>

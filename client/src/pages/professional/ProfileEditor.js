@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { profileOperations } from '../../lib/supabaseClient'
+import { normalizeAndValidateUrl } from '../../lib/utils'
 import { Link } from 'react-router-dom'
 
 const toBooleanFlag = (value) => {
@@ -342,6 +343,13 @@ const ProfileEditor = () => {
       newErrors.phone = 'At least a phone number or website is required so couples can reach you'
     }
 
+    if (formData.website?.trim()) {
+      const { error: urlError } = normalizeAndValidateUrl(formData.website)
+      if (urlError) {
+        newErrors.website = urlError
+      }
+    }
+
     if (!profile?.photo_url && !photoFile) {
       newErrors.photo = 'A professional headshot is required — profiles with photos get significantly more inquiries'
     }
@@ -587,11 +595,20 @@ const ProfileEditor = () => {
               <div className="form-group">
                 <label htmlFor="website">Website</label>
                 <input type="text" id="website" name="website" value={formData.website} onChange={handleInputChange} onBlur={(e) => {
-                  const val = e.target.value.trim()
-                  if (val && !/^https?:\/\//i.test(val)) {
-                    setFormData(prev => ({ ...prev, website: 'https://' + val }))
+                  const raw = e.target.value
+                  if (!raw || !raw.trim()) {
+                    setErrors(prev => ({ ...prev, website: null }))
+                    return
                   }
-                }} placeholder="https://yourwebsite.com" />
+                  const { url, error: urlError } = normalizeAndValidateUrl(raw)
+                  if (urlError) {
+                    setErrors(prev => ({ ...prev, website: urlError }))
+                  } else {
+                    setErrors(prev => ({ ...prev, website: null }))
+                    setFormData(prev => ({ ...prev, website: url }))
+                  }
+                }} placeholder="https://yourwebsite.com" className={errors.website ? 'error' : ''} />
+                {errors.website && <div className="field-error">{errors.website}</div>}
               </div>
             </div>
 

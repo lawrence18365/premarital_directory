@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import QuestionContainer from '../QuestionContainer'
+import { normalizeAndValidateUrl } from '../../../../../lib/utils'
 
 const Q6_ContactInfo = ({
   currentStep,
@@ -11,10 +12,39 @@ const Q6_ContactInfo = ({
   goToNextQuestion,
   goToPreviousQuestion
 }) => {
+  const [websiteError, setWebsiteError] = useState('')
+
+  const handleWebsiteBlur = () => {
+    const raw = profileData.website
+    if (!raw || !raw.trim()) {
+      setWebsiteError('')
+      return
+    }
+    const { url, error: urlError } = normalizeAndValidateUrl(raw)
+    if (urlError) {
+      setWebsiteError(urlError)
+    } else {
+      setWebsiteError('')
+      updateField('website', url)
+    }
+  }
+
   const handleContinue = async () => {
     // Validation - require at least phone or website
     if (!profileData.phone?.trim() && !profileData.website?.trim()) {
       setError('Please provide at least a phone number or website so couples can reach you')
+      return
+    }
+
+    // Validate website URL if provided
+    if (profileData.website?.trim()) {
+      const { url, error: urlError } = normalizeAndValidateUrl(profileData.website)
+      if (urlError) {
+        setWebsiteError(urlError)
+        return
+      }
+      // Save normalized URL before continuing
+      await goToNextQuestion(currentStep, { website: url })
       return
     }
 
@@ -58,12 +88,18 @@ const Q6_ContactInfo = ({
           Website
         </label>
         <input
-          type="url"
+          type="text"
           className="form-input"
           placeholder="https://www.yourpractice.com"
           value={profileData.website || ''}
-          onChange={(e) => updateField('website', e.target.value)}
+          onChange={(e) => { updateField('website', e.target.value); setWebsiteError('') }}
+          onBlur={handleWebsiteBlur}
         />
+        {websiteError && (
+          <div className="field-error" style={{ color: 'var(--error, #dc2626)', fontSize: '0.85rem', marginTop: '0.25rem' }}>
+            {websiteError}
+          </div>
+        )}
       </div>
 
       <div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--ds-accent-soft)', borderRadius: '8px', border: '1px solid var(--ds-border)' }}>

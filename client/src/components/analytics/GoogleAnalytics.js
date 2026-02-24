@@ -114,4 +114,22 @@ export const trackLocationPageView = (state, city = null) => {
   })
 }
 
+// Track onboarding step completion
+export const trackOnboardingStep = (stepNumber, stepName) => {
+  trackEvent('onboarding_step_completed', {
+    step_number: stepNumber,
+    step_name: stepName,
+    event_category: 'onboarding'
+  })
+}
+
+// Track onboarding completion (profile published)
+export const trackOnboardingComplete = (profileId, signupSource) => {
+  trackEvent('onboarding_completed', {
+    profile_id: profileId,
+    signup_source: signupSource || 'organic',
+    event_category: 'conversion'
+  })
+}
+
 export default GoogleAnalytics

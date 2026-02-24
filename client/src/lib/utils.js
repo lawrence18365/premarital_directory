@@ -82,16 +82,40 @@ export const isValidEmail = (email) => {
   return regex.test(email)
 }
 
-// Format website URL
-export const formatWebsiteUrl = (url) => {
-  if (!url) return ''
-  
-  // Add https:// if no protocol specified
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    return `https://${url}`
+// Normalize and validate a website URL
+// Returns { url: string|null, error: string|null }
+export const normalizeAndValidateUrl = (raw) => {
+  if (!raw || !raw.trim()) return { url: '', error: null }
+
+  // Strip all whitespace (including interior spaces like "therapist .com")
+  let cleaned = raw.replace(/\s+/g, '')
+
+  // Prepend https:// if no protocol
+  if (!/^https?:\/\//i.test(cleaned)) {
+    cleaned = 'https://' + cleaned
   }
-  
-  return url
+
+  // Strip trailing slashes
+  cleaned = cleaned.replace(/\/+$/, '')
+
+  try {
+    const parsed = new URL(cleaned)
+
+    // Lowercase the hostname
+    parsed.hostname = parsed.hostname.toLowerCase()
+
+    // Must have a dot in the hostname (e.g. "therapist.com", not just "therapist")
+    if (!parsed.hostname.includes('.')) {
+      return { url: null, error: "That doesn't look like a valid website URL. Example: https://yourpractice.com" }
+    }
+
+    // Rebuild without trailing slash
+    let normalized = parsed.origin + parsed.pathname.replace(/\/+$/, '') + parsed.search + parsed.hash
+
+    return { url: normalized, error: null }
+  } catch {
+    return { url: null, error: "That doesn't look like a valid website URL. Example: https://yourpractice.com" }
+  }
 }
 
 // Get display URL without protocol

@@ -3,6 +3,7 @@ import QuestionContainer from '../QuestionContainer'
 import { supabase } from '../../../../../lib/supabaseClient'
 import { getStateNameFromAbbr } from '../../../../../lib/utils'
 import { sendProfileCreatedEmail, sendAdminNewSignupAlert } from '../../../../../lib/emailNotifications'
+import { trackOnboardingComplete } from '../../../../../components/analytics/GoogleAnalytics'
 import { CLERGY_PROFESSIONS } from '../../constants'
 
 const Q19_Review = ({
@@ -99,6 +100,9 @@ const Q19_Review = ({
       } catch (adminEmailError) {
         console.error('Admin notification failed:', adminEmailError)
       }
+
+      // Fire analytics completion event
+      trackOnboardingComplete(profileId, utmParams?.signup_source)
 
       // Refresh profile context
       await refreshProfile()

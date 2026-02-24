@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { supabase } from '../../../../lib/supabaseClient'
+import { normalizeAndValidateUrl } from '../../../../lib/utils'
+import { trackOnboardingStep } from '../../../../components/analytics/GoogleAnalytics'
 
 const toBooleanFlag = (value) => {
   if (typeof value === 'boolean') return value
@@ -267,6 +269,13 @@ export const useOnboardingState = () => {
         ...pendingUpdates
       }
 
+      // Normalize website URL before saving (last line of defense)
+      let normalizedWebsite = mergedData.website?.trim() || null
+      if (normalizedWebsite) {
+        const { url } = normalizeAndValidateUrl(normalizedWebsite)
+        normalizedWebsite = url || normalizedWebsite
+      }
+
       const updateData = {
         full_name: mergedData.full_name.trim() || null,
         profession: mergedData.profession || null,
@@ -280,7 +289,7 @@ export const useOnboardingState = () => {
         bio_ideal_client: mergedData.bio_ideal_client?.trim() || null,
         bio_outcomes: mergedData.bio_outcomes?.trim() || null,
         phone: mergedData.phone.trim() || null,
-        website: mergedData.website.trim() || null,
+        website: normalizedWebsite,
         faith_tradition: mergedData.faith_tradition || null,
         certifications: mergedData.certifications.length > 0 ? mergedData.certifications : null,
         specialties: mergedData.specialties.length > 0 ? mergedData.specialties : null,
@@ -333,6 +342,29 @@ export const useOnboardingState = () => {
     }
   }, [profileId, profileData, user])
 
+  // Step name mapping for analytics
+  const STEP_NAMES = {
+    1: 'name_profession',
+    2: 'photo_upload',
+    3: 'location',
+    4: 'session_types',
+    5: 'bio_approach',
+    6: 'contact_info',
+    7: 'faith_tradition',
+    8: 'certifications',
+    9: 'specialties',
+    10: 'treatment_approaches',
+    11: 'client_focus',
+    12: 'experience',
+    13: 'pronouns_languages',
+    14: 'credentials_education',
+    15: 'pricing',
+    16: 'insurance',
+    17: 'payment_methods',
+    18: 'faqs',
+    19: 'review'
+  }
+
   // Navigate to next question
   const goToNextQuestion = useCallback(async (fromStep, pendingUpdates = null) => {
     if (pendingUpdates) {
@@ -342,6 +374,9 @@ export const useOnboardingState = () => {
     // Save progress before moving to next step
     const result = await saveProgress(fromStep + 1, pendingUpdates || {})
     if (!result.success) return false
+
+    // Fire analytics event for step completion
+    trackOnboardingStep(fromStep, STEP_NAMES[fromStep] || `step_${fromStep}`)
 
     setCurrentStep(fromStep + 1)
 
