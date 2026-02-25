@@ -249,15 +249,20 @@ const CityPage = ({ stateOverride, cityOverride }) => {
       }
 
       if (getTierPriority(a) !== getTierPriority(b)) return getTierPriority(a) - getTierPriority(b)
-      if (Boolean(b.badge_verified) !== Boolean(a.badge_verified)) return Number(b.badge_verified) - Number(a.badge_verified)
+
+      // Verified providers get a significant boost within their tier
+      const aVerified = Boolean(a.badge_verified)
+      const bVerified = Boolean(b.badge_verified)
+      if (aVerified !== bVerified) return Number(bVerified) - Number(aVerified)
 
       // Composite quality score: completeness (0-100) + engagement + recency
       const qualityScore = (p) => {
         const completeness = p.profile_completeness_score || 0
+        const verified = p.badge_verified ? 40 : 0 // verified profiles get 40pt bonus
         const engagement = Math.min((p.contact_reveals_count || 0) * 5, 30) // cap at 30pts
         const daysSinceCreated = (Date.now() - new Date(p.created_at).getTime()) / 86400000
         const recency = Math.max(0, 20 - daysSinceCreated * 0.5) // 20pts decaying over 40 days
-        return completeness + engagement + recency
+        return completeness + verified + engagement + recency
       }
       return qualityScore(b) - qualityScore(a)
     })

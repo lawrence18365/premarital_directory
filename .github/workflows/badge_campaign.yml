@@ -1,0 +1,26 @@
+name: Send Badge/Backlink Campaign
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  send-campaign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send badge campaign emails
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/send-badge-campaign" \
+            -H "Content-Type: application/json" \
+            -H "x-internal-api-key: ${{ secrets.INTERNAL_API_KEY }}" \
+            -d '{}')
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Campaign failed with status $HTTP_CODE"
+            exit 1
+          fi
