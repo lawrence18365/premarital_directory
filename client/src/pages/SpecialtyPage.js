@@ -11,6 +11,7 @@ import { getSpecialtyBySlug, getAllSpecialties } from '../data/specialtyConfig'
 import { STATE_CONFIG } from '../data/locationConfig'
 import { buildCatholicProgramsQuery, isCatholicSpecialty, normalizeProgramRecord } from '../lib/programCatalog'
 import { supabase } from '../lib/supabaseClient'
+import CoupleEmailCapture from '../components/leads/CoupleEmailCapture'
 import '../assets/css/specialty-page.css'
 
 const SpecialtyPage = () => {
@@ -410,6 +411,10 @@ const SpecialtyPage = () => {
             </div>
           </div>
         )}
+
+        <div className="specialty-container" style={{ marginTop: 'var(--space-8)' }}>
+          <CoupleEmailCapture sourcePage={`specialty/${specialtySlug}`} />
+        </div>
 
         {/* Marriage License Discount Cross-Link */}
         <div className="specialty-container" style={{ paddingTop: 'var(--space-8)' }}>

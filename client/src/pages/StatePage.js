@@ -16,6 +16,7 @@ import { enrichPremaritalSignals, computeCityStats } from '../lib/profileAnalyti
 import ConciergeLeadForm from '../components/leads/ConciergeLeadForm';
 import FAQ from '../components/common/FAQ';
 import { profileOperations } from '../lib/supabaseClient';
+import CoupleEmailCapture from '../components/leads/CoupleEmailCapture';
 import '../assets/css/state-page.css';
 
 const StatePage = () => {
@@ -418,6 +419,10 @@ const StatePage = () => {
             showSearch={false}
             showAside={false}
           />
+        </div>
+
+        <div className="state-container" style={{ marginBottom: 'var(--space-8)' }}>
+          <CoupleEmailCapture sourcePage={`state/${state}`} defaultState={stateConfig?.abbr || ''} />
         </div>
 
         {/* Specialty Cross-Links */}

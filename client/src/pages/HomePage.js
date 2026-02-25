@@ -8,6 +8,7 @@ import { profileOperations, supabase } from '../lib/supabaseClient'
 import FAQ, { premaritalCounselingFAQs } from '../components/common/FAQ'
 import heroBg from '../assets/images/oil_painting_premarital_couple_in_distress.webp'
 import { STATE_CONFIG } from '../data/locationConfig'
+import CoupleEmailCapture from '../components/leads/CoupleEmailCapture'
 
 const FALLBACK_POPULAR_CITIES = [
   // Top metro areas by wedding volume
@@ -201,6 +202,8 @@ const HomePage = () => {
             </div>
           </div>
         </section>
+
+        <CoupleEmailCapture sourcePage="homepage" />
 
         {/* Popular Cities - Critical for SEO internal linking */}
         <section className="popular-cities" aria-labelledby="popular-cities-heading">

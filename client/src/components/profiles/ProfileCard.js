@@ -171,6 +171,11 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
             <i className="fa fa-shield-alt"></i> Verified Provider
           </div>
         )}
+        {profile.responds_quickly && (
+          <div className="profile-badge responds-quickly">
+            <i className="fa fa-bolt"></i> Responds Quickly
+          </div>
+        )}
       </div>
       
       <div className="profile-header">

@@ -47,16 +47,18 @@ const Footer = () => {
           </div>
 
           <div className="footer-section">
-            <h4>Find Counselors</h4>
+            <h4>By Specialty</h4>
             <ul>
-              <li><Link to="/premarital-counseling">Browse by State</Link></li>
               <li><Link to="/premarital-counseling/christian">Christian Counseling</Link></li>
               <li><Link to="/premarital-counseling/catholic">Catholic Pre-Cana</Link></li>
-              <li><Link to="/premarital-counseling/lgbtq">LGBTQ+ Affirming</Link></li>
-              <li><Link to="/premarital-counseling/online">Online Counseling</Link></li>
               <li><Link to="/premarital-counseling/gottman">Gottman Method</Link></li>
-              <li><Link to="/premarital-counseling/marriage-license-discount">Marriage License Discounts</Link></li>
-              <li><Link to="/locations">All Locations Directory</Link></li>
+              <li><Link to="/premarital-counseling/online">Online Counseling</Link></li>
+              <li><Link to="/premarital-counseling/lgbtq">LGBTQ+ Affirming</Link></li>
+              <li><Link to="/premarital-counseling/prepare-enrich">PREPARE/ENRICH</Link></li>
+              <li><Link to="/premarital-counseling/affordable">Affordable Options</Link></li>
+              <li><Link to="/premarital-counseling/interfaith">Interfaith Couples</Link></li>
+              <li><Link to="/premarital-counseling/military">Military Couples</Link></li>
+              <li><Link to="/premarital-counseling/second-marriages">Second Marriages</Link></li>
             </ul>
           </div>
 
@@ -68,18 +70,31 @@ const Footer = () => {
               <li><Link to="/premarital-counseling/florida">Florida</Link></li>
               <li><Link to="/premarital-counseling/new-york">New York</Link></li>
               <li><Link to="/premarital-counseling/georgia">Georgia</Link></li>
+              <li><Link to="/premarital-counseling/illinois">Illinois</Link></li>
+              <li><Link to="/premarital-counseling/ohio">Ohio</Link></li>
               <li><Link to="/premarital-counseling/north-carolina">North Carolina</Link></li>
+              <li><Link to="/premarital-counseling/tennessee">Tennessee</Link></li>
+              <li><Link to="/premarital-counseling/pennsylvania">Pennsylvania</Link></li>
+              <li><Link to="/premarital-counseling">All 50 States</Link></li>
             </ul>
           </div>
 
           <div className="footer-section">
-            <h4>For Professionals</h4>
+            <h4>For Couples</h4>
+            <ul>
+              <li><Link to="/how-it-works">How It Works</Link></li>
+              <li><Link to="/blog">Guides & Articles</Link></li>
+              <li><Link to="/premarital-counseling/marriage-license-discount">Marriage License Discounts</Link></li>
+              <li><Link to="/locations">All Locations</Link></li>
+              <li><Link to="/contact">Contact Us</Link></li>
+            </ul>
+            <h4 style={{ marginTop: '1.5rem' }}>For Professionals</h4>
             <ul>
               <li><Link to="/professional/signup" rel="nofollow">List Your Practice</Link></li>
               <li><Link to="/claim-profile">Claim Profile</Link></li>
               <li><Link to="/for-churches">For Churches</Link></li>
               <li><Link to="/features">Features</Link></li>
-              <li><Link to="/guidelines">Guidelines</Link></li>
+              <li><Link to="/pricing">Pricing</Link></li>
             </ul>
           </div>
 
@@ -87,11 +102,10 @@ const Footer = () => {
             <h4>Company</h4>
             <ul>
               <li><Link to="/about">About Us</Link></li>
-              <li><Link to="/how-it-works">How It Works</Link></li>
               <li><Link to="/editorial-standards">Editorial Standards</Link></li>
+              <li><Link to="/guidelines">Guidelines</Link></li>
               <li><Link to="/corrections">Corrections</Link></li>
-              <li><Link to="/blog">Blog</Link></li>
-              <li><Link to="/contact">Contact</Link></li>
+              <li><Link to="/support">Support</Link></li>
               <li><Link to="/privacy">Privacy Policy</Link></li>
               <li><Link to="/terms">Terms of Service</Link></li>
               <li><Link to="/sitemap">Sitemap</Link></li>

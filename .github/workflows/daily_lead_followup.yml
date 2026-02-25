@@ -1,0 +1,28 @@
+name: Daily Lead Follow-Up Reminders
+on:
+  schedule:
+    - cron: '30 15 * * *'  # 3:30 PM UTC (10:30 AM ET / 7:30 AM PT) — after couple drip at 3 PM
+  workflow_dispatch:
+
+jobs:
+  send-lead-followup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send lead follow-up reminders
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/send-lead-followup" \
+            -H "Content-Type: application/json" \
+            -H "x-internal-api-key: ${{ secrets.INTERNAL_API_KEY }}" \
+            -d '{}')
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Lead follow-up failed with status $HTTP_CODE"
+            exit 1
+          fi

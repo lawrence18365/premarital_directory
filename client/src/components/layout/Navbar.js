@@ -1,18 +1,44 @@
 // Navbar.js
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import '../../assets/css/premium-mobile-nav.css'
 import '../../assets/css/navbar-transparent.css'
+
+const SPECIALTY_LINKS = [
+  { slug: 'christian', label: 'Christian Counseling' },
+  { slug: 'catholic', label: 'Catholic Pre-Cana' },
+  { slug: 'gottman', label: 'Gottman Method' },
+  { slug: 'online', label: 'Online Counseling' },
+  { slug: 'lgbtq', label: 'LGBTQ+ Affirming' },
+  { slug: 'prepare-enrich', label: 'PREPARE/ENRICH' },
+  { slug: 'affordable', label: 'Affordable Options' },
+  { slug: 'interfaith', label: 'Interfaith Couples' },
+]
+
+const STATE_LINKS = [
+  { slug: 'california', label: 'California' },
+  { slug: 'texas', label: 'Texas' },
+  { slug: 'florida', label: 'Florida' },
+  { slug: 'new-york', label: 'New York' },
+  { slug: 'georgia', label: 'Georgia' },
+  { slug: 'illinois', label: 'Illinois' },
+  { slug: 'ohio', label: 'Ohio' },
+  { slug: 'north-carolina', label: 'North Carolina' },
+  { slug: 'tennessee', label: 'Tennessee' },
+  { slug: 'pennsylvania', label: 'Pennsylvania' },
+]
 
 const Navbar = () => {
   const location = useLocation()
   const { user, signOut } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [showNavbar, setShowNavbar] = useState(true); // Initially show the navbar
+  const [showNavbar, setShowNavbar] = useState(true);
   const [solid, setSolid] = useState(false);
-  
+  const [openDropdown, setOpenDropdown] = useState(null)
+  const dropdownRef = useRef(null)
+
   // Disable body scroll when mobile menu is open
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -20,28 +46,35 @@ const Navbar = () => {
     } else {
       document.body.style.overflow = 'unset'
     }
-    
-    // Cleanup on unmount
+
     return () => {
       document.body.style.overflow = 'unset'
     }
   }, [mobileMenuOpen])
-  
-  
 
-  const baseLinks = [
-    { path: '/', label: 'Home', exact: true },
-    { path: '/premarital-counseling', label: 'Find Counselors' },
-    { path: '/blog', label: 'Blog' },
-  ]
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpenDropdown(null)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Close dropdown on route change
+  useEffect(() => {
+    setOpenDropdown(null)
+  }, [location.pathname])
+
   const isHome = ['/', '/therapists', '/coaches', '/clergy'].includes(location.pathname)
-  const navLinks = isHome ? baseLinks.filter(l => l.path !== '/') : baseLinks
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > lastScrollY && window.scrollY > 100) { // Scrolling down and past a threshold
+      if (window.scrollY > lastScrollY && window.scrollY > 100) {
         setShowNavbar(false);
-      } else if (window.scrollY < lastScrollY) { // Scrolling up
+      } else if (window.scrollY < lastScrollY) {
         setShowNavbar(true);
       }
       setLastScrollY(window.scrollY);
@@ -52,14 +85,14 @@ const Navbar = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [lastScrollY]); // Re-run effect when lastScrollY changes
+  }, [lastScrollY]);
 
   // Solid/transparent transition on home hero
   useEffect(() => {
     const onScroll = () => {
       const isHome = ['/', '/therapists', '/coaches', '/clergy'].includes(location.pathname)
       if (!isHome) { setSolid(true); return }
-      const threshold = 160 // px before turning solid
+      const threshold = 160
       setSolid(window.scrollY > threshold)
     }
     onScroll()
@@ -67,7 +100,9 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', onScroll)
   }, [location.pathname])
 
-  // moved above when computing navLinks
+  const toggleDropdown = (name) => {
+    setOpenDropdown(prev => prev === name ? null : name)
+  }
 
   return (
     <nav className={`navbar ${isHome && !solid ? 'navbar--transparent' : ''} ${!showNavbar ? 'navbar-hidden' : ''}`}>
@@ -75,21 +110,74 @@ const Navbar = () => {
         <div className="navbar-content">
 
           {/* Left links */}
-          <ul className="navbar-nav">
-            {navLinks.map(item => (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={
-                    item.exact
-                      ? (location.pathname === item.path ? 'active' : '')
-                      : (location.pathname.startsWith(item.path) ? 'active' : '')
-                  }
-                >
-                  {item.label}
-                </Link>
+          <ul className="navbar-nav" ref={dropdownRef}>
+            {!isHome && (
+              <li>
+                <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
               </li>
-            ))}
+            )}
+
+            {/* Find Counselors with dropdown */}
+            <li className="nav-dropdown-parent">
+              <Link
+                to="/premarital-counseling"
+                className={location.pathname.startsWith('/premarital-counseling') ? 'active' : ''}
+                onMouseEnter={() => setOpenDropdown('counselors')}
+              >
+                Find Counselors <i className="fa fa-chevron-down" style={{ fontSize: '0.6em', marginLeft: 4, opacity: 0.6 }}></i>
+              </Link>
+              {openDropdown === 'counselors' && (
+                <div
+                  className="nav-mega-dropdown"
+                  onMouseLeave={() => setOpenDropdown(null)}
+                >
+                  <div className="nav-mega-col">
+                    <div className="nav-mega-heading">By Specialty</div>
+                    {SPECIALTY_LINKS.map(item => (
+                      <Link key={item.slug} to={`/premarital-counseling/${item.slug}`} className="nav-mega-link">
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="nav-mega-col">
+                    <div className="nav-mega-heading">By State</div>
+                    {STATE_LINKS.map(item => (
+                      <Link key={item.slug} to={`/premarital-counseling/${item.slug}`} className="nav-mega-link">
+                        {item.label}
+                      </Link>
+                    ))}
+                    <Link to="/premarital-counseling" className="nav-mega-link nav-mega-link--all">
+                      All 50 states →
+                    </Link>
+                  </div>
+                  <div className="nav-mega-col">
+                    <div className="nav-mega-heading">Resources</div>
+                    <Link to="/premarital-counseling/marriage-license-discount" className="nav-mega-link">Marriage License Discounts</Link>
+                    <Link to="/how-it-works" className="nav-mega-link">How It Works</Link>
+                    <Link to="/blog" className="nav-mega-link">Guides for Couples</Link>
+                    <Link to="/locations" className="nav-mega-link">All Locations</Link>
+                  </div>
+                </div>
+              )}
+            </li>
+
+            <li>
+              <Link
+                to="/blog"
+                className={location.pathname.startsWith('/blog') ? 'active' : ''}
+              >
+                Blog
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                to="/how-it-works"
+                className={location.pathname === '/how-it-works' ? 'active' : ''}
+              >
+                How It Works
+              </Link>
+            </li>
           </ul>
 
           {/* Right login / logout */}
@@ -129,7 +217,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile backdrop */}
-        <div 
+        <div
           className={`navbar-backdrop ${mobileMenuOpen ? 'active' : ''}`}
           onClick={() => setMobileMenuOpen(false)}
           aria-hidden="true"
@@ -152,30 +240,67 @@ const Navbar = () => {
             </button>
           </div>
           <ul className="navbar-mobile-nav">
-            {navLinks.map(item => (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={
-                    item.exact
-                      ? (location.pathname === item.path ? 'active' : '')
-                      : (location.pathname.startsWith(item.path) ? 'active' : '')
-                  }
-                  onClick={() => setMobileMenuOpen(false)}
-                >
+            {!isHome && (
+              <li>
+                <Link to="/" onClick={() => setMobileMenuOpen(false)}>Home</Link>
+              </li>
+            )}
+            <li>
+              <Link to="/premarital-counseling" onClick={() => setMobileMenuOpen(false)}>
+                Find Counselors
+              </Link>
+            </li>
+            <li>
+              <Link to="/blog" onClick={() => setMobileMenuOpen(false)}>Blog</Link>
+            </li>
+            <li>
+              <Link to="/how-it-works" onClick={() => setMobileMenuOpen(false)}>How It Works</Link>
+            </li>
+
+            {/* Specialty links in mobile */}
+            <li className="mobile-section-label" style={{ padding: '16px 0 4px', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af', fontWeight: 600 }}>
+              By Specialty
+            </li>
+            {SPECIALTY_LINKS.slice(0, 6).map(item => (
+              <li key={item.slug}>
+                <Link to={`/premarital-counseling/${item.slug}`} onClick={() => setMobileMenuOpen(false)}>
                   {item.label}
                 </Link>
               </li>
             ))}
-            
-            {/* Additional mobile-specific links */}
+
+            {/* State links in mobile */}
+            <li className="mobile-section-label" style={{ padding: '16px 0 4px', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af', fontWeight: 600 }}>
+              Popular States
+            </li>
+            {STATE_LINKS.slice(0, 6).map(item => (
+              <li key={item.slug}>
+                <Link to={`/premarital-counseling/${item.slug}`} onClick={() => setMobileMenuOpen(false)}>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+
+            {/* Resources */}
+            <li className="mobile-section-label" style={{ padding: '16px 0 4px', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af', fontWeight: 600 }}>
+              Resources
+            </li>
+            <li>
+              <Link to="/premarital-counseling/marriage-license-discount" onClick={() => setMobileMenuOpen(false)}>
+                Marriage License Discounts
+              </Link>
+            </li>
+            <li>
+              <Link to="/locations" onClick={() => setMobileMenuOpen(false)}>
+                All Locations
+              </Link>
+            </li>
             <li>
               <Link to="/features" onClick={() => setMobileMenuOpen(false)}>
-                <i className="fa fa-star" aria-hidden="true"></i>
                 Features
               </Link>
             </li>
-            
+
             {user ? (
               <>
                 <li className="mobile-user-section">

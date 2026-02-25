@@ -664,6 +664,11 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     <i className="fa fa-shield-alt" aria-hidden="true"></i> Verified
                   </span>
                 )}
+                {profile.responds_quickly && (
+                  <span className="profile-premium-badge" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#92400e', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+                    <i className="fa fa-bolt" aria-hidden="true"></i> Responds Quickly
+                  </span>
+                )}
                 {profile.is_officiant && (
                   <span className="profile-premium-badge" style={{ background: 'var(--ds-accent-soft)', color: 'var(--ds-accent)', border: '1px solid var(--ds-border-strong)' }}>
                     💒 Wedding Officiant
