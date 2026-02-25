@@ -35,7 +35,7 @@ const EmbedFindPage = () => {
     } else {
       url += `/${selectedState}`
     }
-    url += `?utm_source=widget&utm_medium=embed&utm_campaign=${ref}`
+    url += `?utm_source=widget&utm_medium=embed&utm_campaign=${ref}&ref=${ref}`
 
     window.open(url, '_blank', 'noopener')
   }

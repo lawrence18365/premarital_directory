@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { supabase } from '../../lib/supabaseClient';
 import { SEOHelmet } from '../../components/analytics';
@@ -123,7 +123,81 @@ const BlogPostPage = () => {
           <div className="blog-post-content">
             <ReactMarkdown>{post.content}</ReactMarkdown>
           </div>
+
+          {/* Internal links — SEO cross-linking to high-value pages */}
+          <aside className="blog-post-cta" style={{
+            marginTop: 'var(--space-12)',
+            padding: 'var(--space-8)',
+            background: 'var(--gray-50, #f9fafb)',
+            borderRadius: 'var(--radius-lg, 12px)',
+            borderLeft: '4px solid var(--primary, #4f46e5)'
+          }}>
+            <h3 style={{ margin: '0 0 var(--space-3) 0', fontSize: '1.1rem' }}>Ready to find a premarital counselor?</h3>
+            <p style={{ margin: '0 0 var(--space-4) 0', color: 'var(--gray-600, #4b5563)', fontSize: '0.95rem' }}>
+              Browse our directory of licensed therapists, faith-based counselors, and coaches in your area.
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
+              <Link to="/premarital-counseling" style={{
+                display: 'inline-block',
+                padding: 'var(--space-2) var(--space-4)',
+                background: 'var(--primary, #4f46e5)',
+                color: '#fff',
+                borderRadius: 'var(--radius-md, 8px)',
+                textDecoration: 'none',
+                fontSize: '0.9rem',
+                fontWeight: 500
+              }}>
+                Find Counselors Near You
+              </Link>
+              <Link to="/premarital-counseling/marriage-license-discount" style={{
+                display: 'inline-block',
+                padding: 'var(--space-2) var(--space-4)',
+                border: '1px solid var(--gray-300, #d1d5db)',
+                color: 'var(--gray-700, #374151)',
+                borderRadius: 'var(--radius-md, 8px)',
+                textDecoration: 'none',
+                fontSize: '0.9rem',
+                fontWeight: 500
+              }}>
+                Marriage License Discounts
+              </Link>
+            </div>
+          </aside>
         </article>
+      </div>
+
+      {/* Sticky mobile CTA */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 90,
+          background: '#fff',
+          borderTop: '1px solid #e5e7eb',
+          padding: '10px 16px',
+          display: 'flex',
+          gap: '8px',
+          alignItems: 'center',
+          boxShadow: '0 -2px 8px rgba(0,0,0,0.08)'
+        }}
+      >
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.2 }}>
+            Find a premarital counselor
+          </div>
+          <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+            Licensed therapists & coaches near you
+          </div>
+        </div>
+        <Link
+          to="/premarital-counseling"
+          className="btn btn-primary"
+          style={{ whiteSpace: 'nowrap', padding: '8px 16px', fontSize: '0.85rem', textDecoration: 'none' }}
+        >
+          Browse Directory
+        </Link>
       </div>
     </div>
   );

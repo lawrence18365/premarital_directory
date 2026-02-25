@@ -382,6 +382,9 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     })
   }
 
+  // noindex legacy /profile/ and /professionals/ URLs even while loading
+  const isLegacyLoadingRoute = Boolean(slugOrId) || window.location.pathname.startsWith('/professionals/')
+
   if (loading) {
     return (
       <>
@@ -389,7 +392,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
           title="Loading Profile | Premarital Counseling"
           canonicalUrl={`https://www.weddingcounselors.com${window.location.pathname.replace(/\/+$/, '') || '/'}`}
           url={window.location.pathname}
-          noindex={false}
+          noindex={isLegacyLoadingRoute}
         />
         <div className="loading">
           <div className="loading-spinner"></div>
@@ -602,6 +605,10 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     ? `/premarital-counseling/${getStateSlugFromAbbr(profile.state_province)}/${generateSlug(profile.city)}/${profile.slug}`
     : window.location.pathname
 
+  // noindex legacy /profile/ and /professionals/ URLs to prevent duplicate indexing
+  // The canonical URL always points to /premarital-counseling/state/city/slug
+  const isLegacyRoute = Boolean(slugOrId) || window.location.pathname.startsWith('/professionals/')
+
   return (
     <>
       <SEOHelmet
@@ -615,7 +622,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
         breadcrumbs={breadcrumbItems}
         faqs={providerFaqItems.length > 0 ? providerFaqItems : null}
         canonicalUrl={`https://www.weddingcounselors.com${canonicalPath}`}
-        noindex={false}
+        noindex={isLegacyRoute}
       />
 
       <div className="profile-page profile-premium">
@@ -1096,6 +1103,41 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
             {profile && <NearbyProfessionals currentProfile={profile} />}
           </div>
         </section>
+      </div>
+
+      {/* Sticky mobile CTA — persistent contact button on profile pages */}
+      <div
+        className="profile-sticky-cta"
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 90,
+          background: '#fff',
+          borderTop: '1px solid var(--gray-200, #e5e7eb)',
+          padding: '10px 16px',
+          display: 'flex',
+          gap: '10px',
+          alignItems: 'center',
+          boxShadow: '0 -2px 8px rgba(0,0,0,0.08)'
+        }}
+      >
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {profile.full_name}
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--gray-500, #6b7280)' }}>
+            Free to contact — no fees
+          </div>
+        </div>
+        <button
+          onClick={scrollToContact}
+          className="btn btn-primary"
+          style={{ whiteSpace: 'nowrap', padding: '8px 16px', fontSize: '0.85rem' }}
+        >
+          Send Message
+        </button>
       </div>
     </>
   )

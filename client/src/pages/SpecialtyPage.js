@@ -411,6 +411,33 @@ const SpecialtyPage = () => {
           </div>
         )}
 
+        {/* Marriage License Discount Cross-Link */}
+        <div className="specialty-container" style={{ paddingTop: 'var(--space-8)' }}>
+          <Link
+            to="/premarital-counseling/marriage-license-discount"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-4)',
+              padding: 'var(--space-5) var(--space-6)',
+              background: 'var(--gray-50, #f9fafb)',
+              border: '1px solid var(--gray-200, #e5e7eb)',
+              borderRadius: 'var(--radius-lg, 12px)',
+              textDecoration: 'none',
+              color: 'inherit',
+              transition: 'border-color 0.2s'
+            }}
+          >
+            <i className="fa fa-piggy-bank" style={{ fontSize: '1.5rem', color: 'var(--primary, #4f46e5)' }}></i>
+            <div>
+              <strong style={{ display: 'block', marginBottom: '2px' }}>Save on your marriage license</strong>
+              <span style={{ fontSize: '0.9rem', color: 'var(--gray-600, #4b5563)' }}>
+                8 states offer $25–$75 off when you complete premarital counseling. See if yours qualifies.
+              </span>
+            </div>
+          </Link>
+        </div>
+
         {/* Related Specialties */}
         <div className="specialty-related-section">
           <div className="specialty-container">
@@ -435,6 +462,44 @@ const SpecialtyPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Sticky mobile CTA */}
+      {(profiles.length > 0 || programs.length > 0) && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 90,
+            background: '#fff',
+            borderTop: '1px solid #e5e7eb',
+            padding: '10px 16px',
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'center',
+            boxShadow: '0 -2px 8px rgba(0,0,0,0.08)'
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.2 }}>
+              {isCatholic
+                ? `${programs.length} Catholic programs nationwide`
+                : `${profiles.length} ${specialty.name.toLowerCase()} counselors`}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+              Free to contact — no fees
+            </div>
+          </div>
+          <button
+            onClick={() => setShowGetMatchedForm(true)}
+            className="btn btn-primary"
+            style={{ whiteSpace: 'nowrap', padding: '8px 16px', fontSize: '0.85rem' }}
+          >
+            Get Matched Free
+          </button>
+        </div>
+      )}
 
       {/* Get Matched Modal */}
       <ConciergeLeadForm

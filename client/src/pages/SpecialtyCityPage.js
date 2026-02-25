@@ -215,10 +215,15 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
 
   // SEO Meta
   const specialtyCityCount = profiles.length > 0 ? profiles.length : 'top'
-  const metaTitle = `${specialty.name} Premarital Counseling in ${cityName}, ${stateConfig?.abbr || stateName} (${new Date().getFullYear()})`
+  const stateAbbr = stateConfig?.abbr || stateName
+  const metaTitle = specialty.cityMetaTitle
+    ? specialty.cityMetaTitle(cityName, stateAbbr, profiles.length)
+    : `${specialty.name} Premarital Counseling in ${cityName}, ${stateAbbr} (${new Date().getFullYear()})`
   const metaDescription = isCatholic
-    ? `Find verified Catholic Pre-Cana programs in ${cityName}, ${stateConfig?.abbr || stateName}. Compare parish and diocesan options for marriage preparation.`
-    : `Compare ${specialtyCityCount} ${specialty.name.toLowerCase()} premarital counselors in ${cityName}, ${stateConfig?.abbr || stateName}. Browse profiles, see pricing, and contact a therapist directly.`
+    ? `Find verified Catholic Pre-Cana programs in ${cityName}, ${stateAbbr}. Compare parish and diocesan options for marriage preparation.`
+    : specialty.cityMetaDescription
+      ? specialty.cityMetaDescription(cityName, stateAbbr, profiles.length)
+      : `Compare ${specialtyCityCount} ${specialty.name.toLowerCase()} premarital counselors in ${cityName}, ${stateAbbr}. Browse profiles, see pricing, and contact a therapist directly.`
   const isAnchorCity = cityConfig?.is_anchor === true
   const shouldNoindex = isCatholic
     ? programs.length < MIN_VERIFIED_PROGRAMS_FOR_INDEX
@@ -409,6 +414,44 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
           </div>
         )}
       </div>
+
+      {/* Sticky mobile CTA */}
+      {(profiles.length > 0 || programs.length > 0) && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 90,
+            background: '#fff',
+            borderTop: '1px solid #e5e7eb',
+            padding: '10px 16px',
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'center',
+            boxShadow: '0 -2px 8px rgba(0,0,0,0.08)'
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.2 }}>
+              {isCatholic
+                ? `${programs.length} programs in ${cityName}`
+                : `${profiles.length} ${specialty.name.toLowerCase()} counselors`}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+              Free to contact — no fees
+            </div>
+          </div>
+          <button
+            onClick={() => setShowGetMatchedForm(true)}
+            className="btn btn-primary"
+            style={{ whiteSpace: 'nowrap', padding: '8px 16px', fontSize: '0.85rem' }}
+          >
+            Get Matched Free
+          </button>
+        </div>
+      )}
 
       {/* Get Matched Modal */}
       {showGetMatchedForm && (

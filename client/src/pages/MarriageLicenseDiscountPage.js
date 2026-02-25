@@ -121,10 +121,10 @@ const MarriageLicenseDiscountPage = () => {
   return (
     <>
       <SEOHelmet
-        title="How to Get a Marriage License Discount (Save Up to $75) | 2026 Guide"
-        description="Did you know you can save up to $75 on your marriage license or waive the waiting period? Learn exactly how to get your premarital counseling discount in Texas, Florida, Georgia, and more."
+        title="Marriage License Discount for Premarital Counseling (2026)"
+        description="8 states cut your marriage license fee when you complete premarital counseling. See your state's exact discount, requirements, and how to get the certificate."
         url="/premarital-counseling/marriage-license-discount"
-        keywords="marriage license discount, how to get a marriage license discount, marriage certificate discount, premarital counseling discount, save money marriage license, florida marriage license discount, texas marriage license discount, oklahoma marriage license discount"
+        keywords="marriage license discount premarital counseling, marriage certificate discount, how to get marriage license discount, premarital counseling discount states, florida marriage license discount, texas marriage license discount"
         breadcrumbs={breadcrumbItems}
         structuredData={pageStructuredData}
         faqs={faqs}
@@ -144,13 +144,13 @@ const MarriageLicenseDiscountPage = () => {
               </div>
 
               <h1 className="discount-title">
-                Marriage License Savings for Premarital Counseling
+                Marriage License Discount for Premarital Counseling
               </h1>
 
               <p className="discount-subtitle">
-                Complete an approved premarital counseling course to reduce your marriage license fee
-                — and in some states waive the waiting period entirely. Choose your state to see
-                exact requirements and find a qualified counselor.
+                8 states will reduce your marriage license fee — and some waive the waiting period entirely
+                — when you complete premarital counseling. Choose your state below
+                to see the exact discount amount, requirements, and how to get your certificate.
               </p>
 
               <div className="discount-cta">

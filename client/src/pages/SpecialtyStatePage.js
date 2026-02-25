@@ -9,7 +9,7 @@ import FAQ from '../components/common/FAQ'
 import LeadContactForm from '../components/leads/LeadContactForm'
 import LocalSpecialtyContent from '../components/common/LocalSpecialtyContent'
 import LocationInsights from '../components/common/LocationInsights'
-import { getSpecialtyBySlug } from '../data/specialtyConfig'
+import { getSpecialtyBySlug, STATE_DISCOUNT_CONFIG } from '../data/specialtyConfig'
 import { STATE_CONFIG } from '../data/locationConfig'
 import {
   buildCatholicProgramsQuery,
@@ -201,6 +201,14 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
   // Get major cities from config
   const majorCities = availableCities
 
+  // Merge specialty FAQs with state-specific discount FAQs for richer schema
+  const discountConfig = STATE_DISCOUNT_CONFIG[stateSlug]
+  const stateFaqs = discountConfig?.faqs || []
+  const allFaqs = [
+    ...(specialty.faqs || []),
+    ...stateFaqs
+  ]
+
   if (loading) return <LoadingSpinner />
 
   return (
@@ -212,6 +220,7 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
           ? `/premarital-counseling/${stateSlug}`
           : `/premarital-counseling/${specialtySlug}/${stateSlug}`}
         breadcrumbs={breadcrumbItems}
+        faqs={allFaqs.length > 0 ? allFaqs : null}
         noindex={shouldNoindex}
       />
 
@@ -371,12 +380,12 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
           </div>
         </div>
 
-        {/* FAQ Section */}
-        {specialty.faqs && specialty.faqs.length > 0 && (
+        {/* FAQ Section — includes state-specific discount FAQs for richer content */}
+        {allFaqs.length > 0 && (
           <div className="specialty-faq-section">
             <div className="specialty-container">
               <FAQ
-                faqs={specialty.faqs}
+                faqs={allFaqs}
                 title={`${specialty.name} Counseling in ${stateName} — FAQ`}
                 showSearch={false}
                 showAside={false}
@@ -385,6 +394,44 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
           </div>
         )}
       </div>
+
+      {/* Sticky mobile CTA */}
+      {(profiles.length > 0 || programs.length > 0) && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 90,
+            background: '#fff',
+            borderTop: '1px solid #e5e7eb',
+            padding: '10px 16px',
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'center',
+            boxShadow: '0 -2px 8px rgba(0,0,0,0.08)'
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.2 }}>
+              {isCatholic
+                ? `${programs.length} programs in ${stateName}`
+                : `${profiles.length} ${specialty.name.toLowerCase()} counselors in ${stateName}`}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+              Free to contact — no fees
+            </div>
+          </div>
+          <button
+            onClick={() => setShowGetMatchedForm(true)}
+            className="btn btn-primary"
+            style={{ whiteSpace: 'nowrap', padding: '8px 16px', fontSize: '0.85rem' }}
+          >
+            Get Matched Free
+          </button>
+        </div>
+      )}
 
       {/* Get Matched Modal */}
       {showGetMatchedForm && (

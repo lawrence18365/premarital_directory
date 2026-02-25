@@ -481,8 +481,8 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   return (
     <div className="city-page">
       <SEOHelmet
-        title={`${profiles.length > 0 ? profiles.length : 'Top'} Premarital Counselors in ${cityName}, ${stateConfig?.abbr || stateName} (${new Date().getFullYear()})`}
-        description={`Compare ${profiles.length || 'top'} premarital counselors in ${cityName}, ${stateName} — ${inventoryDescriptor}. Prices from $${costStartingAt}/session. Filter by method, faith & availability. Contact directly today.`}
+        title={`Premarital Counseling in ${cityName}, ${stateConfig?.abbr || stateName} — ${profiles.length > 0 ? profiles.length : 'Top'} Counselors (${new Date().getFullYear()})`}
+        description={`Find premarital counseling in ${cityName}, ${stateName}. Compare ${profiles.length || 'top'} ${inventoryDescriptor} — prices from $${costStartingAt}/session. Read profiles, filter by method & faith, and message a counselor today.`}
         keywords={seoKeywords}
         structuredData={structuredData}
         faqs={cityFAQs}
@@ -832,15 +832,20 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                 ) : (
                   <>
                     {groupedFilteredProfiles.therapist.length > 0 && (
-                      <div style={{ marginBottom: 'var(--space-12)' }}>
-                        <h3 style={{
-                          fontSize: '1.5rem',
-                          marginBottom: 'var(--space-4)',
-                          color: 'var(--text-primary)',
-                          borderBottom: '2px solid var(--color-primary)',
-                          paddingBottom: 'var(--space-2)'
+                      <div className="city-role-group" style={{ marginBottom: '3rem' }}>
+                        <h3 className="city-role-heading" style={{
+                          fontSize: '1.35rem',
+                          fontWeight: 600,
+                          marginBottom: '1rem',
+                          color: '#1a1a2e',
+                          borderBottom: '2px solid #0e5e5e',
+                          paddingBottom: '0.5rem',
+                          letterSpacing: '-0.01em'
                         }}>
                           Licensed Therapists & Counselors
+                          <span style={{ fontSize: '0.85rem', fontWeight: 400, color: '#6b7280', marginLeft: '8px' }}>
+                            ({groupedFilteredProfiles.therapist.length})
+                          </span>
                         </h3>
                         <ProfileList
                           profiles={groupedFilteredProfiles.therapist}
@@ -851,15 +856,20 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                     )}
 
                     {groupedFilteredProfiles.clergy.length > 0 && (
-                      <div style={{ marginBottom: 'var(--space-12)' }}>
-                        <h3 style={{
-                          fontSize: '1.5rem',
-                          marginBottom: 'var(--space-4)',
-                          color: 'var(--text-primary)',
-                          borderBottom: '2px solid var(--color-primary)',
-                          paddingBottom: 'var(--space-2)'
+                      <div className="city-role-group" style={{ marginBottom: '3rem' }}>
+                        <h3 className="city-role-heading" style={{
+                          fontSize: '1.35rem',
+                          fontWeight: 600,
+                          marginBottom: '1rem',
+                          color: '#1a1a2e',
+                          borderBottom: '2px solid #0e5e5e',
+                          paddingBottom: '0.5rem',
+                          letterSpacing: '-0.01em'
                         }}>
                           Clergy & Faith-Based Marriage Preparation
+                          <span style={{ fontSize: '0.85rem', fontWeight: 400, color: '#6b7280', marginLeft: '8px' }}>
+                            ({groupedFilteredProfiles.clergy.length})
+                          </span>
                         </h3>
                         <ProfileList
                           profiles={groupedFilteredProfiles.clergy}
@@ -870,15 +880,20 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                     )}
 
                     {groupedFilteredProfiles.coach.length > 0 && (
-                      <div style={{ marginBottom: 'var(--space-12)' }}>
-                        <h3 style={{
-                          fontSize: '1.5rem',
-                          marginBottom: 'var(--space-4)',
-                          color: 'var(--text-primary)',
-                          borderBottom: '2px solid var(--color-primary)',
-                          paddingBottom: 'var(--space-2)'
+                      <div className="city-role-group" style={{ marginBottom: '3rem' }}>
+                        <h3 className="city-role-heading" style={{
+                          fontSize: '1.35rem',
+                          fontWeight: 600,
+                          marginBottom: '1rem',
+                          color: '#1a1a2e',
+                          borderBottom: '2px solid #0e5e5e',
+                          paddingBottom: '0.5rem',
+                          letterSpacing: '-0.01em'
                         }}>
                           Relationship Coaches
+                          <span style={{ fontSize: '0.85rem', fontWeight: 400, color: '#6b7280', marginLeft: '8px' }}>
+                            ({groupedFilteredProfiles.coach.length})
+                          </span>
                         </h3>
                         <ProfileList
                           profiles={groupedFilteredProfiles.coach}
@@ -889,15 +904,20 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                     )}
 
                     {groupedFilteredProfiles.other.length > 0 && (
-                      <div style={{ marginBottom: 'var(--space-12)' }}>
-                        <h3 style={{
-                          fontSize: '1.5rem',
-                          marginBottom: 'var(--space-4)',
-                          color: 'var(--text-primary)',
-                          borderBottom: '2px solid var(--color-primary)',
-                          paddingBottom: 'var(--space-2)'
+                      <div className="city-role-group" style={{ marginBottom: '3rem' }}>
+                        <h3 className="city-role-heading" style={{
+                          fontSize: '1.35rem',
+                          fontWeight: 600,
+                          marginBottom: '1rem',
+                          color: '#1a1a2e',
+                          borderBottom: '2px solid #0e5e5e',
+                          paddingBottom: '0.5rem',
+                          letterSpacing: '-0.01em'
                         }}>
                           Other Marriage Preparation Professionals
+                          <span style={{ fontSize: '0.85rem', fontWeight: 400, color: '#6b7280', marginLeft: '8px' }}>
+                            ({groupedFilteredProfiles.other.length})
+                          </span>
                         </h3>
                         <ProfileList
                           profiles={groupedFilteredProfiles.other}
@@ -1192,6 +1212,43 @@ const CityPage = ({ stateOverride, cityOverride }) => {
         onClose={() => setIsConciergeOpen(false)}
         defaultLocation={`${cityName}, ${stateConfig?.abbr || stateName}`}
       />
+
+      {/* Sticky mobile CTA — appears after scrolling past hero */}
+      {hasProfiles && (
+        <div
+          className="city-sticky-cta"
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 90,
+            background: '#fff',
+            borderTop: '1px solid var(--gray-200, #e5e7eb)',
+            padding: '10px 16px',
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'center',
+            boxShadow: '0 -2px 8px rgba(0,0,0,0.08)'
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.2 }}>
+              {profiles.length} counselors in {cityName}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--gray-500, #6b7280)' }}>
+              Free to contact — no fees
+            </div>
+          </div>
+          <button
+            onClick={() => setIsConciergeOpen(true)}
+            className="btn btn-primary"
+            style={{ whiteSpace: 'nowrap', padding: '8px 16px', fontSize: '0.85rem' }}
+          >
+            Get Matched Free
+          </button>
+        </div>
+      )}
     </div>
   )
 }

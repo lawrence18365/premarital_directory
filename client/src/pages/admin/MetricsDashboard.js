@@ -15,7 +15,21 @@ const MetricsDashboard = () => {
     contactReveals30Days: 0,
     recentSignups: [],
     signupSources: [],
-    contactRevealsByCity: []
+    contactRevealsByCity: [],
+    // Growth funnel metrics
+    totalLeads: 0,
+    leads7Days: 0,
+    leads30Days: 0,
+    totalClicks: 0,
+    clicks7Days: 0,
+    clicks30Days: 0,
+    conversionRate: 0,
+    leadsBySource: [],
+    leadsByAttribution: [],
+    draftProfiles: 0,
+    claimRate: 0,
+    profileCompletenessAvg: 0,
+    weeklyTrend: []
   })
 
   useEffect(() => {
@@ -146,6 +160,74 @@ const MetricsDashboard = () => {
         console.warn('Failed to load city reveal stats:', err)
       }
 
+      // Growth funnel: leads
+      const { data: allLeads } = await supabase
+        .from('profile_leads')
+        .select('id, created_at, source, source_page, utm_source, utm_medium, utm_campaign, partner_ref, profile_id')
+        .order('created_at', { ascending: false })
+
+      const totalLeads = allLeads?.length || 0
+      const leads7Days = (allLeads || []).filter(l => new Date(l.created_at) >= sevenDaysAgo).length
+      const leads30Days = (allLeads || []).filter(l => new Date(l.created_at) >= thirtyDaysAgo).length
+
+      // Clicks
+      const { data: allClicks } = await supabase
+        .from('profile_clicks')
+        .select('id, created_at')
+        .order('created_at', { ascending: false })
+
+      const totalClicks = allClicks?.length || 0
+      const clicks7Days = (allClicks || []).filter(c => new Date(c.created_at) >= sevenDaysAgo).length
+      const clicks30Days = (allClicks || []).filter(c => new Date(c.created_at) >= thirtyDaysAgo).length
+
+      // Conversion rate: leads / clicks (30 day)
+      const conversionRate = clicks30Days > 0 ? ((leads30Days / clicks30Days) * 100).toFixed(1) : 0
+
+      // Leads by source
+      const leadSourceCount = {}
+      ;(allLeads || []).forEach(l => {
+        const src = l.source || 'unknown'
+        leadSourceCount[src] = (leadSourceCount[src] || 0) + 1
+      })
+      const leadsBySource = Object.entries(leadSourceCount)
+        .map(([source, count]) => ({ source, count }))
+        .sort((a, b) => b.count - a.count)
+
+      // Leads by attribution (utm_source)
+      const attrCount = {}
+      ;(allLeads || []).forEach(l => {
+        const attr = l.utm_source || l.partner_ref ? `partner:${l.partner_ref}` : l.source || 'direct'
+        attrCount[attr] = (attrCount[attr] || 0) + 1
+      })
+      const leadsByAttribution = Object.entries(attrCount)
+        .map(([channel, count]) => ({ channel, count }))
+        .sort((a, b) => b.count - a.count)
+
+      // Draft profiles (started but didn't finish)
+      const draftProfiles = profiles.filter(p => p.moderation_status === 'draft').length
+      const organicSignups = profiles.filter(p => p.signup_source === 'organic').length
+      const claimRate = organicSignups > 0 ? ((claimedProfiles / organicSignups) * 100).toFixed(0) : 0
+
+      // Average profile completeness (claimed)
+      const claimedProfilesList = profiles.filter(p => p.is_claimed)
+      const profileCompletenessAvg = claimedProfilesList.length > 0
+        ? Math.round(claimedProfilesList.reduce((sum, p) => sum + (p.profile_completeness_score || 0), 0) / claimedProfilesList.length)
+        : 0
+
+      // Weekly trend (last 8 weeks of clicks, leads, signups)
+      const weeklyTrend = []
+      for (let i = 7; i >= 0; i--) {
+        const weekStart = new Date(now.getTime() - (i + 1) * 7 * 86400000)
+        const weekEnd = new Date(now.getTime() - i * 7 * 86400000)
+        const label = weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        weeklyTrend.push({
+          week: label,
+          clicks: (allClicks || []).filter(c => { const d = new Date(c.created_at); return d >= weekStart && d < weekEnd }).length,
+          leads: (allLeads || []).filter(l => { const d = new Date(l.created_at); return d >= weekStart && d < weekEnd }).length,
+          signups: profiles.filter(p => { const d = new Date(p.created_at); return d >= weekStart && d < weekEnd }).length,
+        })
+      }
+
       setMetrics({
         totalProfiles,
         claimedProfiles,
@@ -156,7 +238,20 @@ const MetricsDashboard = () => {
         contactReveals30Days,
         recentSignups,
         signupSources,
-        contactRevealsByCity
+        contactRevealsByCity,
+        totalLeads,
+        leads7Days,
+        leads30Days,
+        totalClicks,
+        clicks7Days,
+        clicks30Days,
+        conversionRate,
+        leadsBySource,
+        leadsByAttribution,
+        draftProfiles,
+        claimRate,
+        profileCompletenessAvg,
+        weeklyTrend
       })
 
     } catch (error) {
@@ -240,6 +335,107 @@ const MetricsDashboard = () => {
           color="var(--accent)"
         />
       </div>
+
+      {/* Growth Funnel Stats */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: 'var(--space-6)',
+        marginBottom: 'var(--space-12)'
+      }}>
+        <StatCard title="Total Leads" value={metrics.totalLeads} icon="fa-envelope" color="#7c3aed" />
+        <StatCard title="Leads (7d)" value={metrics.leads7Days} icon="fa-envelope-open" color="#059669" />
+        <StatCard title="Profile Views (7d)" value={metrics.clicks7Days} icon="fa-eye" color="#2563eb" />
+        <StatCard title="View-to-Lead Rate (30d)" value={`${metrics.conversionRate}%`} icon="fa-funnel-dollar" color="#dc2626" />
+        <StatCard title="Claim Rate" value={`${metrics.claimRate}%`} icon="fa-user-check" color="#0d9488" />
+        <StatCard title="Draft Profiles" value={metrics.draftProfiles} icon="fa-user-clock" color="#f59e0b" />
+        <StatCard title="Avg Completeness" value={`${metrics.profileCompletenessAvg}%`} icon="fa-tasks" color="#8b5cf6" />
+        <StatCard title="Total Views" value={metrics.totalClicks} icon="fa-chart-line" color="#1e3a5f" />
+      </div>
+
+      {/* Weekly Trend Chart */}
+      {metrics.weeklyTrend.length > 0 && (
+        <div style={{
+          background: 'var(--white)',
+          padding: 'var(--space-6)',
+          borderRadius: 'var(--radius-xl)',
+          boxShadow: 'var(--shadow-md)',
+          border: '1px solid var(--gray-200)',
+          marginBottom: 'var(--space-12)'
+        }}>
+          <h3 style={{ marginBottom: 'var(--space-4)' }}>Weekly Trend (8 weeks)</h3>
+          <div style={{ height: '300px' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={metrics.weeklyTrend}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="week" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="clicks" fill="#2563eb" name="Profile Views" />
+                <Bar dataKey="leads" fill="#7c3aed" name="Leads" />
+                <Bar dataKey="signups" fill="#059669" name="Signups" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* Lead Attribution */}
+      {metrics.leadsBySource.length > 0 && (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+          gap: 'var(--space-8)',
+          marginBottom: 'var(--space-12)'
+        }}>
+          <div style={{
+            background: 'var(--white)',
+            padding: 'var(--space-6)',
+            borderRadius: 'var(--radius-xl)',
+            boxShadow: 'var(--shadow-md)',
+            border: '1px solid var(--gray-200)'
+          }}>
+            <h3 style={{ marginBottom: 'var(--space-4)' }}>Leads by Source</h3>
+            <div style={{ height: '250px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={metrics.leadsBySource}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="source" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#7c3aed" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div style={{
+            background: 'var(--white)',
+            padding: 'var(--space-6)',
+            borderRadius: 'var(--radius-xl)',
+            boxShadow: 'var(--shadow-md)',
+            border: '1px solid var(--gray-200)'
+          }}>
+            <h3 style={{ marginBottom: 'var(--space-4)' }}>Lead Attribution (Channel)</h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'left', padding: 'var(--space-2)', borderBottom: '2px solid var(--gray-200)' }}>Channel</th>
+                  <th style={{ textAlign: 'right', padding: 'var(--space-2)', borderBottom: '2px solid var(--gray-200)' }}>Leads</th>
+                </tr>
+              </thead>
+              <tbody>
+                {metrics.leadsByAttribution.map((item, idx) => (
+                  <tr key={idx}>
+                    <td style={{ padding: 'var(--space-2)', borderBottom: '1px solid var(--gray-100)' }}>{item.channel}</td>
+                    <td style={{ textAlign: 'right', padding: 'var(--space-2)', borderBottom: '1px solid var(--gray-100)', fontWeight: 'bold' }}>{item.count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Charts Grid */}
       <div style={{

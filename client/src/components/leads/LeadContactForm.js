@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { trackContactSubmission } from '../analytics/GoogleAnalytics'
+import { trackFacebookLead } from '../analytics/FacebookPixel'
+import { trackProfessionalContact } from '../analytics/GoogleAds'
+import { getAttribution, getSourceLabel } from '../../lib/attribution'
 
 const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaimed = true, isStateMatching, isSpecialtyMatching, isDiscountMatching, stateName, specialtyType, onSuccess }) => {
   const shortName = professionalName?.split(' ')[0] || 'this professional'
@@ -41,6 +45,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
     try {
       // ATOMIC LEAD INSERTION & NOTIFICATION
       // By calling a single Edge Function, we guarantee the lead won't be saved without being emailed.
+      const attribution = getAttribution()
       const payload = {
         profileId,
         professionalName,
@@ -50,7 +55,9 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
         isStateMatching,
         specialtyType,
         stateName,
-        source: formData.source,
+        source: getSourceLabel(),
+        source_page: window.location.pathname,
+        attribution,
         coupleData: {
           partner_one_name: formData.partner_one_name,
           partner_two_name: formData.partner_two_name,
@@ -77,6 +84,11 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
       }
 
       setSuccess(true)
+
+      // Fire conversion tracking events
+      trackContactSubmission(professionalName, 'contact_form')
+      trackFacebookLead(professionalName)
+      trackProfessionalContact(professionalName)
 
       // Call success callback with returned lead data
       if (onSuccess && data?.lead) {
@@ -172,13 +184,46 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
 
         <div className="form-group">
           <label htmlFor="message">Message *</label>
+          {!formData.message && (
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '6px',
+              marginBottom: '8px'
+            }}>
+              {[
+                "We're engaged and exploring premarital counseling options.",
+                "We'd like to learn about your availability and pricing.",
+                "We're interested in premarital counseling before our wedding.",
+              ].map((template) => (
+                <button
+                  key={template}
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, message: template }))}
+                  style={{
+                    padding: '4px 10px',
+                    fontSize: '0.8rem',
+                    background: 'var(--gray-100, #f3f4f6)',
+                    border: '1px solid var(--gray-300, #d1d5db)',
+                    borderRadius: '999px',
+                    cursor: 'pointer',
+                    color: 'var(--gray-700, #374151)',
+                    lineHeight: 1.4,
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {template}
+                </button>
+              ))}
+            </div>
+          )}
           <textarea
             id="message"
             name="message"
             value={formData.message}
             onChange={handleInputChange}
-            placeholder="Share your goals, wedding timeline, and what kind of premarital support you want."
-            rows={4}
+            placeholder="Or write your own message..."
+            rows={3}
             required
           />
         </div>

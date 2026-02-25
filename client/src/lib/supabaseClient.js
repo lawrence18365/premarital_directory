@@ -551,7 +551,11 @@ export const clickTrackingOperations = {
         source_state: clickData.state,
         source_page: clickData.source || 'city_page',
         user_agent: navigator.userAgent || null,
-        referrer: document.referrer || null
+        referrer: document.referrer || null,
+        partner_ref: clickData.partner_ref || null,
+        utm_source: clickData.utm_source || null,
+        utm_medium: clickData.utm_medium || null,
+        utm_campaign: clickData.utm_campaign || null
       })
 
     return { data, error }

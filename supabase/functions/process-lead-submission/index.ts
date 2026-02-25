@@ -3,6 +3,18 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 import { getAllowedOrigins, getCorsHeaders, getRequestIp, isOriginAllowed } from "../_shared/auth.ts"
 import { enforceRateLimit } from "../_shared/rateLimit.ts"
 
+interface Attribution {
+    utm_source?: string
+    utm_medium?: string
+    utm_campaign?: string
+    utm_content?: string
+    utm_term?: string
+    ref?: string
+    landing_page?: string
+    referrer?: string | null
+    captured_at?: string
+}
+
 interface ProcessLeadRequest {
     profileId: string | null
     professionalName?: string
@@ -13,6 +25,8 @@ interface ProcessLeadRequest {
     specialtyType?: string
     stateName?: string
     source: string
+    source_page?: string
+    attribution?: Attribution
     coupleData: {
         partner_one_name: string
         partner_two_name?: string
@@ -72,7 +86,7 @@ serve(async (req) => {
         }
 
         const payload: ProcessLeadRequest = await req.json()
-        const { profileId, coupleData, source, isProfileClaimed, isSpecialtyMatching, isDiscountMatching, isStateMatching, specialtyType, stateName, professionalName } = payload
+        const { profileId, coupleData, source, source_page, attribution, isProfileClaimed, isSpecialtyMatching, isDiscountMatching, isStateMatching, specialtyType, stateName, professionalName } = payload
 
         // Validation
         if (!coupleData.partner_one_name || !coupleData.email || !coupleData.message) {
@@ -104,9 +118,15 @@ serve(async (req) => {
                 wedding_date: coupleData.wedding_date || null,
                 location: coupleData.location,
                 message: outboundMessage,
-                source: source || 'directory',
+                source: source || 'direct',
+                source_page: source_page || null,
+                utm_source: attribution?.utm_source || null,
+                utm_medium: attribution?.utm_medium || null,
+                utm_campaign: attribution?.utm_campaign || null,
+                partner_ref: attribution?.ref || null,
+                referrer: attribution?.referrer || null,
                 status: leadStatus,
-                delivery_status: 'pending' // Tracking columns
+                delivery_status: 'pending'
             }])
             .select()
 

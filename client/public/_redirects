@@ -17,5 +17,17 @@ https://weddingcounselors.com/* https://www.weddingcounselors.com/:splat 301!
 # Handle blog post URLs specifically to prevent issues
 /blog/:slug/ /blog/:slug 301!
 
+# Legacy URL redirects (301 Permanent) — consolidate duplicate paths into canonical URLs
+# These were previously JS-only redirects that Google crawled before the redirect fired,
+# creating 636+ duplicate indexed pages splitting ranking authority.
+/professionals/:state/:city/:slug /premarital-counseling/:state/:city/:slug 301!
+/professionals/:state/:city /premarital-counseling/:state/:city 301!
+/professionals/:state /premarital-counseling/:state 301!
+/professionals /premarital-counseling 301!
+/states/:state/:city/:slug /premarital-counseling/:state/:city/:slug 301!
+/states/:state/:city /premarital-counseling/:state/:city 301!
+/states/:state /premarital-counseling/:state 301!
+/states /premarital-counseling 301!
+
 # SPA fallback (200 OK)
 /* /index.html 200

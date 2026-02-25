@@ -63,10 +63,10 @@ const ContactPage = () => {
   return (
     <div style={{ padding: 'var(--space-20) 0', background: 'var(--ds-bg-soft)' }}>
       <SEOHelmet 
-        title="Contact Us - Premarital Counseling Directory"
-        description="Get in touch with our team. We help couples find qualified premarital counselors and support professionals in growing their practice."
+        title="Contact Us"
+        description="Questions about Wedding Counselors? Contact our team for help finding a counselor, listing your practice, or general support."
         url="/contact"
-        keywords="contact, premarital counseling, customer support, help"
+        keywords="contact wedding counselors, support"
         structuredData={{
           '@context': 'https://schema.org',
           '@type': 'ContactPage',

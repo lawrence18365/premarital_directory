@@ -178,6 +178,42 @@ export const CITY_CONFIG = {
       specialties: ['Active lifestyle couples', 'Holistic approaches', 'Young professionals'],
       is_anchor: true
     }
+  },
+  'arizona': {
+    'phoenix': {
+      name: 'Phoenix',
+      population: '1,608,139',
+      description: 'Phoenix offers year-round premarital counseling with licensed therapists and faith-based counselors serving the Valley.',
+      specialties: ['Desert community counseling', 'Bilingual services', 'Military couples'],
+      is_anchor: true
+    }
+  },
+  'michigan': {
+    'detroit': {
+      name: 'Detroit',
+      population: '639,111',
+      description: 'Detroit provides community-centered premarital counseling with licensed therapists and faith-based programs across Metro Detroit.',
+      specialties: ['Community-based counseling', 'Faith-based programs', 'Multicultural services'],
+      is_anchor: true
+    }
+  },
+  'tennessee': {
+    'nashville': {
+      name: 'Nashville',
+      population: '683,622',
+      description: 'Nashville combines Southern warmth with professional premarital counseling from licensed therapists and church-based programs.',
+      specialties: ['Faith-based counseling', 'Music industry professionals', 'Young couples'],
+      is_anchor: true
+    }
+  },
+  'north-carolina': {
+    'raleigh': {
+      name: 'Raleigh',
+      population: '467,665',
+      description: 'Raleigh offers research-informed premarital counseling with licensed professionals serving the Triangle area.',
+      specialties: ['Research Triangle professionals', 'University-connected counseling', 'Young families'],
+      is_anchor: true
+    }
   }
 }
 

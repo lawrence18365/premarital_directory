@@ -96,7 +96,38 @@ async function main() {
   }
   console.log('');
 
-  // 2) Query-level data
+  // 2) True site totals (no dimensions = no anonymization loss)
+  console.log('Fetching true site totals...');
+  const totalsRes = await sc.searchanalytics.query({
+    siteUrl: GSC_SITE_URL,
+    requestBody: {
+      startDate: START_DATE,
+      endDate:   END_DATE,
+      dataState: 'all',
+    },
+  });
+  const siteTotals = totalsRes.data.rows?.[0] || { clicks: 0, impressions: 0, ctr: 0, position: 0 };
+  const trueTotals = {
+    clicks:      siteTotals.clicks,
+    impressions: siteTotals.impressions,
+    ctr:         parseFloat((siteTotals.ctr * 100).toFixed(2)),
+    position:    parseFloat(siteTotals.position.toFixed(1)),
+  };
+  console.log(`  TRUE totals → ${trueTotals.clicks} clicks | ${trueTotals.impressions} impressions | ${trueTotals.ctr}% CTR | pos ${trueTotals.position}`);
+
+  // 3) Daily data (date dimension — accurate per-day totals for trend analysis)
+  console.log('Fetching daily data...');
+  const dailyRows = await query(['date']);
+  const dailyData = dailyRows.map(r => ({
+    date:        r.keys[0],
+    clicks:      r.clicks,
+    impressions: r.impressions,
+    ctr:         parseFloat((r.ctr * 100).toFixed(2)),
+    position:    parseFloat(r.position.toFixed(1)),
+  })).sort((a, b) => a.date.localeCompare(b.date));
+  save('daily.json', dailyData);
+
+  // 4) Query-level data
   console.log('Fetching query data...');
   const queryRows = await query(['query']);
   const queryData = queryRows.map(r => ({
@@ -108,7 +139,7 @@ async function main() {
   }));
   save('queries.json', queryData);
 
-  // 3) Page-level data
+  // 5) Page-level data
   console.log('Fetching page data...');
   const pageRows = await query(['page']);
   const pageData = pageRows.map(r => ({
@@ -120,7 +151,7 @@ async function main() {
   }));
   save('pages.json', pageData);
 
-  // 4) Query + Page combined (most useful for finding opportunities)
+  // 6) Query + Page combined (most useful for finding opportunities)
   console.log('Fetching query+page combined data...');
   const combinedRows = await query(['query', 'page']);
   const combinedData = combinedRows.map(r => ({
@@ -133,22 +164,37 @@ async function main() {
   }));
   save('combined.json', combinedData);
 
-  // 5) Quick local summary
-  console.log('\n--- Quick Summary ---');
-  const total = {
-    clicks:      queryData.reduce((s, r) => s + r.clicks, 0),
-    impressions: queryData.reduce((s, r) => s + r.impressions, 0),
-  };
-  console.log(`Total clicks:      ${total.clicks.toLocaleString()}`);
-  console.log(`Total impressions: ${total.impressions.toLocaleString()}`);
-  console.log(`Avg CTR:           ${(total.clicks / total.impressions * 100).toFixed(2)}%`);
+  // Save true totals alongside row-level data
+  save('totals.json', {
+    trueTotals,
+    dateRange: { start: START_DATE, end: END_DATE },
+    rowCoverage: {
+      queryRowClicks: queryData.reduce((s, r) => s + r.clicks, 0),
+      queryRowImpressions: queryData.reduce((s, r) => s + r.impressions, 0),
+      pctClicksCaptured: ((queryData.reduce((s, r) => s + r.clicks, 0) / trueTotals.clicks) * 100).toFixed(1) + '%',
+      pctImpressionsCaptured: ((queryData.reduce((s, r) => s + r.impressions, 0) / trueTotals.impressions) * 100).toFixed(1) + '%',
+      note: 'GSC API anonymizes low-volume queries. Row-level data captures a subset of true totals.',
+    },
+  });
 
-  const nearWins = queryData.filter(r => r.position >= 4 && r.position <= 20 && r.impressions >= 50)
+  // 7) Quick local summary
+  console.log('\n--- Quick Summary (TRUE totals from GSC) ---');
+  console.log(`Total clicks:      ${trueTotals.clicks.toLocaleString()}`);
+  console.log(`Total impressions: ${trueTotals.impressions.toLocaleString()}`);
+  console.log(`Avg CTR:           ${trueTotals.ctr}%`);
+  console.log(`Avg position:      ${trueTotals.position}`);
+
+  const rowClicks = queryData.reduce((s, r) => s + r.clicks, 0);
+  const rowImpressions = queryData.reduce((s, r) => s + r.impressions, 0);
+  console.log(`\nRow-level coverage: ${rowClicks}/${trueTotals.clicks} clicks (${((rowClicks/trueTotals.clicks)*100).toFixed(0)}%) | ${rowImpressions}/${trueTotals.impressions} impressions (${((rowImpressions/trueTotals.impressions)*100).toFixed(0)}%)`);
+  console.log('(Gap = anonymized long-tail queries hidden by GSC API)');
+
+  const nearWins = queryData.filter(r => r.position >= 4 && r.position <= 20 && r.impressions >= 5)
     .sort((a, b) => b.impressions - a.impressions)
-    .slice(0, 10);
-  console.log('\nTop near-win keywords (pos 4–20, 50+ impressions):');
+    .slice(0, 15);
+  console.log('\nTop near-win keywords (pos 4–20, 5+ impressions):');
   nearWins.forEach(r =>
-    console.log(`  [${r.position}] ${r.query} — ${r.impressions} imp / ${r.clicks} clicks`)
+    console.log(`  [pos ${r.position}] ${r.query} — ${r.impressions} imp / ${r.clicks} clicks`)
   );
 
   console.log('\nDone. Run analyze.js next for AI-powered recommendations.');

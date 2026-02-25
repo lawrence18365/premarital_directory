@@ -69,8 +69,8 @@ const StatesIndexPage = () => {
   return (
     <div className="states-page">
       <SEOHelmet
-        title="Premarital Counseling by State | Licensed Therapists, Coaches & Clergy"
-        description="Find premarital counseling by state. Compare licensed therapists, faith-based counselors, and online options from active listings."
+        title="Find Premarital Counseling Near You (All 50 States)"
+        description="Browse premarital counselors by state. Compare licensed therapists, coaches, and clergy with pricing, availability, and verified credentials. Contact providers directly."
         url="/premarital-counseling"
         keywords="premarital counseling, premarital therapy, pre marriage counseling, couples counseling before marriage, pre cana"
         breadcrumbs={breadcrumbs}

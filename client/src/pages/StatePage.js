@@ -188,8 +188,8 @@ const StatePage = () => {
   return (
     <>
       <SEOHelmet
-        title={`${stateData?.totalProfiles || 'Top'} Premarital Counselors in ${stateConfig.name} (${new Date().getFullYear()})`}
-        description={`Compare ${stateData?.totalProfiles || 'top'} premarital counselors across ${activeCities.length || stateConfig.major_cities.length} cities in ${stateConfig.name}. Licensed therapists, Christian counselors & couples therapy. Filter by method, price & availability.`}
+        title={`Premarital Counseling in ${stateConfig.name} — ${stateData?.totalProfiles || 'Top'} Counselors (${new Date().getFullYear()})`}
+        description={`Find premarital counseling in ${stateConfig.name}. Compare ${stateData?.totalProfiles || ''} counselors across ${activeCities.length || stateConfig.major_cities.length} cities — licensed therapists, faith-based counselors & coaches with pricing. Browse by city and contact a counselor today.`}
         url={`/premarital-counseling/${state}`}
         keywords={`marriage counseling ${stateConfig.name}, premarital counseling ${stateConfig.name}, marriage therapist ${stateConfig.name}, premarital counseling near me ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, christian marriage counseling ${stateConfig.name}`}
         breadcrumbs={breadcrumbItems}
@@ -462,6 +462,42 @@ const StatePage = () => {
         </div>
 
       </div>
+
+      {/* Sticky mobile CTA */}
+      {hasStateProfiles && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 90,
+            background: '#fff',
+            borderTop: '1px solid #e5e7eb',
+            padding: '10px 16px',
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'center',
+            boxShadow: '0 -2px 8px rgba(0,0,0,0.08)'
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.2 }}>
+              {stateData.totalProfiles} counselors in {stateConfig.name}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+              Free to contact — no fees
+            </div>
+          </div>
+          <button
+            onClick={() => setShowGetMatchedForm(true)}
+            className="btn btn-primary"
+            style={{ whiteSpace: 'nowrap', padding: '8px 16px', fontSize: '0.85rem' }}
+          >
+            Get Matched Free
+          </button>
+        </div>
+      )}
 
       {/* Get Matched Modal */}
       <ConciergeLeadForm
