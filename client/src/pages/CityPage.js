@@ -1030,7 +1030,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                   />
                 </div>
 
-                <CoupleEmailCapture sourcePage={`city/${state}/${city}`} />
+                <CoupleEmailCapture sourcePage={`city/${state}/${city}`} defaultCity={cityName} defaultState={stateConfig?.abbr || ''} />
 
                 {/* External Authority Resources for E-E-A-T */}
                 <div style={{

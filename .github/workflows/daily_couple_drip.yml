@@ -1,0 +1,28 @@
+name: Daily Couple Drip Emails
+on:
+  schedule:
+    - cron: '0 15 * * *'  # 3 PM UTC (10 AM ET / 7 AM PT)
+  workflow_dispatch:
+
+jobs:
+  send-couple-drip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send couple drip emails
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/send-couple-drip" \
+            -H "Content-Type: application/json" \
+            -H "x-internal-api-key: ${{ secrets.INTERNAL_API_KEY }}" \
+            -d '{}')
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Couple drip failed with status $HTTP_CODE"
+            exit 1
+          fi
