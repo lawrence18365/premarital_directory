@@ -48,10 +48,10 @@ const wrapEmail = (content: string, profileId: string) => `
 
 const MILESTONES: Milestone[] = [
   {
-    key: '5_views',
+    key: '50_views',
     step: 10, // steps 10-19 reserved for engagement milestones
-    check: (stats) => stats.views >= 5,
-    subject: (name) => `${name}, couples in your area are finding you`,
+    check: (stats) => stats.views >= 50,
+    subject: (name) => `${name}, 50+ couples have found your profile`,
     html: (profile, stats) => {
       const firstName = profile.full_name?.split(',')[0]?.split(' ')[0] || 'there'
       return wrapEmail(`
@@ -62,7 +62,7 @@ const MILESTONES: Milestone[] = [
             <div style="font-size: 14px; color: #6b7280;">couples have viewed your profile</div>
           </div>
           <p style="font-size: 15px;">
-            Couples searching for premarital counseling in ${profile.city || 'your area'} are landing on your profile.
+            Couples searching for premarital counseling in ${profile.city || 'your area'} are consistently finding your profile.
             A complete profile with detailed pricing and availability converts views into inquiries.
           </p>
           <p style="text-align: center; margin: 24px 0;">
@@ -73,10 +73,10 @@ const MILESTONES: Milestone[] = [
     }
   },
   {
-    key: '15_views',
+    key: '150_views',
     step: 11,
-    check: (stats) => stats.views >= 15,
-    subject: (name) => `${name}, you're gaining traction`,
+    check: (stats) => stats.views >= 150,
+    subject: (name) => `${name}, your profile is getting serious traction`,
     html: (profile, stats) => {
       const firstName = profile.full_name?.split(',')[0]?.split(' ')[0] || 'there'
       return wrapEmail(`
@@ -87,7 +87,7 @@ const MILESTONES: Milestone[] = [
             <div style="font-size: 14px; color: #6b7280;">profile views and counting</div>
           </div>
           <p style="font-size: 15px;">
-            You're getting consistent visibility from couples in ${profile.city || 'your area'}.
+            You're one of the most-viewed counselors in ${profile.city || 'your area'}.
             Counselors who add session pricing and respond to inquiries within 24 hours see significantly more bookings.
           </p>
           <p style="text-align: center; margin: 24px 0;">
