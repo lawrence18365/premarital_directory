@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { supabase } from '../../lib/supabaseClient';
 import { SEOHelmet } from '../../components/analytics';
 import Breadcrumbs, { generateBreadcrumbs } from '../../components/common/Breadcrumbs';
+import CoupleEmailCapture from '../../components/leads/CoupleEmailCapture';
 import '../../assets/css/blog.css';
 
 // Generate Article/BlogPosting structured data for SEO
@@ -43,6 +44,7 @@ const generateArticleStructuredData = (post) => {
 const BlogPostPage = () => {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
+  const [relatedPosts, setRelatedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -60,6 +62,21 @@ const BlogPostPage = () => {
         }
 
         setPost(data);
+
+        // Fetch related posts (same category first, then any others)
+        const { data: related } = await supabase
+          .from('posts')
+          .select('slug, title, excerpt, category, date, read_time')
+          .eq('status', 'published')
+          .neq('slug', slug)
+          .order('date', { ascending: false })
+          .limit(20);
+
+        if (related) {
+          const sameCategory = related.filter(p => p.category === data.category);
+          const others = related.filter(p => p.category !== data.category);
+          setRelatedPosts([...sameCategory, ...others].slice(0, 3));
+        }
       } catch (error) {
         setError(error.message);
       } finally {
@@ -163,6 +180,48 @@ const BlogPostPage = () => {
               </Link>
             </div>
           </aside>
+
+          <CoupleEmailCapture sourcePage={`blog/${slug}`} />
+
+          {/* Related Posts */}
+          {relatedPosts.length > 0 && (
+            <nav className="blog-related-posts" style={{ marginTop: 'var(--space-12)' }}>
+              <h2 style={{ fontSize: '1.25rem', marginBottom: 'var(--space-6)', fontWeight: 600 }}>Keep Reading</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-4)' }}>
+                {relatedPosts.map((related) => (
+                  <Link
+                    key={related.slug}
+                    to={`/blog/${related.slug}`}
+                    style={{
+                      display: 'block',
+                      padding: 'var(--space-5)',
+                      background: '#fff',
+                      border: '1px solid var(--gray-200, #e5e7eb)',
+                      borderRadius: 'var(--radius-lg, 12px)',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      transition: 'border-color 0.15s, box-shadow 0.15s'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#0d9488'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(13,148,136,0.1)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.boxShadow = 'none'; }}
+                  >
+                    <div style={{ fontSize: '0.75rem', color: '#0d9488', fontWeight: 500, marginBottom: '6px' }}>
+                      {related.category}
+                    </div>
+                    <div style={{ fontSize: '1rem', fontWeight: 600, lineHeight: 1.3, marginBottom: '8px', color: '#111827' }}>
+                      {related.title}
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: '#6b7280', lineHeight: 1.5 }}>
+                      {related.excerpt?.substring(0, 100)}{related.excerpt?.length > 100 ? '…' : ''}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '8px' }}>
+                      {related.read_time}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </nav>
+          )}
         </article>
       </div>
 

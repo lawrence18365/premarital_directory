@@ -180,6 +180,8 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
               src={profile.photo_url}
               alt={profile.full_name}
               className="profile-photo"
+              loading="lazy"
+              decoding="async"
               onError={() => setImageError(true)}
             />
           ) : (

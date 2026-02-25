@@ -17,6 +17,7 @@ import HowToChooseSection from '../components/city/HowToChooseSection';
 import MultiProviderInquiryForm from '../components/city/MultiProviderInquiryForm';
 import CityDataSummary from '../components/city/CityDataSummary';
 import ConciergeLeadForm from '../components/leads/ConciergeLeadForm';
+import CoupleEmailCapture from '../components/leads/CoupleEmailCapture';
 import {
   enrichPremaritalSignals,
   groupProfilesByRole,
@@ -1028,6 +1029,8 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                     showAside={false}
                   />
                 </div>
+
+                <CoupleEmailCapture sourcePage={`city/${state}/${city}`} />
 
                 {/* External Authority Resources for E-E-A-T */}
                 <div style={{
