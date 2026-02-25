@@ -100,9 +100,6 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', onScroll)
   }, [location.pathname])
 
-  const toggleDropdown = (name) => {
-    setOpenDropdown(prev => prev === name ? null : name)
-  }
 
   return (
     <nav className={`navbar ${isHome && !solid ? 'navbar--transparent' : ''} ${!showNavbar ? 'navbar-hidden' : ''}`}>
