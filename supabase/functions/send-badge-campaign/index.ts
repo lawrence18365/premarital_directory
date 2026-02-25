@@ -66,8 +66,14 @@ serve(async (req) => {
 
   const sentIds = new Set((alreadySent || []).map((r: { profile_id: string }) => r.profile_id))
 
-  for (const provider of providers) {
+  for (let i = 0; i < providers.length; i++) {
+    const provider = providers[i]
     const email = provider.email?.toLowerCase()
+
+    // Rate limit: wait 600ms between sends to stay under Resend's 2/sec limit
+    if (i > 0) {
+      await new Promise(resolve => setTimeout(resolve, 600))
+    }
 
     // Skip: no email, on DNC list, or already sent
     if (!email || dncEmails.has(email) || sentIds.has(provider.id)) {
