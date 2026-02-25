@@ -1,0 +1,29 @@
+name: Daily Engagement Milestones
+
+on:
+  schedule:
+    - cron: '30 14 * * *' # 2:30 PM UTC / 9:30 AM ET daily (after drip emails)
+  workflow_dispatch: # Manual trigger for testing
+
+jobs:
+  send-engagement-milestones:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send engagement milestone emails
+        run: |
+          response=$(curl -s -w "\n%{http_code}" \
+            -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/send-engagement-milestones" \
+            -H "Content-Type: application/json" \
+            -H "x-internal-api-key: ${{ secrets.INTERNAL_API_KEY }}" \
+            -d '{}')
+
+          http_code=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -1)
+
+          echo "Status: $http_code"
+          echo "Response: $body"
+
+          if [ "$http_code" -ge 400 ]; then
+            echo "::error::Engagement milestone function returned $http_code"
+            exit 1
+          fi
