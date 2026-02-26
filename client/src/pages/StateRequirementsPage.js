@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import SEOHelmet from '../components/analytics/SEOHelmet';
-import Breadcrumbs, { generateBreadcrumbs } from '../components/common/Breadcrumbs';
+import Breadcrumbs from '../components/common/Breadcrumbs';
 import { STATE_MARRIAGE_DATA } from '../data/stateMarriageData';
 import { STATE_CONFIG } from '../data/locationConfig';
 
