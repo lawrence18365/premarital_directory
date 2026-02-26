@@ -135,7 +135,7 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
         &times;
       </button>
 
-      <div style={{ maxWidth: '520px' }}>
+      <div style={{ maxWidth: '560px', margin: '0 auto', textAlign: 'center' }}>
         <h3 style={{ margin: '0 0 4px', fontSize: '1.15rem', fontWeight: 700, color: '#111827' }}>
           Free Guide: 10 Questions Every Couple Should Discuss Before Marriage
         </h3>
@@ -143,7 +143,7 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
           Get the guide counselors use with their clients — plus personalized recommendations for your area.
         </p>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={{ textAlign: 'left' }}>
           {/* Row 1: Name + Email */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
             <div style={{ flex: '0 0 140px', minWidth: '120px' }}>
