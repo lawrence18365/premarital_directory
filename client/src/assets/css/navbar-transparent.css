@@ -9,8 +9,7 @@
 
 .navbar--transparent .navbar-brand { color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
 
-.navbar--transparent .navbar-nav a,
-.navbar--transparent .navbar-nav a.active {
+.navbar--transparent .navbar-nav > li > a {
   color: #ffffff;
   position: relative;
   padding: 0.25rem 0.5rem;
@@ -24,8 +23,8 @@
   color: #fff !important;
 }
 
-.navbar--transparent .navbar-nav a:hover { opacity: 1; }
-.navbar--transparent .navbar-nav a.active { opacity: 1; }
+.navbar--transparent .navbar-nav > li > a:hover { opacity: 1; }
+.navbar--transparent .navbar-nav > li > a.active { opacity: 1; }
 
 .navbar--transparent .navbar-actions .btn.btn-outline {
   color: #ffffff;
@@ -44,7 +43,7 @@
 .navbar--transparent .hamburger { background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.35); }
 
 /* Minimal active indicator */
-.navbar--transparent .navbar-nav a.active:after {
+.navbar--transparent .navbar-nav > li > a.active:after {
   display: block;
   content: '';
   position: absolute;

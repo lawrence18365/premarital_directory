@@ -323,7 +323,6 @@ export const profileOperations = {
 
     // Count profiles by state (primary locations)
     const stateCounts = {}
-    const profileIdsByState = {}
     data.forEach(profile => {
       const state = profile.state_province
       if (state) {
