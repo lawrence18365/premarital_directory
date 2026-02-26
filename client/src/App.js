@@ -84,6 +84,7 @@ const Segment3Route = React.lazy(() => import('./components/routing/Segment3Rout
 const MarriageLicenseDiscountPage = React.lazy(() => import('./pages/MarriageLicenseDiscountPage'))
 const MarriageLicenseStatePage = React.lazy(() => import('./pages/MarriageLicenseStatePage'))
 const BoostLandingPage = React.lazy(() => import('./pages/BoostLandingPage'))
+const StateRequirementsPage = React.lazy(() => import('./pages/StateRequirementsPage'))
 
 // Blog pages
 const BlogIndex = React.lazy(() => import('./pages/blog/BlogIndex'))
@@ -192,6 +193,7 @@ function AppInner() {
             <Route path="/premarital-counseling" element={<StatesIndexPage />} />
             <Route path="/premarital-counseling/marriage-license-discount" element={<MarriageLicenseDiscountPage />} />
             <Route path="/premarital-counseling/marriage-license-discount/:state" element={<MarriageLicenseStatePage />} />
+            <Route path="/premarital-counseling/state-requirements" element={<StateRequirementsPage />} />
 
             {/* Level 1: State OR Specialty */}
             <Route path="/premarital-counseling/:state" element={<SpecialtyOrStatePage />} />

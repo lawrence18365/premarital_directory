@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { profileOperations } from '../../lib/supabaseClient'
 import { normalizeAndValidateUrl } from '../../lib/utils'
 import { Link } from 'react-router-dom'
+import { STATE_CONFIG } from '../../data/locationConfig'
 
 const toBooleanFlag = (value) => {
   if (typeof value === 'boolean') return value
@@ -68,6 +69,12 @@ const ProfileEditor = () => {
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [errors, setErrors] = useState({})
   const [activeSection, setActiveSection] = useState('basic')
+
+  // Additional locations state
+  const [additionalLocations, setAdditionalLocations] = useState([])
+  const [addLocLoading, setAddLocLoading] = useState(false)
+  const [addLocError, setAddLocError] = useState(null)
+  const [newLocation, setNewLocation] = useState({ city: '', state_province: '', postal_code: '' })
 
   // Options matching CreateProfilePage
   const specialtyOptions = [
@@ -261,6 +268,53 @@ const ProfileEditor = () => {
       }
     }
   }, [profile])
+
+  // Load additional locations
+  const loadAdditionalLocations = useCallback(async () => {
+    if (!profile?.id) return
+    const { data } = await profileOperations.getAdditionalLocations(profile.id)
+    setAdditionalLocations(data || [])
+  }, [profile?.id])
+
+  useEffect(() => {
+    loadAdditionalLocations()
+  }, [loadAdditionalLocations])
+
+  const handleAddLocation = async () => {
+    if (!newLocation.city.trim() || !newLocation.state_province.trim()) {
+      setAddLocError('City and state are required')
+      return
+    }
+    // Don't allow adding primary location as additional
+    if (
+      newLocation.state_province === formData.state_province &&
+      newLocation.city.trim().toLowerCase() === formData.city.trim().toLowerCase()
+    ) {
+      setAddLocError('This is already your primary location')
+      return
+    }
+    setAddLocLoading(true)
+    setAddLocError(null)
+    const { error } = await profileOperations.addAdditionalLocation(profile.id, {
+      city: newLocation.city.trim(),
+      state_province: newLocation.state_province,
+      postal_code: newLocation.postal_code.trim() || null
+    })
+    if (error) {
+      setAddLocError(error.message?.includes('Maximum') ? 'Maximum of 3 additional locations reached' : error.message)
+    } else {
+      setNewLocation({ city: '', state_province: '', postal_code: '' })
+      await loadAdditionalLocations()
+    }
+    setAddLocLoading(false)
+  }
+
+  const handleRemoveLocation = async (locationId) => {
+    const { error } = await profileOperations.removeAdditionalLocation(locationId)
+    if (!error) {
+      setAdditionalLocations(prev => prev.filter(loc => loc.id !== locationId))
+    }
+  }
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -794,6 +848,106 @@ const ProfileEditor = () => {
                   <option value="Australia">Australia</option>
                 </select>
               </div>
+            </div>
+
+            {/* Additional Practice Locations */}
+            <div className="form-section">
+              <h2>Additional Practice Locations</h2>
+              <p>Licensed in multiple states? Add up to 3 additional locations to appear in those city and state listings too.</p>
+
+              {/* Existing additional locations */}
+              {additionalLocations.length > 0 && (
+                <div style={{ marginBottom: '1rem' }}>
+                  {additionalLocations.map(loc => (
+                    <div key={loc.id} style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '0.75rem 1rem',
+                      background: 'var(--gray-50)',
+                      borderRadius: '8px',
+                      marginBottom: '0.5rem',
+                      border: '1px solid var(--gray-200)'
+                    }}>
+                      <span>
+                        <i className="fa fa-map-marker" style={{ color: 'var(--color-primary)', marginRight: '0.5rem' }}></i>
+                        <strong>{loc.city}, {loc.state_province}</strong>
+                        {loc.postal_code && <span style={{ color: 'var(--text-muted)', marginLeft: '0.5rem' }}>{loc.postal_code}</span>}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveLocation(loc.id)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--error)',
+                          cursor: 'pointer',
+                          padding: '0.25rem 0.5rem',
+                          fontSize: '0.85rem'
+                        }}
+                      >
+                        <i className="fa fa-times"></i> Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add new location form */}
+              {additionalLocations.length >= 3 ? (
+                <p style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.9rem' }}>
+                  Maximum of 3 additional locations reached.
+                </p>
+              ) : (
+                <div style={{ padding: '1rem', background: 'var(--gray-50)', borderRadius: '8px', border: '1px dashed var(--gray-300)' }}>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>State *</label>
+                      <select
+                        value={newLocation.state_province}
+                        onChange={(e) => setNewLocation(prev => ({ ...prev, state_province: e.target.value }))}
+                      >
+                        <option value="">Select state...</option>
+                        {Object.entries(STATE_CONFIG).map(([slug, config]) => (
+                          <option key={slug} value={config.abbr}>{config.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>City *</label>
+                      <input
+                        type="text"
+                        value={newLocation.city}
+                        onChange={(e) => setNewLocation(prev => ({ ...prev, city: e.target.value }))}
+                        placeholder="e.g. Phoenix"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>ZIP (optional)</label>
+                      <input
+                        type="text"
+                        value={newLocation.postal_code}
+                        onChange={(e) => setNewLocation(prev => ({ ...prev, postal_code: e.target.value }))}
+                        placeholder="85001"
+                      />
+                    </div>
+                  </div>
+                  {addLocError && <div className="field-error" style={{ marginBottom: '0.5rem' }}>{addLocError}</div>}
+                  <button
+                    type="button"
+                    onClick={handleAddLocation}
+                    disabled={addLocLoading}
+                    className="btn btn-outline"
+                    style={{ marginTop: '0.5rem' }}
+                  >
+                    {addLocLoading ? (
+                      <><i className="fa fa-spinner fa-spin"></i> Adding...</>
+                    ) : (
+                      <><i className="fa fa-plus"></i> Add Location</>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Session Types */}

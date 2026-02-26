@@ -39,16 +39,45 @@ export const profileOperations = {
 
     const { data, error } = await query
 
-    if (data && data.length > 0) {
-      return { data, error }
-    }
-
     if (error) {
       // Fallback: Use pagination to get all profiles
       return await this.getAllProfilesPaginated(filters)
     }
 
-    return { data, error }
+    let results = data || []
+
+    // Merge profiles from additional locations when filtering by state or city
+    if (filters.state || filters.city) {
+      const { data: additionalLocs } = await this.getProfileIdsByAdditionalLocation({
+        state: filters.state,
+        city: filters.city
+      })
+      if (additionalLocs && additionalLocs.length > 0) {
+        const existingIds = new Set(results.map(p => p.id))
+        const extraIds = additionalLocs
+          .map(loc => loc.profile_id)
+          .filter(id => !existingIds.has(id))
+
+        if (extraIds.length > 0) {
+          const { data: extraProfiles } = await this.getProfilesByIds([...new Set(extraIds)])
+          if (extraProfiles) {
+            // Tag each extra profile with the additional location info
+            const locMap = {}
+            additionalLocs.forEach(loc => {
+              if (!locMap[loc.profile_id]) locMap[loc.profile_id] = loc
+            })
+            extraProfiles.forEach(p => {
+              p._isAdditionalLocation = true
+              p._additionalLocationCity = locMap[p.id]?.city
+              p._additionalLocationState = locMap[p.id]?.state_province
+            })
+            results = [...results, ...extraProfiles]
+          }
+        }
+      }
+    }
+
+    return { data: results, error: null }
   },
 
   // Fallback method: Get all profiles using pagination
@@ -154,7 +183,29 @@ export const profileOperations = {
       .order('is_sponsored', { ascending: false })
       .order('created_at', { ascending: false })
 
-    return { data, error }
+    let results = data || []
+
+    // Also include profiles with additional locations in this state
+    const { data: additionalLocs } = await this.getProfileIdsByAdditionalLocation({ state: stateAbbr })
+    if (additionalLocs && additionalLocs.length > 0) {
+      const existingIds = new Set(results.map(p => p.id))
+      const extraIds = [...new Set(additionalLocs.map(loc => loc.profile_id).filter(id => !existingIds.has(id)))]
+      if (extraIds.length > 0) {
+        const { data: extraProfiles } = await this.getProfilesByIds(extraIds)
+        if (extraProfiles) {
+          const locMap = {}
+          additionalLocs.forEach(loc => { if (!locMap[loc.profile_id]) locMap[loc.profile_id] = loc })
+          extraProfiles.forEach(p => {
+            p._isAdditionalLocation = true
+            p._additionalLocationCity = locMap[p.id]?.city
+            p._additionalLocationState = locMap[p.id]?.state_province
+          })
+          results = [...results, ...extraProfiles]
+        }
+      }
+    }
+
+    return { data: results, error }
   },
 
   // Get profiles by state and city
@@ -170,7 +221,29 @@ export const profileOperations = {
       .order('is_sponsored', { ascending: false })
       .order('created_at', { ascending: false })
 
-    return { data, error }
+    let results = data || []
+
+    // Also include profiles with additional locations in this city/state
+    const { data: additionalLocs } = await this.getProfileIdsByAdditionalLocation({ state: stateAbbr, city })
+    if (additionalLocs && additionalLocs.length > 0) {
+      const existingIds = new Set(results.map(p => p.id))
+      const extraIds = [...new Set(additionalLocs.map(loc => loc.profile_id).filter(id => !existingIds.has(id)))]
+      if (extraIds.length > 0) {
+        const { data: extraProfiles } = await this.getProfilesByIds(extraIds)
+        if (extraProfiles) {
+          const locMap = {}
+          additionalLocs.forEach(loc => { if (!locMap[loc.profile_id]) locMap[loc.profile_id] = loc })
+          extraProfiles.forEach(p => {
+            p._isAdditionalLocation = true
+            p._additionalLocationCity = locMap[p.id]?.city
+            p._additionalLocationState = locMap[p.id]?.state_province
+          })
+          results = [...results, ...extraProfiles]
+        }
+      }
+    }
+
+    return { data: results, error }
   },
 
   // Get nearby profiles (same city/state) excluding the current one
@@ -187,7 +260,26 @@ export const profileOperations = {
       .order('sponsored_rank', { ascending: false })
       .limit(limit)
 
-    return { data, error }
+    let results = data || []
+
+    // Fill remaining slots from additional locations
+    if (results.length < limit) {
+      const { data: additionalLocs } = await this.getProfileIdsByAdditionalLocation({ state: stateAbbr, city })
+      if (additionalLocs && additionalLocs.length > 0) {
+        const existingIds = new Set(results.map(p => p.id))
+        existingIds.add(excludeProfileId)
+        const extraIds = [...new Set(additionalLocs.map(loc => loc.profile_id).filter(id => !existingIds.has(id)))]
+        if (extraIds.length > 0) {
+          const remaining = limit - results.length
+          const { data: extraProfiles } = await this.getProfilesByIds(extraIds.slice(0, remaining))
+          if (extraProfiles) {
+            results = [...results, ...extraProfiles]
+          }
+        }
+      }
+    }
+
+    return { data: results, error }
   },
 
   // Search profiles by text
@@ -201,7 +293,22 @@ export const profileOperations = {
       .order('sponsored_rank', { ascending: false })
       .order('is_sponsored', { ascending: false })
 
-    return { data, error }
+    let results = data || []
+
+    // Also search additional location cities
+    const { data: additionalLocs } = await this.getProfileIdsByAdditionalLocation({ city: searchTerm })
+    if (additionalLocs && additionalLocs.length > 0) {
+      const existingIds = new Set(results.map(p => p.id))
+      const extraIds = [...new Set(additionalLocs.map(loc => loc.profile_id).filter(id => !existingIds.has(id)))]
+      if (extraIds.length > 0) {
+        const { data: extraProfiles } = await this.getProfilesByIds(extraIds)
+        if (extraProfiles) {
+          results = [...results, ...extraProfiles]
+        }
+      }
+    }
+
+    return { data: results, error }
   },
 
   // Get state statistics
@@ -214,14 +321,36 @@ export const profileOperations = {
 
     if (error) return { data: null, error }
 
-    // Count profiles by state
+    // Count profiles by state (primary locations)
     const stateCounts = {}
+    const profileIdsByState = {}
     data.forEach(profile => {
       const state = profile.state_province
       if (state) {
         stateCounts[state] = (stateCounts[state] || 0) + 1
       }
     })
+
+    // Include additional locations
+    const { data: additionalLocs } = await supabase
+      .from('profile_additional_locations')
+      .select('profile_id, state_province')
+
+    if (additionalLocs) {
+      // Only count a profile once per state
+      const counted = new Set()
+      data.forEach(p => {
+        if (p.state_province) counted.add(`${p.id}|${p.state_province}`)
+      })
+
+      additionalLocs.forEach(loc => {
+        const key = `${loc.profile_id}|${loc.state_province}`
+        if (!counted.has(key)) {
+          counted.add(key)
+          stateCounts[loc.state_province] = (stateCounts[loc.state_province] || 0) + 1
+        }
+      })
+    }
 
     return { data: stateCounts, error: null }
   },
@@ -276,6 +405,36 @@ export const profileOperations = {
       page += 1
     }
 
+    // Include additional locations in coverage
+    const { data: additionalLocs } = await supabase
+      .from('profile_additional_locations')
+      .select('profile_id, city, state_province')
+
+    if (additionalLocs) {
+      additionalLocs.forEach((loc) => {
+        const stateAbbr = (loc.state_province || '').trim().toUpperCase()
+        const cityName = (loc.city || '').trim()
+        if (!stateAbbr) return
+
+        stateCounts[stateAbbr] = (stateCounts[stateAbbr] || 0) + 1
+        if (!cityName) return
+
+        const normalizedCity = cityName.toLowerCase().replace(/\s+/g, ' ').trim()
+        const citySlug = normalizedCity.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+        const key = `${stateAbbr}|${normalizedCity}`
+
+        if (!cityMap[key]) {
+          cityMap[key] = {
+            stateAbbr,
+            cityName,
+            citySlug,
+            count: 0
+          }
+        }
+        cityMap[key].count += 1
+      })
+    }
+
     return {
       data: {
         stateCounts,
@@ -283,6 +442,71 @@ export const profileOperations = {
       },
       error: null
     }
+  },
+
+  // --- Additional Locations CRUD ---
+
+  async getAdditionalLocations(profileId) {
+    const { data, error } = await supabase
+      .from('profile_additional_locations')
+      .select('*')
+      .eq('profile_id', profileId)
+      .order('created_at', { ascending: true })
+
+    return { data: data || [], error }
+  },
+
+  async addAdditionalLocation(profileId, { city, state_province, postal_code }) {
+    const { data, error } = await supabase
+      .from('profile_additional_locations')
+      .insert({ profile_id: profileId, city, state_province, postal_code: postal_code || null })
+      .select()
+      .single()
+
+    return { data, error }
+  },
+
+  async removeAdditionalLocation(locationId) {
+    const { error } = await supabase
+      .from('profile_additional_locations')
+      .delete()
+      .eq('id', locationId)
+
+    return { error }
+  },
+
+  // --- Additional Location Helpers ---
+
+  // Get profile IDs that have an additional location matching state (and optionally city)
+  async getProfileIdsByAdditionalLocation({ state, city }) {
+    let query = supabase
+      .from('profile_additional_locations')
+      .select('profile_id, city, state_province')
+
+    if (state) {
+      query = query.eq('state_province', state)
+    }
+    if (city) {
+      query = query.ilike('city', `%${city}%`)
+    }
+
+    const { data, error } = await query
+    if (error || !data) return { data: [], error }
+    return { data, error: null }
+  },
+
+  // Fetch visible profiles by an array of IDs
+  async getProfilesByIds(ids) {
+    if (!ids || ids.length === 0) return { data: [], error: null }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .in('id', ids)
+      .eq('is_hidden', false)
+      .or('moderation_status.eq.approved,moderation_status.is.null')
+
+    return { data: data || [], error }
   },
 
   // Check if a profile already exists with this email

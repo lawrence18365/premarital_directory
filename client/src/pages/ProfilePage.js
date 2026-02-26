@@ -255,6 +255,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
 
   const currentSlug = profileSlug || slugOrId
   const [profile, setProfile] = useState(null)
+  const [additionalLocations, setAdditionalLocations] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [phoneRevealed, setPhoneRevealed] = useState(false)
@@ -335,6 +336,10 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
         setError('Profile not found')
       } else {
         setProfile(data)
+        // Load additional locations
+        profileOperations.getAdditionalLocations(data.id).then(({ data: locs }) => {
+          setAdditionalLocations(locs || [])
+        }).catch(() => {})
       }
     } catch (err) {
       setError('Failed to load profile')
@@ -690,6 +695,28 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                   {availabilityIsVerified && <span>{availabilityLabel}</span>}
                 </div>
 
+                {additionalLocations.length > 0 && (
+                  <div style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    <i className="fa fa-map-marker" style={{ marginRight: '0.4rem', color: 'var(--color-primary)' }}></i>
+                    Also serving:{' '}
+                    {additionalLocations.map((loc, i) => {
+                      const stateSlug = getStateSlugFromAbbr(loc.state_province)
+                      const citySlug = loc.city.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')
+                      return (
+                        <span key={loc.id}>
+                          {i > 0 && ' | '}
+                          <Link
+                            to={`/premarital-counseling/${stateSlug}/${citySlug}`}
+                            style={{ color: 'var(--color-primary)', textDecoration: 'none' }}
+                          >
+                            {loc.city}, {loc.state_province}
+                          </Link>
+                        </span>
+                      )
+                    })}
+                  </div>
+                )}
+
                 {quickFacts.length > 0 && (
                   <div className="profile-premium-quickfacts">
                     {quickFacts.map((fact) => (
@@ -919,7 +946,10 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     <h2>Premarital Counseling in {profile.city}, {profile.state_province}</h2>
                     <div className="profile-prose">
                       <p>
-                        {firstName} serves couples in {profile.city} and nearby communities.
+                        {firstName} serves couples in {profile.city}
+                        {additionalLocations.length > 0
+                          ? `, ${additionalLocations.map(loc => loc.city).join(', ')}, and nearby communities.`
+                          : ' and nearby communities.'}
                         {hasOnlineOption ? ' Online sessions are available.' : ''}
                       </p>
                     </div>

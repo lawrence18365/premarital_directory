@@ -17,6 +17,8 @@ import ConciergeLeadForm from '../components/leads/ConciergeLeadForm';
 import FAQ from '../components/common/FAQ';
 import { profileOperations } from '../lib/supabaseClient';
 import CoupleEmailCapture from '../components/leads/CoupleEmailCapture';
+import StateMarriageLawSection from '../components/state/StateMarriageLawSection';
+import RelatedBlogPosts from '../components/state/RelatedBlogPosts';
 import '../assets/css/state-page.css';
 
 const StatePage = () => {
@@ -65,10 +67,14 @@ const StatePage = () => {
       }
 
       // Count profiles by city
+      // For profiles from additional locations, use their additional location city
       const cityCounts = {}
       profiles?.forEach(profile => {
-        if (profile.city) {
-          const cityNormalized = profile.city.toLowerCase()
+        const city = profile._isAdditionalLocation && profile._additionalLocationCity
+          ? profile._additionalLocationCity
+          : profile.city
+        if (city) {
+          const cityNormalized = city.toLowerCase()
           cityCounts[cityNormalized] = (cityCounts[cityNormalized] || 0) + 1
         }
       })
@@ -420,6 +426,12 @@ const StatePage = () => {
             showAside={false}
           />
         </div>
+
+        {/* State Marriage Law Section */}
+        <StateMarriageLawSection stateSlug={state} stateName={stateConfig.name} />
+
+        {/* Related Blog Posts */}
+        <RelatedBlogPosts stateSlug={state} stateName={stateConfig.name} />
 
         <div className="state-container" style={{ marginBottom: 'var(--space-8)' }}>
           <CoupleEmailCapture sourcePage={`state/${state}`} defaultState={stateConfig?.abbr || ''} />
