@@ -290,10 +290,12 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
             )}
 
             {/* Dynamic Local Content - Prevents "Thin Content" */}
-            <LocalSpecialtyContent 
-              specialty={specialty} 
+            <LocalSpecialtyContent
+              specialty={specialty}
               stateName={stateName}
               cityName={cityName}
+              profiles={profiles}
+              stateSlug={stateSlug}
             />
 
             <h2 className="section-title" style={{ marginTop: 'var(--space-8)' }}>

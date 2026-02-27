@@ -572,8 +572,8 @@ export const STATE_DISCOUNT_CONFIG = {
     name: 'Minnesota',
     abbr: 'MN',
     discount: 'Up to $75',
-    originalFee: '$115',
-    discountedFee: '$40',
+    originalFee: '$125',
+    discountedFee: '$50',
     waitingPeriod: '5-day waiting period waived',
     requirements: [
       'Complete at least 12 hours of premarital education',
@@ -603,7 +603,7 @@ export const STATE_DISCOUNT_CONFIG = {
   'oklahoma': {
     name: 'Oklahoma',
     abbr: 'OK',
-    discount: '$50',
+    discount: '$45',
     originalFee: '$50',
     discountedFee: '$5',
     waitingPeriod: 'No waiting period impact',
@@ -727,6 +727,70 @@ export const STATE_DISCOUNT_CONFIG = {
     ],
     certificateUrl: 'https://www.in.gov/courts/files/form-completion-premarital-counseling.pdf',
     notes: 'Use the official Indiana courts certificate form to claim the $60 discount.'
+  },
+  'utah': {
+    name: 'Utah',
+    abbr: 'UT',
+    discount: '$20',
+    originalFee: '$50–$70 (varies by county)',
+    discountedFee: '$30–$50',
+    waitingPeriod: 'No waiting period impact',
+    requirements: [
+      'Complete a Marriage Education Discount (MED) approved course',
+      '6 hours of education OR 3 hours of counseling with an approved provider',
+      'Obtain an MED completion code from your provider'
+    ],
+    steps: [
+      'Find an MED-approved educator or counselor through the Utah State University Stronger Marriage program',
+      'Complete 6 hours of marriage education OR 3 hours of premarital counseling as a couple',
+      'Receive your MED completion code from your approved provider',
+      'Enter the MED code when applying for your marriage license at the county clerk\'s office',
+      'Receive a $20 discount on your marriage license fee'
+    ],
+    faqs: [
+      {
+        question: 'What is the Utah Marriage Education Discount (MED)?',
+        answer: 'The MED program is a state-sponsored initiative administered through Utah State University. Couples who complete an approved marriage education course or counseling session receive a $20 discount on their marriage license fee.'
+      },
+      {
+        question: 'What\'s the difference between 6 hours of education and 3 hours of counseling?',
+        answer: 'Utah offers two paths: a 6-hour marriage education course (group or online), or 3 hours of one-on-one premarital counseling with an MED-approved provider. Both qualify for the same $20 discount.'
+      }
+    ],
+    certificateUrl: 'https://extension.usu.edu/strongermarriage/utah-med/',
+    notes: 'Part of the USU Stronger Marriage program — two qualification paths available.'
+  },
+  'west-virginia': {
+    name: 'West Virginia',
+    abbr: 'WV',
+    discount: '$20',
+    originalFee: '$56',
+    discountedFee: '$36',
+    waitingPeriod: 'No waiting period impact',
+    requirements: [
+      'Complete a premarital education course of at least 4 hours',
+      'Course must be from a qualified instructor',
+      'Present certificate of completion when applying for license'
+    ],
+    steps: [
+      'Find a qualified premarital education provider in West Virginia',
+      'Complete at least 4 hours of premarital education as a couple',
+      'Receive your certificate of completion',
+      'Present the certificate at the county clerk\'s office when applying for your marriage license',
+      'Receive a $20 discount, reducing the license fee from $56 to $36'
+    ],
+    faqs: [
+      {
+        question: 'How much does a marriage license cost in West Virginia with premarital counseling?',
+        answer: 'With the $20 premarital education discount, a West Virginia marriage license costs $36 instead of the standard $56.'
+      },
+      {
+        question: 'What type of premarital education qualifies in West Virginia?',
+        answer: 'West Virginia requires a premarital education course of at least 4 hours. The course must be taught by a qualified instructor — licensed therapists, counselors, and clergy members typically qualify.'
+      }
+    ],
+    certificateUrl: null,
+    notes: 'Complete a 4-hour course to save $20 on your marriage license.'
   }
 }
 

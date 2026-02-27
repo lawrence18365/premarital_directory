@@ -242,7 +242,7 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
                 {isCatholic ? `Browse verified Catholic marriage preparation options across ${stateName}` : `Find ${specialty.name.toLowerCase()} marriage preparation across ${stateName}`}
               </p>
 
-              <LocalSpecialtyContent specialty={specialty} stateName={stateName} />
+              <LocalSpecialtyContent specialty={specialty} stateName={stateName} profiles={profiles} stateSlug={stateSlug} />
 
               {/* CTA Buttons */}
               <div className="specialty-cta">
@@ -270,9 +270,11 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
             )}
 
             {/* Dynamic Local Content - Prevents "Thin Content" */}
-            <LocalSpecialtyContent 
-              specialty={specialty} 
-              stateName={stateName} 
+            <LocalSpecialtyContent
+              specialty={specialty}
+              stateName={stateName}
+              profiles={profiles}
+              stateSlug={stateSlug}
             />
             
             <h2 className="section-title" style={{ marginTop: 'var(--space-8)' }}>

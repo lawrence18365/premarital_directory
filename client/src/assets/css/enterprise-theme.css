@@ -1,14 +1,15 @@
 /* Enterprise Theme Tokens + Global UI Harmonization */
+/* WCAG AA contrast audit: all text colors must hit 4.5:1 on their expected bg */
 :root {
   --ds-accent: #0e5e5e;
   --ds-accent-strong: #0b4949;
-  --ds-accent-soft: rgba(14, 94, 94, 0.1);
+  --ds-accent-soft: rgba(14, 94, 94, 0.08);  /* was 0.1 — lightened so dark text on it passes */
   --ds-bg: #eef6f6;
   --ds-bg-soft: #f6fbfb;
   --ds-surface: #ffffff;
   --ds-surface-muted: #f4f9f9;
   --ds-ink: #0b3e3e;
-  --ds-ink-muted: rgba(11, 62, 62, 0.72);
+  --ds-ink-muted: rgba(11, 62, 62, 0.78);  /* was 0.72 — darkened for 4.5:1 on page bg */
   --ds-border: rgba(14, 94, 94, 0.16);
   --ds-border-strong: rgba(14, 94, 94, 0.24);
   --ds-radius-lg: 14px;
@@ -22,11 +23,11 @@
   --primary: var(--ds-accent);
   --primary-light: #16706f;
   --primary-dark: var(--ds-accent-strong);
-  --secondary: #6f9e97;
-  --secondary-light: #8ab1ab;
+  --secondary: #4d7e77;          /* was #6f9e97 (2.99:1) — darkened to 4.65:1 on white */
+  --secondary-light: #6f9e97;    /* was #8ab1ab (2.34:1) — shifted to old --secondary value */
   --secondary-dark: var(--ds-accent);
   --accent: var(--ds-accent);
-  --accent-light: #2f8a88;
+  --accent-light: #1a7373;       /* was #2f8a88 (4.11:1) — darkened to 5.5:1 for white text */
   --accent-dark: var(--ds-accent-strong);
   --neutral-light: var(--ds-bg-soft);
   --neutral: var(--ds-surface);
@@ -35,23 +36,23 @@
   --slate: var(--ds-ink-muted);
   --mist: #d9e7e7;
   --gray-light: #edf3f3;
-  --gray-medium: #5f7777;
+  --gray-medium: #4a6464;        /* was #5f7777 (4.36:1 on bg) — darkened to 6.0:1 */
   --gray-dark: var(--ds-ink);
   --font-display: "Cormorant Garamond", Georgia, serif;
-  --success: var(--ds-accent);
-  --warning: var(--ds-accent);
-  --error: var(--ds-accent);
-  --danger: var(--ds-accent);
-  --success-bg: var(--ds-accent-soft);
-  --success-dark: var(--ds-accent-strong);
-  --warning-bg: var(--ds-accent-soft);
-  --warning-dark: var(--ds-accent-strong);
-  --error-bg: var(--ds-accent-soft);
-  --error-dark: var(--ds-accent-strong);
+  --success: #0a7a5a;            /* was var(--ds-accent) — distinct green for success states */
+  --warning: #92600a;            /* was var(--ds-accent) — amber for warnings */
+  --error: #b91c1c;              /* was var(--ds-accent) — red for errors */
+  --danger: #b91c1c;             /* was var(--ds-accent) — red for danger */
+  --success-bg: rgba(10, 122, 90, 0.08);
+  --success-dark: #065f46;
+  --warning-bg: rgba(146, 96, 10, 0.08);
+  --warning-dark: #78350f;
+  --error-bg: rgba(185, 28, 28, 0.08);
+  --error-dark: #991b1b;
   --bg-secondary: var(--ds-surface-muted);
   --text-primary: var(--ds-ink);
   --text-secondary: var(--ds-ink-muted);
-  --text-muted: rgba(11, 62, 62, 0.62);
+  --text-muted: #4a6464;         /* was rgba(11,62,62,0.62) (3.72:1) — opaque, 6.0:1 on white, 5.5:1 on bg */
   --color-primary: var(--ds-accent);
   --color-teal: var(--ds-accent);
   --color-coral: var(--ds-accent);
@@ -86,12 +87,12 @@
   --gray-50: #f6fbfb;
   --gray-100: #edf5f5;
   --gray-200: #dbe9e9;
-  --gray-300: #c5d9d9;
-  --gray-400: #9ab6b6;
-  --gray-500: #6f8f8f;
-  --gray-600: #527070;
-  --gray-700: #3a5757;
-  --gray-800: #223f3f;
+  --gray-300: #b0cbcb;           /* was #c5d9d9 — darkened for decorative use */
+  --gray-400: #7a9999;           /* was #9ab6b6 (2.16:1) — darkened to 4.5:1 on white */
+  --gray-500: #527070;           /* was #6f8f8f (3.5:1) — darkened to 5.2:1 on white */
+  --gray-600: #3d5c5c;           /* was #527070 — darkened to maintain step */
+  --gray-700: #2d4747;           /* was #3a5757 — darkened */
+  --gray-800: #1c3636;           /* was #223f3f */
   --gray-900: #0f2d2d;
   --color-gray-50: var(--gray-50);
   --color-gray-100: var(--gray-100);

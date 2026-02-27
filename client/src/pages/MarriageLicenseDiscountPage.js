@@ -72,7 +72,7 @@ const MarriageLicenseDiscountPage = () => {
   const faqs = [
     {
       question: 'Which states offer marriage license discounts for premarital counseling?',
-      answer: `Several states offer discounts on marriage license fees for couples who complete premarital counseling: Florida (~$33 off), Texas ($60 off), Minnesota (up to $75 off), Tennessee ($60 off), Oklahoma ($50 off), Georgia ($16–50 off), Maryland (varies by county), and Indiana ($60 off). Some states also waive waiting periods.`
+      answer: `Ten states currently offer discounts on marriage license fees for couples who complete premarital counseling: Florida (~$33 off), Texas ($60 off), Minnesota (up to $75 off), Tennessee ($60 off), Oklahoma ($45 off), Georgia ($16–50 off), Indiana ($60 off), Maryland (varies by county), Utah ($20 off via MED program), and West Virginia ($20 off). Florida, Texas, and Minnesota also waive mandatory waiting periods.`
     },
     {
       question: 'How do I get the marriage license discount?',
@@ -80,19 +80,31 @@ const MarriageLicenseDiscountPage = () => {
     },
     {
       question: 'How long does premarital counseling need to be for the discount?',
-      answer: 'Requirements vary: Florida requires 4 hours, Texas requires 8 hours (Twogether in Texas program), Minnesota requires 12 hours, and most other states require 4-6 hours. Check your specific state requirements.'
+      answer: 'Requirements vary: Florida requires 4 hours, Texas requires 8 hours (Twogether in Texas program), Minnesota requires 12 hours, Utah requires 6 hours of education or 3 hours of counseling, West Virginia requires 4 hours, and most other states require 4-6 hours. Check your specific state requirements.'
     },
     {
       question: 'Do online premarital counseling programs qualify for the discount?',
-      answer: 'It depends on the state. Some states accept online programs while others require in-person sessions with a licensed professional or clergy member. Check your state\'s specific requirements or ask your counselor.'
+      answer: 'It depends on the state. Florida, Maryland, and several others accept online programs as long as the provider is licensed and meets the minimum hour requirement. Some states require in-person sessions. Check your state\'s specific requirements or ask your counselor before enrolling in an online program.'
     },
     {
       question: 'Can any counselor provide the certificate for the discount?',
-      answer: 'Most states require the counselor to be licensed (LMFT, LPC, LCSW, psychologist) or ordained clergy. Some states like Texas have specific approved programs. Your counselor should know if they\'re qualified to issue the certificate.'
+      answer: 'Most states require the counselor to be licensed (LMFT, LPC, LCSW, psychologist) or ordained clergy. Some states like Texas have specific approved programs (Twogether in Texas), and Utah maintains a list of MED-approved educators. Your counselor should know if they\'re qualified to issue the certificate in your state.'
     },
     {
       question: 'How long is the premarital counseling certificate valid?',
-      answer: 'Validity periods vary by state. Texas certificates are valid for 1 year, while other states may have different timeframes. Complete counseling close to your wedding date to ensure the certificate is still valid.'
+      answer: 'Validity periods vary by state. Texas and Georgia certificates are valid for 1 year, Utah\'s MED certificate is valid for 1 year, and other states may have different timeframes. Complete counseling close to your wedding date to ensure the certificate is still valid when you apply for your license.'
+    },
+    {
+      question: 'Do both partners need to attend premarital counseling for the discount?',
+      answer: 'Yes. All states that offer marriage license discounts require both partners to attend and complete the premarital counseling program together. The certificate of completion is issued to the couple, not to an individual.'
+    },
+    {
+      question: 'What happens if my premarital counseling certificate expires before I apply for the license?',
+      answer: 'If your certificate has expired, you will need to complete the premarital counseling program again to receive a new certificate. To avoid this, time your counseling so the certificate is still valid when you plan to apply for your marriage license — most couples complete counseling 2–6 months before their wedding.'
+    },
+    {
+      question: 'Does my state offer a marriage license discount?',
+      answer: 'Currently 10 states offer a direct fee reduction on your marriage license for completing premarital counseling: Florida, Texas, Minnesota, Tennessee, Oklahoma, Georgia, Indiana, Maryland, Utah, and West Virginia. South Carolina offers a $50 state income tax credit instead of a direct fee reduction. If your state isn\'t listed, premarital counseling is still a worthwhile investment — just without the license fee discount.'
     }
   ]
 
@@ -101,7 +113,7 @@ const MarriageLicenseDiscountPage = () => {
     "@context": "https://schema.org",
     "@type": "WebPage",
     "name": "Marriage License Discounts for Premarital Counseling",
-    "description": "Save money on your marriage license by completing premarital counseling. Learn about state discounts and find qualified counselors.",
+    "description": "10 states reduce your marriage license fee by $20–$75 when you complete premarital counseling. Compare discounts state by state and find approved counselors.",
     "mainEntity": {
       "@type": "ItemList",
       "name": "States Offering Marriage License Discounts",
@@ -121,10 +133,10 @@ const MarriageLicenseDiscountPage = () => {
   return (
     <>
       <SEOHelmet
-        title="Save $25–$60 on Your Marriage License — 8 States With Premarital Counseling Discounts (2026)"
-        description="Florida, Georgia, Texas, and 5 more states reduce your marriage license fee after premarital counseling. See your state's exact savings, step-by-step requirements, and find approved counselors near you."
+        title="Marriage License Discount by State: Save $20–$75 (2026)"
+        description="10 states cut your marriage license fee when you complete premarital counseling. FL, TX, MN, TN, OK, GA, IN, MD, UT & WV — see each state's exact discount, hour requirements, and find approved counselors."
         url="/premarital-counseling/marriage-license-discount"
-        keywords="marriage license discount premarital counseling, marriage certificate discount, premarital counseling for marriage license, qualifying premarital education program, how to get marriage license discount, florida marriage license discount, texas marriage license discount, georgia marriage license discount"
+        keywords="marriage license discount premarital counseling, marriage certificate discount, premarital counseling for marriage license, qualifying premarital education program, how to get marriage license discount, florida marriage license discount, texas marriage license discount, georgia marriage license discount, utah marriage license discount, west virginia marriage license discount, marriage license fee reduction"
         breadcrumbs={breadcrumbItems}
         structuredData={pageStructuredData}
         faqs={faqs}
@@ -148,9 +160,9 @@ const MarriageLicenseDiscountPage = () => {
               </h1>
 
               <p className="discount-subtitle">
-                8 states will reduce your marriage license fee — and some waive the waiting period entirely
-                — when you complete premarital counseling. Choose your state below
-                to see the exact discount amount, requirements, and how to get your certificate.
+                10 states will reduce your marriage license fee by $20–$75 — and some waive the waiting
+                period entirely — when you complete premarital counseling. Choose your state below
+                to see the exact discount, hour requirements, and how to get your certificate.
               </p>
 
               <div className="discount-cta">
@@ -169,7 +181,7 @@ const MarriageLicenseDiscountPage = () => {
         {/* States Grid */}
         <div className="discount-states-section">
           <div className="discount-container">
-            <h2 className="section-title">8 States Offering Marriage License Discounts</h2>
+            <h2 className="section-title">10 States Offering Marriage License Discounts</h2>
             <p className="section-subtitle">
               Select your state to see exact requirements and find approved counselors near you.
             </p>
