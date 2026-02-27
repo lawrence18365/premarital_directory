@@ -1,0 +1,76 @@
+name: Daily Google Indexing
+
+on:
+  schedule:
+    # 6:00 AM UTC daily — before the SEO sitemap ping at 8:00 AM
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Indexing mode'
+        required: true
+        default: 'new-profiles'
+        type: choice
+        options:
+          - new-profiles
+          - priority
+          - sitemap
+          - important
+
+jobs:
+  index-urls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      # Step 1: Submit new/claimed profiles (daily)
+      - name: Submit new profiles to Indexing API
+        if: github.event_name == 'schedule' || github.event.inputs.mode == 'new-profiles'
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/ga/auto-index.js --new-profiles
+
+      # Step 2: On scheduled runs, also submit priority non-indexed URLs
+      # (uses remaining daily quota after new profiles)
+      - name: Submit priority non-indexed URLs
+        if: github.event_name == 'schedule' || github.event.inputs.mode == 'priority'
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # First generate a fresh coverage sample to identify non-indexed URLs
+          node scripts/ga/index-coverage-report.js --profiles --sample 50 || true
+          # Then submit priority URLs using remaining quota
+          node scripts/ga/auto-index.js --priority || echo "No priority URLs to submit"
+
+      # Manual modes
+      - name: Submit from sitemap
+        if: github.event.inputs.mode == 'sitemap'
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/ga/auto-index.js --sitemap
+
+      - name: Submit important pages
+        if: github.event.inputs.mode == 'important'
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/ga/auto-index.js

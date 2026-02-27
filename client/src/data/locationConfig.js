@@ -97,7 +97,8 @@ export const CITY_CONFIG = {
       name: 'San Antonio',
       population: '1,434,625',
       description: 'San Antonio offers culturally rich premarital counseling experiences.',
-      specialties: ['Hispanic/Latino counseling', 'Military couples', 'Traditional values focus']
+      specialties: ['Hispanic/Latino counseling', 'Military couples', 'Traditional values focus'],
+      is_anchor: true
     }
   },
   'california': {
@@ -119,7 +120,8 @@ export const CITY_CONFIG = {
       name: 'San Diego',
       population: '1,386,932',
       description: 'San Diego combines beach-town relaxation with professional counseling excellence.',
-      specialties: ['Military couples', 'Outdoor therapy options', 'Cross-border relationships']
+      specialties: ['Military couples', 'Outdoor therapy options', 'Cross-border relationships'],
+      is_anchor: true
     }
   },
   'new-york': {
@@ -212,6 +214,58 @@ export const CITY_CONFIG = {
       population: '467,665',
       description: 'Raleigh offers research-informed premarital counseling with licensed professionals serving the Triangle area.',
       specialties: ['Research Triangle professionals', 'University-connected counseling', 'Young families'],
+      is_anchor: true
+    },
+    'charlotte': {
+      name: 'Charlotte',
+      population: '874,579',
+      description: 'Charlotte blends Southern tradition with corporate sophistication in its premarital counseling community.',
+      specialties: ['Banking professionals', 'Corporate relocations', 'Faith-based counseling'],
+      is_anchor: true
+    }
+  },
+  'washington': {
+    'seattle': {
+      name: 'Seattle',
+      population: '737,015',
+      description: 'Seattle offers progressive, highly credentialed premarital counseling in the Pacific Northwest.',
+      specialties: ['Tech industry couples', 'LGBTQ+ affirming', 'Mindfulness-based approaches'],
+      is_anchor: true
+    }
+  },
+  'oregon': {
+    'portland': {
+      name: 'Portland',
+      population: '652,503',
+      description: 'Portland provides creative, values-aligned premarital counseling in an intimate Pacific Northwest setting.',
+      specialties: ['Progressive counseling', 'Creative professionals', 'LGBTQ+ affirming'],
+      is_anchor: true
+    }
+  },
+  'massachusetts': {
+    'boston': {
+      name: 'Boston',
+      population: '675,647',
+      description: 'Boston offers academically rigorous premarital counseling shaped by world-class universities and medical institutions.',
+      specialties: ['Academic professionals', 'Medical residents', 'Research-based approaches'],
+      is_anchor: true
+    }
+  },
+  'pennsylvania': {
+    'philadelphia': {
+      name: 'Philadelphia',
+      population: '1,603,797',
+      description: 'Philadelphia provides historic depth and clinical excellence in premarital counseling across diverse communities.',
+      specialties: ['Diverse communities', 'Faith-based programs', 'Quaker marriage tradition'],
+      is_anchor: true
+    }
+  },
+  'minnesota': {
+    'minneapolis': {
+      name: 'Minneapolis',
+      population: '429,954',
+      description: 'Minneapolis offers strong clinical and faith-based premarital counseling serving the Twin Cities metro.',
+      specialties: ['Corporate professionals', 'Lutheran tradition', 'Culturally responsive counseling'],
       is_anchor: true
     }
   }

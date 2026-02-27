@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import SEOHelmet from '../analytics/SEOHelmet'
+import { Helmet } from 'react-helmet'
 
 const Breadcrumbs = ({ items = [], className = '', variant }) => {
   if (!items || items.length === 0) return null
@@ -19,7 +19,13 @@ const Breadcrumbs = ({ items = [], className = '', variant }) => {
 
   return (
     <>
-      <SEOHelmet structuredData={breadcrumbStructuredData} />
+      {/* Use Helmet directly to inject ONLY structured data — not SEOHelmet,
+          which would override the page's title/description with defaults. */}
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbStructuredData)}
+        </script>
+      </Helmet>
       <nav className={`breadcrumbs ${variant ? `breadcrumbs--${variant}` : ''} ${className}`.trim()} aria-label="Breadcrumb">
         <ol className="breadcrumb-list">
           {items.map((item, index) => (

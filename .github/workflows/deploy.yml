@@ -186,8 +186,9 @@ jobs:
           fi
 
           # Check for a custom title (not the generic fallback)
-          if grep -q '<title>Find Premarital' "$SAMPLE"; then
-            echo "::warning::Sample page has generic title — profile data may not have loaded"
+          if grep -q '<title>Wedding Counselors</title>' "$SAMPLE"; then
+            echo "::error::Sample page has generic title 'Wedding Counselors' — SEOHelmet did not set profile-specific title"
+            exit 1
           else
             TITLE=$(grep -oP '<title>\K[^<]+' "$SAMPLE" | head -1)
             echo "Title: $TITLE"

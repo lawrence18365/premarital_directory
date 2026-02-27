@@ -15,6 +15,7 @@ const AnalyticsDashboard = () => {
     inquiries: { total: 0, last7d: 0, last30d: 0, pending: 0 },
     topCities: []
   });
+  const [gaAnalytics, setGaAnalytics] = useState(null);
   const [recentInquiries, setRecentInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -91,6 +92,29 @@ const AnalyticsDashboard = () => {
       });
 
       setRecentInquiries(inquiriesData?.slice(0, 5) || []);
+
+      // Load GA4 analytics (from profile_analytics table, synced daily)
+      const { data: gaData } = await supabase
+        .from('profile_analytics')
+        .select('*')
+        .eq('profile_id', profile.id)
+        .order('period_start', { ascending: false })
+        .limit(3);
+
+      if (gaData && gaData.length > 0) {
+        const currentPeriod = gaData[0];
+        const previousPeriod = gaData[1] || null;
+        const pageviewDelta = previousPeriod
+          ? Math.round(((currentPeriod.pageviews - previousPeriod.pageviews) / Math.max(previousPeriod.pageviews, 1)) * 100)
+          : null;
+
+        setGaAnalytics({
+          current: currentPeriod,
+          previous: previousPeriod,
+          pageviewDelta,
+          periods: gaData
+        });
+      }
 
     } catch (error) {
       console.error('Error loading analytics:', error);
@@ -243,6 +267,114 @@ const AnalyticsDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Google Search Performance - from GA4 sync */}
+      {gaAnalytics && (
+        <div className="dashboard-section" style={{ marginTop: 'var(--space-8)' }}>
+          <h2>Google Search Performance</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: 'var(--space-4)' }}>
+            How couples find your profile through Google (updated daily)
+          </p>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: 'var(--space-4)'
+          }}>
+            <div style={{
+              background: 'white',
+              padding: 'var(--space-5)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--gray-200)',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-primary)' }}>
+                {gaAnalytics.current.pageviews.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                Google Pageviews
+              </div>
+              {gaAnalytics.pageviewDelta !== null && (
+                <div style={{
+                  fontSize: '0.8rem',
+                  marginTop: '4px',
+                  color: gaAnalytics.pageviewDelta >= 0 ? 'var(--success)' : '#dc2626',
+                  fontWeight: '600'
+                }}>
+                  {gaAnalytics.pageviewDelta >= 0 ? '+' : ''}{gaAnalytics.pageviewDelta}% vs prior period
+                </div>
+              )}
+            </div>
+
+            <div style={{
+              background: 'white',
+              padding: 'var(--space-5)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--gray-200)',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent)' }}>
+                {gaAnalytics.current.unique_visitors.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                Unique Visitors
+              </div>
+            </div>
+
+            <div style={{
+              background: 'white',
+              padding: 'var(--space-5)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--gray-200)',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+                {gaAnalytics.current.avg_session_duration > 0
+                  ? `${Math.floor(gaAnalytics.current.avg_session_duration / 60)}m ${Math.round(gaAnalytics.current.avg_session_duration % 60)}s`
+                  : '—'
+                }
+              </div>
+              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                Avg. Time on Page
+              </div>
+            </div>
+          </div>
+
+          {/* Top search terms if available */}
+          {gaAnalytics.current.top_search_terms?.length > 0 && (
+            <div style={{ marginTop: 'var(--space-4)' }}>
+              <h3 style={{ fontSize: '1rem', marginBottom: 'var(--space-3)' }}>Top Search Terms</h3>
+              <div style={{
+                background: 'white',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--gray-200)',
+                overflow: 'hidden'
+              }}>
+                {gaAnalytics.current.top_search_terms.slice(0, 5).map((term, idx) => (
+                  <div
+                    key={term.query || idx}
+                    style={{
+                      padding: 'var(--space-3) var(--space-4)',
+                      borderBottom: idx < Math.min(gaAnalytics.current.top_search_terms.length, 5) - 1 ? '1px solid var(--gray-100)' : 'none',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    <span style={{ color: 'var(--text-primary)' }}>{term.query}</span>
+                    <span style={{
+                      color: 'var(--text-muted)',
+                      fontSize: '0.8rem'
+                    }}>
+                      {term.clicks} clicks
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-8)', marginTop: 'var(--space-8)' }}>
         {/* Top Cities */}

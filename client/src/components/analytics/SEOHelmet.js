@@ -135,6 +135,7 @@ const SEOHelmet = ({
   const fullTitle = title ? `${title} | ${siteName}` : siteName
   const defaultDescription = process.env.REACT_APP_SITE_DESCRIPTION || 'Find qualified premarital counselors, therapists, and coaches near you. Complete directory of wedding counseling professionals.'
 
+
   return (
     <Helmet>
       {/* Basic SEO */}

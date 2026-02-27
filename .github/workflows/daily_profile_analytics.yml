@@ -1,0 +1,27 @@
+name: Sync Profile Analytics from GA4
+
+on:
+  schedule:
+    - cron: '30 7 * * *'  # 7:30 AM UTC daily (after indexing cron)
+  workflow_dispatch:
+
+jobs:
+  sync-analytics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Sync GA4 profile analytics to Supabase
+        env:
+          GA4_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
+          GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/ga/sync-profile-analytics.js

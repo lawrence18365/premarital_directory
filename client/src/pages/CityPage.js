@@ -16,6 +16,7 @@ import FAQ from '../components/common/FAQ';
 import HowToChooseSection from '../components/city/HowToChooseSection';
 import MultiProviderInquiryForm from '../components/city/MultiProviderInquiryForm';
 import CityDataSummary from '../components/city/CityDataSummary';
+import CityEditorialContent from '../components/city/CityEditorialContent';
 import ConciergeLeadForm from '../components/leads/ConciergeLeadForm';
 import CoupleEmailCapture from '../components/leads/CoupleEmailCapture';
 import {
@@ -608,6 +609,11 @@ const CityPage = ({ stateOverride, cityOverride }) => {
           cityName={cityName}
           stateName={stateName}
           stateSlug={state}
+        />
+
+        <CityEditorialContent
+          stateSlug={state}
+          citySlug={city}
         />
 
         <div id="providers-list" className={`state-content ${showEmptyState ? 'state-content--empty' : ''}`}>

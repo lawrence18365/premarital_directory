@@ -121,10 +121,10 @@ const MarriageLicenseDiscountPage = () => {
   return (
     <>
       <SEOHelmet
-        title="Marriage License Discount for Premarital Counseling (2026)"
-        description="8 states cut your marriage license fee when you complete premarital counseling. See your state's exact discount, requirements, and how to get the certificate."
+        title="Save $25–$60 on Your Marriage License — 8 States With Premarital Counseling Discounts (2026)"
+        description="Florida, Georgia, Texas, and 5 more states reduce your marriage license fee after premarital counseling. See your state's exact savings, step-by-step requirements, and find approved counselors near you."
         url="/premarital-counseling/marriage-license-discount"
-        keywords="marriage license discount premarital counseling, marriage certificate discount, how to get marriage license discount, premarital counseling discount states, florida marriage license discount, texas marriage license discount"
+        keywords="marriage license discount premarital counseling, marriage certificate discount, premarital counseling for marriage license, qualifying premarital education program, how to get marriage license discount, florida marriage license discount, texas marriage license discount, georgia marriage license discount"
         breadcrumbs={breadcrumbItems}
         structuredData={pageStructuredData}
         faqs={faqs}

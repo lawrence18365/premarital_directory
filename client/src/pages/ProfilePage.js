@@ -808,6 +808,22 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                   </section>
                 )}
 
+                <section id="contact-section" className="profile-premium-card profile-contact-card profile-contact-inline">
+                  <h2>Send {firstName} a Message</h2>
+                  {!profile.is_claimed && (
+                    <p className="profile-contact-note">
+                      This provider has not verified profile details yet. Your message is forwarded to the public contact email on file when available, or to directory support for follow-up.
+                    </p>
+                  )}
+                  <LeadContactForm
+                    profileId={profile.id}
+                    professionalName={profile.full_name}
+                    profile={profile}
+                    isProfileClaimed={profile.is_claimed}
+                    onSuccess={handleLeadSuccess}
+                  />
+                </section>
+
                 <section className="profile-premium-card">
                   <h2>Premarital Fit & Logistics</h2>
                   <p className="profile-data-note">
@@ -983,22 +999,6 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                       Send Message
                     </button>
                   )}
-                </section>
-
-                <section id="contact-section" className="profile-premium-card profile-contact-card">
-                  <h2>Send a Message</h2>
-                  {!profile.is_claimed && (
-                    <p className="profile-contact-note">
-                      This provider has not verified profile details yet. Your message is forwarded to the public contact email on file when available, or to directory support for follow-up.
-                    </p>
-                  )}
-                  <LeadContactForm
-                    profileId={profile.id}
-                    professionalName={profile.full_name}
-                    profile={profile}
-                    isProfileClaimed={profile.is_claimed}
-                    onSuccess={handleLeadSuccess}
-                  />
                 </section>
 
                 {canShowDirectContact && (
