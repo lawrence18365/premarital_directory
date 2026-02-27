@@ -128,6 +128,7 @@ const ClaimWithTokenPage = React.lazy(() => import('./pages/ClaimWithTokenPage')
 const ClaimSuccessPage = React.lazy(() => import('./pages/ClaimSuccessPage'))
 const ClaimProgramPage = React.lazy(() => import('./pages/ClaimProgramPage'))
 const ForChurchesPage = React.lazy(() => import('./pages/ForChurchesPage'))
+const ForOfficiantsPage = React.lazy(() => import('./pages/ForOfficiantsPage'))
 const EmbedFindPage = React.lazy(() => import('./pages/EmbedFindPage'))
 const HowItWorksPage = React.lazy(() => import('./pages/HowItWorksPage'))
 const EditorialStandardsPage = React.lazy(() => import('./pages/EditorialStandardsPage'))
@@ -235,6 +236,7 @@ function AppInner() {
             <Route path="/support" element={<SupportPage />} />
             <Route path="/guidelines" element={<GuidelinesPage />} />
             <Route path="/for-churches" element={<ForChurchesPage />} />
+            <Route path="/for-officiants" element={<ForOfficiantsPage />} />
             <Route path="/embed/find" element={<EmbedFindPage />} />
             <Route path="/go/:profileSlug" element={<BoostLandingPage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />

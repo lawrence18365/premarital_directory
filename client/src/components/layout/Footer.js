@@ -93,6 +93,7 @@ const Footer = () => {
               <li><Link to="/professional/signup" rel="nofollow">List Your Practice</Link></li>
               <li><Link to="/claim-profile">Claim Profile</Link></li>
               <li><Link to="/for-churches">For Churches</Link></li>
+              <li><Link to="/for-officiants">For Officiants</Link></li>
               <li><Link to="/features">Features</Link></li>
               <li><Link to="/pricing">Pricing</Link></li>
             </ul>
