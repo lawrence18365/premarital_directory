@@ -8,6 +8,7 @@ on:
 jobs:
   send-weekly-digest:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Send weekly digest
         run: |

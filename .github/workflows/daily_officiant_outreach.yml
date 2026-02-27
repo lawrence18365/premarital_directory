@@ -8,6 +8,7 @@ on:
 jobs:
   send-officiant-outreach:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Send officiant outreach batch
         run: |

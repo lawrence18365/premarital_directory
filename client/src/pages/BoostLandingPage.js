@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
+import SEOHelmet from '../components/analytics/SEOHelmet'
 import LeadContactForm from '../components/leads/LeadContactForm'
 import { profileOperations } from '../lib/supabaseClient'
 import { formatLocation } from '../lib/utils'
@@ -121,11 +121,12 @@ const BoostLandingPage = () => {
 
   return (
     <div className="boost-page">
-      <Helmet>
-        <title>{name} — Premarital Counseling | Book a Session</title>
-        <meta name="description" content={`${profession} in ${location}. ${method ? method + ' trained. ' : ''}${rate ? rate + '. ' : ''}Contact ${name} directly for premarital counseling.`} />
-        <meta name="robots" content="noindex, follow" />
-      </Helmet>
+      <SEOHelmet
+        title={`${name} — Premarital Counseling | Book a Session`}
+        description={`${profession} in ${location}. ${method ? method + ' trained. ' : ''}${rate ? rate + '. ' : ''}Contact ${name} directly for premarital counseling.`}
+        url={`/boost/${profile.slug}`}
+        noindex={true}
+      />
 
       {/* Minimal header */}
       <header className="boost-header">

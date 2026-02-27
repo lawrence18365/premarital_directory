@@ -40,6 +40,8 @@ const CampaignDashboard = () => {
         .from('profiles')
         .select('id')
         .eq('is_verified', false)
+        .eq('is_hidden', false)
+        .or('moderation_status.eq.approved,moderation_status.is.null')
         .not('email', 'is', null)
         .not('email', 'eq', '')
 

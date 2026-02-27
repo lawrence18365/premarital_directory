@@ -25,7 +25,7 @@ const EmailVerifiedPage = () => {
   return (
     <>
       <SEOHelmet
-        title="Email Verified - Welcome to Wedding Counselors"
+        title="Email Verified — Welcome"
         description="Your email has been verified. Create your professional profile now."
         noIndex={true}
       />

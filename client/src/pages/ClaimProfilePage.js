@@ -40,7 +40,7 @@ const ClaimProfilePage = () => {
 
   const loadExistingProfile = async () => {
     try {
-      const { data, error } = await profileOperations.getProfile(slugOrId)
+      const { data, error } = await profileOperations.getProfile(slugOrId, { allowHidden: true })
       if (data && !error) {
         setExistingProfile(data)
         setFormData({
@@ -283,7 +283,7 @@ const ClaimProfilePage = () => {
     return (
       <div className="container" style={{ padding: 'var(--space-20) 0' }}>
         <SEOHelmet
-          title="Profile Submitted - Wedding Counselors"
+          title="Profile Submitted"
           description="Thanks for sending in your profile. Our team will follow up shortly."
           url="/claim-profile"
         />

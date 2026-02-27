@@ -339,7 +339,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
         // Load additional locations
         profileOperations.getAdditionalLocations(data.id).then(({ data: locs }) => {
           setAdditionalLocations(locs || [])
-        }).catch(() => {})
+        }).catch((err) => console.warn('Failed to load additional locations:', err))
       }
     } catch (err) {
       setError('Failed to load profile')
@@ -411,8 +411,9 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     return (
       <>
         <SEOHelmet
+          title="Profile Not Found"
+          description="The profile you're looking for doesn't exist or may have been removed."
           noindex={true}
-          canonicalUrl={window.location.pathname}
         />
         <div className="container" style={{ padding: 'var(--space-20) 0', textAlign: 'center' }}>
           <h2>Profile Not Found</h2>

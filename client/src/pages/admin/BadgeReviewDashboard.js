@@ -98,7 +98,7 @@ const BadgeReviewDashboard = () => {
           </div>
         </div>
         <div className="dashboard-actions">
-          <Link to="/admin" className="btn btn-outline">
+          <Link to="/admin/dashboard" className="btn btn-outline">
             <i className="fa fa-arrow-left" aria-hidden="true"></i> Admin Home
           </Link>
         </div>

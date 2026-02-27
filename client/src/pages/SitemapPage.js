@@ -15,6 +15,11 @@ const SitemapPage = () => {
     { to: '/features', label: 'Features' },
     { to: '/support', label: 'Support' },
     { to: '/guidelines', label: 'Guidelines' },
+    { to: '/how-it-works', label: 'How It Works' },
+    { to: '/editorial-standards', label: 'Editorial Standards' },
+    { to: '/corrections', label: 'Corrections' },
+    { to: '/locations', label: 'Locations Directory' },
+    { to: '/premarital-counseling/marriage-license-discount', label: 'Marriage License Discounts' },
     { to: '/privacy', label: 'Privacy Policy' },
     { to: '/terms', label: 'Terms of Service' }
   ]
@@ -22,7 +27,9 @@ const SitemapPage = () => {
   const authRoutes = [
     { to: '/professional/login', label: 'Professional Login' },
     { to: '/professional/signup', label: 'Professional Signup' },
-    { to: '/claim-profile', label: 'Claim Profile' }
+    { to: '/claim-profile', label: 'Claim Profile' },
+    { to: '/for-churches', label: 'For Churches' },
+    { to: '/for-officiants', label: 'For Officiants' }
   ]
 
   return (

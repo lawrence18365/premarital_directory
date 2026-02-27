@@ -6,7 +6,7 @@ const AboutPage = () => {
   return (
     <div className="page-container about-page">
       <SEOHelmet
-        title="About Wedding Counselors"
+        title="About Us"
         description="Our mission is to help couples build strong foundations for marriage by connecting them with verified premarital counseling professionals."
         url="/about"
       />

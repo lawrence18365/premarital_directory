@@ -136,21 +136,28 @@ export const profileOperations = {
   },
 
   // Get single profile by ID or slug
-  async getProfile(idOrSlug) {
+  // allowHidden: skip visibility filters (for claim flow, admin, profile owner)
+  async getProfile(idOrSlug, { allowHidden = false } = {}) {
     // First try to get by slug
-    let { data, error } = await supabase
+    let query = supabase
       .from('profiles')
       .select('*')
       .eq('slug', idOrSlug)
-      .single()
+    if (!allowHidden) {
+      query = query.eq('is_hidden', false).or('moderation_status.eq.approved,moderation_status.is.null')
+    }
+    let { data, error } = await query.single()
 
     // If not found by slug, try by ID
     if (error && error.code === 'PGRST116') {
-      const result = await supabase
+      let query2 = supabase
         .from('profiles')
         .select('*')
         .eq('id', idOrSlug)
-        .single()
+      if (!allowHidden) {
+        query2 = query2.eq('is_hidden', false).or('moderation_status.eq.approved,moderation_status.is.null')
+      }
+      const result = await query2.single()
       data = result.data
       error = result.error
     }
@@ -508,12 +515,14 @@ export const profileOperations = {
     return { data: data || [], error }
   },
 
-  // Check if a profile already exists with this email
+  // Check if a visible profile already exists with this email (for signup dedup)
   async checkEmailExists(email) {
     const { data, error } = await supabase
       .from('profiles')
       .select('id, full_name, is_claimed, user_id')
       .ilike('email', email.trim())
+      .eq('is_hidden', false)
+      .or('moderation_status.eq.approved,moderation_status.is.null')
       .maybeSingle()
 
     return { exists: !!data, profile: data, error }

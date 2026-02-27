@@ -5,6 +5,7 @@ on:
 jobs:
   send-campaign:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Send badge campaign emails
         run: |
@@ -20,7 +21,7 @@ jobs:
           echo "Status: $HTTP_CODE"
           echo "Response: $BODY"
 
-          if [ "$HTTP_CODE" != "200" ]; then
+          if [ "$HTTP_CODE" -ge 400 ]; then
             echo "::error::Campaign failed with status $HTTP_CODE"
             exit 1
           fi

@@ -9,6 +9,7 @@ on:
 jobs:
   ping-search-engines:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Ping Google with updated sitemap
         run: |

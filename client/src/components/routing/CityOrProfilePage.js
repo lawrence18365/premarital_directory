@@ -62,7 +62,7 @@ const CityOrProfilePage = ({ stateOverride, cityOrSlugOverride }) => {
       }
       
     } catch (err) {
-      // On error, default to city page
+      console.warn('CityOrProfilePage routing error:', err)
       setIsCity(true)
     } finally {
       setLoading(false)
