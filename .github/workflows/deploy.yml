@@ -95,9 +95,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: client/.prerender-cache
-          key: prerender-${{ runner.os }}-${{ hashFiles('client/scripts/prerender.js') }}
+          key: prerender-v2-${{ runner.os }}-${{ hashFiles('client/scripts/prerender.js', 'client/src/components/analytics/SEOHelmet.js', 'client/src/components/common/Breadcrumbs.js') }}
           restore-keys: |
-            prerender-${{ runner.os }}-
+            prerender-v2-${{ runner.os }}-
 
       - name: Copy cached prerendered pages into build
         if: env.SKIP_PRERENDER != 'true'
