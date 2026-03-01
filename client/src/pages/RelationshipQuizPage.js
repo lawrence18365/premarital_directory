@@ -117,8 +117,6 @@ const RelationshipQuizPage = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState({})
   const [showResults, setShowResults] = useState(false)
-  const [email, setEmail] = useState('')
-  const [emailSubmitted, setEmailSubmitted] = useState(false)
 
   const handleAnswer = (value) => {
     const newAnswers = { ...answers, [currentQuestion]: value }
