@@ -117,13 +117,15 @@ export const useOnboardingState = () => {
   // UTM tracking
   const [utmParams, setUtmParams] = useState({})
 
-  // Capture UTM parameters on mount
+  // Capture UTM parameters + referral code on mount
   useEffect(() => {
+    const storedRef = sessionStorage.getItem('wc_referral_code') || ''
     const params = {
       utm_source: searchParams.get('utm_source') || '',
       utm_medium: searchParams.get('utm_medium') || '',
       utm_campaign: searchParams.get('utm_campaign') || '',
-      signup_source: searchParams.get('source') || 'organic'
+      signup_source: searchParams.get('source') || 'organic',
+      referral_code: searchParams.get('ref') || storedRef
     }
     setUtmParams(params)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -226,7 +228,8 @@ export const useOnboardingState = () => {
                 weekly_digest: true,
                 inquiry_notifications: true,
                 marketing: marketingOptIn
-              }
+              },
+              signup_referral_code: utmParams.referral_code || null
             })
             .select()
             .single()

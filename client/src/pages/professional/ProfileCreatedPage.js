@@ -19,7 +19,7 @@ const ProfileCreatedPage = () => {
         title="Profile Created Successfully"
         description="Your professional profile is now live on Wedding Counselors directory."
         url="/professional/profile-created"
-        noIndex={true}
+        noindex={true}
       />
 
       <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
@@ -88,6 +88,35 @@ const ProfileCreatedPage = () => {
           >
             <i className="fa fa-dashboard" aria-hidden="true"></i> Go to Dashboard
           </Link>
+        </div>
+
+        {/* Referral CTA */}
+        <div style={{
+          marginTop: 'var(--space-8)',
+          padding: 'var(--space-6)',
+          background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+          border: '1px solid #86efac',
+          borderRadius: 'var(--radius-xl)',
+          textAlign: 'center'
+        }}>
+          <h3 style={{ marginBottom: 'var(--space-2)', color: '#166534' }}>
+            <i className="fa fa-users" aria-hidden="true" style={{ marginRight: '8px' }}></i>
+            Know a Colleague Who Should Be Listed?
+          </h3>
+          <p style={{ fontSize: '0.9rem', color: '#15803d', marginBottom: 'var(--space-4)' }}>
+            Share this link with fellow counselors. When they sign up, you both get higher visibility.
+          </p>
+          <button
+            onClick={() => {
+              const url = `https://www.weddingcounselors.com/professional/signup?ref=new&utm_source=referral&utm_medium=colleague`
+              navigator.clipboard.writeText(url).catch(() => {})
+            }}
+            className="btn btn-primary"
+            style={{ fontSize: '0.9rem' }}
+          >
+            <i className="fa fa-link" aria-hidden="true" style={{ marginRight: '6px' }}></i>
+            Copy Invite Link
+          </button>
         </div>
 
         {/* What's Next */}

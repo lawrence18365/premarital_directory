@@ -1,0 +1,79 @@
+/* ShareButton — all variants */
+
+.share-btn {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+/* Icon variant (compact circle) */
+.share-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gray-100, #f3f4f6);
+  color: var(--gray-600, #4b5563);
+  font-size: 0.85rem;
+}
+
+.share-btn-icon:hover {
+  background: var(--gray-200, #e5e7eb);
+  color: var(--gray-800, #1f2937);
+}
+
+/* Pill variant (button with text) */
+.share-btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--gray-100, #f3f4f6);
+  color: var(--gray-700, #374151);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.share-btn-pill:hover {
+  background: var(--gray-200, #e5e7eb);
+  color: var(--gray-900, #111827);
+}
+
+/* Inline variant (text link style) */
+.share-btn-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  color: var(--color-primary, #0d9488);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.share-btn-inline:hover {
+  color: var(--color-primary-dark, #0f766e);
+  text-decoration: underline;
+}
+
+/* Post-inquiry share block */
+.post-inquiry-share {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gray-200, #e5e7eb);
+  text-align: center;
+}
+
+.post-inquiry-share-text {
+  margin: 0 0 10px 0;
+  font-size: 0.85rem;
+  color: var(--gray-500, #6b7280);
+}
+
+.post-inquiry-share-btn {
+  margin: 0 auto;
+}

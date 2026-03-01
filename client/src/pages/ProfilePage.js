@@ -15,7 +15,9 @@ import { getAttribution } from '../lib/attribution'
 import { profileOperations, clickTrackingOperations } from '../lib/supabaseClient'
 import UnclaimedProfileBanner from '../components/profiles/UnclaimedProfileBanner'
 import NearbyProfessionals from '../components/profiles/NearbyProfessionals'
+import ShareButton from '../components/common/ShareButton'
 import '../assets/css/profile-page-enhanced.css'
+import '../assets/css/share-button.css'
 
 // Helper: Convert state abbreviation to slug (OH -> ohio)
 const getStateSlugFromAbbr = (abbr) => {
@@ -754,6 +756,12 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     External Website
                   </a>
                 )}
+                <ShareButton
+                  url={canonicalPath}
+                  title={`${profile.full_name} — Premarital Counselor in ${profile.city}, ${profile.state_province}`}
+                  text={`Check out ${profile.full_name}, a premarital counselor in ${profile.city}`}
+                  variant="icon"
+                />
               </div>
             </header>
 

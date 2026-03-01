@@ -4,6 +4,8 @@ import { trackContactSubmission } from '../analytics/GoogleAnalytics'
 import { trackFacebookLead } from '../analytics/FacebookPixel'
 import { trackProfessionalContact } from '../analytics/GoogleAds'
 import { getAttribution, getSourceLabel } from '../../lib/attribution'
+import { PostInquiryShare } from '../common/ShareButton'
+import '../../assets/css/share-button.css'
 
 const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaimed = true, isStateMatching, isSpecialtyMatching, isDiscountMatching, stateName, specialtyType, onSuccess }) => {
   const shortName = professionalName?.split(' ')[0] || 'this professional'
@@ -123,6 +125,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
         >
           Send another message
         </button>
+        <PostInquiryShare professionalName={professionalName} />
       </div>
     )
   }

@@ -384,18 +384,18 @@ const HomePage = () => {
             }}>
               {[
                 {
-                  slug: 'financial-questions-before-marriage',
-                  title: 'Financial Questions to Ask Before Marriage',
+                  slug: 'financial-questions-to-ask-before-marriage',
+                  title: '10 Financial Questions Every Couple Must Ask Before Getting Married',
                   excerpt: 'Essential money conversations every couple should have before saying "I do."'
                 },
                 {
-                  slug: 'wedding-planning-fights',
-                  title: 'How to Stop Wedding Planning Fights',
+                  slug: 'fighting-about-wedding-planning',
+                  title: 'Fighting About Wedding Planning? Here\'s How to Get Back on the Same Team',
                   excerpt: 'Practical strategies for navigating disagreements during wedding planning.'
                 },
                 {
-                  slug: 'inlaw-boundaries',
-                  title: 'Setting Boundaries with In-Laws',
+                  slug: 'setting-healthy-boundaries-with-inlaws',
+                  title: 'Love, Honor, and... Boundaries: A Guide to Setting Healthy In-Law Boundaries',
                   excerpt: 'How to build healthy relationships with extended family before marriage.'
                 }
               ].map((post) => (
@@ -447,6 +447,23 @@ const HomePage = () => {
           showAside={false}
           highlights={[]}
         />
+
+        {/* Quiz CTA */}
+        <section style={{
+          padding: 'var(--space-12) 0',
+          background: 'linear-gradient(135deg, rgba(13,148,136,0.06) 0%, rgba(13,148,136,0.02) 100%)'
+        }}>
+          <div className="container" style={{ textAlign: 'center', maxWidth: '600px' }}>
+            <p className="section-eyebrow">Free 2-Minute Assessment</p>
+            <h3 style={{ fontSize: '1.4rem', marginBottom: 'var(--space-3)' }}>Are You Ready for Marriage?</h3>
+            <p style={{ color: 'var(--gray-600, #4b5563)', marginBottom: 'var(--space-6)', fontSize: '1rem' }}>
+              Take our quick relationship readiness quiz to see where you stand on communication, finances, conflict resolution, and more.
+            </p>
+            <Link to="/quiz/relationship-readiness" className="btn btn-primary btn-large">
+              Take the Quiz
+            </Link>
+          </div>
+        </section>
 
         {/* Professional CTA */}
         <section className="provider-cta" aria-labelledby="provider-cta-heading">

@@ -5,7 +5,9 @@ import { supabase } from '../../lib/supabaseClient';
 import { SEOHelmet } from '../../components/analytics';
 import Breadcrumbs, { generateBreadcrumbs } from '../../components/common/Breadcrumbs';
 import CoupleEmailCapture from '../../components/leads/CoupleEmailCapture';
+import ShareButton from '../../components/common/ShareButton';
 import '../../assets/css/blog.css';
+import '../../assets/css/share-button.css';
 
 // Generate Article/BlogPosting structured data for SEO
 const generateArticleStructuredData = (post) => {
@@ -134,6 +136,12 @@ const BlogPostPage = () => {
               <span className="blog-category">{post.category}</span>
               <span className="blog-date">{new Date(post.date).toLocaleDateString()}</span>
               <span className="read-time">{post.read_time}</span>
+              <ShareButton
+                url={`/blog/${post.slug}`}
+                title={post.title}
+                text={post.excerpt || post.title}
+                variant="pill"
+              />
             </div>
           </header>
 
@@ -166,7 +174,7 @@ const BlogPostPage = () => {
               }}>
                 Find Counselors Near You
               </Link>
-              <Link to="/premarital-counseling/marriage-license-discount" style={{
+              <Link to="/quiz/relationship-readiness" style={{
                 display: 'inline-block',
                 padding: 'var(--space-2) var(--space-4)',
                 border: '1px solid var(--gray-300, #d1d5db)',
@@ -176,7 +184,7 @@ const BlogPostPage = () => {
                 fontSize: '0.9rem',
                 fontWeight: 500
               }}>
-                Marriage License Discounts
+                Take the Readiness Quiz
               </Link>
             </div>
           </aside>

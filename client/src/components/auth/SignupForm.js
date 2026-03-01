@@ -31,6 +31,14 @@ const SignupForm = () => {
   const { signUp, signIn, resetPassword, user, profile } = useAuth()
   const navigate = useNavigate()
 
+  // Persist referral code so it survives the signup→verify→onboarding redirect chain
+  React.useEffect(() => {
+    const ref = searchParams.get('ref')
+    if (ref) {
+      sessionStorage.setItem('wc_referral_code', ref)
+    }
+  }, [searchParams])
+
   // Redirect logged-in users
   React.useEffect(() => {
     if (user && profile?.onboarding_completed) {

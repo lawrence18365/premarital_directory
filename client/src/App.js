@@ -90,6 +90,9 @@ const StateRequirementsPage = React.lazy(() => import('./pages/StateRequirements
 const BlogIndex = React.lazy(() => import('./pages/blog/BlogIndex'))
 const BlogPostPage = React.lazy(() => import('./pages/blog/BlogPostPage'))
 
+// Quiz
+const RelationshipQuizPage = React.lazy(() => import('./pages/RelationshipQuizPage'))
+
 // Authentication Pages
 const LoginForm = React.lazy(() => import('./components/auth/LoginForm'))
 const SignupForm = React.lazy(() => import('./components/auth/SignupForm'))
@@ -246,6 +249,7 @@ function AppInner() {
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/blog" element={<BlogIndex />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/quiz/relationship-readiness" element={<RelationshipQuizPage />} />
             <Route path="/seo/:slug" element={<SEOContentPage />} />
             <Route path="/sitemap" element={<SitemapPage />} />
             <Route path="/locations" element={<LocationsDirectoryPage />} />

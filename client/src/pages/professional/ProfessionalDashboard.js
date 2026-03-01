@@ -48,6 +48,8 @@ const ProfessionalDashboard = () => {
   const [badgeSubmitting, setBadgeSubmitting] = useState(false)
   const [badgeError, setBadgeError] = useState(null)
   const [badgeCopied, setBadgeCopied] = useState(null)
+  const [referralCount, setReferralCount] = useState(0)
+  const [referralCopied, setReferralCopied] = useState(false)
 
   useEffect(() => {
     if (profile) {
@@ -159,6 +161,14 @@ const ProfessionalDashboard = () => {
         .maybeSingle()
 
       if (badgeData) setBadgeSubmission(badgeData)
+
+      // Load referral count
+      const { count: refCount } = await supabase
+        .from('referrals')
+        .select('id', { count: 'exact', head: true })
+        .eq('referrer_id', profile.id)
+
+      setReferralCount(refCount || 0)
 
     } catch (err) {
       console.error('Error loading dashboard data:', err)
@@ -286,21 +296,58 @@ const ProfessionalDashboard = () => {
     return `https://www.weddingcounselors.com/premarital-counseling/${stateSlug}/${citySlug}`
   }
 
+  const getFullProfileUrl = () => {
+    if (!profile) return '#'
+    return `https://www.weddingcounselors.com${getPublicProfileUrl()}`
+  }
+
   const handleCopyBadge = async (type) => {
-    const embedUrl = getCityPageUrl()
     const badgeUrl = 'https://www.weddingcounselors.com/assets/badges/badge-featured-on-weddingcounselors-premarital-transparent-v1.png'
+    const profileUrl = getFullProfileUrl()
+    const cityUrl = getCityPageUrl()
+    const displayName = profile?.full_name || 'My Profile'
     const cityName = profile?.city ? ` in ${profile.city}` : ''
-    const altText = `Premarital Counselors${cityName} on WeddingCounselors.com`
-    const text = type === 'embed'
-      ? `<a href="${embedUrl}" target="_blank" rel="noopener"><img src="${badgeUrl}" alt="${altText}" width="200" /></a>`
-      : embedUrl
+    const altText = `${displayName} — Premarital Counselor${cityName} on WeddingCounselors.com`
+
+    const snippets = {
+      embed: `<a href="${profileUrl}" target="_blank" rel="noopener"><img src="${badgeUrl}" alt="${altText}" width="200" /></a>`,
+      link: profileUrl,
+      textlink: `<a href="${profileUrl}" target="_blank" rel="noopener">Find me on WeddingCounselors.com</a>`,
+      citylink: cityUrl
+    }
 
     try {
-      await navigator.clipboard.writeText(text)
+      await navigator.clipboard.writeText(snippets[type])
       setBadgeCopied(type)
       setTimeout(() => setBadgeCopied(null), 2000)
     } catch {
       alert('Failed to copy. Please copy manually.')
+    }
+  }
+
+  const getReferralUrl = () => {
+    const code = profile?.referral_code || profile?.slug
+    if (!code) return null
+    return `https://www.weddingcounselors.com/professional/signup?ref=${code}&utm_source=referral&utm_medium=colleague`
+  }
+
+  const handleCopyReferralLink = async () => {
+    const url = getReferralUrl()
+    if (!url) return
+    try {
+      await navigator.clipboard.writeText(url)
+      setReferralCopied(true)
+      setTimeout(() => setReferralCopied(false), 2000)
+    } catch {
+      // fallback
+      const input = document.createElement('input')
+      input.value = url
+      document.body.appendChild(input)
+      input.select()
+      document.execCommand('copy')
+      document.body.removeChild(input)
+      setReferralCopied(true)
+      setTimeout(() => setReferralCopied(false), 2000)
     }
   }
 
@@ -541,7 +588,7 @@ const ProfessionalDashboard = () => {
         ) : (
           <>
             <p className="profdash-badge-explainer">
-              Add our badge to your website to earn a <strong>Verified</strong> badge and rank higher in search results. Place the badge on any page of your site, then submit the URL for review.
+              Link to your WeddingCounselors profile from your website to earn a <strong>Verified</strong> badge and rank higher in search results. Choose any option below, then submit your URL for verification.
             </p>
 
             <div className="profdash-badge-preview">
@@ -557,15 +604,27 @@ const ProfessionalDashboard = () => {
                 onClick={() => handleCopyBadge('embed')}
                 className="profdash-copy-btn"
               >
+                <i className="fa fa-code" aria-hidden="true" style={{ marginRight: '6px' }}></i>
                 {badgeCopied === 'embed' ? 'Copied!' : 'Copy Badge Embed'}
+              </button>
+              <button
+                onClick={() => handleCopyBadge('textlink')}
+                className="profdash-copy-btn"
+              >
+                <i className="fa fa-link" aria-hidden="true" style={{ marginRight: '6px' }}></i>
+                {badgeCopied === 'textlink' ? 'Copied!' : 'Copy "Find Me" Link'}
               </button>
               <button
                 onClick={() => handleCopyBadge('link')}
                 className="profdash-copy-btn"
               >
-                {badgeCopied === 'link' ? 'Copied!' : 'Copy Text Link'}
+                <i className="fa fa-external-link-alt" aria-hidden="true" style={{ marginRight: '6px' }}></i>
+                {badgeCopied === 'link' ? 'Copied!' : 'Copy Profile URL'}
               </button>
             </div>
+            <p style={{ fontSize: '13px', color: 'var(--ds-text-muted)', marginTop: '8px' }}>
+              Paste any of the above into your website's footer, about page, or sidebar.
+            </p>
 
             {badgeSubmission && badgeSubmission.status === 'verified' ? (
               <div className="profdash-badge-status">
@@ -578,7 +637,7 @@ const ProfessionalDashboard = () => {
               </div>
             ) : (
               <form onSubmit={handleBadgeSubmit} className="profdash-badge-form">
-                <label htmlFor="badge-source-url">Paste the page on your website where you added the badge</label>
+                <label htmlFor="badge-source-url">Paste the page on your website where you added the badge or link</label>
 
                 {badgeError && (
                   <div className="alert alert-error" style={{ marginBottom: '8px', padding: '12px', fontSize: '14px', borderRadius: '6px' }}>
@@ -614,6 +673,54 @@ const ProfessionalDashboard = () => {
             )}
           </>
         )}
+      </section>
+
+      <section className="profdash-referral-section" style={{
+        background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+        border: '1px solid #86efac',
+        borderRadius: '12px',
+        padding: '24px',
+        marginBottom: '24px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div style={{ flex: 1, minWidth: '240px' }}>
+            <h2 style={{ margin: '0 0 8px 0', fontSize: '1.15rem', color: '#166534' }}>
+              <i className="fa fa-users" aria-hidden="true" style={{ marginRight: '8px' }}></i>
+              Invite a Colleague
+            </h2>
+            <p style={{ margin: '0 0 12px 0', fontSize: '0.9rem', color: '#15803d', lineHeight: 1.5 }}>
+              Know a counselor who should be listed? Share your referral link.
+              When they create their profile, you both benefit from higher visibility in the directory.
+            </p>
+            {referralCount > 0 && (
+              <p style={{ margin: '0 0 12px 0', fontSize: '0.85rem', color: '#166534', fontWeight: 600 }}>
+                <i className="fa fa-check-circle" style={{ marginRight: '6px' }}></i>
+                {referralCount} colleague{referralCount === 1 ? '' : 's'} joined through your link
+              </p>
+            )}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button
+                onClick={handleCopyReferralLink}
+                className="btn btn-primary"
+                style={{ fontSize: '0.85rem', padding: '8px 16px' }}
+              >
+                {referralCopied ? (
+                  <><i className="fa fa-check" aria-hidden="true" style={{ marginRight: '6px' }}></i>Link Copied!</>
+                ) : (
+                  <><i className="fa fa-link" aria-hidden="true" style={{ marginRight: '6px' }}></i>Copy Invite Link</>
+                )}
+              </button>
+              <a
+                href={`mailto:?subject=Join me on WeddingCounselors.com&body=Hey! I'm listed on WeddingCounselors.com and it's been a great way to connect with engaged couples. You should create a free profile too: ${encodeURIComponent(getReferralUrl() || '')}`}
+                className="btn btn-outline"
+                style={{ fontSize: '0.85rem', padding: '8px 16px', textDecoration: 'none' }}
+              >
+                <i className="fa fa-envelope" aria-hidden="true" style={{ marginRight: '6px' }}></i>
+                Send via Email
+              </a>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="profdash-grid">

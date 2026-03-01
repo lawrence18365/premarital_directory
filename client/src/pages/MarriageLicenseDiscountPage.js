@@ -7,7 +7,9 @@ import LeadContactForm from '../components/leads/LeadContactForm'
 import { STATE_DISCOUNT_CONFIG, getStatesWithDiscounts } from '../data/specialtyConfig'
 import { STATE_CONFIG } from '../data/locationConfig'
 import { supabase } from '../lib/supabaseClient'
+import ShareButton from '../components/common/ShareButton'
 import '../assets/css/discount-page.css'
+import '../assets/css/share-button.css'
 
 function formatDollars(cents) {
   if (cents == null) return null
@@ -133,8 +135,8 @@ const MarriageLicenseDiscountPage = () => {
   return (
     <>
       <SEOHelmet
-        title="Marriage License Discount by State: Save $20–$75 (2026)"
-        description="10 states cut your marriage license fee when you complete premarital counseling. FL, TX, MN, TN, OK, GA, IN, MD, UT & WV — see each state's exact discount, hour requirements, and find approved counselors."
+        title="Marriage License Discount: 10 States That Cut Your Fee (2026)"
+        description="Save $20–$75 on your marriage license by completing premarital counseling. See if your state qualifies, what's required, and find approved counselors near you."
         url="/premarital-counseling/marriage-license-discount"
         keywords="marriage license discount premarital counseling, marriage certificate discount, premarital counseling for marriage license, qualifying premarital education program, how to get marriage license discount, florida marriage license discount, texas marriage license discount, georgia marriage license discount, utah marriage license discount, west virginia marriage license discount, marriage license fee reduction"
         breadcrumbs={breadcrumbItems}
@@ -173,6 +175,13 @@ const MarriageLicenseDiscountPage = () => {
                   <i className="fa fa-heart mr-2"></i>
                   Find a Qualifying Counselor
                 </button>
+                <ShareButton
+                  url="/premarital-counseling/marriage-license-discount"
+                  title="Marriage License Discount: 10 States That Cut Your Fee"
+                  text="Did you know? 10 states reduce your marriage license fee when you complete premarital counseling. Check if yours qualifies!"
+                  variant="pill"
+                  className="discount-share-btn"
+                />
               </div>
             </div>
           </div>
