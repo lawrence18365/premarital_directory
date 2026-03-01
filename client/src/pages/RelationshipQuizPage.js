@@ -139,7 +139,6 @@ const RelationshipQuizPage = () => {
     setAnswers({})
     setCurrentQuestion(0)
     setShowResults(false)
-    setEmailSubmitted(false)
   }
 
   const progress = (Object.keys(answers).length / QUESTIONS.length) * 100
