@@ -139,6 +139,8 @@ serve(async (req) => {
 
         // STEP 2: NOTIFY PROVIDER
         try {
+            let invokeResult: { data: unknown; error: unknown }
+
             if (isUnmatchedLead) {
                 // Unmatched lead (from state/specialty/discount pages) - Route to Admin
                 const matchContext = isDiscountMatching ? 'Marriage License Discount'
@@ -146,7 +148,7 @@ serve(async (req) => {
                         : isStateMatching ? (stateName || 'State')
                             : 'General'
 
-                await supabaseClient.functions.invoke('send-lead-notification', {
+                invokeResult = await supabaseClient.functions.invoke('send-lead-notification', {
                     body: {
                         leadId,
                         profileId: null,
@@ -165,7 +167,7 @@ serve(async (req) => {
                 })
             } else if (isProfileClaimed) {
                 // Standard notification for claimed profiles
-                await supabaseClient.functions.invoke('send-lead-notification', {
+                invokeResult = await supabaseClient.functions.invoke('send-lead-notification', {
                     body: {
                         leadId,
                         profileId,
@@ -188,7 +190,7 @@ serve(async (req) => {
                     .eq('id', profileId)
                     .single()
 
-                await supabaseClient.functions.invoke('email-unclaimed-profile-owner', {
+                invokeResult = await supabaseClient.functions.invoke('email-unclaimed-profile-owner', {
                     body: {
                         profileId,
                         profileSlug: profile?.slug,
@@ -201,6 +203,23 @@ serve(async (req) => {
                         claimUrl: `https://www.weddingcounselors.com/claim-profile/${profile?.slug || profileId}?utm_source=email&utm_medium=lead_intercept&utm_campaign=claim_profile`,
                     }
                 })
+            }
+
+            // Check if the invoked function returned an error
+            if (invokeResult.error) {
+                const errMsg = typeof invokeResult.error === 'string'
+                    ? invokeResult.error
+                    : (invokeResult.error as Error)?.message || JSON.stringify(invokeResult.error)
+                console.error('Notification function returned error:', errMsg)
+                throw new Error(`Notification failed: ${errMsg}`)
+            }
+
+            // Verify the downstream function reported success
+            const responseData = invokeResult.data as Record<string, unknown> | null
+            if (responseData && responseData.success === false) {
+                const errMsg = (responseData.error as string) || 'Notification function returned failure'
+                console.error('Notification function returned failure:', errMsg)
+                throw new Error(errMsg)
             }
 
             // If we reach here, email was successfully handed off to the notification functions

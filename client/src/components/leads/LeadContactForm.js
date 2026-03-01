@@ -103,6 +103,14 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
     } catch (error) {
       console.error('Error submitting lead:', error)
       setError('Failed to send your message. Please try again.')
+      // Track failed submissions so they show up in GA4
+      if (window.gtag) {
+        window.gtag('event', 'contact_form_error', {
+          error_message: error?.message || 'Unknown error',
+          professional_name: professionalName,
+          event_category: 'conversion'
+        })
+      }
     }
 
     setLoading(false)

@@ -15,7 +15,8 @@ export function getAllowedOrigins(): string[] {
 
 export function isOriginAllowed(origin: string | null, allowedOrigins: string[]): boolean {
   if (!allowedOrigins.length) return true
-  if (!origin) return false
+  // Allow null origin for internal edge-function-to-edge-function calls (no browser origin header)
+  if (!origin) return true
   return allowedOrigins.includes(origin)
 }
 

@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-03-01T18:54:45.180Z",
+  "generatedAt": "2026-03-01T21:49:44.230Z",
   "period": {},
   "weekOverWeek": {
     "thisWeek": {
       "users": 128,
-      "sessions": 175,
+      "sessions": 176,
       "pageViews": 490,
-      "avgDuration": 335.5231971942857,
-      "bounceRate": 0.3485714285714286,
+      "avgDuration": 333.6168153920455,
+      "bounceRate": 0.3522727272727273,
       "engagedSessions": 114,
       "newUsers": 101
     },
@@ -25,7 +25,7 @@
       "sessions": 5,
       "pageViews": -32,
       "avgDuration": -12,
-      "bounceRate": 12,
+      "bounceRate": 13,
       "engagedSessions": -1,
       "newUsers": 28
     }
@@ -251,9 +251,9 @@
     },
     {
       "channel": "Organic Search",
-      "sessions": 51,
-      "engagementRate": 78,
-      "pagesPerSession": "2.5"
+      "sessions": 52,
+      "engagementRate": 77,
+      "pagesPerSession": "2.4"
     },
     {
       "channel": "Email",
@@ -287,7 +287,7 @@
     },
     {
       "event": "session_start",
-      "count": 174,
+      "count": 175,
       "users": 127
     },
     {
@@ -297,8 +297,8 @@
     },
     {
       "event": "user_engagement",
-      "count": 92,
-      "users": 47
+      "count": 93,
+      "users": 48
     },
     {
       "event": "directory_launch",
@@ -365,6 +365,12 @@
       "sessions": 2,
       "bounceRate": 0,
       "avgDuration": 76
+    },
+    {
+      "path": "",
+      "sessions": 1,
+      "bounceRate": 100,
+      "avgDuration": 0
     },
     {
       "path": "(not set)",
@@ -455,20 +461,14 @@
       "sessions": 1,
       "bounceRate": 0,
       "avgDuration": 27
-    },
-    {
-      "path": "/premarital-counseling/christian/wisconsin/green-bay",
-      "sessions": 1,
-      "bounceRate": 0,
-      "avgDuration": 21
     }
   ],
   "devices": [
     {
       "device": "desktop",
       "users": 78,
-      "sessions": 109,
-      "bounceRate": 39
+      "sessions": 110,
+      "bounceRate": 40
     },
     {
       "device": "mobile",
@@ -479,22 +479,16 @@
   ],
   "topCities": [
     {
+      "city": "(not set)",
+      "region": "(not set)",
+      "users": 19,
+      "sessions": 19
+    },
+    {
       "city": "Vancouver",
       "region": "British Columbia",
       "users": 9,
       "sessions": 18
-    },
-    {
-      "city": "",
-      "region": "",
-      "users": 11,
-      "sessions": 11
-    },
-    {
-      "city": "(not set)",
-      "region": "(not set)",
-      "users": 9,
-      "sessions": 9
     },
     {
       "city": "New York",
@@ -565,6 +559,12 @@
     {
       "city": "Miami",
       "region": "Florida",
+      "users": 3,
+      "sessions": 3
+    },
+    {
+      "city": "Pasadena",
+      "region": "California",
       "users": 3,
       "sessions": 3
     }
