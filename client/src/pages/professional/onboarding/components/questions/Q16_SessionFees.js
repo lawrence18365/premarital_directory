@@ -48,7 +48,7 @@ const Q16_SessionFees = ({
             <input
               type="checkbox"
               checked={profileData.donation_based || false}
-              onChange={() => {}}
+              readOnly
             />
             <label className="checkbox-label">
               I offer this service free of charge or donation-based
@@ -115,7 +115,7 @@ const Q16_SessionFees = ({
               <input
                 type="checkbox"
                 checked={profileData.offers_free_consultation || false}
-                onChange={() => updateField('offers_free_consultation', !profileData.offers_free_consultation)}
+                readOnly
               />
               <label className="checkbox-label">
                 I offer a free initial consultation
@@ -132,7 +132,7 @@ const Q16_SessionFees = ({
                 <input
                   type="checkbox"
                   checked={profileData.sliding_scale || false}
-                  onChange={() => updateField('sliding_scale', !profileData.sliding_scale)}
+                  readOnly
                 />
                 <label className="checkbox-label">
                   I offer sliding scale fees based on income

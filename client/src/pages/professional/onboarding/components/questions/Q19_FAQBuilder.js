@@ -64,7 +64,7 @@ const commonFAQs = [
   }
 ]
 
-const Q20_FAQBuilder = ({
+const Q19_FAQBuilder = ({
   currentStep,
   profileData,
   saving,
@@ -92,18 +92,18 @@ const Q20_FAQBuilder = ({
   })
 
   const handleToggleFAQ = (faqId) => {
-    setSelectedFAQs(prev => {
-      if (prev.includes(faqId)) {
-        // Remove
-        const newAnswers = { ...faqAnswers }
+    const isCurrentlySelected = selectedFAQs.includes(faqId)
+
+    if (isCurrentlySelected) {
+      setSelectedFAQs(prev => prev.filter(id => id !== faqId))
+      setFaqAnswers(prev => {
+        const newAnswers = { ...prev }
         delete newAnswers[faqId]
-        setFaqAnswers(newAnswers)
-        return prev.filter(id => id !== faqId)
-      } else {
-        // Add
-        return [...prev, faqId]
-      }
-    })
+        return newAnswers
+      })
+    } else {
+      setSelectedFAQs(prev => [...prev, faqId])
+    }
   }
 
   const handleAnswerChange = (faqId, answer) => {
@@ -166,7 +166,7 @@ const Q20_FAQBuilder = ({
                 <input
                   type="checkbox"
                   checked={isSelected}
-                  onChange={() => handleToggleFAQ(faq.id)}
+                  readOnly
                 />
                 <label className="checkbox-label">
                   {faq.question}
@@ -199,4 +199,4 @@ const Q20_FAQBuilder = ({
   )
 }
 
-export default Q20_FAQBuilder
+export default Q19_FAQBuilder

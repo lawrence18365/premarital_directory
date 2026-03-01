@@ -6,7 +6,7 @@ import { sendProfileCreatedEmail, sendAdminNewSignupAlert } from '../../../../..
 import { trackOnboardingComplete } from '../../../../../components/analytics/GoogleAnalytics'
 import { CLERGY_PROFESSIONS } from '../../constants'
 
-const Q19_Review = ({
+const Q20_Review = ({
   currentStep,
   profileData,
   profileId,
@@ -251,45 +251,8 @@ const Q19_Review = ({
           ))}
         </div>
       )}
-
-      <style jsx>{`
-        .review-section {
-          margin-bottom: 2rem;
-          padding-bottom: 1.5rem;
-          border-bottom: 1px solid #e5e7eb;
-        }
-
-        .review-section:last-child {
-          border-bottom: none;
-        }
-
-        .review-heading {
-          font-size: 1.1rem;
-          font-weight: 600;
-          color: var(--charcoal);
-          margin-bottom: 1rem;
-        }
-
-        .review-item {
-          display: flex;
-          gap: 1rem;
-          margin-bottom: 0.75rem;
-          font-size: 0.95rem;
-        }
-
-        .review-label {
-          font-weight: 600;
-          color: var(--slate);
-          min-width: 140px;
-        }
-
-        .review-value {
-          color: var(--charcoal);
-          flex: 1;
-        }
-      `}</style>
     </QuestionContainer>
   )
 }
 
-export default Q19_Review
+export default Q20_Review

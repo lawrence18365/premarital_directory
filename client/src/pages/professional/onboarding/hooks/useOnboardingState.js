@@ -34,13 +34,14 @@ const STEP_NAMES = {
   10: 'treatment_approaches',
   11: 'client_focus',
   12: 'experience',
-  13: 'pronouns_languages',
-  14: 'credentials_education',
-  15: 'pricing',
-  16: 'insurance',
-  17: 'payment_methods',
-  18: 'faqs',
-  19: 'review'
+  13: 'languages',
+  14: 'license_credentials',
+  15: 'education',
+  16: 'session_fees',
+  17: 'insurance',
+  18: 'payment_methods',
+  19: 'faqs',
+  20: 'review_publish'
 }
 
 /**
