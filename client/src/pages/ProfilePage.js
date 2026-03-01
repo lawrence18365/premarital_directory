@@ -279,7 +279,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
 
   useEffect(() => {
     if (profile && !state) {
-      const stateSlug = profile.state_province ? generateSlug(profile.state_province) : null
+      const stateSlug = profile.state_province ? getStateSlugFromAbbr(profile.state_province) : null
       const citySlug = profile.city ? generateSlug(profile.city) : null
       const normalizedProfileSlug = profile.slug || generateSlug(profile.full_name)
 

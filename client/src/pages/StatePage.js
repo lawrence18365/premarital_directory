@@ -201,8 +201,8 @@ const StatePage = () => {
   return (
     <>
       <SEOHelmet
-        title={`Premarital Counseling in ${stateConfig.name} — ${stateData?.totalProfiles || 'Top'} Counselors (${new Date().getFullYear()})`}
-        description={`Find premarital counseling in ${stateConfig.name}. Compare ${stateData?.totalProfiles || ''} counselors across ${activeCities.length || stateConfig.major_cities.length} cities — licensed therapists, faith-based counselors & coaches with pricing. Browse by city and contact a counselor today.`}
+        title={`Premarital & Marriage Counseling in ${stateConfig.name} — ${stateData?.totalProfiles || 'Top'} Counselors (${new Date().getFullYear()})`}
+        description={`Find premarital and marriage counseling in ${stateConfig.name}. Compare ${stateData?.totalProfiles || ''} counselors across ${activeCities.length || stateConfig.major_cities.length} cities — licensed therapists, faith-based counselors & coaches with pricing. Browse by city and contact a counselor today.`}
         url={`/premarital-counseling/${state}`}
         keywords={`marriage counseling ${stateConfig.name}, premarital counseling ${stateConfig.name}, marriage therapist ${stateConfig.name}, premarital counseling near me ${stateConfig.name}, pre marriage counseling ${stateConfig.name}, premarital therapy ${stateConfig.name}, christian premarital counseling ${stateConfig.name}, christian marriage counseling ${stateConfig.name}`}
         breadcrumbs={breadcrumbItems}
@@ -219,7 +219,7 @@ const StatePage = () => {
             <div className="state-header-content">
 
               <h1 className="state-title">
-                Premarital Counseling in {stateConfig.name}
+                Premarital &amp; Marriage Counseling in {stateConfig.name}
               </h1>
 
               <p className="state-subtitle">

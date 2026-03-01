@@ -138,7 +138,7 @@ const MarriageLicenseDiscountPage = () => {
         title="Marriage License Discount With Premarital Counseling — Save Up to $75"
         description="10 states cut $20–$75 off your marriage license fee when you complete premarital counseling. Florida, Texas, Minnesota & more — check your state, see the requirements, and get your certificate."
         url="/premarital-counseling/marriage-license-discount"
-        keywords="marriage license discount premarital counseling, marriage certificate discount, premarital counseling for marriage license, qualifying premarital education program, how to get marriage license discount, florida marriage license discount, texas marriage license discount, georgia marriage license discount, utah marriage license discount, west virginia marriage license discount, marriage license fee reduction"
+        keywords="marriage license discount premarital counseling, marriage certificate discount, twogether in texas, twogether in texas online course, texas premarital education course, texas premarital course, premarital counseling for marriage license, qualifying premarital education program, how to get marriage license discount, florida marriage license discount, texas marriage license discount, save money on marriage license, california marriage license fee discount premarital counseling, georgia marriage license discount, utah marriage license discount, marriage license fee reduction"
         breadcrumbs={breadcrumbItems}
         structuredData={pageStructuredData}
         faqs={faqs}

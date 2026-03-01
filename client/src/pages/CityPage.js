@@ -496,8 +496,8 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   return (
     <div className="city-page">
       <SEOHelmet
-        title={`Premarital Counseling in ${cityName}, ${stateConfig?.abbr || stateName} — ${profiles.length > 0 ? profiles.length : 'Top'} Counselors`}
-        description={`Find premarital counseling in ${cityName}, ${stateName}. Compare ${profiles.length || 'top'} ${inventoryDescriptor} — prices from $${costStartingAt}/session. Read profiles, filter by method & faith, and message a counselor today.`}
+        title={`Premarital & Marriage Counseling in ${cityName}, ${stateConfig?.abbr || stateName} (${new Date().getFullYear()})`}
+        description={`Find premarital and marriage counseling in ${cityName}, ${stateName}. Compare ${profiles.length || 'top'} ${inventoryDescriptor} — prices from $${costStartingAt}/session. Read profiles, filter by method & faith, and message a counselor today.`}
         keywords={seoKeywords}
         structuredData={structuredData}
         faqs={cityFAQs}
@@ -510,7 +510,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
         <div className="container">
           <Breadcrumbs items={breadcrumbData} variant="on-hero" />
           <div className="state-header-content">
-            <h1>Premarital Counseling in {cityName}, {stateName}</h1>
+            <h1>Premarital &amp; Marriage Counseling in {cityName}, {stateName}</h1>
             <p className="lead city-hero-subtitle">
               Compare {profiles.length > 0 ? profiles.length : 'qualified'} {formatTypeList(providerTypeLabels)} in {cityName}. Browse profiles, filter by method and price, and contact a counselor today.
             </p>
