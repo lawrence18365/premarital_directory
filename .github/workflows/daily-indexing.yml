@@ -1,21 +1,28 @@
 name: Daily Google Indexing
 
+# ⚠️  NOTE: Google's Indexing API is officially restricted to JobPosting and
+# BroadcastEvent pages. Sitemap ping is the recommended compliant approach
+# for directory and blog content. The Indexing API steps are kept but
+# should be used sparingly — consider disabling them if Google warns you.
+
 on:
   schedule:
-    # 6:00 AM UTC daily — before the SEO sitemap ping at 8:00 AM
+    # 6:00 AM UTC daily
     - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       mode:
         description: 'Indexing mode'
         required: true
-        default: 'new-profiles'
+        default: 'ping-sitemap'
         type: choice
         options:
+          - ping-sitemap
           - new-profiles
           - priority
           - sitemap
           - important
+          - blog
 
 jobs:
   index-urls:
@@ -31,6 +38,11 @@ jobs:
 
       - run: npm ci
 
+      # Step 0: Always ping sitemap (safe, compliant, recommended)
+      - name: Ping Google & Bing to re-crawl sitemap
+        if: github.event_name == 'schedule' || github.event.inputs.mode == 'ping-sitemap'
+        run: node scripts/ga/auto-index.js --ping-sitemap
+
       # Step 1: Submit new/claimed profiles (daily)
       - name: Submit new profiles to Indexing API
         if: github.event_name == 'schedule' || github.event.inputs.mode == 'new-profiles'
@@ -40,6 +52,26 @@ jobs:
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/ga/auto-index.js --new-profiles
+
+      # Step 1b: Submit blog posts (daily, uses ~40 quota)
+      - name: Submit blog posts to Indexing API
+        if: github.event_name == 'schedule' || github.event.inputs.mode == 'blog'
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/ga/auto-index.js --blog
+
+      # Step 1c: Submit important pages (city, state, specialty — daily, uses ~50 quota)
+      - name: Submit important pages to Indexing API
+        if: github.event_name == 'schedule' || github.event.inputs.mode == 'important'
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/ga/auto-index.js
 
       # Step 2: On scheduled runs, also submit priority non-indexed URLs
       # (uses remaining daily quota after new profiles)

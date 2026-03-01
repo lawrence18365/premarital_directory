@@ -1,20 +1,26 @@
 /**
  * scripts/ga/auto-index.js
  *
- * Submits URLs to Google's Indexing API for fast crawling.
- * Logs all submissions to Supabase `indexing_submissions` table for
- * dedup (48h window) and daily quota tracking.
+ * ⚠️  IMPORTANT: Google's Indexing API is officially restricted to pages with
+ * JobPosting or BroadcastEvent structured data. Using it for other page types
+ * (directories, blog posts) is technically against Google's terms. As of 2025,
+ * Google has been enforcing this more strictly.
+ *
+ * RECOMMENDED APPROACH:
+ *   1. Primary: Sitemap ping (--ping-sitemap) — safe, compliant
+ *   2. Secondary: URL Inspection API via GSC for monitoring index status
+ *   3. Tertiary: Indexing API only if you have explicit Google approval
  *
  * Usage:
- *   node scripts/ga/auto-index.js                    # Submit all important pages
- *   node scripts/ga/auto-index.js --url <url>        # Submit a single URL
+ *   node scripts/ga/auto-index.js --ping-sitemap     # Ping Google to re-crawl sitemap (RECOMMENDED)
+ *   node scripts/ga/auto-index.js --url <url>        # Submit a single URL via Indexing API
  *   node scripts/ga/auto-index.js --sitemap          # Parse sitemap and submit all URLs
  *   node scripts/ga/auto-index.js --new-profiles     # Submit recently created/claimed profiles
  *   node scripts/ga/auto-index.js --priority         # Submit top non-indexed URLs from coverage report
  *   node scripts/ga/auto-index.js --from-file <path> # Submit URLs from a text file (one per line)
  *   node scripts/ga/auto-index.js --dry-run          # Show what would be submitted without calling API
  *
- * Daily limit: 200 URLs/day (Google quota)
+ * Daily limit: 200 URLs/day (Google quota for Indexing API)
  */
 
 import 'dotenv/config';
@@ -368,9 +374,87 @@ async function submitFromFile(filePath) {
   await batchSubmit(urls, 'manual-file');
 }
 
+// ── Blog mode ────────────────────────────────────────────────────────
+
+async function submitBlogPosts() {
+  console.log('\n=== Submitting Blog Posts ===\n');
+
+  const { data: posts, error } = await supabase
+    .from('posts')
+    .select('slug')
+    .eq('status', 'published');
+
+  if (error) {
+    console.error('Supabase error:', error.message);
+    return;
+  }
+
+  if (!posts || posts.length === 0) {
+    console.log('No published blog posts found.');
+    return;
+  }
+
+  const urls = posts
+    .filter(p => p.slug)
+    .map(p => `${BASE_URL}/blog/${p.slug}`);
+
+  // Also submit the blog index page
+  urls.push(`${BASE_URL}/blog`);
+
+  console.log(`Found ${urls.length} blog URLs (${posts.length} posts + index)`);
+  await batchSubmit(urls, 'cron-blog');
+}
+
+// ── Sitemap Ping (RECOMMENDED — safe, compliant) ────────────────────
+
+async function pingSitemap() {
+  console.log('\n=== Pinging Google & Bing to Re-Crawl Sitemap ===\n');
+  console.log('This is the recommended approach — it asks search engines to');
+  console.log('re-crawl your sitemap without using the restricted Indexing API.\n');
+
+  const sitemapUrl = encodeURIComponent(`${BASE_URL}/sitemap.xml`);
+  const endpoints = [
+    { name: 'Google', url: `https://www.google.com/ping?sitemap=${sitemapUrl}` },
+    { name: 'Bing', url: `https://www.bing.com/ping?sitemap=${sitemapUrl}` },
+  ];
+
+  for (const endpoint of endpoints) {
+    if (DRY_RUN) {
+      console.log(`  [DRY RUN] Would ping ${endpoint.name}: ${endpoint.url}`);
+      continue;
+    }
+    try {
+      await new Promise((resolve) => {
+        https.get(endpoint.url, (res) => {
+          let d = '';
+          res.on('data', c => d += c);
+          res.on('end', () => {
+            if (res.statusCode === 200) {
+              console.log(`  ✓ ${endpoint.name} sitemap ping successful`);
+            } else {
+              console.log(`  ⚠ ${endpoint.name} returned ${res.statusCode}`);
+            }
+            resolve();
+          });
+        }).on('error', (err) => {
+          console.log(`  ✗ ${endpoint.name} ping failed: ${err.message}`);
+          resolve();
+        });
+      });
+    } catch (err) {
+      console.log(`  ✗ ${endpoint.name} error: ${err.message}`);
+    }
+  }
+
+  console.log('\nSitemap ping complete. Google will re-crawl updated URLs at its own pace.');
+  console.log('For faster discovery, ensure strong internal linking from indexed pages.\n');
+}
+
 // ── CLI ─────────────────────────────────────────────────────────────
 
-if (args.includes('--url')) {
+if (args.includes('--ping-sitemap')) {
+  pingSitemap();
+} else if (args.includes('--url')) {
   const url = args[args.indexOf('--url') + 1];
   if (!url) { console.error('Usage: --url <url>'); process.exit(1); }
   submitSingleUrl(url);
@@ -378,6 +462,8 @@ if (args.includes('--url')) {
   submitFromSitemap();
 } else if (args.includes('--new-profiles')) {
   submitNewProfiles();
+} else if (args.includes('--blog')) {
+  submitBlogPosts();
 } else if (args.includes('--priority')) {
   submitPriority();
 } else if (args.includes('--from-file')) {

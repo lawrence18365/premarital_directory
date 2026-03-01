@@ -17,6 +17,11 @@ https://weddingcounselors.com/* https://www.weddingcounselors.com/:splat 301!
 # Handle blog post URLs specifically to prevent issues
 /blog/:slug/ /blog/:slug 301!
 
+# Blog slug redirects: old sitemap had wrong slugs, Google indexed them
+/blog/financial-questions-before-marriage /blog/financial-questions-to-ask-before-marriage 301!
+/blog/wedding-planning-fights /blog/fighting-about-wedding-planning 301!
+/blog/inlaw-boundaries /blog/setting-healthy-boundaries-with-inlaws 301!
+
 # Legacy URL redirects (301 Permanent) — consolidate duplicate paths into canonical URLs
 # These were previously JS-only redirects that Google crawled before the redirect fired,
 # creating 636+ duplicate indexed pages splitting ranking authority.

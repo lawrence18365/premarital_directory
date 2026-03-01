@@ -49,7 +49,7 @@ const ConfirmEmailPage = () => {
       <SEOHelmet
         title="Check Your Email"
         description="Complete your professional account setup by confirming your email"
-        noIndex={true}
+        noindex={true}
       />
 
       <div className="confirm-email">

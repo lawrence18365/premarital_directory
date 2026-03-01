@@ -12,6 +12,7 @@ import { STATE_CONFIG } from '../data/locationConfig'
 import { buildCatholicProgramsQuery, isCatholicSpecialty, normalizeProgramRecord } from '../lib/programCatalog'
 import { supabase } from '../lib/supabaseClient'
 import CoupleEmailCapture from '../components/leads/CoupleEmailCapture'
+import SpecialtyBlogLinks from '../components/state/SpecialtyBlogLinks'
 import '../assets/css/specialty-page.css'
 
 const SpecialtyPage = () => {
@@ -180,7 +181,7 @@ const SpecialtyPage = () => {
   return (
     <>
       <SEOHelmet
-        title={specialty.metaTitle}
+        title={`${specialty.metaTitle} (${new Date().getFullYear()})`}
         description={specialty.metaDescription}
         url={`/premarital-counseling/${specialtySlug}`}
         keywords={specialty.keywords.join(', ')}
@@ -413,6 +414,10 @@ const SpecialtyPage = () => {
         )}
 
         <div className="specialty-container" style={{ marginTop: 'var(--space-8)' }}>
+          <SpecialtyBlogLinks specialtySlug={specialtySlug} specialtyName={specialty?.name} />
+        </div>
+
+        <div className="specialty-container" style={{ marginTop: 'var(--space-8)' }}>
           <CoupleEmailCapture sourcePage={`specialty/${specialtySlug}`} />
         </div>
 
@@ -446,12 +451,12 @@ const SpecialtyPage = () => {
         {/* Related Specialties */}
         <div className="specialty-related-section">
           <div className="specialty-container">
-            <h2 className="section-title">Explore Other Specialties</h2>
+            <h2 className="section-title">Related Specialties</h2>
             <div className="related-specialties-grid">
-              {getAllSpecialties()
-                .filter(s => s.slug !== specialtySlug)
-                .slice(0, 6)
-                .map(s => (
+              {(specialty.relatedSpecialties
+                ? specialty.relatedSpecialties.map(slug => getAllSpecialties().find(s => s.slug === slug)).filter(Boolean)
+                : getAllSpecialties().filter(s => s.slug !== specialtySlug).slice(0, 6)
+              ).map(s => (
                   <Link
                     key={s.slug}
                     to={`/premarital-counseling/${s.slug}`}

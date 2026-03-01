@@ -66,18 +66,83 @@ const CORE_PAGES = [
   { url: '/premarital-counseling/affordable', priority: 0.85, changefreq: 'weekly' }
 ]
 
-// Known blog posts (add more as they're created)
-const BLOG_POSTS = [
-  { slug: 'financial-questions-before-marriage', priority: 0.8 },
-  { slug: 'wedding-planning-fights', priority: 0.8 },
-  { slug: 'inlaw-boundaries', priority: 0.8 },
+// Fallback blog posts — used only if Supabase fetch fails.
+// The script will try to fetch published posts from the DB first.
+const BLOG_POSTS_FALLBACK = [
+  { slug: 'financial-questions-to-ask-before-marriage', priority: 0.8 },
+  { slug: 'fighting-about-wedding-planning', priority: 0.8 },
+  { slug: 'setting-healthy-boundaries-with-inlaws', priority: 0.8 },
+  { slug: '5-common-myths-about-premarital-counseling-debunked', priority: 0.8 },
   { slug: 'premarital-counseling-cost', priority: 0.9 },
   { slug: 'prepare-enrich-explained', priority: 0.9 },
   { slug: 'how-to-choose-premarital-counselor', priority: 0.9 },
   { slug: 'symbis-explained', priority: 0.9 },
   { slug: 'foccus-explained', priority: 0.9 },
-  { slug: 'what-to-expect-premarital-counseling', priority: 0.9 }
+  { slug: 'what-to-expect-premarital-counseling', priority: 0.9 },
+  { slug: 'twogether-in-texas', priority: 0.8 },
+  { slug: 'how-long-does-premarital-counseling-take', priority: 0.8 },
+  { slug: 'online-vs-in-person-premarital-counseling', priority: 0.8 },
+  { slug: 'is-premarital-counseling-worth-it', priority: 0.8 },
+  { slug: 'what-to-expect-first-premarital-counseling-session', priority: 0.8 },
+  { slug: 'premarital-counseling-second-marriages', priority: 0.8 },
+  { slug: 'oklahoma-marriage-license-discount', priority: 0.8 },
+  { slug: 'indiana-marriage-license-discount', priority: 0.8 },
+  { slug: 'christian-vs-secular-premarital-counseling', priority: 0.8 },
+  { slug: 'how-to-find-gottman-certified-therapist', priority: 0.8 },
+  { slug: 'catholic-marriage-counseling', priority: 0.8 },
+  { slug: 'how-to-find-a-marriage-counselor', priority: 0.8 },
+  { slug: 'premarital-counseling-with-pastor', priority: 0.8 },
+  { slug: 'premarital-counseling-questions-pastor', priority: 0.8 },
+  { slug: 'church-premarital-counseling-by-denomination', priority: 0.8 },
+  { slug: 'premarital-counseling-exercises-at-home', priority: 0.8 },
+  { slug: 'best-premarital-counseling-books', priority: 0.8 },
+  { slug: 'florida-marriage-license-discount', priority: 0.8 },
+  { slug: 'minnesota-marriage-license-discount', priority: 0.8 },
+  { slug: 'georgia-marriage-license-discount', priority: 0.8 },
+  { slug: 'pastors-guide-premarital-counseling-program', priority: 0.8 },
+  { slug: 'register-premarital-course-provider', priority: 0.8 },
+  { slug: 'premarital-counseling-curriculum-comparison', priority: 0.8 },
+  { slug: 'prepare-enrich-vs-gottman-vs-symbis', priority: 0.8 },
+  { slug: 'premarital-counseling-license-requirements', priority: 0.8 },
+  { slug: 'what-divorced-couples-wish-discussed-before-marriage', priority: 0.8 },
+  { slug: 'premarital-counseling-statistics', priority: 0.8 },
+  { slug: 'premarital-counseling-phoenix', priority: 0.7 },
+  { slug: 'premarital-counseling-raleigh-nc', priority: 0.7 },
+  { slug: 'premarital-counseling-nashville', priority: 0.7 },
+  { slug: 'premarital-counseling-detroit', priority: 0.7 },
+  { slug: 'premarital-counseling-chicago', priority: 0.7 },
+  { slug: 'premarital-counseling-texas', priority: 0.7 },
+  { slug: 'premarital-counseling-new-york', priority: 0.7 },
+  { slug: 'premarital-counseling-minnesota', priority: 0.7 },
+  { slug: 'premarital-counseling-florida', priority: 0.7 },
+  { slug: 'premarital-counseling-illinois', priority: 0.7 }
 ]
+
+async function fetchBlogPosts() {
+  if (!createClient) return null
+
+  const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
+  const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseAnonKey) return null
+
+  try {
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+    const { data, error } = await supabase
+      .from('posts')
+      .select('slug, updated_at, date')
+      .eq('status', 'published')
+      .order('created_at', { ascending: false })
+
+    if (error || !data) return null
+    return data.map(p => ({
+      slug: p.slug,
+      priority: 0.8,
+      lastmod: p.updated_at || p.date || null
+    }))
+  } catch {
+    return null
+  }
+}
 
 // Specialty slugs from specialtyConfig.js
 const SPECIALTY_SLUGS = [
@@ -517,12 +582,19 @@ async function main() {
   console.log(`   - Specialty state pages kept: ${includedSpecialtyStatePages}`)
   console.log(`   - Specialty city pages kept: ${includedSpecialtyCityPages}`)
 
-  // 3. Blog posts sitemap
+  // 3. Blog posts sitemap (fetch from DB, fall back to hardcoded list)
+  const dbBlogPosts = await fetchBlogPosts()
+  const BLOG_POSTS = dbBlogPosts || BLOG_POSTS_FALLBACK
+  if (dbBlogPosts) {
+    console.log(`   Fetched ${dbBlogPosts.length} blog posts from database`)
+  } else {
+    console.log(`   ⚠️  Using fallback blog list (${BLOG_POSTS_FALLBACK.length} posts)`)
+  }
   const blogUrls = BLOG_POSTS.map(post => ({
     url: `/blog/${post.slug}`,
     priority: post.priority,
     changefreq: 'monthly',
-    lastmod: today
+    lastmod: post.lastmod ? new Date(post.lastmod).toISOString().split('T')[0] : today
   }))
 
   const blogSitemap = generateSitemapXML(blogUrls)

@@ -1,91 +1,77 @@
 {
-  "generatedAt": "2026-02-27T04:52:34.738Z",
+  "generatedAt": "2026-03-01T18:54:45.180Z",
   "period": {},
   "weekOverWeek": {
     "thisWeek": {
-      "users": 115,
-      "sessions": 171,
-      "pageViews": 572,
-      "avgDuration": 405.6238763333334,
-      "bounceRate": 0.2982456140350877,
-      "engagedSessions": 120,
-      "newUsers": 91
+      "users": 128,
+      "sessions": 175,
+      "pageViews": 490,
+      "avgDuration": 335.5231971942857,
+      "bounceRate": 0.3485714285714286,
+      "engagedSessions": 114,
+      "newUsers": 101
     },
     "lastWeek": {
-      "users": 103,
-      "sessions": 184,
-      "pageViews": 778,
-      "avgDuration": 402.8440401467391,
-      "bounceRate": 0.2826086956521739,
-      "engagedSessions": 132,
-      "newUsers": 92
+      "users": 92,
+      "sessions": 167,
+      "pageViews": 716,
+      "avgDuration": 381.1200081137725,
+      "bounceRate": 0.31137724550898205,
+      "engagedSessions": 115,
+      "newUsers": 79
     },
     "deltas": {
-      "users": 12,
-      "sessions": -7,
-      "pageViews": -26,
-      "avgDuration": 1,
-      "bounceRate": 6,
-      "engagedSessions": -9,
-      "newUsers": -1
+      "users": 39,
+      "sessions": 5,
+      "pageViews": -32,
+      "avgDuration": -12,
+      "bounceRate": 12,
+      "engagedSessions": -1,
+      "newUsers": 28
     }
   },
   "topPages": [
     {
       "path": "/professional/onboarding",
-      "views": 126,
+      "views": 109,
       "users": 15,
-      "avgDuration": 817,
+      "avgDuration": 676,
       "bounceRate": 33
     },
     {
       "path": "/",
-      "views": 57,
-      "users": 26,
-      "avgDuration": 279,
-      "bounceRate": 17
+      "views": 43,
+      "users": 20,
+      "avgDuration": 297,
+      "bounceRate": 21
     },
     {
       "path": "/professional/dashboard",
-      "views": 46,
-      "users": 19,
-      "avgDuration": 164,
-      "bounceRate": 16
+      "views": 38,
+      "users": 17,
+      "avgDuration": 120,
+      "bounceRate": 11
     },
     {
       "path": "/professional/signup",
-      "views": 46,
-      "users": 26,
-      "avgDuration": 183,
-      "bounceRate": 15
+      "views": 38,
+      "users": 20,
+      "avgDuration": 203,
+      "bounceRate": 18
     },
     {
       "path": "/professional/login",
-      "views": 21,
-      "users": 14,
-      "avgDuration": 33,
-      "bounceRate": 6
-    },
-    {
-      "path": "/professional/profile/edit",
-      "views": 19,
-      "users": 10,
-      "avgDuration": 235,
-      "bounceRate": 7
-    },
-    {
-      "path": "/premarital-counseling/marriage-license-discount",
-      "views": 18,
-      "users": 4,
-      "avgDuration": 562,
-      "bounceRate": 0
+      "views": 24,
+      "users": 15,
+      "avgDuration": 41,
+      "bounceRate": 5
     },
     {
       "path": "/premarital-counseling",
-      "views": 16,
-      "users": 12,
+      "views": 13,
+      "users": 9,
       "avgDuration": 19,
-      "bounceRate": 6
+      "bounceRate": 0
     },
     {
       "path": "/premarital-counseling/tennessee/hendersonville/morgan-doutrich",
@@ -95,24 +81,10 @@
       "bounceRate": 11
     },
     {
-      "path": "/premarital-counseling/marriage-license-discount/florida",
-      "views": 8,
-      "users": 1,
-      "avgDuration": 148,
-      "bounceRate": 33
-    },
-    {
-      "path": "/professional/confirm-email",
-      "views": 8,
+      "path": "/professional/profile/edit",
+      "views": 12,
       "users": 8,
-      "avgDuration": 64,
-      "bounceRate": 0
-    },
-    {
-      "path": "/professional/email-verified",
-      "views": 7,
-      "users": 7,
-      "avgDuration": 17,
+      "avgDuration": 173,
       "bounceRate": 0
     },
     {
@@ -124,10 +96,10 @@
     },
     {
       "path": "/premarital-counseling/new-york",
-      "views": 5,
-      "users": 3,
-      "avgDuration": 103,
-      "bounceRate": 0
+      "views": 6,
+      "users": 4,
+      "avgDuration": 79,
+      "bounceRate": 25
     },
     {
       "path": "/premarital-counseling/tennessee",
@@ -137,53 +109,67 @@
       "bounceRate": 0
     },
     {
-      "path": "/premarital-counseling/vermont/burlington",
+      "path": "/professional/email-verified",
       "views": 5,
-      "users": 2,
-      "avgDuration": 122,
-      "bounceRate": 0
-    },
-    {
-      "path": "/premarital-counseling/texas",
-      "views": 4,
-      "users": 3,
-      "avgDuration": 102,
-      "bounceRate": 0
-    },
-    {
-      "path": "/premarital-counseling/vt/burlington/amelia-rosehart-578",
-      "views": 4,
-      "users": 2,
-      "avgDuration": 5,
-      "bounceRate": 0
-    },
-    {
-      "path": "/profile/2745dd17-293e-4e1d-a1d5-067ebeba46a2",
-      "views": 4,
-      "users": 2,
-      "avgDuration": 227,
+      "users": 5,
+      "avgDuration": 18,
       "bounceRate": 0
     },
     {
       "path": "/terms",
+      "views": 5,
+      "users": 4,
+      "avgDuration": 64,
+      "bounceRate": 25
+    },
+    {
+      "path": "/blog",
       "views": 4,
       "users": 3,
-      "avgDuration": 83,
+      "avgDuration": 90,
+      "bounceRate": 50
+    },
+    {
+      "path": "/premarital-counseling/co/denver/joe-elliott-384",
+      "views": 4,
+      "users": 4,
+      "avgDuration": 11,
+      "bounceRate": 75
+    },
+    {
+      "path": "/premarital-counseling/vermont/burlington",
+      "views": 4,
+      "users": 1,
+      "avgDuration": 211,
       "bounceRate": 0
     },
     {
-      "path": "/claim-profile",
+      "path": "/professional/confirm-email",
+      "views": 4,
+      "users": 4,
+      "avgDuration": 88,
+      "bounceRate": 0
+    },
+    {
+      "path": "/premarital-counseling/california",
       "views": 3,
-      "users": 3,
-      "avgDuration": 44,
+      "users": 2,
+      "avgDuration": 6,
+      "bounceRate": 33
+    },
+    {
+      "path": "/premarital-counseling/california/pasadena/jessica-munoz-cohan",
+      "views": 3,
+      "users": 2,
+      "avgDuration": 53,
       "bounceRate": 0
     },
     {
       "path": "/premarital-counseling/christian",
       "views": 3,
-      "users": 2,
-      "avgDuration": 32,
-      "bounceRate": 0
+      "users": 3,
+      "avgDuration": 25,
+      "bounceRate": 33
     },
     {
       "path": "/premarital-counseling/christian/maryland/baltimore",
@@ -200,18 +186,25 @@
       "bounceRate": 0
     },
     {
-      "path": "/premarital-counseling/georgia/sandy-springs/deborah-russo",
+      "path": "/premarital-counseling/gottman",
       "views": 3,
-      "users": 2,
-      "avgDuration": 24,
-      "bounceRate": 0
+      "users": 3,
+      "avgDuration": 36,
+      "bounceRate": 33
     },
     {
-      "path": "/premarital-counseling/ma/mashpee/steven-isenberg",
+      "path": "/premarital-counseling/marriage-license-discount",
       "views": 3,
-      "users": 1,
+      "users": 3,
       "avgDuration": 33,
-      "bounceRate": 67
+      "bounceRate": 33
+    },
+    {
+      "path": "/premarital-counseling/north-carolina",
+      "views": 3,
+      "users": 3,
+      "avgDuration": 18,
+      "bounceRate": 33
     },
     {
       "path": "/premarital-counseling/tennessee/hendersonville",
@@ -221,55 +214,62 @@
       "bounceRate": 0
     },
     {
-      "path": "/premarital-counseling/texas/houston/odunayo-samo",
+      "path": "/premarital-counseling/texas",
       "views": 3,
       "users": 2,
-      "avgDuration": 5,
-      "bounceRate": 67
-    },
-    {
-      "path": "/editorial-standards",
-      "views": 2,
-      "users": 1,
-      "avgDuration": 23,
+      "avgDuration": 144,
       "bounceRate": 50
     },
     {
-      "path": "/how-it-works",
+      "path": "/premarital-counseling/vt/burlington/amelia-rosehart-578",
+      "views": 3,
+      "users": 2,
+      "avgDuration": 4,
+      "bounceRate": 0
+    },
+    {
+      "path": "/profile/2745dd17-293e-4e1d-a1d5-067ebeba46a2",
+      "views": 3,
+      "users": 2,
+      "avgDuration": 303,
+      "bounceRate": 0
+    },
+    {
+      "path": "/claim-profile",
       "views": 2,
       "users": 2,
-      "avgDuration": 9,
-      "bounceRate": 0
+      "avgDuration": 3,
+      "bounceRate": 50
     }
   ],
   "trafficSources": [
     {
       "channel": "Direct",
-      "sessions": 97,
-      "engagementRate": 67,
-      "pagesPerSession": "3.9"
+      "sessions": 99,
+      "engagementRate": 58,
+      "pagesPerSession": "2.6"
     },
     {
       "channel": "Organic Search",
-      "sessions": 53,
-      "engagementRate": 75,
-      "pagesPerSession": "2.1"
-    },
-    {
-      "channel": "Referral",
-      "sessions": 11,
-      "engagementRate": 73,
-      "pagesPerSession": "4.0"
+      "sessions": 51,
+      "engagementRate": 78,
+      "pagesPerSession": "2.5"
     },
     {
       "channel": "Email",
-      "sessions": 9,
-      "engagementRate": 78,
-      "pagesPerSession": "4.0"
+      "sessions": 14,
+      "engagementRate": 64,
+      "pagesPerSession": "4.9"
+    },
+    {
+      "channel": "Referral",
+      "sessions": 10,
+      "engagementRate": 80,
+      "pagesPerSession": "4.2"
     },
     {
       "channel": "Unassigned",
-      "sessions": 3,
+      "sessions": 1,
       "engagementRate": 0,
       "pagesPerSession": "0.0"
     }
@@ -277,53 +277,58 @@
   "events": [
     {
       "event": "web_vitals",
-      "count": 608,
-      "users": 97
+      "count": 592,
+      "users": 115
     },
     {
       "event": "page_view",
-      "count": 572,
-      "users": 112
+      "count": 490,
+      "users": 126
     },
     {
       "event": "session_start",
-      "count": 170,
-      "users": 114
-    },
-    {
-      "event": "user_engagement",
-      "count": 107,
-      "users": 48
+      "count": 174,
+      "users": 127
     },
     {
       "event": "first_visit",
-      "count": 91,
-      "users": 91
+      "count": 101,
+      "users": 101
     },
     {
-      "event": "scroll",
-      "count": 89,
-      "users": 44
+      "event": "user_engagement",
+      "count": 92,
+      "users": 47
     },
     {
       "event": "directory_launch",
-      "count": 78,
-      "users": 78
+      "count": 90,
+      "users": 90
     },
     {
       "event": "profile_view",
-      "count": 72,
-      "users": 38
+      "count": 63,
+      "users": 37
+    },
+    {
+      "event": "scroll",
+      "count": 55,
+      "users": 33
+    },
+    {
+      "event": "onboarding_step_completed",
+      "count": 40,
+      "users": 3
     },
     {
       "event": "form_start",
-      "count": 43,
-      "users": 28
+      "count": 35,
+      "users": 22
     },
     {
       "event": "location_page_view",
-      "count": 29,
-      "users": 14
+      "count": 32,
+      "users": 19
     },
     {
       "event": "click",
@@ -331,9 +336,9 @@
       "users": 7
     },
     {
-      "event": "onboarding_step_completed",
-      "count": 1,
-      "users": 1
+      "event": "onboarding_completed",
+      "count": 2,
+      "users": 2
     }
   ],
   "organicLandingPages": [
@@ -344,10 +349,16 @@
       "avgDuration": 254
     },
     {
-      "path": "/premarital-counseling/vermont/burlington",
+      "path": "/premarital-counseling/florida/miami",
       "sessions": 2,
       "bounceRate": 0,
-      "avgDuration": 547
+      "avgDuration": 316
+    },
+    {
+      "path": "/premarital-counseling/north-carolina/charlotte",
+      "sessions": 2,
+      "bounceRate": 0,
+      "avgDuration": 161
     },
     {
       "path": "/professional/dashboard",
@@ -386,28 +397,10 @@
       "avgDuration": 6
     },
     {
-      "path": "/premarital-counseling/affordable/new-mexico/las-cruces",
-      "sessions": 1,
-      "bounceRate": 0,
-      "avgDuration": 1235
-    },
-    {
       "path": "/premarital-counseling/affordable/washington/seattle",
       "sessions": 1,
       "bounceRate": 0,
       "avgDuration": 21
-    },
-    {
-      "path": "/premarital-counseling/az/phoenix/amorita-young-844",
-      "sessions": 1,
-      "bounceRate": 0,
-      "avgDuration": 12
-    },
-    {
-      "path": "/premarital-counseling/ca/tustin/kaytie-allah-261",
-      "sessions": 1,
-      "bounceRate": 100,
-      "avgDuration": 9
     },
     {
       "path": "/premarital-counseling/california/los-angeles",
@@ -422,6 +415,18 @@
       "avgDuration": 6
     },
     {
+      "path": "/premarital-counseling/catholic/california/fresno",
+      "sessions": 1,
+      "bounceRate": 100,
+      "avgDuration": 4
+    },
+    {
+      "path": "/premarital-counseling/catholic/pennsylvania/philadelphia",
+      "sessions": 1,
+      "bounceRate": 0,
+      "avgDuration": 18
+    },
+    {
       "path": "/premarital-counseling/catholic/wisconsin/kenosha",
       "sessions": 1,
       "bounceRate": 0,
@@ -434,55 +439,67 @@
       "avgDuration": 5
     },
     {
+      "path": "/premarital-counseling/christian/oregon/gresham",
+      "sessions": 1,
+      "bounceRate": 0,
+      "avgDuration": 92
+    },
+    {
       "path": "/premarital-counseling/christian/rhode-island",
       "sessions": 1,
       "bounceRate": 0,
       "avgDuration": 30
     },
     {
-      "path": "/premarital-counseling/co/denver/savana-reuben-meisner-278",
-      "sessions": 1,
-      "bounceRate": 100,
-      "avgDuration": 8
-    },
-    {
-      "path": "/premarital-counseling/ct/canton/katie-campochiaro",
-      "sessions": 1,
-      "bounceRate": 100,
-      "avgDuration": 4
-    },
-    {
-      "path": "/premarital-counseling/dc/petworth/amanda-augustenborg",
+      "path": "/premarital-counseling/christian/washington/spokane",
       "sessions": 1,
       "bounceRate": 0,
-      "avgDuration": 105
+      "avgDuration": 27
+    },
+    {
+      "path": "/premarital-counseling/christian/wisconsin/green-bay",
+      "sessions": 1,
+      "bounceRate": 0,
+      "avgDuration": 21
     }
   ],
   "devices": [
     {
       "device": "desktop",
-      "users": 62,
-      "sessions": 103,
-      "bounceRate": 32
+      "users": 78,
+      "sessions": 109,
+      "bounceRate": 39
     },
     {
       "device": "mobile",
-      "users": 53,
-      "sessions": 68,
-      "bounceRate": 26
+      "users": 50,
+      "sessions": 66,
+      "bounceRate": 27
     }
   ],
   "topCities": [
     {
       "city": "Vancouver",
       "region": "British Columbia",
-      "users": 8,
-      "sessions": 21
+      "users": 9,
+      "sessions": 18
     },
     {
-      "city": "Atlanta",
-      "region": "Georgia",
-      "users": 5,
+      "city": "",
+      "region": "",
+      "users": 11,
+      "sessions": 11
+    },
+    {
+      "city": "(not set)",
+      "region": "(not set)",
+      "users": 9,
+      "sessions": 9
+    },
+    {
+      "city": "New York",
+      "region": "New York",
+      "users": 7,
       "sessions": 9
     },
     {
@@ -492,15 +509,15 @@
       "sessions": 8
     },
     {
-      "city": "Chicago",
-      "region": "Illinois",
-      "users": 7,
+      "city": "Atlanta",
+      "region": "Georgia",
+      "users": 3,
       "sessions": 7
     },
     {
-      "city": "New York",
-      "region": "New York",
-      "users": 2,
+      "city": "Los Angeles",
+      "region": "California",
+      "users": 3,
       "sessions": 6
     },
     {
@@ -510,20 +527,14 @@
       "sessions": 6
     },
     {
-      "city": "(not set)",
-      "region": "(not set)",
-      "users": 5,
-      "sessions": 5
-    },
-    {
-      "city": "Houston",
+      "city": "Dallas",
       "region": "Texas",
-      "users": 2,
+      "users": 3,
       "sessions": 5
     },
     {
-      "city": "Seattle",
-      "region": "Washington",
+      "city": "Chicago",
+      "region": "Illinois",
       "users": 4,
       "sessions": 4
     },
@@ -540,14 +551,14 @@
       "sessions": 4
     },
     {
-      "city": "Birmingham",
-      "region": "Alabama",
+      "city": "Ashburn",
+      "region": "Virginia",
       "users": 3,
       "sessions": 3
     },
     {
-      "city": "Dallas",
-      "region": "Texas",
+      "city": "Birmingham",
+      "region": "Alabama",
       "users": 3,
       "sessions": 3
     },
@@ -556,42 +567,29 @@
       "region": "Florida",
       "users": 3,
       "sessions": 3
-    },
-    {
-      "city": "Phoenix",
-      "region": "Arizona",
-      "users": 3,
-      "sessions": 3
     }
   ],
   "topSearchQueries": [
     {
-      "query": "holly eliza jones",
+      "query": "pre-marriage counseling",
       "clicks": 1,
-      "impressions": 4,
-      "ctr": 25,
-      "position": 6.5
+      "impressions": 1,
+      "ctr": 100,
+      "position": 5
     },
     {
-      "query": "#marriagecounseling",
+      "query": "adams therapy",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
-      "position": 26
-    },
-    {
-      "query": "adam figlewicz",
-      "clicks": 0,
-      "impressions": 1,
-      "ctr": 0,
-      "position": 7
+      "position": 10
     },
     {
       "query": "affair counseling near me",
       "clicks": 0,
-      "impressions": 6,
+      "impressions": 8,
       "ctr": 0,
-      "position": 38.3
+      "position": 40.5
     },
     {
       "query": "affordable couples counseling near me",
@@ -610,9 +608,9 @@
     {
       "query": "alejandra weiss",
       "clicks": 0,
-      "impressions": 12,
+      "impressions": 14,
       "ctr": 0,
-      "position": 11.8
+      "position": 11.1
     },
     {
       "query": "alp counseling",
@@ -624,30 +622,51 @@
     {
       "query": "are there online premarital counseling options in maryland?",
       "clicks": 0,
-      "impressions": 4,
+      "impressions": 2,
       "ctr": 0,
-      "position": 9.8
+      "position": 9.5
     },
     {
       "query": "best couples therapy miami",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
-      "position": 82
+      "position": 83
     },
     {
       "query": "best marriage counseling",
       "clicks": 0,
-      "impressions": 5,
+      "impressions": 6,
       "ctr": 0,
-      "position": 36.4
+      "position": 37.5
+    },
+    {
+      "query": "best marriage counseling charlotte nc",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 82
     },
     {
       "query": "best marriage counseling miami",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
-      "position": 57
+      "position": 58
+    },
+    {
+      "query": "best marriage counseling omaha",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 94
+    },
+    {
+      "query": "best marriage counselors in louisville ky",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 60
     },
     {
       "query": "best marriage counselors near me",
@@ -657,6 +676,13 @@
       "position": 70.5
     },
     {
+      "query": "best marriage therapist near me",
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 18
+    },
+    {
       "query": "best online premarital counseling",
       "clicks": 0,
       "impressions": 1,
@@ -664,18 +690,25 @@
       "position": 95
     },
     {
+      "query": "best virtual couples counseling services 2026",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 9
+    },
+    {
       "query": "brian murphy therapist",
       "clicks": 0,
-      "impressions": 2,
+      "impressions": 1,
       "ctr": 0,
-      "position": 9.5
+      "position": 10
     },
     {
       "query": "byron galloway",
       "clicks": 0,
       "impressions": 2,
       "ctr": 0,
-      "position": 4
+      "position": 4.5
     },
     {
       "query": "cadey phipps",
@@ -683,6 +716,13 @@
       "impressions": 1,
       "ctr": 0,
       "position": 9
+    },
+    {
+      "query": "california county marriage license fee discount premarital counseling",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 6.3
     },
     {
       "query": "california couples counseling",
@@ -703,48 +743,13 @@
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
-      "position": 15
-    },
-    {
-      "query": "catholic marriage counseling",
-      "clicks": 0,
-      "impressions": 2,
-      "ctr": 0,
-      "position": 69
-    },
-    {
-      "query": "catholic marriage counselors",
-      "clicks": 0,
-      "impressions": 1,
-      "ctr": 0,
-      "position": 84
-    },
-    {
-      "query": "certified gottman therapist birmingham",
-      "clicks": 0,
-      "impressions": 5,
-      "ctr": 0,
-      "position": 14
-    },
-    {
-      "query": "certified marriage counselor",
-      "clicks": 0,
-      "impressions": 1,
-      "ctr": 0,
-      "position": 59
-    },
-    {
-      "query": "cheap marriage counseling near me",
-      "clicks": 0,
-      "impressions": 5,
-      "ctr": 0,
-      "position": 15.6
+      "position": 19
     }
   ],
   "gscTotals": {
-    "clicks": 28,
-    "impressions": 2206,
-    "ctr": 0.012692656391659111,
-    "position": 24.025385312783317
+    "clicks": 40,
+    "impressions": 2865,
+    "ctr": 0.013961605584642234,
+    "position": 24.585340314136126
   }
 }

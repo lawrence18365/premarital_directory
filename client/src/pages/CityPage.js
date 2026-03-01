@@ -19,6 +19,8 @@ import CityDataSummary from '../components/city/CityDataSummary';
 import CityEditorialContent from '../components/city/CityEditorialContent';
 import ConciergeLeadForm from '../components/leads/ConciergeLeadForm';
 import CoupleEmailCapture from '../components/leads/CoupleEmailCapture';
+import RelatedBlogPosts from '../components/state/RelatedBlogPosts';
+import { getStateCostRange, COUNSELING_STATS, getStateLicenseDiscount } from '../data/counselingMarketData';
 import {
   enrichPremaritalSignals,
   groupProfilesByRole,
@@ -390,9 +392,11 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   const sessionCostDisplayRange = directoryPriceInsights.label
   const sessionCostForCopy = `${sessionCostDisplayRange} per session`
   const costStartingAt = String(directoryPriceInsights.min || 150)
+  const stateMarketCost = getStateCostRange(state)
+  const cityLicenseDiscount = getStateLicenseDiscount(state)
   const costSourceSentence = directoryPriceInsights.source === 'directory'
-    ? `This range is based on ${directoryPriceInsights.count} listed profile${directoryPriceInsights.count === 1 ? '' : 's'} with published pricing.`
-    : 'This is a market estimate for the area; exact rates vary by provider.'
+    ? `This range is based on ${directoryPriceInsights.count} listed profile${directoryPriceInsights.count === 1 ? '' : 's'} with published pricing in ${cityName}.`
+    : `${stateName} therapists generally charge ${stateMarketCost.label} per session; exact rates vary by provider and credentials.`
   const costFaithSentence = groupedProfiles.clergy.length > 0
     ? 'Some clergy-led programs may be free or low-cost through local churches.'
     : hasFaithIntegratedProviders
@@ -440,9 +444,13 @@ const CityPage = ({ stateOverride, cityOverride }) => {
       answer: `Yes, many ${cityName} premarital counselors offer online sessions via telehealth. This is ideal for busy engaged couples with different schedules or if one partner travels. Online premarital counseling is just as effective as in-person for marriage preparation.`
     },
     {
-      question: `What topics are covered in premarital counseling in ${cityName}?`,
-      answer: `Premarital counseling in ${cityName} covers communication skills, conflict resolution, finances, family planning, intimacy expectations, roles and responsibilities, faith and values, and in-law relationships. Counselors help engaged couples prepare for a strong marriage foundation.`
-    }
+      question: `Does premarital counseling actually reduce divorce risk?`,
+      answer: `Yes. A meta-analysis of 20 studies in the Journal of Family Psychology found couples who completed premarital counseling had a ${COUNSELING_STATS.divorceReduction} lower chance of divorce. The median program is ${COUNSELING_STATS.medianHours} hours, and ${COUNSELING_STATS.participationRate} of couples getting married today participate. Topics covered include communication, conflict resolution, finances, intimacy, and family planning.`
+    },
+    ...(cityLicenseDiscount ? [{
+      question: `Can premarital counseling save money on a ${stateName} marriage license?`,
+      answer: `Yes. ${stateName} offers a ${cityLicenseDiscount.discount} discount on your marriage license fee when you complete at least ${cityLicenseDiscount.courseHours} hours of premarital education. ${cityLicenseDiscount.notes}. You'll need to present a certificate of completion when applying for your license.`
+    }] : [])
   ]
 
   const heroHighlights = [
@@ -488,7 +496,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   return (
     <div className="city-page">
       <SEOHelmet
-        title={`Premarital Counseling in ${cityName}, ${stateConfig?.abbr || stateName} — ${profiles.length > 0 ? profiles.length : 'Top'} Counselors (${new Date().getFullYear()})`}
+        title={`Premarital Counseling in ${cityName}, ${stateConfig?.abbr || stateName} — ${profiles.length > 0 ? profiles.length : 'Top'} Counselors`}
         description={`Find premarital counseling in ${cityName}, ${stateName}. Compare ${profiles.length || 'top'} ${inventoryDescriptor} — prices from $${costStartingAt}/session. Read profiles, filter by method & faith, and message a counselor today.`}
         keywords={seoKeywords}
         structuredData={structuredData}
@@ -1035,6 +1043,8 @@ const CityPage = ({ stateOverride, cityOverride }) => {
                     showAside={false}
                   />
                 </div>
+
+                <RelatedBlogPosts stateSlug={state} stateName={stateName} />
 
                 <CoupleEmailCapture sourcePage={`city/${state}/${city}`} defaultCity={cityName} defaultState={stateConfig?.abbr || ''} />
 

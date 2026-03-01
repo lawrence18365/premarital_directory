@@ -6,7 +6,8 @@ export const SPECIALTY_CONFIG = {
     name: 'Christian',
     slug: 'christian',
     title: 'Christian Premarital Counseling',
-    metaTitle: `Christian Premarital Counseling — Faith-Based Counselors (${new Date().getFullYear()})`,
+    metaTitle: 'Christian Premarital Counseling — Faith-Based Counselors',
+    relatedSpecialties: ['catholic', 'interfaith', 'prepare-enrich'],
     metaDescription: 'Compare Christian premarital counselors who integrate faith and scripture into marriage preparation. Browse profiles, see methods, and contact directly.',
     h1: 'Christian Premarital Counseling',
     subtitle: 'Faith-based marriage preparation rooted in Biblical principles',
@@ -67,7 +68,8 @@ export const SPECIALTY_CONFIG = {
     name: 'Catholic Pre-Cana',
     slug: 'catholic',
     title: 'Catholic Pre-Cana Classes',
-    metaTitle: `Catholic Pre-Cana Classes Near You — Programs & Schedules (${new Date().getFullYear()})`,
+    relatedSpecialties: ['christian', 'interfaith', 'prepare-enrich'],
+    metaTitle: 'Catholic Pre-Cana Classes Near You — Programs & Schedules',
     metaDescription: 'Find Catholic Pre-Cana programs and marriage preparation classes. FOCCUS inventory, Engaged Encounter, and parish programs. Browse schedules and register.',
     h1: 'Catholic Pre-Cana & Marriage Preparation',
     subtitle: 'Verified parish and diocesan programs for Catholic couples preparing for marriage',
@@ -103,8 +105,9 @@ export const SPECIALTY_CONFIG = {
     name: 'LGBTQ+ Affirming',
     slug: 'lgbtq',
     title: 'LGBTQ+ Affirming Premarital Counseling',
-    metaTitle: `LGBTQ+ Affirming Premarital Counseling — Inclusive Therapists (${new Date().getFullYear()})`,
-    metaDescription: 'Find LGBTQ+ affirming premarital counselors who support same-sex couples and queer relationships. Browse inclusive therapist profiles and contact directly.',
+    relatedSpecialties: ['online', 'affordable', 'gottman'],
+    metaTitle: 'LGBTQ+ Affirming Premarital Counselors Near You',
+    metaDescription: 'Browse LGBTQ+ affirming premarital counselors and marriage therapists. Inclusive, celebratory support for same-sex and queer couples. Contact directly.',
     h1: 'LGBTQ+ Affirming Premarital Counseling',
     subtitle: 'Inclusive marriage preparation that celebrates your relationship',
     keywords: ['lgbtq premarital counseling', 'lgbtq affirming therapist near me', 'lgbtqia premarital counseling', 'gay couples counseling near me', 'same-sex marriage preparation', 'queer affirming therapist', 'lgbtq friendly counselor near me'],
@@ -164,7 +167,8 @@ export const SPECIALTY_CONFIG = {
     name: 'Online/Virtual',
     slug: 'online',
     title: 'Online Premarital Counseling',
-    metaTitle: `Online Premarital Counseling — Virtual Sessions (${new Date().getFullYear()})`,
+    relatedSpecialties: ['affordable', 'gottman', 'prepare-enrich'],
+    metaTitle: 'Online Premarital Counseling — Virtual Sessions',
     metaDescription: 'Compare online premarital counseling options with licensed therapists. Video sessions, flexible scheduling, and affordable packages. Contact a counselor today.',
     stateMetaTitle: (stateName) => `Online Premarital Counseling in ${stateName} (${new Date().getFullYear()}) — Compare Options`,
     stateMetaDescription: (stateName, count) =>
@@ -233,8 +237,9 @@ export const SPECIALTY_CONFIG = {
   'gottman': {
     name: 'Gottman Method',
     slug: 'gottman',
+    relatedSpecialties: ['prepare-enrich', 'online', 'second-marriages'],
     title: 'Gottman Method Premarital Counseling',
-    metaTitle: `Gottman Method Premarital Counseling — Certified Therapists (${new Date().getFullYear()})`,
+    metaTitle: 'Gottman Method Premarital Counseling — Certified Therapists',
     metaDescription: 'Find certified Gottman-trained premarital counselors near you. Research-backed Sound Relationship House method. Browse profiles and book a session.',
     stateMetaTitle: (stateName) => `Certified Gottman Therapists in ${stateName} — Premarital Counseling (${new Date().getFullYear()})`,
     stateMetaDescription: (stateName, count) =>
@@ -275,8 +280,9 @@ export const SPECIALTY_CONFIG = {
   'prepare-enrich': {
     name: 'PREPARE/ENRICH',
     slug: 'prepare-enrich',
+    relatedSpecialties: ['gottman', 'christian', 'online'],
     title: 'PREPARE/ENRICH Premarital Counseling',
-    metaTitle: `PREPARE/ENRICH Counselors — Certified Facilitators (${new Date().getFullYear()})`,
+    metaTitle: 'PREPARE/ENRICH Counselors — Certified Facilitators',
     metaDescription: 'Find PREPARE/ENRICH certified facilitators for research-based premarital assessment. Identify strengths, growth areas, and build a stronger foundation.',
     h1: 'PREPARE/ENRICH Premarital Counseling',
     subtitle: 'The most widely used premarital assessment in the world',
@@ -312,6 +318,7 @@ export const SPECIALTY_CONFIG = {
     name: 'Interfaith Couples',
     slug: 'interfaith',
     title: 'Interfaith Premarital Counseling',
+    relatedSpecialties: ['christian', 'catholic', 'lgbtq'],
     metaTitle: 'Interfaith Premarital Counseling | Multi-Faith Marriage Prep',
     metaDescription: 'Find premarital counselors experienced with interfaith couples. Navigate religious differences, blended traditions, and family expectations.',
     h1: 'Interfaith Premarital Counseling',
@@ -341,6 +348,29 @@ export const SPECIALTY_CONFIG = {
         question: 'How can we honor both of our religious traditions?',
         answer: 'Many interfaith couples create blended practices, celebrate both sets of holidays, or choose elements from each tradition that feel meaningful. A counselor can help you explore what works for your relationship.'
       }
+    ],
+    bodyContent: [
+      {
+        heading: 'What Interfaith Premarital Counseling Covers',
+        paragraphs: [
+          'Interfaith counseling goes beyond surface-level compromise. Sessions typically explore the deeper values behind each partner\'s traditions — why certain rituals matter, how faith shapes identity, and what role spirituality will play in your daily life together.',
+          'Counselors help couples discuss concrete decisions: holiday observance, dietary customs, worship attendance, and how (or whether) to introduce children to one or both faiths. These conversations are easier to navigate before marriage than after.'
+        ]
+      },
+      {
+        heading: 'Managing Family Expectations',
+        paragraphs: [
+          'Extended families often have strong feelings about interfaith marriages. A counselor can help you set boundaries, communicate your choices respectfully, and develop strategies for navigating family gatherings where religious differences may surface.',
+          'Many couples find that proactively discussing these dynamics — rather than reacting to them — reduces conflict and builds confidence heading into the wedding and beyond.'
+        ]
+      },
+      {
+        heading: 'Building a Shared Spiritual Life',
+        paragraphs: [
+          'Interfaith couples don\'t have to choose one tradition over another. Many create meaningful blended practices — lighting Shabbat candles and attending Sunday services, observing Ramadan and Christmas, or developing entirely new rituals that reflect both backgrounds.',
+          'A counselor experienced with interfaith couples can help you find common ground in your values even when your traditions differ, turning religious diversity into a source of richness rather than conflict.'
+        ]
+      }
     ]
   },
 
@@ -348,6 +378,7 @@ export const SPECIALTY_CONFIG = {
     name: 'Second Marriages',
     slug: 'second-marriages',
     title: 'Premarital Counseling for Second Marriages',
+    relatedSpecialties: ['gottman', 'online', 'affordable'],
     metaTitle: 'Premarital Counseling for Second Marriages | Remarriage Preparation',
     metaDescription: 'Find premarital counselors experienced with second marriages, remarriage, and blended families. Address past patterns and build a stronger future.',
     h1: 'Premarital Counseling for Second Marriages',
@@ -377,12 +408,36 @@ export const SPECIALTY_CONFIG = {
         question: 'How is counseling different for remarriage?',
         answer: 'Remarriage counseling addresses more complex topics: processing grief or divorce, managing relationships with ex-spouses, integrating children, combining households, and avoiding past mistakes.'
       }
+    ],
+    bodyContent: [
+      {
+        heading: 'Why Second Marriages Need Different Preparation',
+        paragraphs: [
+          'Research shows that second marriages face a higher divorce rate than first marriages — not because people are less committed, but because the challenges are more complex. Unresolved patterns from a previous marriage, co-parenting logistics, and blended family dynamics all add layers that first-time couples don\'t encounter.',
+          'Premarital counseling for remarriage focuses on identifying the patterns that contributed to your previous relationship\'s end and building concrete strategies to avoid repeating them. It\'s not about blame — it\'s about self-awareness and intentional growth.'
+        ]
+      },
+      {
+        heading: 'Navigating Blended Family Dynamics',
+        paragraphs: [
+          'If either partner has children, the transition to a blended family is one of the biggest challenges you\'ll face. Counselors help you align on parenting styles, establish roles for stepparents, set expectations with children, and develop a co-parenting plan with ex-spouses.',
+          'Topics like discipline boundaries, introducing a new partner to kids, managing loyalty conflicts, and creating shared family traditions are best discussed before the wedding — when emotions are lower and solutions can be planned thoughtfully.'
+        ]
+      },
+      {
+        heading: 'Financial and Legal Complexity',
+        paragraphs: [
+          'Second marriages often involve more complex financial situations: child support, alimony, existing debt, assets from a previous marriage, and inheritance considerations. A counselor can help you have honest conversations about merging (or keeping separate) finances.',
+          'Many couples also benefit from discussing prenuptial agreements, estate planning, and beneficiary designations — practical topics that affect both partners and their children from previous relationships.'
+        ]
+      }
     ]
   },
 
   'military': {
     name: 'Military Couples',
     slug: 'military',
+    relatedSpecialties: ['online', 'affordable', 'gottman'],
     title: 'Military Premarital Counseling',
     metaTitle: 'Military Premarital Counseling | Armed Forces Marriage Prep',
     metaDescription: 'Find premarital counselors experienced with military couples. Navigate deployments, relocations, and unique military lifestyle challenges.',
@@ -413,14 +468,38 @@ export const SPECIALTY_CONFIG = {
         question: 'Can we do counseling during deployment?',
         answer: 'Yes, online counseling makes it possible to continue sessions even during deployment. Many military-experienced counselors offer flexible virtual options.'
       }
+    ],
+    bodyContent: [
+      {
+        heading: 'Unique Challenges Military Couples Face',
+        paragraphs: [
+          'Military life places extraordinary demands on relationships. Frequent relocations mean constantly rebuilding social networks. Deployments create extended separations that test communication and trust. The unpredictability of military orders can make planning a wedding — and a life together — more complicated than for civilian couples.',
+          'Counselors experienced with military families understand these pressures and help couples develop resilience strategies specifically designed for the military lifestyle, including communication plans for deployment and reintegration frameworks for homecoming.'
+        ]
+      },
+      {
+        heading: 'Resources Available to Service Members',
+        paragraphs: [
+          'Military couples have access to several free or low-cost counseling options. Military OneSource offers up to 12 free non-medical counseling sessions per issue. Base chaplains provide free premarital counseling, often required for on-base weddings. TRICARE may cover licensed marriage and family therapy.',
+          'Many counselors on this directory have experience working with military families and understand the unique aspects of military culture, including rank dynamics, operational security, and the transition between military and civilian life.'
+        ]
+      },
+      {
+        heading: 'Preparing for Deployment and Reintegration',
+        paragraphs: [
+          'Deployment preparation is a critical topic in military premarital counseling. Couples learn to establish communication routines, manage finances independently, build support networks, and set expectations for contact frequency during separation.',
+          'Equally important is reintegration — the adjustment period when a service member returns home. Counselors help couples anticipate the challenges of reconnecting after months apart, including shifts in roles, emotional distance, and readjusting to shared daily life.'
+        ]
+      }
     ]
   },
 
   'affordable': {
     name: 'Affordable/Sliding Scale',
     slug: 'affordable',
+    relatedSpecialties: ['online', 'christian', 'military'],
     title: 'Affordable Premarital Counseling',
-    metaTitle: `Affordable Premarital Counseling — Sliding Scale & Low-Cost (${new Date().getFullYear()})`,
+    metaTitle: 'Affordable Premarital Counseling — Sliding Scale & Low-Cost',
     metaDescription: 'Find affordable premarital counseling with sliding scale fees and low-cost options. Compare prices, browse profiles, and contact a counselor today.',
     h1: 'Affordable Premarital Counseling',
     subtitle: 'Quality marriage preparation at prices you can afford',

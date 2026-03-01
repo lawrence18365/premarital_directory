@@ -17,7 +17,7 @@ const ProfilePendingPage = () => {
         title="Profile Submitted - Awaiting Review"
         description="Your professional profile has been submitted and is awaiting review."
         url="/professional/profile-pending"
-        noIndex={true}
+        noindex={true}
       />
 
       <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>

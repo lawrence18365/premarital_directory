@@ -10,6 +10,7 @@ import { requireInternalKey } from "../_shared/auth.ts"
  * Step 1 (Day 2):  "Finish your profile" - nudge to complete profile
  * Step 2 (Day 7):  "Your first week" - visibility recap with view stats
  * Step 3 (Day 14): "Getting more inquiries" - tips for profile optimization
+ * Step 4 (Day 21): "Add our badge" - dedicated badge/backlink CTA with embed code
  *
  * Drip type is determined by profile source:
  * - 'welcome' for organic signups (created via CreateProfilePage)
@@ -44,6 +45,12 @@ const DRIP_STEPS: DripStep[] = [
     subject: (_name) => `How to get more inquiries from couples`,
     html: (profile, _stats) => generateStep3HTML(profile),
   },
+  {
+    step: 4,
+    daysAfter: 21,
+    subject: (name) => `${name}, add our badge to your website`,
+    html: (profile, _stats) => generateStep4HTML(profile),
+  },
 ]
 
 serve(async (req) => {
@@ -72,9 +79,9 @@ serve(async (req) => {
   const now = new Date()
 
   try {
-    // Get profiles created in the last 30 days (drip window)
-    const thirtyDaysAgo = new Date(now)
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    // Get profiles created in the last 45 days (drip window: step 4 at day 21 + 7 day buffer)
+    const windowStart = new Date(now)
+    windowStart.setDate(windowStart.getDate() - 45)
 
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
@@ -82,7 +89,7 @@ serve(async (req) => {
       .eq('is_hidden', false)
       .eq('moderation_status', 'approved')
       .not('email', 'is', null)
-      .gte('created_at', thirtyDaysAgo.toISOString())
+      .gte('created_at', windowStart.toISOString())
 
     if (profilesError) throw profilesError
     if (!profiles || profiles.length === 0) {
@@ -142,8 +149,8 @@ serve(async (req) => {
       for (const dripStep of DRIP_STEPS) {
         // Check timing
         if (daysSinceCreation < dripStep.daysAfter) continue
-        // Don't send steps that are way too late (more than 3 days past threshold)
-        if (daysSinceCreation > dripStep.daysAfter + 3) continue
+        // Don't send steps that are way too late (more than 7 days past threshold)
+        if (daysSinceCreation > dripStep.daysAfter + 7) continue
         // Check idempotency
         if (profileSentSteps.has(dripStep.step)) continue
 
@@ -307,8 +314,6 @@ function generateStep2HTML(profile: any, stats: any): string {
 function generateStep3HTML(profile: any): string {
   const firstName = profile.full_name?.split(',')[0]?.split(' ')[0] || 'there'
   const editUrl = `${BASE_URL}/professional/profile/edit`
-  const dashboardUrl = `${BASE_URL}/professional/dashboard`
-  const badgeUrl = `${BASE_URL}/assets/badges/badge-featured-on-weddingcounselors-premarital-transparent-v1.png`
 
   const content = `
     <div style="padding: 24px;">
@@ -338,22 +343,60 @@ function generateStep3HTML(profile: any): string {
         <a href="${editUrl}" style="${buttonStyle}">Optimize Your Profile</a>
       </p>
 
-      <!-- Badge / Backlink CTA -->
-      <div style="background: #f0fdf4; border: 1px solid #d1fae5; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center;">
-        <img src="${badgeUrl}" alt="Featured on WeddingCounselors.com" width="120" style="display: inline-block; margin-bottom: 12px;" />
-        <p style="margin: 0 0 8px; font-size: 15px; font-weight: 600; color: #0b3e3e;">
-          Bonus: Add our badge to your website
+      <p style="font-size: 14px; color: #6b7280;">
+        Questions? Just reply to this email.
+      </p>
+    </div>
+  `
+
+  return wrapEmail(content, profile.id)
+}
+
+// Step 4 (Day 21): Dedicated badge/backlink CTA with copy-paste embed code
+function generateStep4HTML(profile: any): string {
+  const firstName = profile.full_name?.split(',')[0]?.split(' ')[0] || 'there'
+  const badgeUrl = `${BASE_URL}/assets/badges/badge-featured-on-weddingcounselors-premarital-transparent-v1.png`
+
+  // Build the profile URL from city/state/slug
+  const stateSlug = (profile.state_province || '').toLowerCase().replace(/\s+/g, '-')
+  const citySlug = (profile.city || '').toLowerCase().replace(/\s+/g, '-')
+  const profileSlug = profile.slug || profile.id
+  const profileUrl = `${BASE_URL}/premarital-counseling/${stateSlug}/${citySlug}/${profileSlug}`
+
+  const embedCode = `<a href="${profileUrl}" target="_blank" rel="noopener"><img src="${badgeUrl}" alt="Featured on WeddingCounselors.com" width="200" /></a>`
+  const textLinkCode = `<a href="${profileUrl}" target="_blank" rel="noopener">Find me on WeddingCounselors.com</a>`
+
+  const content = `
+    <div style="padding: 24px;">
+      <p style="font-size: 15px;">Hi ${firstName},</p>
+      <p style="font-size: 15px;">
+        Quick favor — would you add our badge to your website? It takes 30 seconds and helps couples find you through our directory.
+      </p>
+
+      <div style="text-align: center; margin: 20px 0;">
+        <img src="${badgeUrl}" alt="Featured on WeddingCounselors.com" width="160" style="display: inline-block;" />
+      </div>
+
+      <p style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Option 1: Badge image</p>
+      <p style="font-size: 13px; color: #6b7280; margin-top: 0;">Copy this code and paste it into your website (sidebar, footer, or about page):</p>
+      <div style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 12px; word-break: break-all; margin-bottom: 20px;">
+        ${embedCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+      </div>
+
+      <p style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Option 2: Simple text link</p>
+      <p style="font-size: 13px; color: #6b7280; margin-top: 0;">Prefer a text link? Copy this instead:</p>
+      <div style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 12px; word-break: break-all; margin-bottom: 20px;">
+        ${textLinkCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+      </div>
+
+      <div style="background: #f0fdf4; border: 1px solid #d1fae5; border-radius: 8px; padding: 16px; margin: 20px 0;">
+        <p style="margin: 0; font-size: 14px; color: #374151;">
+          <strong>Why?</strong> When you link to your profile, we verify your listing with a trust badge. Verified counselors appear higher in search results and get more inquiries from couples.
         </p>
-        <p style="margin: 0 0 12px; font-size: 14px; color: #374151;">
-          Place our "Featured on WeddingCounselors.com" badge on your site and we'll verify your profile. Verified counselors rank higher in search results and get a trust badge visible to couples.
-        </p>
-        <a href="${dashboardUrl}" style="display: inline-block; padding: 10px 20px; background: #0b5e5e; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
-          Get the Badge
-        </a>
       </div>
 
       <p style="font-size: 14px; color: #6b7280;">
-        Questions? Just reply to this email.
+        Need help? Just reply to this email and I'll walk you through it.
       </p>
     </div>
   `

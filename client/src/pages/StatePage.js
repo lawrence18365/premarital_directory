@@ -18,6 +18,7 @@ import FAQ from '../components/common/FAQ';
 import { profileOperations } from '../lib/supabaseClient';
 import CoupleEmailCapture from '../components/leads/CoupleEmailCapture';
 import StateMarriageLawSection from '../components/state/StateMarriageLawSection';
+import { getStateCostRange, COUNSELING_STATS, getStateLicenseDiscount } from '../data/counselingMarketData';
 import RelatedBlogPosts from '../components/state/RelatedBlogPosts';
 import '../assets/css/state-page.css';
 
@@ -134,27 +135,32 @@ const StatePage = () => {
   // Generate breadcrumbs
   const breadcrumbItems = generateBreadcrumbs.statePage(stateConfig.name)
 
-  // State-specific FAQ data for rich results
+  // State-specific FAQ data for rich results (uses real regional cost data)
+  const stateCost = getStateCostRange(state)
+  const stateDiscount = getStateLicenseDiscount(state)
+  const discountSentence = stateDiscount
+    ? ` ${stateConfig.name} offers a ${stateDiscount.discount} marriage license discount for couples who complete at least ${stateDiscount.courseHours} hours of premarital education.`
+    : ''
   const stateFAQs = stateConfig ? [
     {
       question: `How much does premarital counseling cost in ${stateConfig.name}?`,
-      answer: `Premarital counseling in ${stateConfig.name} typically costs between $100-$200 per session. Many counselors offer package deals for 5-8 sessions. Faith-based options like Pre-Cana may be free or low-cost through churches. Some insurance plans may cover premarital therapy.`
+      answer: `Licensed therapists in ${stateConfig.name} typically charge ${stateCost.label} per session for premarital counseling. Most couples complete ${COUNSELING_STATS.typicalSessions} sessions, putting the total cost at roughly $${stateCost.min * 5}–$${stateCost.max * 8}. Church-affiliated programs range from ${COUNSELING_STATS.churchCost} per session and may be free for members. Package deals averaging ${COUNSELING_STATS.packageDeal} for a full program are common.${discountSentence}`
     },
     {
       question: `How many sessions do engaged couples need in ${stateConfig.name}?`,
-      answer: `Most engaged couples in ${stateConfig.name} complete 5-8 premarital counseling sessions over 2-3 months. Programs like PREPARE-ENRICH and Gottman Method have structured timelines. Clergy-led programs may require 4-6 sessions before your wedding.`
+      answer: `The median time couples spend in premarital counseling is ${COUNSELING_STATS.medianHours} hours — usually ${COUNSELING_STATS.typicalSessions} sessions over 2–3 months. Programs like PREPARE/ENRICH (which has a separate $${COUNSELING_STATS.prepareEnrichCost} assessment fee) and the Gottman Method follow structured timelines. Clergy-led programs in ${stateConfig.name} may require 4–6 sessions.`
+    },
+    {
+      question: `Does premarital counseling actually work?`,
+      answer: `Yes. A meta-analysis of 20 studies published in the Journal of Family Psychology found that couples who completed premarital counseling had a ${COUNSELING_STATS.divorceReduction} lower chance of divorce. Currently, ${COUNSELING_STATS.participationRate} ${COUNSELING_STATS.participationRateContext}, and ${COUNSELING_STATS.marriageImportance} of Americans rate a happy marriage as one of the most important things in life.`
     },
     {
       question: `Are there Christian and faith-based premarital counselors in ${stateConfig.name}?`,
-      answer: `Yes, ${stateConfig.name} has many Christian premarital counselors, Catholic Pre-Cana programs, and faith-based marriage preparation options. Many licensed therapists (LMFT, LPC) integrate Christian values, and local churches offer clergy-led premarital programs.`
+      answer: `Yes, ${stateConfig.name} has Christian premarital counselors, Catholic Pre-Cana programs, and faith-based marriage preparation options. Many licensed therapists (LMFT, LPC) can integrate faith values into sessions, and local churches often offer clergy-led premarital programs at reduced cost (${COUNSELING_STATS.churchCost} per session or free for members).`
     },
     {
       question: `Can we do premarital counseling online in ${stateConfig.name}?`,
-      answer: `Yes, many ${stateConfig.name} premarital counselors offer online sessions via telehealth. This is ideal for busy engaged couples with different schedules. Online premarital counseling is just as effective as in-person for marriage preparation.`
-    },
-    {
-      question: `What should engaged couples look for in a premarital counselor in ${stateConfig.name}?`,
-      answer: `Look for licensed professionals (LMFT, LPC, LCSW) with premarital counseling experience. Consider their approach (Gottman, PREPARE-ENRICH, faith-based), availability, cost, and whether they accept insurance. Many ${stateConfig.name} counselors offer free consultations.`
+      answer: `Yes, many ${stateConfig.name} premarital counselors offer online sessions via telehealth. This is ideal for busy engaged couples, long-distance relationships, or if one partner travels. Research shows online premarital counseling is as effective as in-person — and it often costs less because therapists save on office overhead.`
     }
   ] : []
 
@@ -425,6 +431,38 @@ const StatePage = () => {
             showSearch={false}
             showAside={false}
           />
+        </div>
+
+        {/* Research-Backed Topical Authority Section */}
+        <div className="state-container" style={{ marginBottom: 'var(--space-12)' }}>
+          <div style={{
+            padding: 'var(--space-8)',
+            background: 'var(--white)',
+            borderRadius: 'var(--radius-xl)',
+            border: '1px solid rgba(14, 94, 94, 0.1)',
+            boxShadow: 'var(--shadow-sm)',
+          }}>
+            <h2 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.4rem',
+              color: 'var(--primary-dark)',
+              marginBottom: 'var(--space-4)',
+            }}>
+              Why Premarital Counseling Matters in {stateConfig.name}
+            </h2>
+            <div style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '0.95rem' }}>
+              <p style={{ marginBottom: 'var(--space-4)' }}>
+                Research consistently supports the value of premarital counseling. A meta-analysis of 20 studies published in the <em>Journal of Family Psychology</em> found that couples who completed premarital counseling had a <strong>{COUNSELING_STATS.divorceReduction} lower chance of divorce</strong> compared to those who did not.
+              </p>
+              <p style={{ marginBottom: 'var(--space-4)' }}>
+                Currently, {COUNSELING_STATS.participationRate} {COUNSELING_STATS.participationRateContext}. The median program lasts {COUNSELING_STATS.medianHours} hours — typically {COUNSELING_STATS.typicalSessions} sessions over 2–3 months.
+                {stateDiscount ? ` ${stateConfig.name} incentivizes participation with a ${stateDiscount.discount} marriage license discount for couples who complete at least ${stateDiscount.courseHours} hours of premarital education.` : ''}
+              </p>
+              <p>
+                In {stateConfig.name}, licensed therapists typically charge {stateCost.label} per session, while church-affiliated programs range from {COUNSELING_STATS.churchCost}. {COUNSELING_STATS.weddingCostContext} — a small investment that research shows pays dividends for decades.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* State Marriage Law Section */}

@@ -27,7 +27,7 @@ const EmailVerifiedPage = () => {
       <SEOHelmet
         title="Email Verified — Welcome"
         description="Your email has been verified. Create your professional profile now."
-        noIndex={true}
+        noindex={true}
       />
 
       <div className="email-verified">

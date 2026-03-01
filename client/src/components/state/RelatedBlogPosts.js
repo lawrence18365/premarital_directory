@@ -1,84 +1,64 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { STATE_MARRIAGE_DATA } from '../../data/stateMarriageData';
+import { supabase } from '../../lib/supabaseClient';
 
-/**
- * Maps state slugs to relevant blog posts based on whether the state
- * has a premarital discount program, covenant marriage, or other features.
- */
-const getRelatedPosts = (stateSlug, stateName) => {
-  const data = STATE_MARRIAGE_DATA[stateSlug];
-  const posts = [];
+// Universal fallback slugs when fewer than 4 state-specific posts exist
+const UNIVERSAL_SLUGS = [
+  'what-to-expect-premarital-counseling',
+  'how-to-choose-premarital-counselor',
+  'premarital-counseling-with-pastor',
+  'premarital-counseling-cost',
+];
 
-  // State-specific discount posts
-  const stateDiscountPosts = {
-    'florida': { slug: 'florida-marriage-license-discount', title: `Florida Marriage License Discount: Save $32.50 With Premarital Counseling` },
-    'minnesota': { slug: 'minnesota-marriage-license-discount', title: `Minnesota Marriage License Discount: Save $75 With Premarital Education` },
-    'georgia': { slug: 'georgia-marriage-license-discount', title: `Georgia Marriage License Discount: Save on Your License Fee` },
-    'oklahoma': { slug: 'oklahoma-marriage-license-discount', title: `Oklahoma Marriage License Discount: Save $20 With Premarital Counseling` },
-    'indiana': { slug: 'indiana-marriage-license-discount', title: `Indiana Marriage License Discount Guide` },
-    'texas': { slug: 'twogether-in-texas', title: `Twogether in Texas: Save $60 on Your Marriage License` },
-  };
-
-  // Add state-specific discount post if available
-  if (stateDiscountPosts[stateSlug]) {
-    posts.push({
-      slug: stateDiscountPosts[stateSlug].slug,
-      title: stateDiscountPosts[stateSlug].title,
-      category: 'Marriage License',
-      readTime: '6 min',
-    });
-  }
-
-  // For discount states without a specific post, link to the provider registration post
-  if (data?.premaritalDiscount && !stateDiscountPosts[stateSlug]) {
-    posts.push({
-      slug: 'register-premarital-course-provider',
-      title: 'How to Register as a Premarital Course Provider in Your State',
-      category: 'For Professionals',
-      readTime: '10 min',
-    });
-  }
-
-  // Universal posts relevant to all states
-  posts.push({
-    slug: 'what-to-expect-premarital-counseling',
-    title: 'What to Expect in Premarital Counseling: A Complete Guide',
-    category: 'Getting Started',
-    readTime: '8 min',
-  });
-
-  posts.push({
-    slug: 'how-to-choose-premarital-counselor',
-    title: `How to Choose a Premarital Counselor in ${stateName}`,
-    category: 'Choosing a Counselor',
-    readTime: '7 min',
-  });
-
-  // Faith-based post
-  posts.push({
-    slug: 'premarital-counseling-with-pastor',
-    title: 'Premarital Counseling With Your Pastor: What to Expect',
-    category: 'Faith-Based',
-    readTime: '10 min',
-  });
-
-  // Cost post
-  posts.push({
-    slug: 'premarital-counseling-cost',
-    title: `How Much Does Premarital Counseling Cost in ${stateName}?`,
-    category: 'Cost & Insurance',
-    readTime: '7 min',
-  });
-
-  // Return max 4 posts
-  return posts.slice(0, 4);
-};
+const MAX_POSTS = 4;
 
 const RelatedBlogPosts = ({ stateSlug, stateName }) => {
-  const posts = getRelatedPosts(stateSlug, stateName);
+  const [posts, setPosts] = useState([]);
+  const [loaded, setLoaded] = useState(false);
 
-  if (!posts || posts.length === 0) return null;
+  useEffect(() => {
+    if (!stateSlug && !stateName) return;
+
+    const fetchRelated = async () => {
+      try {
+        // 1. Try to find state-specific posts (slug contains state name)
+        const stateKey = (stateSlug || '').toLowerCase();
+        const { data: allPublished } = await supabase
+          .from('posts')
+          .select('slug, title, excerpt, category, read_time')
+          .eq('status', 'published')
+          .order('date', { ascending: false });
+
+        if (!allPublished) {
+          setLoaded(true);
+          return;
+        }
+
+        // Posts whose slug contains the state name (e.g. "florida-marriage-license-discount")
+        const stateSpecific = allPublished.filter(p =>
+          p.slug.includes(stateKey) && stateKey.length > 2
+        );
+
+        // Fill remaining slots with universal posts
+        const usedSlugs = new Set(stateSpecific.map(p => p.slug));
+        const universalPosts = UNIVERSAL_SLUGS
+          .filter(slug => !usedSlugs.has(slug))
+          .map(slug => allPublished.find(p => p.slug === slug))
+          .filter(Boolean);
+
+        const combined = [...stateSpecific, ...universalPosts].slice(0, MAX_POSTS);
+        setPosts(combined);
+      } catch {
+        // Silently fail — this is a supplementary section
+      } finally {
+        setLoaded(true);
+      }
+    };
+
+    fetchRelated();
+  }, [stateSlug, stateName]);
+
+  if (!loaded || posts.length === 0) return null;
 
   return (
     <section style={{
@@ -96,14 +76,14 @@ const RelatedBlogPosts = ({ stateSlug, stateName }) => {
           padding: 'var(--space-8)',
           boxShadow: 'var(--shadow-sm)',
         }}>
-          <h3 style={{
+          <h2 style={{
             fontFamily: 'var(--font-display)',
             fontSize: '1.5rem',
             color: 'var(--primary-dark)',
             marginBottom: 'var(--space-2)',
           }}>
             Premarital Counseling Resources for {stateName} Couples
-          </h3>
+          </h2>
           <p style={{
             color: 'var(--text-secondary)',
             fontSize: '0.95rem',
@@ -167,7 +147,7 @@ const RelatedBlogPosts = ({ stateSlug, stateName }) => {
                   color: 'var(--text-secondary)',
                   marginTop: 'var(--space-3)',
                 }}>
-                  {post.readTime} read
+                  {post.read_time} read
                 </span>
               </Link>
             ))}
