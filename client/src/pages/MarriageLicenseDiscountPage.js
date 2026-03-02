@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import Breadcrumbs from '../components/common/Breadcrumbs'
 import FAQ from '../components/common/FAQ'
-import LeadContactForm from '../components/leads/LeadContactForm'
+import ConciergeLeadForm from '../components/leads/ConciergeLeadForm'
 import { STATE_DISCOUNT_CONFIG, getStatesWithDiscounts } from '../data/specialtyConfig'
 import { STATE_CONFIG } from '../data/locationConfig'
 import { supabase } from '../lib/supabaseClient'
@@ -135,8 +135,8 @@ const MarriageLicenseDiscountPage = () => {
   return (
     <>
       <SEOHelmet
-        title="Marriage License Discount With Premarital Counseling — Save Up to $75"
-        description="10 states cut $20–$75 off your marriage license fee when you complete premarital counseling. Florida, Texas, Minnesota & more — check your state, see the requirements, and get your certificate."
+        title="Marriage License Discount: Save $20–$75 in 10 States (2026 Guide)"
+        description="FL, TX, MN, TN, OK, GA & more — complete a premarital course, get your certificate, and save on your marriage license fee. See requirements by state."
         url="/premarital-counseling/marriage-license-discount"
         keywords="marriage license discount premarital counseling, marriage certificate discount, twogether in texas, twogether in texas online course, texas premarital education course, texas premarital course, premarital counseling for marriage license, qualifying premarital education program, how to get marriage license discount, florida marriage license discount, texas marriage license discount, save money on marriage license, california marriage license fee discount premarital counseling, georgia marriage license discount, utah marriage license discount, marriage license fee reduction"
         breadcrumbs={breadcrumbItems}
@@ -369,33 +369,11 @@ const MarriageLicenseDiscountPage = () => {
       </div>
 
       {/* Get Matched Modal */}
-      {showGetMatchedForm && (
-        <div className="modal-overlay" onClick={() => setShowGetMatchedForm(false)}>
-          <div className="modal-content get-matched-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Find a Counselor for Your State</h3>
-              <button
-                onClick={() => setShowGetMatchedForm(false)}
-                className="modal-close"
-                aria-label="Close"
-              >
-                <i className="fa fa-times"></i>
-              </button>
-            </div>
-            <div className="modal-body">
-              <p>Tell us about your needs and we'll connect you with qualified counselors who can provide the marriage license discount certificate.</p>
-              <LeadContactForm
-                profileId={null}
-                professionalName="Marriage License Discount Counselors"
-                isDiscountMatching={true}
-                onSuccess={() => {
-                  setShowGetMatchedForm(false)
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <ConciergeLeadForm
+        isOpen={showGetMatchedForm}
+        onClose={() => setShowGetMatchedForm(false)}
+        sourceUrl="/premarital-counseling/marriage-license-discount"
+      />
     </>
   )
 }
