@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import Breadcrumbs from '../components/common/Breadcrumbs'
 import ProfileCard from '../components/profiles/ProfileCard'
 import ProgramCard from '../components/programs/ProgramCard'
 import FAQ from '../components/common/FAQ'
-import LeadContactForm from '../components/leads/LeadContactForm'
+import ConciergeLeadForm from '../components/leads/ConciergeLeadForm'
 import LocalSpecialtyContent from '../components/common/LocalSpecialtyContent'
 import LocationInsights from '../components/common/LocationInsights'
 import { getSpecialtyBySlug } from '../data/specialtyConfig'
@@ -41,9 +41,22 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
   
   // Get city name from config or format slug
   const cityConfig = CITY_CONFIG[stateSlug]?.[citySlug]
-  const cityName = cityConfig?.name || citySlug.split('-').map(word => 
+  const cityName = cityConfig?.name || citySlug.split('-').map(word =>
     word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ')
+
+  const navigate = useNavigate()
+
+  // Redirect 2-letter state abbreviations to full state name slug
+  const fullStateSlug = stateSlug && stateSlug.length === 2
+    ? Object.keys(STATE_CONFIG).find(key => STATE_CONFIG[key].abbr?.toLowerCase() === stateSlug.toLowerCase())
+    : null
+
+  useEffect(() => {
+    if (fullStateSlug) {
+      navigate(`/premarital-counseling/${specialtySlug}/${fullStateSlug}/${citySlug}`, { replace: true })
+    }
+  }, [fullStateSlug, specialtySlug, citySlug, navigate])
 
   useEffect(() => {
     if (specialty && stateSlug && citySlug) {
@@ -239,7 +252,9 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
         url={shouldNoindex
           ? `/premarital-counseling/${stateSlug}/${citySlug}`
           : `/premarital-counseling/${specialtySlug}/${stateSlug}/${citySlug}`}
+        canonicalUrl={`/premarital-counseling/${specialtySlug}/${fullStateSlug || stateSlug}/${citySlug}`}
         breadcrumbs={breadcrumbItems}
+        faqs={specialty.faqs?.length > 0 ? specialty.faqs : null}
         noindex={shouldNoindex}
       />
 
@@ -456,35 +471,12 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
       )}
 
       {/* Get Matched Modal */}
-      {showGetMatchedForm && (
-        <div className="modal-overlay" onClick={() => setShowGetMatchedForm(false)}>
-          <div className="modal-content get-matched-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>{isCatholic ? `Find a Catholic Program in ${cityName}` : `Find a ${specialty.name} Counselor in ${cityName}`}</h3>
-              <button
-                onClick={() => setShowGetMatchedForm(false)}
-                className="modal-close"
-                aria-label="Close"
-              >
-                <i className="fa fa-times"></i>
-              </button>
-            </div>
-            <div className="modal-body">
-              <LeadContactForm
-                profileId={null}
-                professionalName={isCatholic ? `Catholic Programs in ${cityName}` : `${specialty.name} Counselors in ${cityName}`}
-                isSpecialtyMatching={true}
-                specialtyType={specialty.name}
-                stateName={stateName}
-                cityName={cityName}
-                onSuccess={() => {
-                  setShowGetMatchedForm(false)
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <ConciergeLeadForm
+        isOpen={showGetMatchedForm}
+        onClose={() => setShowGetMatchedForm(false)}
+        defaultLocation={`${cityName}, ${stateConfig?.abbr || stateName}`}
+        sourceUrl={`/premarital-counseling/${specialtySlug}/${stateSlug}/${citySlug}`}
+      />
     </>
   )
 }

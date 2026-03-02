@@ -6,7 +6,7 @@ import Breadcrumbs from '../components/common/Breadcrumbs'
 import ProfileCard from '../components/profiles/ProfileCard'
 import ProgramCard from '../components/programs/ProgramCard'
 import FAQ from '../components/common/FAQ'
-import LeadContactForm from '../components/leads/LeadContactForm'
+import ConciergeLeadForm from '../components/leads/ConciergeLeadForm'
 import LocalSpecialtyContent from '../components/common/LocalSpecialtyContent'
 import LocationInsights from '../components/common/LocationInsights'
 import { getSpecialtyBySlug, STATE_DISCOUNT_CONFIG } from '../data/specialtyConfig'
@@ -436,34 +436,12 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
       )}
 
       {/* Get Matched Modal */}
-      {showGetMatchedForm && (
-        <div className="modal-overlay" onClick={() => setShowGetMatchedForm(false)}>
-          <div className="modal-content get-matched-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>{isCatholic ? `Find a Catholic Program in ${stateName}` : `Find a ${specialty.name} Counselor in ${stateName}`}</h3>
-              <button
-                onClick={() => setShowGetMatchedForm(false)}
-                className="modal-close"
-                aria-label="Close"
-              >
-                <i className="fa fa-times"></i>
-              </button>
-            </div>
-            <div className="modal-body">
-              <LeadContactForm
-                profileId={null}
-                professionalName={isCatholic ? `Catholic Programs in ${stateName}` : `${specialty.name} Counselors in ${stateName}`}
-                isSpecialtyMatching={true}
-                specialtyType={specialty.name}
-                stateName={stateName}
-                onSuccess={() => {
-                  setShowGetMatchedForm(false)
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <ConciergeLeadForm
+        isOpen={showGetMatchedForm}
+        onClose={() => setShowGetMatchedForm(false)}
+        defaultLocation={stateName}
+        sourceUrl={`/premarital-counseling/${specialtySlug}/${stateSlug}`}
+      />
     </>
   )
 }

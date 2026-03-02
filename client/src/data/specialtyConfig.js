@@ -228,7 +228,7 @@ export const SPECIALTY_CONFIG = {
       {
         heading: 'Marriage License Discounts Through Online Counseling',
         paragraphs: [
-          'If you live in Texas, Florida, Oklahoma, Indiana, Tennessee, Minnesota, or Georgia, completing an online premarital course may qualify you for a discount of $16–$75 on your marriage license fee — and in some states, the waiting period is waived as well. Most states accept virtual programs as long as the provider holds a valid license in your state. Browse our state-by-state discount guide to confirm eligibility requirements before enrolling.'
+          'If you live in Texas, Florida, Oklahoma, Indiana, Tennessee, Minnesota, Maryland, or Georgia, completing an online premarital course may qualify you for a discount of $16–$75 on your marriage license fee — and in some states, the waiting period is waived as well. Most states accept virtual programs as long as the provider holds a valid license in your state. Browse our state-by-state discount guide to confirm eligibility requirements before enrolling.'
         ]
       }
     ]
@@ -273,6 +273,44 @@ export const SPECIALTY_CONFIG = {
       {
         question: 'How do I find a certified Gottman therapist?',
         answer: 'Look for counselors who are "Gottman-trained" or "Gottman Certified Therapists." Certification requires extensive training and demonstrates expertise in the method.'
+      },
+      {
+        question: 'Is Gottman Method effective for premarital counseling specifically?',
+        answer: 'Yes. The Gottman Method was originally developed from longitudinal studies of newlywed couples. The Sound Relationship House framework is especially useful before marriage because it helps couples build strong friendship, shared meaning, and conflict-management skills before patterns become entrenched.'
+      },
+      {
+        question: 'How many sessions does Gottman premarital counseling typically require?',
+        answer: 'Most Gottman-trained therapists recommend 8–12 premarital sessions, often spread over 3–4 months. Some offer intensive weekend formats (2-day retreats) that cover the same material in a condensed schedule. Your therapist will tailor the pace to your specific needs.'
+      },
+      {
+        question: 'Does insurance cover Gottman premarital counseling?',
+        answer: 'Insurance coverage varies by provider and plan. Many therapists bill Gottman premarital sessions under general couples therapy CPT codes, which some plans cover. Ask your therapist about superbills for out-of-network reimbursement, and check whether your plan includes couples counseling benefits.'
+      }
+    ],
+    bodyContent: [
+      {
+        heading: 'The Research Behind Gottman Method',
+        paragraphs: [
+          'The Gottman Method is grounded in over four decades of research conducted at the University of Washington\'s "Love Lab." Drs. John and Julie Gottman observed thousands of couples and identified specific behaviors — such as the "Four Horsemen" (criticism, contempt, defensiveness, and stonewalling) — that predict relationship failure with over 90% accuracy. Their research also revealed the positive habits that distinguish successful couples: turning toward bids for connection, maintaining a 5-to-1 ratio of positive to negative interactions, and building detailed "Love Maps" of each other\'s inner world.'
+        ]
+      },
+      {
+        heading: 'What Happens in a Gottman Premarital Session',
+        paragraphs: [
+          'Gottman premarital counseling is structured around the Sound Relationship House (SRH) framework, which treats a healthy relationship like a house built from the foundation up. Sessions typically begin with an assessment — including the Gottman Relationship Checkup — to identify your strengths and growth areas. From there, your therapist guides you through building Love Maps (knowing each other\'s world), sharing fondness and admiration, turning toward each other, managing conflict with dialogue rather than gridlock, creating shared meaning, and establishing trust and commitment as the load-bearing walls of your relationship.'
+        ]
+      },
+      {
+        heading: 'Gottman vs. Other Premarital Methods',
+        paragraphs: [
+          'While tools like PREPARE/ENRICH focus on inventory-based assessment and structured feedback, the Gottman Method emphasizes live interaction patterns and skill-building through experiential exercises. PREPARE/ENRICH is excellent for surfacing topic-specific compatibility data; Gottman excels at teaching couples how to communicate and repair in real time. Many therapists are trained in both and integrate them — using PREPARE/ENRICH for the diagnostic snapshot and Gottman techniques for the skill-building work that follows.'
+        ]
+      },
+      {
+        heading: 'How to Evaluate Gottman Certification Levels',
+        paragraphs: [
+          'Not all "Gottman therapists" hold the same credentials. Level 1 (Gottman-Trained) therapists have completed foundational training in the method. Level 2 adds advanced intervention techniques. Level 3 (Gottman Certified Therapist) requires extensive training, consultation, and demonstrated clinical competency — it\'s the highest level of certification the Gottman Institute offers. When choosing a therapist, ask about their training level and how much of their practice focuses on Gottman-based work.'
+        ]
       }
     ]
   },

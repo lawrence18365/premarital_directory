@@ -16,6 +16,7 @@ import { profileOperations, clickTrackingOperations } from '../lib/supabaseClien
 import UnclaimedProfileBanner from '../components/profiles/UnclaimedProfileBanner'
 import NearbyProfessionals from '../components/profiles/NearbyProfessionals'
 import ShareButton from '../components/common/ShareButton'
+import CoupleEmailCapture from '../components/leads/CoupleEmailCapture'
 import '../assets/css/profile-page-enhanced.css'
 import '../assets/css/share-button.css'
 
@@ -148,10 +149,19 @@ const isMissingDescriptor = (value) => {
 }
 
 // Build a CTR-optimized meta title for profile pages (target: under 60 chars)
-const buildProfileMetaTitle = (profile, { hasOnlineOption, stateName, specialties, treatmentApproaches }) => {
-  const name = profile?.full_name || 'Professional'
+const buildProfileMetaTitle = (profile, { hasOnlineOption, stateName, specialties, treatmentApproaches, slug }) => {
   const city = profile?.city || ''
   const stAbbr = profile?.state_province || ''
+
+  // Detect practice name from slug (e.g. "forest-city-counseling-675" → "Forest City Counseling")
+  let displayName = profile?.full_name || 'Professional'
+  if (slug) {
+    const slugWithoutId = slug.replace(/-\d+$/, '')
+    const titleCased = slugWithoutId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+    if (/counseling|therapy|center|associates|wellness|services/i.test(titleCased) && titleCased.toLowerCase() !== displayName.toLowerCase()) {
+      displayName = titleCased
+    }
+  }
 
   // Detect a notable method to surface in the title (Gottman is highest signal)
   const allMethods = [...(specialties || []), ...(treatmentApproaches || [])]
@@ -163,12 +173,12 @@ const buildProfileMetaTitle = (profile, { hasOnlineOption, stateName, specialtie
   // Use em-dash for visual distinction in SERPs
   // Lead with name, add location + method signals, include action word
   let title = city
-    ? `${name} — Premarital Counseling ${city}, ${stAbbr}`
-    : `${name} — Premarital Counselor`
+    ? `${displayName} — Premarital Counseling ${city}, ${stAbbr}`
+    : `${displayName} — Premarital Counselor`
 
   // Inject method if it fits and adds signal
-  if (methodTag && city && `${name} (${methodTag}) — Premarital Counseling ${city}, ${stAbbr}`.length <= 62) {
-    title = `${name} (${methodTag}) — Premarital Counseling ${city}, ${stAbbr}`
+  if (methodTag && city && `${displayName} (${methodTag}) — Premarital Counseling ${city}, ${stAbbr}`.length <= 62) {
+    title = `${displayName} (${methodTag}) — Premarital Counseling ${city}, ${stAbbr}`
   }
 
   // If title is short enough, add "Reviews & Info" for CTR on branded queries
@@ -290,6 +300,19 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
       }
     }
   }, [profile, state, city, navigate])
+
+  // Redirect 2-letter state abbreviation to full state name slug
+  useEffect(() => {
+    if (state && state.length === 2) {
+      const fullStateSlug = getStateSlugFromAbbr(state)
+      if (fullStateSlug && fullStateSlug !== state) {
+        const newPath = city
+          ? `/premarital-counseling/${fullStateSlug}/${city}/${currentSlug}`
+          : `/premarital-counseling/${fullStateSlug}/${currentSlug}`
+        navigate(newPath, { replace: true })
+      }
+    }
+  }, [state, city, currentSlug, navigate])
 
   useEffect(() => {
     if (profile) {
@@ -620,7 +643,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   return (
     <>
       <SEOHelmet
-        title={buildProfileMetaTitle(profile, { hasOnlineOption, stateName, specialties, treatmentApproaches })}
+        title={buildProfileMetaTitle(profile, { hasOnlineOption, stateName, specialties, treatmentApproaches, slug: currentSlug })}
         description={buildProfileMetaDescription(profile, { pricingLabel, insuranceAccepted, hasOnlineOption, freeConsultationEnabled, treatmentApproaches, slidingScaleEnabled, stateName })}
         url={window.location.pathname}
         type="profile"
@@ -965,6 +988,12 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     ))}
                   </div>
                 </section>
+
+                <CoupleEmailCapture
+                  sourcePage={`profile:${currentSlug}`}
+                  defaultCity={profile.city || ''}
+                  defaultState={profile.state_province || ''}
+                />
 
                 {profile.city && profile.state_province && (
                   <section className="profile-premium-card profile-premium-card-muted">
