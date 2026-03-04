@@ -173,29 +173,16 @@ export const pronounOptions = [
   { value: 'they/them', label: 'They/Them' }
 ]
 
-// Total questions in the onboarding flow
-export const TOTAL_QUESTIONS = 20
+// Total questions in the onboarding flow (simplified: 6 core + review)
+export const TOTAL_QUESTIONS = 7
 
 // Question metadata for tracking
 export const QUESTION_METADATA = {
   1: { title: 'Name & Profession', required: true },
-  2: { title: 'Professional Photo', required: true },
+  2: { title: 'Professional Photo', required: false },
   3: { title: 'Location', required: true },
   4: { title: 'Session Types', required: true },
   5: { title: 'About Your Practice', required: true },
   6: { title: 'Contact Info', required: true },
-  7: { title: 'Faith Tradition', required: false },
-  8: { title: 'Certifications', required: false },
-  9: { title: 'Specialties', required: false },
-  10: { title: 'Therapeutic Approach', required: false },
-  11: { title: 'Client Focus', required: false },
-  12: { title: 'Experience & Pronouns', required: false },
-  13: { title: 'Languages', required: false },
-  14: { title: 'License & Credentials', required: false },
-  15: { title: 'Education & Training', required: false },
-  16: { title: 'Session Fees & Pricing', required: false },
-  17: { title: 'Insurance Accepted', required: false },
-  18: { title: 'Payment Methods', required: false },
-  19: { title: 'Common Questions (FAQs)', required: false },
-  20: { title: 'Review & Publish', required: true }
+  7: { title: 'Review & Publish', required: true }
 }

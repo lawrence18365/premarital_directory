@@ -4,11 +4,9 @@ import { QUESTION_METADATA, TOTAL_QUESTIONS } from '../constants'
 const SECONDS_PER_STEP = 20
 
 const STEP_SECTIONS = [
-  { name: 'Basics', start: 1, end: 6 },
-  { name: 'Your Practice', start: 7, end: 11 },
-  { name: 'Credentials', start: 12, end: 15 },
-  { name: 'Pricing', start: 16, end: 18 },
-  { name: 'Finishing Up', start: 19, end: 20 }
+  { name: 'Your Info', start: 1, end: 3 },
+  { name: 'Your Practice', start: 4, end: 6 },
+  { name: 'Publish', start: 7, end: 7 }
 ]
 
 const getSectionForStep = (step) => {

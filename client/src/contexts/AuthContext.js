@@ -147,16 +147,20 @@ export const AuthProvider = ({ children }) => {
           .from('profiles')
           .select(PROFILE_SELECT_COLUMNS)
           .is('user_id', null)
-          .eq('is_claimed', true)
           .ilike('email', authUser.email)
           .maybeSingle()
 
         if (!unlinkedError && unlinkedProfile) {
-          // Auto-link: set user_id on the orphaned profile
+          // Auto-link: set user_id on the orphaned/unclaimed profile
           // (RLS policy "Users can claim unclaimed profiles matching their email" allows this)
           const { data: linkedProfile, error: linkError } = await supabase
             .from('profiles')
-            .update({ user_id: userId, last_login: new Date().toISOString() })
+            .update({ 
+              user_id: userId, 
+              is_claimed: true,
+              claimed_at: new Date().toISOString(),
+              last_login: new Date().toISOString() 
+            })
             .eq('id', unlinkedProfile.id)
             .is('user_id', null)
             .select(PROFILE_SELECT_COLUMNS)

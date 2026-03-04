@@ -21,29 +21,19 @@ const toBooleanFlag = (value) => {
   return Boolean(value)
 }
 
-// Step name mapping for analytics (module-level constant)
+// Step name mapping for analytics (simplified 7-step flow)
 const STEP_NAMES = {
   1: 'name_profession',
   2: 'photo_upload',
   3: 'location',
   4: 'session_types',
-  5: 'bio_approach',
+  5: 'bio',
   6: 'contact_info',
-  7: 'faith_tradition',
-  8: 'certifications',
-  9: 'specialties',
-  10: 'treatment_approaches',
-  11: 'client_focus',
-  12: 'experience',
-  13: 'languages',
-  14: 'license_credentials',
-  15: 'education',
-  16: 'session_fees',
-  17: 'insurance',
-  18: 'payment_methods',
-  19: 'faqs',
-  20: 'review_publish'
+  7: 'review_publish'
 }
+
+// Max step in simplified flow (used to clamp legacy users)
+const MAX_STEP = 7
 
 /**
  * Custom hook for managing onboarding state, auto-save, and navigation
@@ -196,8 +186,8 @@ export const useOnboardingState = () => {
             setPhotoPreview(existingProfile.photo_url)
           }
 
-          // Resume from last saved step
-          const resumeStep = existingProfile.onboarding_step || 1
+          // Resume from last saved step (clamp to max step for users from old 20-step flow)
+          const resumeStep = Math.min(existingProfile.onboarding_step || 1, MAX_STEP)
           setCurrentStep(resumeStep)
 
           // Update URL to reflect current step
@@ -249,6 +239,9 @@ export const useOnboardingState = () => {
                 setProfileData(prev => ({ ...prev, email: user.email }))
                 return
               }
+              // If it's a unique constraint on email but not matching this user_id, 
+              // it means the email is claimed by another account.
+              throw new Error('This email is already associated with another directory profile. Please contact support if you need to recover it.')
             }
             throw createError
           }
@@ -258,7 +251,9 @@ export const useOnboardingState = () => {
         }
       } catch (err) {
         console.error('Error initializing onboarding:', err)
-        setError('Failed to load onboarding. Please refresh the page.')
+        setError(err.message === 'This email is already associated with another directory profile. Please contact support if you need to recover it.' 
+          ? err.message 
+          : 'Failed to load onboarding. Please refresh the page.')
       } finally {
         setLoading(false)
       }

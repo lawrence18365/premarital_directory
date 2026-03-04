@@ -17,6 +17,9 @@ const Q2_PhotoUpload = ({
   goToNextQuestion,
   goToPreviousQuestion
 }) => {
+  const handleSkip = async () => {
+    await goToNextQuestion(currentStep)
+  }
   const fileInputRef = useRef(null)
 
   const handleFileSelect = async (event) => {
@@ -42,9 +45,9 @@ const Q2_PhotoUpload = ({
   }
 
   const handleContinue = async () => {
-    // Validation
+    // Photo is optional — if no file/preview, treat as skip
     if (!photoFile && !photoPreview) {
-      setError('Please upload a professional headshot — couples are much more likely to reach out when they can see who they\'ll be working with')
+      await goToNextQuestion(currentStep)
       return
     }
 
@@ -102,12 +105,14 @@ const Q2_PhotoUpload = ({
       error={error}
       onBack={goToPreviousQuestion}
       onContinue={handleContinue}
+      canSkip={!photoFile && !photoPreview}
+      onSkip={handleSkip}
     >
       <div className="form-group">
         <label className="form-label">
           Upload a professional headshot
           <span className="form-label-subtitle">
-            A friendly, professional photo helps couples feel more comfortable reaching out
+            Profiles with photos get 3x more inquiries — but you can add one later too
           </span>
         </label>
 

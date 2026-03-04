@@ -124,6 +124,13 @@ const Q20_Review = ({
     return value || fallback
   }
 
+  // Truncate bio for review display
+  const truncatedBio = profileData.bio
+    ? profileData.bio.length > 200
+      ? profileData.bio.substring(0, 200) + '...'
+      : profileData.bio
+    : null
+
   return (
     <QuestionContainer
       currentStep={currentStep}
@@ -132,14 +139,14 @@ const Q20_Review = ({
       onBack={goToPreviousQuestion}
       onContinue={handlePublish}
     >
-      <div style={{ marginBottom: '2rem' }}>
-        <p style={{ fontSize: '1rem', color: 'var(--slate)', marginBottom: '1.5rem' }}>
-          Review your profile before publishing. You can edit these details anytime from your dashboard.
+      <div style={{ marginBottom: '1.5rem' }}>
+        <p style={{ fontSize: '1rem', color: 'var(--slate)', marginBottom: '0.5rem' }}>
+          Your profile is ready to go live. Couples in your area will be able to find and contact you.
         </p>
       </div>
 
       <div className="review-section">
-        <h3 className="review-heading">Basic Information</h3>
+        <h3 className="review-heading">Your Profile</h3>
         <div className="review-item">
           <span className="review-label">Name:</span>
           <span className="review-value">{displayValue(profileData.full_name)}</span>
@@ -161,41 +168,16 @@ const Q20_Review = ({
         <div className="review-item">
           <span className="review-label">Photo:</span>
           <span className="review-value">
-            {profileData.photo_url ? 'Uploaded' : 'Not provided'}
+            {profileData.photo_url ? 'Uploaded' : 'Not yet — you can add one from your dashboard'}
           </span>
         </div>
       </div>
 
       <div className="review-section">
         <h3 className="review-heading">{isClergy ? 'About Your Ministry' : 'About Your Practice'}</h3>
-        {profileData.bio_approach && (
-          <div className="review-item">
-            <span className="review-label">{isClergy ? 'Your Approach:' : 'Your Approach:'}</span>
-            <span className="review-value">{profileData.bio_approach}</span>
-          </div>
-        )}
-        {profileData.bio_ideal_client && (
-          <div className="review-item">
-            <span className="review-label">{isClergy ? 'Couples You Serve:' : 'Ideal Client:'}</span>
-            <span className="review-value">{profileData.bio_ideal_client}</span>
-          </div>
-        )}
-        {profileData.bio_outcomes && (
-          <div className="review-item">
-            <span className="review-label">{isClergy ? 'What Couples Receive:' : 'Expected Outcomes:'}</span>
-            <span className="review-value">{profileData.bio_outcomes}</span>
-          </div>
-        )}
-        {profileData.specialties && profileData.specialties.length > 0 && (
-          <div className="review-item">
-            <span className="review-label">Specialties:</span>
-            <span className="review-value">{displayValue(profileData.specialties)}</span>
-          </div>
-        )}
-        {profileData.faith_tradition && (
-          <div className="review-item">
-            <span className="review-label">Faith Tradition:</span>
-            <span className="review-value">{displayValue(profileData.faith_tradition)}</span>
+        {truncatedBio && (
+          <div className="review-item" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+            <span className="review-value" style={{ marginLeft: 0 }}>{truncatedBio}</span>
           </div>
         )}
       </div>
@@ -212,45 +194,18 @@ const Q20_Review = ({
         </div>
       </div>
 
-      {(profileData.donation_based || profileData.session_fee_min || profileData.session_fee_max) && (
-        <div className="review-section">
-          <h3 className="review-heading">{isClergy ? 'Fees' : 'Pricing'}</h3>
-          <div className="review-item">
-            <span className="review-label">{isClergy ? 'Fees:' : 'Session Fees:'}</span>
-            <span className="review-value">
-              {profileData.donation_based
-                ? 'Free / Donation-based'
-                : profileData.session_fee_min && profileData.session_fee_max
-                  ? `$${profileData.session_fee_min} - $${profileData.session_fee_max}`
-                  : profileData.session_fee_min
-                    ? `$${profileData.session_fee_min}`
-                    : 'Not provided'}
-            </span>
-          </div>
-          {profileData.offers_free_consultation && (
-            <div className="review-item">
-              <span className="review-value">Offers free consultation</span>
-            </div>
-          )}
-          {profileData.sliding_scale && (
-            <div className="review-item">
-              <span className="review-value">Offers sliding scale fees</span>
-            </div>
-          )}
-        </div>
-      )}
-
-      {profileData.faqs && profileData.faqs.length > 0 && (
-        <div className="review-section">
-          <h3 className="review-heading">Common Questions</h3>
-          {profileData.faqs.map((faq, index) => (
-            <div key={index} className="review-item" style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: '1rem' }}>
-              <span className="review-label" style={{ marginBottom: '0.25rem' }}>Q: {faq.question}</span>
-              <span className="review-value" style={{ marginLeft: 0 }}>A: {faq.answer}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      <div style={{
+        marginTop: '1.5rem',
+        padding: '1rem',
+        background: 'var(--ds-accent-soft)',
+        borderRadius: '8px',
+        border: '1px solid var(--ds-border)'
+      }}>
+        <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--slate)' }}>
+          <i className="fa fa-lightbulb-o" style={{ marginRight: '0.5rem', color: 'var(--primary)' }}></i>
+          <strong>After publishing</strong>, boost your visibility by adding specialties, certifications, pricing, and more from your dashboard.
+        </p>
+      </div>
     </QuestionContainer>
   )
 }

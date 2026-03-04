@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-03-02T20:13:50.257Z",
+  "generatedAt": "2026-03-02T20:56:48.181Z",
   "period": {},
   "weekOverWeek": {
     "thisWeek": {
       "users": 137,
-      "sessions": 181,
-      "pageViews": 532,
-      "avgDuration": 305.82084582320437,
-      "bounceRate": 0.3701657458563536,
+      "sessions": 182,
+      "pageViews": 533,
+      "avgDuration": 304.1405115054945,
+      "bounceRate": 0.37362637362637363,
       "engagedSessions": 114,
       "newUsers": 107
     },
@@ -22,10 +22,10 @@
     },
     "deltas": {
       "users": 40,
-      "sessions": 3,
+      "sessions": 4,
       "pageViews": -24,
-      "avgDuration": -20,
-      "bounceRate": 16,
+      "avgDuration": -21,
+      "bounceRate": 17,
       "engagedSessions": -4,
       "newUsers": 27
     }
@@ -151,6 +151,13 @@
       "bounceRate": 0
     },
     {
+      "path": "/professional/leads",
+      "views": 4,
+      "users": 2,
+      "avgDuration": 7,
+      "bounceRate": 80
+    },
+    {
       "path": "/premarital-counseling/california",
       "views": 3,
       "users": 2,
@@ -214,13 +221,6 @@
       "bounceRate": 50
     },
     {
-      "path": "/professional/leads",
-      "views": 3,
-      "users": 2,
-      "avgDuration": 8,
-      "bounceRate": 75
-    },
-    {
       "path": "/profile/2745dd17-293e-4e1d-a1d5-067ebeba46a2",
       "views": 3,
       "users": 2,
@@ -245,8 +245,8 @@
   "trafficSources": [
     {
       "channel": "Direct",
-      "sessions": 104,
-      "engagementRate": 54,
+      "sessions": 105,
+      "engagementRate": 53,
       "pagesPerSession": "2.6"
     },
     {
@@ -282,12 +282,12 @@
     },
     {
       "event": "page_view",
-      "count": 532,
+      "count": 533,
       "users": 135
     },
     {
       "event": "session_start",
-      "count": 180,
+      "count": 181,
       "users": 136
     },
     {
@@ -473,8 +473,8 @@
     {
       "device": "mobile",
       "users": 52,
-      "sessions": 63,
-      "bounceRate": 29
+      "sessions": 64,
+      "bounceRate": 30
     }
   ],
   "topCities": [

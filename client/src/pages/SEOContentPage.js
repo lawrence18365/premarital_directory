@@ -226,8 +226,10 @@ const SEOContentPage = () => {
                             ))}
                           </div>
                         )}
-                        <a 
-                          href={`/profile/${profile.slug || profile.id}`}
+                        <a
+                          href={profile.state_province && profile.city && profile.slug
+                            ? `/premarital-counseling/${generateSlug(profile.state_province)}/${generateSlug(profile.city)}/${profile.slug}`
+                            : `/profile/${profile.slug || profile.id}`}
                           className="btn btn-small btn-outline"
                         >
                           View Profile

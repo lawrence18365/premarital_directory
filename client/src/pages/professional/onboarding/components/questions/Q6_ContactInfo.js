@@ -105,7 +105,7 @@ const Q6_ContactInfo = ({
       <div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--ds-accent-soft)', borderRadius: '8px', border: '1px solid var(--ds-border)' }}>
         <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--slate)' }}>
           <i className="fa fa-info-circle" style={{ marginRight: '0.5rem', color: 'var(--primary)' }}></i>
-          <strong>Great progress!</strong> You've completed all the required information. The next questions are optional and help couples find you more easily.
+          <strong>Almost done!</strong> One more step to review and publish your profile. You can add specialties, certifications, pricing, and more anytime from your dashboard.
         </p>
       </div>
     </QuestionContainer>

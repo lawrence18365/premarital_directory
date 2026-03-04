@@ -1,64 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import QuestionContainer from '../QuestionContainer'
 import { CLERGY_PROFESSIONS } from '../../constants'
-
-const getInitialSubStep = (profileData) => {
-  if (!profileData.bio_approach?.trim()) return 0
-  if (!profileData.bio_ideal_client?.trim()) return 1
-  return 2
-}
-
-const getStepConfig = (isClergy) => {
-  if (isClergy) {
-    return [
-      {
-        title: 'Your Ministry Approach',
-        label: 'How do you guide couples through marriage preparation?',
-        field: 'bio_approach',
-        placeholder: '2-3 sentences about your approach — e.g., the sessions you offer, the faith tradition you draw from, and what makes your preparation meaningful.'
-      },
-      {
-        title: 'Couples You Serve',
-        label: 'Who are you a great fit for?',
-        field: 'bio_ideal_client',
-        placeholder: 'Describe the couples you work with best — e.g., couples within your congregation, interfaith couples, couples of any background seeking faith-grounded preparation.'
-      },
-      {
-        title: 'What Couples Receive',
-        label: 'What can couples expect after working with you?',
-        field: 'bio_outcomes',
-        placeholder: 'Describe what couples walk away with — e.g., a deeper foundation of shared values, clarity on communication, a meaningful pre-wedding ritual or blessing.'
-      }
-    ]
-  }
-
-  return [
-    {
-      title: 'Your Approach',
-      label: 'How do you work with couples?',
-      field: 'bio_approach',
-      placeholder: '2-3 sentences about your approach.'
-    },
-    {
-      title: 'Best-Fit Couples',
-      label: 'Who are you a great fit for?',
-      field: 'bio_ideal_client',
-      placeholder: 'Describe the couples you work with best.'
-    },
-    {
-      title: 'Expected Outcomes',
-      label: 'What can couples expect after working with you?',
-      field: 'bio_outcomes',
-      placeholder: 'Describe the transformation or results.'
-    }
-  ]
-}
 
 const Q5_Bio = ({
   currentStep,
   profileData,
   updateField,
-  saveProgress,
   saving,
   error,
   setError,
@@ -66,66 +13,46 @@ const Q5_Bio = ({
   goToPreviousQuestion
 }) => {
   const isClergy = CLERGY_PROFESSIONS.includes(profileData.profession)
-  const stepConfig = getStepConfig(isClergy)
-  const [subStep, setSubStep] = useState(() => getInitialSubStep(profileData))
-
-  const activeStep = stepConfig[subStep]
-  const isFinalSubStep = subStep === stepConfig.length - 1
 
   const handleContinue = async () => {
-    const fieldValue = profileData[activeStep.field]?.trim()
-
-    if (!fieldValue) {
-      setError(`Please complete "${activeStep.label}"`)
+    const bio = profileData.bio?.trim()
+    if (!bio) {
+      setError('Please write a brief description so couples know what to expect')
       return
     }
 
-    if (!isFinalSubStep) {
-      const saveResult = await saveProgress(currentStep, {
-        [activeStep.field]: profileData[activeStep.field]
-      })
-
-      if (!saveResult?.success) return
-
-      setError('')
-      setSubStep(prev => prev + 1)
-      return
-    }
-
-    const combinedBio = `${profileData.bio_approach}\n\n${profileData.bio_ideal_client}\n\n${profileData.bio_outcomes}`
-    await goToNextQuestion(currentStep, { bio: combinedBio })
+    // Also save to structured fields for backward compatibility
+    await goToNextQuestion(currentStep, {
+      bio: bio,
+      bio_approach: bio
+    })
   }
 
-  const handleBack = () => {
-    if (subStep > 0) {
-      setError('')
-      setSubStep(prev => prev - 1)
-      return
-    }
-
-    goToPreviousQuestion()
-  }
+  const placeholder = isClergy
+    ? 'Tell couples about your marriage preparation ministry — your approach, who you typically work with, and what couples can expect. Even 2-3 sentences is great to start.\n\nExample: "I offer faith-centered marriage preparation grounded in Scripture and practical communication tools. I work with couples of all backgrounds who want a meaningful foundation for their marriage. Sessions typically cover communication, conflict resolution, finances, and spiritual life together."'
+    : 'Tell couples about your practice — your approach, who you work best with, and what couples can expect. Even 2-3 sentences is great to start.\n\nExample: "I specialize in evidence-based premarital counseling using the Gottman Method. I work with engaged and newly married couples who want to build a strong foundation. My sessions focus on communication, conflict resolution, and building shared meaning."'
 
   return (
     <QuestionContainer
       currentStep={currentStep}
       saving={saving}
       error={error}
-      onBack={handleBack}
+      onBack={goToPreviousQuestion}
       onContinue={handleContinue}
-      titleOverride={activeStep.title}
-      hideKicker={true}
-      hideContext={true}
-      continueLabelOverride={isFinalSubStep ? 'Continue' : 'Next'}
     >
       <div className="form-group">
-        <label className="form-label">{activeStep.label}</label>
+        <label className="form-label">
+          {isClergy ? 'Tell couples about your ministry' : 'Tell couples about your practice'}
+          <span className="form-label-subtitle">
+            You can always expand this later from your dashboard
+          </span>
+        </label>
         <textarea
           className="form-textarea"
-          style={{ minHeight: '100px' }}
-          placeholder={activeStep.placeholder}
-          value={profileData[activeStep.field] || ''}
-          onChange={(e) => updateField(activeStep.field, e.target.value)}
+          style={{ minHeight: '160px' }}
+          placeholder={placeholder}
+          value={profileData.bio || ''}
+          onChange={(e) => updateField('bio', e.target.value)}
           autoFocus
         />
       </div>

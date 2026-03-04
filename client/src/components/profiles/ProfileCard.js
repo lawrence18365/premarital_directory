@@ -268,7 +268,7 @@ const ProfileCard = ({ profile, type = 'directory' }) => {
         <Link to={
           stateSlug && citySlug
             ? `/premarital-counseling/${stateSlug}/${citySlug}/${profileSlug}`
-            : `/profile/${profileSlug}`
+            : `/premarital-counseling/${stateSlug || 'search'}/${citySlug || 'all'}/${profileSlug}`
         } className="btn btn-primary">
           View Profile & Contact
         </Link>

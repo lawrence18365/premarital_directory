@@ -8,6 +8,9 @@ Sitemap: https://www.weddingcounselors.com/sitemap.xml
 Disallow: /admin/
 Disallow: /api/
 
+# Block legacy profile URLs (canonical URLs are under /premarital-counseling/)
+Disallow: /profile/
+
 # Block private professional areas (dashboards, editing, analytics)
 # But allow public auth pages (signup, login) — they have noindex meta tags
 Disallow: /professional/dashboard
