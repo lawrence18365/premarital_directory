@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { PROFILE_SELECT_COLUMNS } from '../lib/profileSelectColumns'
 
 const AuthContext = createContext({})
 const INITIAL_AUTH_TIMEOUT_MS = 15000
@@ -123,7 +124,7 @@ export const AuthProvider = ({ children }) => {
       // Simple query first - avoid complex joins that might fail
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('*')
+        .select(PROFILE_SELECT_COLUMNS)
         .eq('user_id', userId)
         .maybeSingle()
 
@@ -144,7 +145,7 @@ export const AuthProvider = ({ children }) => {
       if (authUser?.email) {
         const { data: unlinkedProfile, error: unlinkedError } = await supabase
           .from('profiles')
-          .select('*')
+          .select(PROFILE_SELECT_COLUMNS)
           .is('user_id', null)
           .eq('is_claimed', true)
           .ilike('email', authUser.email)
@@ -158,7 +159,7 @@ export const AuthProvider = ({ children }) => {
             .update({ user_id: userId, last_login: new Date().toISOString() })
             .eq('id', unlinkedProfile.id)
             .is('user_id', null)
-            .select()
+            .select(PROFILE_SELECT_COLUMNS)
             .single()
 
           if (!linkError && linkedProfile) {
@@ -239,7 +240,7 @@ export const AuthProvider = ({ children }) => {
           ...userData
         })
         .eq('id', profileId)
-        .select()
+        .select('id')
 
       if (error) throw error
 
@@ -263,7 +264,7 @@ export const AuthProvider = ({ children }) => {
           last_login: new Date().toISOString()
         })
         .eq('id', profile.id)
-        .select()
+        .select('id')
 
       if (error) throw error
 

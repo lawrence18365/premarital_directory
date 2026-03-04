@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../../../contexts/AuthContext'
 import { supabase } from '../../../../lib/supabaseClient'
+import { PROFILE_SELECT_COLUMNS } from '../../../../lib/profileSelectColumns'
 import { normalizeAndValidateUrl } from '../../../../lib/utils'
 import { trackOnboardingStep } from '../../../../components/analytics/GoogleAnalytics'
 
@@ -145,7 +146,7 @@ export const useOnboardingState = () => {
         // Check if user already has a profile
         const { data: existingProfile, error: fetchError } = await supabase
           .from('profiles')
-          .select('*')
+          .select(PROFILE_SELECT_COLUMNS)
           .eq('user_id', user.id)
           .maybeSingle()
 
@@ -232,7 +233,7 @@ export const useOnboardingState = () => {
               },
               signup_referral_code: utmParams.referral_code || null
             })
-            .select()
+            .select('id')
             .single()
 
           if (createError) {
@@ -240,7 +241,7 @@ export const useOnboardingState = () => {
             if (createError.code === '23505') {
               const { data: raceProfile } = await supabase
                 .from('profiles')
-                .select('*')
+                .select('id')
                 .eq('user_id', user.id)
                 .single()
               if (raceProfile) {
