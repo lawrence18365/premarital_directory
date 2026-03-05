@@ -87,28 +87,7 @@ jobs:
           REACT_APP_GOOGLE_ADS_ID: ${{ secrets.REACT_APP_GOOGLE_ADS_ID }}
           CI: true
 
-      # Restore cached prerendered HTML from the last successful deploy.
-      # The prerender script skips routes whose HTML already exists, so
-      # only NEW pages get rendered — cutting run time dramatically.
-      - name: Restore prerender cache
-        if: env.SKIP_PRERENDER != 'true'
-        uses: actions/cache@v4
-        with:
-          path: client/.prerender-cache
-          key: prerender-v2-${{ runner.os }}-${{ hashFiles('client/scripts/prerender.js', 'client/src/components/analytics/SEOHelmet.js', 'client/src/components/common/Breadcrumbs.js') }}
-          restore-keys: |
-            prerender-v2-${{ runner.os }}-
 
-      - name: Copy cached prerendered pages into build
-        if: env.SKIP_PRERENDER != 'true'
-        run: |
-          if [ -d client/.prerender-cache ]; then
-            CACHED=$(find client/.prerender-cache -name "index.html" -type f | wc -l)
-            echo "Restoring $CACHED cached prerendered pages"
-            cp -rn client/.prerender-cache/* client/build/ 2>/dev/null || true
-          else
-            echo "No prerender cache found — full prerender will run"
-          fi
 
       - name: Prerender SEO pages
         if: env.SKIP_PRERENDER != 'true'
@@ -119,19 +98,7 @@ jobs:
           REACT_APP_SUPABASE_ANON_KEY: ${{ secrets.REACT_APP_SUPABASE_ANON_KEY }}
           CI: true
 
-      - name: Update prerender cache
-        if: env.SKIP_PRERENDER != 'true'
-        run: |
-          rm -rf client/.prerender-cache
-          mkdir -p client/.prerender-cache
-          # Cache only prerendered subdirectories (not static assets — those change every build)
-          for dir in premarital-counseling about blog contact features pricing support; do
-            if [ -d "client/build/$dir" ]; then
-              cp -r "client/build/$dir" "client/.prerender-cache/$dir"
-            fi
-          done
-          CACHED=$(find client/.prerender-cache -name "index.html" -type f | wc -l)
-          echo "Cached $CACHED prerendered pages for next run"
+
 
       # Quick sanity check: verify a profile page was actually prerendered
       - name: Verify prerender output
