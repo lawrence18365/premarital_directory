@@ -192,7 +192,7 @@ const SpecialtyPage = () => {
 
       <div className="specialty-page">
         {/* Hero Header */}
-        <div className="specialty-hero" style={{ '--specialty-color': specialty.color }}>
+        <header className="specialty-hero" style={{ '--specialty-color': specialty.color }}>
           <div className="specialty-container">
             <Breadcrumbs items={breadcrumbItems} variant="on-hero" />
 
@@ -212,14 +212,14 @@ const SpecialtyPage = () => {
               <div className="specialty-cta">
                 <button
                   onClick={() => setShowGetMatchedForm(true)}
-                  className="btn btn-primary btn-large"
+                  className="btn btn-primary"
                 >
                   <i className="fa fa-heart mr-2"></i>
                   {isCatholic ? 'Find a Catholic Program' : `Find a ${specialty.name} Counselor`}
                 </button>
                 <Link
                   to="/professional/signup"
-                  className="btn btn-secondary btn-large"
+                  className="btn btn-secondary"
                   rel="nofollow"
                 >
                   <i className="fa fa-plus-circle mr-2"></i>
@@ -228,43 +228,27 @@ const SpecialtyPage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </header>
 
         {/* Benefits Section */}
         {specialty.benefits && specialty.benefits.length > 0 && (
-          <div className="specialty-benefits-section">
+          <section className="specialty-benefits-section">
             <div className="specialty-container">
-              <h2 className="section-title">Why Choose {specialty.name} Counseling?</h2>
+              <h2 className="section-title">Experience the Benefits of {specialty.name} Preparation</h2>
               <div className="benefits-grid">
                 {specialty.benefits.map((benefit, index) => (
                   <div key={index} className="benefit-card">
-                    <i className="fa fa-check-circle"></i>
+                    <i className="fa fa-check"></i>
                     <span>{benefit}</span>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Body Content Section */}
-        {specialty.bodyContent && specialty.bodyContent.length > 0 && (
-          <div className="specialty-body-section">
-            <div className="specialty-container">
-              {specialty.bodyContent.map((section, index) => (
-                <div key={index} className="specialty-body-block">
-                  {section.heading && <h2 className="specialty-body-heading">{section.heading}</h2>}
-                  {section.paragraphs && section.paragraphs.map((para, pIndex) => (
-                    <p key={pIndex} className="specialty-body-para">{para}</p>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
+          </section>
         )}
 
         {/* Profiles Section */}
-        <div className="specialty-profiles-section">
+        <section className="specialty-profiles-section">
           <div className="specialty-container">
             <h2 className="section-title">
               {isCatholic
@@ -272,7 +256,7 @@ const SpecialtyPage = () => {
                   ? `${programs.length} Verified Catholic Pre-Cana Programs`
                   : 'Verified Catholic Pre-Cana Programs')
                 : (profiles.length > 0
-                  ? `${profiles.length} ${specialty.name} Premarital Counselors`
+                  ? `${profiles.length} Featured ${specialty.name} Counselors`
                   : `Find ${specialty.name} Premarital Counselors`
                 )}
             </h2>
@@ -282,7 +266,7 @@ const SpecialtyPage = () => {
                   ? 'Browse verified parish and diocesan marriage preparation programs first. Catholic-friendly therapists are listed below as secondary options.'
                   : 'No verified programs are published yet in this specialty. Claim your parish program to be listed.')
                 : (profiles.length > 0
-                  ? `Connect with premarital counselors specializing in ${specialty.name.toLowerCase()} marriage preparation across the United States.`
+                  ? `Connect with qualified professionals specializing in ${specialty.name.toLowerCase()} marriage preparation across the United States.`
                   : `We're building our network of ${specialty.name.toLowerCase()} counselors. Submit your preferences and we'll match you with qualified professionals.`
                 )}
             </p>
@@ -336,8 +320,8 @@ const SpecialtyPage = () => {
                 )}
 
                 {profiles.length > 0 && (
-                  <div className="states-with-specialty">
-                    <h3>Catholic-Friendly Therapists (Secondary)</h3>
+                  <div className="states-with-specialty" style={{ marginTop: 'var(--space-12)' }}>
+                    <h3 style={{ marginBottom: 'var(--space-8)' }}>Catholic-Friendly Therapists</h3>
                     <div className="profiles-grid">
                       {profiles.slice(0, 6).map((profile) => (
                         <ProfileCard key={profile.id} profile={profile} />
@@ -396,62 +380,91 @@ const SpecialtyPage = () => {
               )
             )}
           </div>
-        </div>
+        </section>
+
+        {/* Body Content Section */}
+        {specialty.bodyContent && specialty.bodyContent.length > 0 && (
+          <section className="specialty-body-section">
+            <div className="specialty-container">
+              {specialty.bodyContent.map((section, index) => (
+                <article key={index} className="specialty-body-block">
+                  {section.heading && <h2 className="specialty-body-heading">{section.heading}</h2>}
+                  {section.paragraphs && section.paragraphs.map((para, pIndex) => (
+                    <p key={pIndex} className="specialty-body-para">{para}</p>
+                  ))}
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* FAQ Section */}
         {specialty.faqs && specialty.faqs.length > 0 && (
-          <div className="specialty-faq-section">
+          <section className="specialty-faq-section">
             <div className="specialty-container">
               <FAQ
                 faqs={specialty.faqs}
-                title={`${specialty.name} Premarital Counseling — Frequently Asked Questions`}
+                title={`${specialty.name} Premarital Counseling FAQ`}
                 description={`Common questions about ${specialty.name.toLowerCase()} marriage preparation`}
                 showSearch={false}
                 showAside={false}
               />
             </div>
-          </div>
+          </section>
         )}
 
-        <div className="specialty-container" style={{ marginTop: 'var(--space-8)' }}>
+        <section className="specialty-container" style={{ marginTop: 'var(--space-12)' }}>
           <SpecialtyBlogLinks specialtySlug={specialtySlug} specialtyName={specialty?.name} />
-        </div>
+        </section>
 
-        <div className="specialty-container" style={{ marginTop: 'var(--space-8)' }}>
+        <section className="specialty-container" style={{ marginTop: 'var(--space-12)' }}>
           <CoupleEmailCapture sourcePage={`specialty/${specialtySlug}`} />
-        </div>
+        </section>
 
         {/* Marriage License Discount Cross-Link */}
-        <div className="specialty-container" style={{ paddingTop: 'var(--space-8)' }}>
+        <section className="specialty-container" style={{ padding: 'var(--space-12) 0' }}>
           <Link
             to="/premarital-counseling/marriage-license-discount"
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 'var(--space-4)',
-              padding: 'var(--space-5) var(--space-6)',
-              background: 'var(--gray-50, #f9fafb)',
-              border: '1px solid var(--gray-200, #e5e7eb)',
-              borderRadius: 'var(--radius-lg, 12px)',
+              gap: 'var(--space-6)',
+              padding: 'var(--space-8) var(--space-10)',
+              background: 'var(--white)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-2xl)',
               textDecoration: 'none',
               color: 'inherit',
-              transition: 'border-color 0.2s'
+              transition: 'all 0.2s ease',
+              boxShadow: 'var(--shadow-sm)'
             }}
+            className="hover-shadow"
           >
-            <i className="fa fa-piggy-bank" style={{ fontSize: '1.5rem', color: 'var(--primary, #4f46e5)' }}></i>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              background: 'rgba(79, 70, 229, 0.1)',
+              borderRadius: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              justify-content: center,
+              flexShrink: 0
+            }}>
+              <i className="fa fa-piggy-bank" style={{ fontSize: '1.75rem', color: 'var(--primary)' }}></i>
+            </div>
             <div>
-              <strong style={{ display: 'block', marginBottom: '2px' }}>Save on your marriage license</strong>
-              <span style={{ fontSize: '0.9rem', color: 'var(--gray-600, #4b5563)' }}>
-                8 states offer $25–$75 off when you complete premarital counseling. See if yours qualifies.
+              <strong style={{ display: 'block', marginBottom: '4px', fontSize: '1.2rem', color: 'var(--text-primary)' }}>Save on your marriage license</strong>
+              <span style={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                8 states offer $25–$75 off when you complete premarital counseling. See if yours qualifies and save money on your wedding day.
               </span>
             </div>
           </Link>
-        </div>
+        </section>
 
         {/* Related Specialties */}
-        <div className="specialty-related-section">
+        <section className="specialty-related-section">
           <div className="specialty-container">
-            <h2 className="section-title">Related Specialties</h2>
+            <h2 className="section-title">Explore Other Specialties</h2>
             <div className="related-specialties-grid">
               {(specialty.relatedSpecialties
                 ? specialty.relatedSpecialties.map(slug => getAllSpecialties().find(s => s.slug === slug)).filter(Boolean)
@@ -470,7 +483,7 @@ const SpecialtyPage = () => {
                 ))}
             </div>
           </div>
-        </div>
+        </section>
       </div>
 
       {/* Sticky mobile CTA */}
@@ -482,29 +495,37 @@ const SpecialtyPage = () => {
             left: 0,
             right: 0,
             zIndex: 90,
-            background: '#fff',
-            borderTop: '1px solid #e5e7eb',
-            padding: '10px 16px',
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            borderTop: '1px solid var(--border)',
+            padding: 'var(--space-3) var(--space-5)',
             display: 'flex',
-            gap: '8px',
+            gap: 'var(--space-3)',
             alignItems: 'center',
-            boxShadow: '0 -2px 8px rgba(0,0,0,0.08)'
+            boxShadow: '0 -4px 12px rgba(0,0,0,0.05)'
           }}
         >
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.2 }}>
+            <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)', lineHeight: 1.2 }}>
               {isCatholic
-                ? `${programs.length} Catholic programs nationwide`
+                ? `${programs.length} Catholic programs`
                 : `${profiles.length} ${specialty.name.toLowerCase()} counselors`}
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-              Free to contact — no fees
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+              Free to contact • No fees
             </div>
           </div>
           <button
             onClick={() => setShowGetMatchedForm(true)}
             className="btn btn-primary"
-            style={{ whiteSpace: 'nowrap', padding: '8px 16px', fontSize: '0.85rem' }}
+            style={{ 
+              whiteSpace: 'nowrap', 
+              padding: 'var(--space-2) var(--space-5)', 
+              fontSize: '0.875rem',
+              borderRadius: 'var(--radius-full)',
+              minWidth: 'auto'
+            }}
           >
             Get Matched Free
           </button>
