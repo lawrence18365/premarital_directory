@@ -173,17 +173,19 @@ const buildProfileMetaTitle = (profile, { hasOnlineOption, stateName, specialtie
   // Use em-dash for visual distinction in SERPs
   // Lead with name, add location + method signals, include action word
   let title = city
-    ? `${displayName} — Premarital Counseling ${city}, ${stAbbr}`
+    ? `${displayName} — Premarital Counselor in ${city}, ${stAbbr}`
     : `${displayName} — Premarital Counselor`
 
   // Inject method if it fits and adds signal
-  if (methodTag && city && `${displayName} (${methodTag}) — Premarital Counseling ${city}, ${stAbbr}`.length <= 62) {
-    title = `${displayName} (${methodTag}) — Premarital Counseling ${city}, ${stAbbr}`
+  if (methodTag && city && `${displayName} (${methodTag}) — Premarital Counselor in ${city}, ${stAbbr}`.length <= 62) {
+    title = `${displayName} (${methodTag}) — Premarital Counselor in ${city}, ${stAbbr}`
   }
 
-  // If title is short enough, add "Reviews & Info" for CTR on branded queries
+  // Add CTA suffix for CTR on branded queries
+  // "Book Online" for virtual-available profiles; "Contact Today" otherwise
+  const ctaSuffix = hasOnlineOption ? 'Book Online' : 'Contact Today'
   if (title.length <= 48) {
-    title = `${title} | Reviews & Info`
+    title = `${title} | ${ctaSuffix}`
   }
 
   return title

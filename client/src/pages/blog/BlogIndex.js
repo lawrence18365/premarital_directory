@@ -255,9 +255,51 @@ const BlogIndex = () => {
           <p>Find qualified premarital counselors in your area</p>
           <Link to="/premarital-counseling" className="btn btn-primary">Find Counselors</Link>
         </section>
+
+        {/* State Guides — internal links for SEO discovery */}
+        <section style={{
+          marginTop: 'var(--space-12)',
+          padding: 'var(--space-8)',
+          background: 'var(--gray-50, #f9fafb)',
+          borderRadius: 'var(--radius-lg, 12px)'
+        }}>
+          <h3 style={{ fontSize: '1.1rem', marginBottom: 'var(--space-4)', fontWeight: 600 }}>
+            Premarital Counseling by State
+          </h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+            {[
+              { slug: 'premarital-counseling-texas', label: 'Texas' },
+              { slug: 'premarital-counseling-florida', label: 'Florida' },
+              { slug: 'premarital-counseling-new-york', label: 'New York' },
+              { slug: 'premarital-counseling-illinois', label: 'Illinois' },
+              { slug: 'premarital-counseling-minnesota', label: 'Minnesota' },
+              { slug: 'premarital-counseling-chicago', label: 'Chicago' },
+              { slug: 'premarital-counseling-nashville', label: 'Nashville' },
+              { slug: 'premarital-counseling-phoenix', label: 'Phoenix' },
+            ].map(s => (
+              <Link
+                key={s.slug}
+                to={`/blog/${s.slug}`}
+                style={{
+                  display: 'inline-block',
+                  padding: '6px 14px',
+                  border: '1px solid var(--gray-200, #e5e7eb)',
+                  borderRadius: 'var(--radius-md, 8px)',
+                  fontSize: '0.85rem',
+                  color: 'var(--gray-700, #374151)',
+                  textDecoration: 'none',
+                  background: '#fff',
+                  transition: 'border-color 0.15s'
+                }}
+              >
+                {s.label}
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
-      </div>
-    );
+    </div>
+  );
 };
 
 export default BlogIndex;

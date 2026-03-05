@@ -66,6 +66,18 @@ serve(async (req) => {
 
   const sentIds = new Set((alreadySent || []).map((r: { profile_id: string }) => r.profile_id))
 
+  // Also check if the drip email sequence already sent the badge ask (step 4)
+  // to avoid double-sending across campaigns
+  const { data: dripBadgeSent } = await supabase
+    .from('drip_email_log')
+    .select('profile_id')
+    .in('drip_type', ['welcome', 'claim_welcome'])
+    .eq('step', 4)
+
+  for (const r of (dripBadgeSent || [])) {
+    sentIds.add((r as { profile_id: string }).profile_id)
+  }
+
   for (let i = 0; i < providers.length; i++) {
     const provider = providers[i]
     const email = provider.email?.toLowerCase()

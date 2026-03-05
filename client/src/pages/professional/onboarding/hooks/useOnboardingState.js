@@ -145,7 +145,9 @@ export const useOnboardingState = () => {
         if (existingProfile) {
           // Profile exists - load it for resume
           setProfileId(existingProfile.id)
-          setProfileData({
+          setProfileId(existingProfile.id)
+
+          let loadedData = {
             full_name: existingProfile.full_name || '',
             profession: existingProfile.profession || '',
             photo_url: existingProfile.photo_url || '',
@@ -180,14 +182,38 @@ export const useOnboardingState = () => {
             payment_methods: existingProfile.payment_methods || [],
             faqs: existingProfile.faqs || [],
             email: existingProfile.email || user.email
-          })
+          }
 
-          if (existingProfile.photo_url) {
-            setPhotoPreview(existingProfile.photo_url)
+          let dbStep = existingProfile.onboarding_step || 1
+
+          // Check if local sessionStorage backup is newer than DB 
+          try {
+            const backupStr = sessionStorage.getItem('onboarding_backup')
+            if (backupStr) {
+              const backup = JSON.parse(backupStr)
+              const dbTime = existingProfile.onboarding_last_saved_at
+                ? new Date(existingProfile.onboarding_last_saved_at).getTime()
+                : 0
+
+              if (backup.timestamp && backup.timestamp > dbTime && backup.data) {
+                console.log('Restoring newer onboarding state from local backup', backup.data)
+                // Shallow merge backup over DB data
+                loadedData = { ...loadedData, ...backup.data }
+                dbStep = backup.step || dbStep
+              }
+            }
+          } catch (e) {
+            console.error('Error reading onboarding backup:', e)
+          }
+
+          setProfileData(loadedData)
+
+          if (loadedData.photo_url) {
+            setPhotoPreview(loadedData.photo_url)
           }
 
           // Resume from last saved step (clamp to max step for users from old 20-step flow)
-          const resumeStep = Math.min(existingProfile.onboarding_step || 1, MAX_STEP)
+          const resumeStep = Math.min(dbStep, MAX_STEP)
           setCurrentStep(resumeStep)
 
           // Update URL to reflect current step
@@ -251,8 +277,8 @@ export const useOnboardingState = () => {
         }
       } catch (err) {
         console.error('Error initializing onboarding:', err)
-        setError(err.message === 'This email is already associated with another directory profile. Please contact support if you need to recover it.' 
-          ? err.message 
+        setError(err.message === 'This email is already associated with another directory profile. Please contact support if you need to recover it.'
+          ? err.message
           : 'Failed to load onboarding. Please refresh the page.')
       } finally {
         setLoading(false)
@@ -298,6 +324,14 @@ export const useOnboardingState = () => {
         const { url } = normalizeAndValidateUrl(normalizedWebsite)
         normalizedWebsite = url || normalizedWebsite
       }
+
+      // Optimistic cache: Save to sessionStorage before DB request,
+      // ensuring progress is stored locally even if the network fails.
+      sessionStorage.setItem('onboarding_backup', JSON.stringify({
+        step,
+        data: mergedData,
+        timestamp: Date.now()
+      }))
 
       const updateData = {
         full_name: mergedData.full_name.trim() || null,
@@ -347,13 +381,6 @@ export const useOnboardingState = () => {
         .eq('id', profileId)
 
       if (updateError) throw updateError
-
-      // Also cache to sessionStorage as backup
-      sessionStorage.setItem('onboarding_backup', JSON.stringify({
-        step,
-        data: mergedData,
-        timestamp: Date.now()
-      }))
 
       return { success: true }
     } catch (err) {

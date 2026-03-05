@@ -94,6 +94,16 @@ serve(async (req) => {
 
     const badgeVerifiedIds = new Set((badgeVerifiedProfiles || []).map(p => p.id))
 
+    // Check who already received the badge ask via drip emails or badge campaign
+    // so we don't nag them again in the weekly digest
+    const { data: badgeDripLogs } = await supabase
+      .from('drip_email_log')
+      .select('profile_id')
+      .in('drip_type', ['badge_campaign', 'welcome', 'claim_welcome'])
+      .eq('step', 4)
+
+    const alreadyReceivedBadgeAsk = new Set((badgeDripLogs || []).map(d => d.profile_id))
+
     // Filter eligible profiles
     const eligible = profiles.filter(p => {
       // Check do_not_contact
@@ -175,7 +185,13 @@ serve(async (req) => {
         continue
       }
 
+      // Only show badge CTA if: not yet verified, not already asked via drip/campaign,
+      // and claimed within the last 30 days (don't nag long-term providers forever)
+      const claimedAt = new Date(profile.created_at)
+      const daysSinceClaim = Math.floor((now.getTime() - claimedAt.getTime()) / (1000 * 60 * 60 * 24))
       const showBadgeCta = !badgeVerifiedIds.has(profile.id)
+        && !alreadyReceivedBadgeAsk.has(profile.id)
+        && daysSinceClaim <= 30
       const stats = { views7d, views30d, inquiries7d, inquiries30d, daysListed }
       const html = generateDigestHTML(profile, stats, showBadgeCta)
 
@@ -308,9 +324,9 @@ function generateDigestHTML(
         ${hasActivity ? `
           <p style="margin: 0 0 20px; font-size: 15px;">
             ${stats.inquiries7d > 0
-              ? `Couples in ${profile.city} are reaching out! Make sure to respond within 24 hours for the best conversion rate.`
-              : `Your profile is getting views from couples in ${profile.city}. A complete profile with a photo and detailed bio converts views into inquiries.`
-            }
+        ? `Couples in ${profile.city} are reaching out! Make sure to respond within 24 hours for the best conversion rate.`
+        : `Your profile is getting views from couples in ${profile.city}. A complete profile with a photo and detailed bio converts views into inquiries.`
+      }
           </p>
         ` : `
           <p style="margin: 0 0 20px; font-size: 15px;">

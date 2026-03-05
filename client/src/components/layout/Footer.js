@@ -77,6 +77,14 @@ const Footer = () => {
               <li><Link to="/premarital-counseling/pennsylvania">Pennsylvania</Link></li>
               <li><Link to="/premarital-counseling">All 50 States</Link></li>
             </ul>
+            <h4 style={{ marginTop: '1.5rem' }}>Popular Cities</h4>
+            <ul>
+              <li><Link to="/premarital-counseling/north-carolina/charlotte">Charlotte, NC</Link></li>
+              <li><Link to="/premarital-counseling/arizona/phoenix">Phoenix, AZ</Link></li>
+              <li><Link to="/premarital-counseling/north-carolina/raleigh">Raleigh, NC</Link></li>
+              <li><Link to="/premarital-counseling/alabama/birmingham">Birmingham, AL</Link></li>
+              <li><Link to="/premarital-counseling/montana/billings">Billings, MT</Link></li>
+            </ul>
           </div>
 
           <div className="footer-section">
