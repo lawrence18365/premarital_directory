@@ -111,6 +111,10 @@ const ProfessionalsPage = () => {
 
     // Apply sorting
     filtered.sort((a, b) => {
+      if (a.is_claimed !== b.is_claimed) {
+        return Number(Boolean(b.is_claimed)) - Number(Boolean(a.is_claimed))
+      }
+
       // First: Sort by sponsored rank (Premium=2, Featured=1, Free=0)
       const rankA = a.sponsored_rank || 0
       const rankB = b.sponsored_rank || 0

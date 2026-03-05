@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { trackEvent } from '../analytics/GoogleAnalytics'
 import '../../assets/css/concierge-form.css'
 
 const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = '' }) => {
@@ -14,20 +15,53 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [success, setSuccess] = useState(false)
+    const hasTrackedView = useRef(false)
+    const hasTrackedStart = useRef(false)
+
+    const getFunnelContext = () => ({
+        event_category: 'conversion',
+        form_type: 'concierge_match',
+        source_page: sourceUrl || (typeof window !== 'undefined' ? window.location.pathname : 'unknown')
+    })
+
+    const trackFormStart = () => {
+        if (hasTrackedStart.current) return
+        hasTrackedStart.current = true
+        trackEvent('lead_form_start', getFunnelContext())
+    }
+
+    useEffect(() => {
+        if (!isOpen) {
+            hasTrackedView.current = false
+            hasTrackedStart.current = false
+            return
+        }
+        if (hasTrackedView.current) return
+        hasTrackedView.current = true
+        trackEvent('lead_form_view', getFunnelContext())
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen])
 
     const handleInputChange = (e) => {
         const { name, value } = e.target
+        trackFormStart()
         setFormData((prev) => ({ ...prev, [name]: value }))
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        trackFormStart()
 
         if (!formData.name || !formData.email) {
             setError('Name and email are required.')
+            trackEvent('lead_form_error', {
+                ...getFunnelContext(),
+                error_type: 'validation_missing_required'
+            })
             return
         }
 
+        trackEvent('lead_form_submit', getFunnelContext())
         setLoading(true)
         setError('')
 
@@ -64,6 +98,10 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
             }
 
             setSuccess(true)
+            trackEvent('lead_form_success', {
+                ...getFunnelContext(),
+                lead_id: data?.lead?.id || null
+            })
 
             // Reset form (optional, could just leave success message displayed)
             setFormData({
@@ -84,6 +122,10 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
         } catch (err) {
             console.error('Submission error:', err)
             setError(err.message || 'An unexpected error occurred. Please try again.')
+            trackEvent('lead_form_error', {
+                ...getFunnelContext(),
+                error_message: err?.message || 'Unknown error'
+            })
         } finally {
             setLoading(false)
         }

@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
-import { trackContactSubmission } from '../analytics/GoogleAnalytics'
+import { trackContactSubmission, trackEvent } from '../analytics/GoogleAnalytics'
 import { trackFacebookLead } from '../analytics/FacebookPixel'
 import { trackProfessionalContact } from '../analytics/GoogleAds'
 import { getAttribution, getSourceLabel } from '../../lib/attribution'
@@ -24,9 +24,33 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const hasTrackedFormView = useRef(false)
+  const hasTrackedFormStart = useRef(false)
+
+  const getFunnelContext = () => ({
+    event_category: 'conversion',
+    professional_name: professionalName,
+    profile_id: profileId || 'unmatched',
+    is_profile_claimed: Boolean(isProfileClaimed),
+    source_page: typeof window !== 'undefined' ? window.location.pathname : 'unknown'
+  })
+
+  const trackFormStart = () => {
+    if (hasTrackedFormStart.current) return
+    hasTrackedFormStart.current = true
+    trackEvent('lead_form_start', getFunnelContext())
+  }
+
+  useEffect(() => {
+    if (hasTrackedFormView.current) return
+    hasTrackedFormView.current = true
+    trackEvent('lead_form_view', getFunnelContext())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
+    trackFormStart()
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -35,12 +59,18 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    trackFormStart()
 
     if (!formData.partner_one_name || !formData.couple_email || !formData.message) {
       setError('Please fill in all required fields')
+      trackEvent('lead_form_error', {
+        ...getFunnelContext(),
+        error_type: 'validation_missing_required'
+      })
       return
     }
 
+    trackEvent('lead_form_submit', getFunnelContext())
     setLoading(true)
     setError('')
 
@@ -86,6 +116,10 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
       }
 
       setSuccess(true)
+      trackEvent('lead_form_success', {
+        ...getFunnelContext(),
+        lead_id: data?.lead?.id || null
+      })
 
       // Fire conversion tracking events
       trackContactSubmission(professionalName, 'contact_form')
@@ -103,14 +137,16 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
     } catch (error) {
       console.error('Error submitting lead:', error)
       setError('Failed to send your message. Please try again.')
-      // Track failed submissions so they show up in GA4
-      if (window.gtag) {
-        window.gtag('event', 'contact_form_error', {
-          error_message: error?.message || 'Unknown error',
-          professional_name: professionalName,
-          event_category: 'conversion'
-        })
-      }
+      trackEvent('lead_form_error', {
+        ...getFunnelContext(),
+        error_message: error?.message || 'Unknown error'
+      })
+      // Preserve legacy event name used in historical reports.
+      trackEvent('contact_form_error', {
+        error_message: error?.message || 'Unknown error',
+        professional_name: professionalName,
+        event_category: 'conversion'
+      })
     }
 
     setLoading(false)
@@ -210,7 +246,10 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
                 <button
                   key={template}
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, message: template }))}
+                  onClick={() => {
+                    trackFormStart()
+                    setFormData(prev => ({ ...prev, message: template }))
+                  }}
                   style={{
                     padding: '4px 10px',
                     fontSize: '0.8rem',

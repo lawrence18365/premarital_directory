@@ -9,6 +9,87 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+const DIRECTORY_BOT_PATTERNS = [
+  'bot',
+  'spider',
+  'crawler',
+  'crawl',
+  'googlebot',
+  'googleother',
+  'adsbot',
+  'bingbot',
+  'duckduckbot',
+  'bytespider',
+  'slurp',
+  'baiduspider',
+  'petalbot',
+  'headless',
+  'lighthouse',
+  'facebookexternalhit',
+  'linkedinbot',
+  'preview',
+  'httpclient',
+  'python-requests',
+  'curl/',
+  'wget/'
+]
+
+const toTimestamp = (value) => {
+  const parsed = Date.parse(value || '')
+  return Number.isNaN(parsed) ? 0 : parsed
+}
+
+const hasPricingInfo = (profile) => Boolean(
+  profile?.pricing_range ||
+  Number(profile?.session_fee_min) > 0 ||
+  Number(profile?.session_fee_max) > 0
+)
+
+const tierWeight = (tier) => {
+  const weights = {
+    area_spotlight: 3,
+    local_featured: 2,
+    community: 1
+  }
+  return weights[tier] || 0
+}
+
+const compareProfilesForCouples = (a, b) => {
+  const claimedDelta = Number(Boolean(b?.is_claimed)) - Number(Boolean(a?.is_claimed))
+  if (claimedDelta !== 0) return claimedDelta
+
+  const sponsoredRankDelta = (Number(b?.sponsored_rank) || 0) - (Number(a?.sponsored_rank) || 0)
+  if (sponsoredRankDelta !== 0) return sponsoredRankDelta
+
+  const sponsoredDelta = Number(Boolean(b?.is_sponsored)) - Number(Boolean(a?.is_sponsored))
+  if (sponsoredDelta !== 0) return sponsoredDelta
+
+  const tierDelta = tierWeight(b?.tier) - tierWeight(a?.tier)
+  if (tierDelta !== 0) return tierDelta
+
+  const completenessDelta = (Number(b?.profile_completeness_score) || 0) - (Number(a?.profile_completeness_score) || 0)
+  if (completenessDelta !== 0) return completenessDelta
+
+  const photoDelta = Number(Boolean(b?.photo_url)) - Number(Boolean(a?.photo_url))
+  if (photoDelta !== 0) return photoDelta
+
+  const pricingDelta = Number(hasPricingInfo(b)) - Number(hasPricingInfo(a))
+  if (pricingDelta !== 0) return pricingDelta
+
+  const recencyDelta = toTimestamp(b?.created_at) - toTimestamp(a?.created_at)
+  if (recencyDelta !== 0) return recencyDelta
+
+  return String(a?.full_name || '').localeCompare(String(b?.full_name || ''))
+}
+
+export const rankProfilesForCouples = (profiles = []) => [...profiles].sort(compareProfilesForCouples)
+
+export const isLikelyBotUserAgent = (userAgent = '') => {
+  const normalized = String(userAgent || '').toLowerCase()
+  if (!normalized) return false
+  return DIRECTORY_BOT_PATTERNS.some((pattern) => normalized.includes(pattern))
+}
+
 // Helper functions for common operations
 export const profileOperations = {
   // Get all profiles with optional filtering
@@ -77,7 +158,7 @@ export const profileOperations = {
       }
     }
 
-    return { data: results, error: null }
+    return { data: rankProfilesForCouples(results), error: null }
   },
 
   // Fallback method: Get all profiles using pagination
@@ -132,7 +213,7 @@ export const profileOperations = {
       page++
     }
 
-    return { data: allProfiles, error: null }
+    return { data: rankProfilesForCouples(allProfiles), error: null }
   },
 
   // Get single profile by ID or slug
@@ -212,7 +293,7 @@ export const profileOperations = {
       }
     }
 
-    return { data: results, error }
+    return { data: rankProfilesForCouples(results), error }
   },
 
   // Get profiles by state and city
@@ -250,7 +331,7 @@ export const profileOperations = {
       }
     }
 
-    return { data: results, error }
+    return { data: rankProfilesForCouples(results), error }
   },
 
   // Get nearby profiles (same city/state) excluding the current one
@@ -286,7 +367,7 @@ export const profileOperations = {
       }
     }
 
-    return { data: results, error }
+    return { data: rankProfilesForCouples(results), error }
   },
 
   // Search profiles by text
@@ -315,7 +396,7 @@ export const profileOperations = {
       }
     }
 
-    return { data: results, error }
+    return { data: rankProfilesForCouples(results), error }
   },
 
   // Get state statistics
@@ -512,7 +593,7 @@ export const profileOperations = {
       .eq('is_hidden', false)
       .or('moderation_status.eq.approved,moderation_status.is.null')
 
-    return { data: data || [], error }
+    return { data: rankProfilesForCouples(data || []), error }
   },
 
   // Check if a visible profile already exists with this email (for signup dedup)
@@ -775,6 +856,11 @@ export const profileOperations = {
 export const clickTrackingOperations = {
   // Log a profile click from a city page
   async logProfileClick(clickData) {
+    const userAgent = clickData.user_agent || (typeof navigator !== 'undefined' ? navigator.userAgent : '')
+    if (isLikelyBotUserAgent(userAgent)) {
+      return { data: null, error: null }
+    }
+
     const { data, error } = await supabase
       .from('profile_clicks')
       .insert({
@@ -782,8 +868,8 @@ export const clickTrackingOperations = {
         source_city: clickData.city,
         source_state: clickData.state,
         source_page: clickData.source || 'city_page',
-        user_agent: navigator.userAgent || null,
-        referrer: document.referrer || null,
+        user_agent: userAgent || null,
+        referrer: clickData.referrer || (typeof document !== 'undefined' ? document.referrer : null),
         partner_ref: clickData.partner_ref || null,
         utm_source: clickData.utm_source || null,
         utm_medium: clickData.utm_medium || null,

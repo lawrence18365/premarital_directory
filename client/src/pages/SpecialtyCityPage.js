@@ -17,7 +17,7 @@ import {
   MIN_VERIFIED_PROGRAMS_FOR_INDEX,
   normalizeProgramRecord
 } from '../lib/programCatalog'
-import { supabase } from '../lib/supabaseClient'
+import { supabase, rankProfilesForCouples } from '../lib/supabaseClient'
 import '../assets/css/specialty-page.css'
 
 const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) => {
@@ -144,7 +144,7 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
           setNearbySpecialtyCities([])
         }
       } else {
-        setProfiles(data || [])
+        setProfiles(rankProfilesForCouples(data || []))
 
         const { data: stateSpecialtyProfiles, error: stateError } = await supabase
           .from('profiles')

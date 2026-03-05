@@ -226,6 +226,11 @@ const CityPage = ({ stateOverride, cityOverride }) => {
     const sorted = [...filteredProfiles]
 
     sorted.sort((a, b) => {
+      // Couples should see claim-verified listings first across all sort modes.
+      if (a.is_claimed !== b.is_claimed) {
+        return Number(Boolean(b.is_claimed)) - Number(Boolean(a.is_claimed))
+      }
+
       if (sortBy === 'best-premarital') {
         if (b.premaritalFitScore !== a.premaritalFitScore) return b.premaritalFitScore - a.premaritalFitScore
       } else if (sortBy === 'verified-details') {
@@ -330,6 +335,11 @@ const CityPage = ({ stateOverride, cityOverride }) => {
       } else {
         // Sort profiles by tier: Area Spotlight > Local Featured > Community
         const tierSortedProfiles = (data || []).sort((a, b) => {
+          const claimedDelta = Number(Boolean(b.is_claimed)) - Number(Boolean(a.is_claimed))
+          if (claimedDelta !== 0) {
+            return claimedDelta
+          }
+
           const tierOrder = {
             'area_spotlight': 1,
             'local_featured': 2,

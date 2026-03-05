@@ -10,7 +10,7 @@ import ConciergeLeadForm from '../components/leads/ConciergeLeadForm'
 import { getSpecialtyBySlug, getAllSpecialties } from '../data/specialtyConfig'
 import { STATE_CONFIG } from '../data/locationConfig'
 import { buildCatholicProgramsQuery, isCatholicSpecialty, normalizeProgramRecord } from '../lib/programCatalog'
-import { supabase } from '../lib/supabaseClient'
+import { supabase, rankProfilesForCouples } from '../lib/supabaseClient'
 import CoupleEmailCapture from '../components/leads/CoupleEmailCapture'
 import SpecialtyBlogLinks from '../components/state/SpecialtyBlogLinks'
 import '../assets/css/specialty-page.css'
@@ -86,9 +86,9 @@ const SpecialtyPage = () => {
           .order('created_at', { ascending: false })
           .limit(100)
 
-        setProfiles(fallbackData || [])
+        setProfiles(rankProfilesForCouples(fallbackData || []))
       } else {
-        setProfiles(data || [])
+        setProfiles(rankProfilesForCouples(data || []))
       }
     } catch (err) {
       console.error('Error:', err)
