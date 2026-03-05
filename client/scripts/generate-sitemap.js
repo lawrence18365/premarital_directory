@@ -419,7 +419,7 @@ async function main() {
   fs.writeFileSync(path.join(publicDir, 'sitemap-core.xml'), coreSitemap)
   console.log(`✅ Generated sitemap-core.xml (${coreUrls.length} URLs)`)
 
-  // 2. All Cities Sitemap (Expanded from just anchor cities)
+  // 2. All Cities Sitemap (quality-gated to avoid thin state/city URLs)
   const cityUrls = []
   const hasProfileCoverage = !!profileCounts
   const stateProfileCounts = {}
@@ -434,12 +434,16 @@ async function main() {
   // Flatten all cities from STATE_CONFIG
   const allCities = []
   let includedStatePages = 0
+  let skippedStatePages = 0
   Object.keys(STATE_CONFIG).forEach(stateSlug => {
     const stateData = STATE_CONFIG[stateSlug]
     const hasStateProfiles = (stateProfileCounts[stateSlug] || 0) > 0
 
-    // Add State Page
-    if (!hasProfileCoverage || hasStateProfiles) {
+    // Fail closed: never include state URLs when coverage is unavailable.
+    // This prevents indexing thin pages if Supabase data is missing at build time.
+    if (!hasProfileCoverage) {
+      skippedStatePages++
+    } else if (hasStateProfiles) {
       cityUrls.push({
         url: `/premarital-counseling/${stateSlug}`,
         priority: 0.8,
@@ -447,6 +451,8 @@ async function main() {
         lastmod: today
       })
       includedStatePages++
+    } else {
+      skippedStatePages++
     }
 
     // Add City Pages
@@ -469,6 +475,9 @@ async function main() {
 
   // Generate URLs for all cities
   allCities.forEach(city => {
+    // Fail closed when coverage is unavailable
+    if (!hasProfileCoverage) return
+
     const key = `${city.cityName.toLowerCase()}|${city.stateSlug}`
     const profileCount = profileCounts ? (profileCounts[key] || 0) : 0
 
@@ -494,9 +503,11 @@ async function main() {
   console.log(`\n✅ Generated sitemap-cities.xml (${cityUrls.length} URLs)`)
   if (hasProfileCoverage) {
     console.log(`   - Included state pages with active profiles: ${includedStatePages}`)
+    console.log(`   - Skipped thin state pages: ${skippedStatePages}`)
     console.log('   - Included city pages with active profiles only')
   } else {
-    console.log('   - Coverage data unavailable: included state pages + anchor cities only')
+    console.log(`   - Coverage data unavailable: skipped all ${skippedStatePages} state pages`)
+    console.log('   - Coverage data unavailable: skipped all city pages')
   }
 
   // 2.5 Programmatic Specialty Sitemap (quality-gated to avoid thin URL bloat)
