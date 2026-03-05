@@ -38,10 +38,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      # Temporarily allowing push deploys to fix the broken UI
-      SKIP_PRERENDER: false
-      PRERENDER_INCLUDE_PROFILES: false # Keep it lean
-      SHOULD_DEPLOY_VERCEL: true
+      # Push runs: skip prerender entirely (no deploy happens, so prerender is wasted minutes).
+      # Schedule/manual runs: full prerender + deploy.
+      SKIP_PRERENDER: ${{ github.event_name == 'push' }}
+      PRERENDER_INCLUDE_PROFILES: ${{ github.event_name != 'push' }}
+      SHOULD_DEPLOY_VERCEL: ${{ github.event_name != 'push' }}
 
     steps:
       - name: Checkout code
