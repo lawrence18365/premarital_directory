@@ -447,7 +447,7 @@ const SpecialtyPage = () => {
               borderRadius: '16px',
               display: 'flex',
               alignItems: 'center',
-              justify-content: center,
+              justifyContent: 'center',
               flexShrink: 0
             }}>
               <i className="fa fa-piggy-bank" style={{ fontSize: '1.75rem', color: 'var(--primary)' }}></i>
