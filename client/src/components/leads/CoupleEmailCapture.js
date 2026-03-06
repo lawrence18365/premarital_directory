@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { supabase } from '../../lib/supabaseClient'
+import { trackEvent } from '../analytics/GoogleAnalytics'
 
 const INTEREST_OPTIONS = [
   { value: 'counseling', label: 'Premarital counseling' },
@@ -42,10 +42,19 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
 
   // Check if already submitted (localStorage)
   useEffect(() => {
-    if (localStorage.getItem('wc_guide_subscribed')) {
+    if (localStorage.getItem('wc_guide_subscribed') || localStorage.getItem('wc_guide_dismissed')) {
       setDismissed(true)
     }
   }, [])
+
+  useEffect(() => {
+    if (dismissed) return
+
+    trackEvent('couple_guide_capture_view', {
+      source_page: sourcePage,
+      event_category: 'conversion',
+    })
+  }, [dismissed, sourcePage])
 
   if (dismissed && status !== 'success') return null
 
@@ -78,23 +87,14 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
     if (!email) return
 
     setStatus('submitting')
+    trackEvent('couple_guide_capture_submit', {
+      source_page: sourcePage,
+      interest,
+      event_category: 'conversion',
+    })
+
     try {
-      // Save to DB
-      const { error } = await supabase
-        .from('couple_subscribers')
-        .upsert({
-          email: email.toLowerCase().trim(),
-          first_name: name.trim() || null,
-          interest,
-          city: city.trim() || null,
-          state: state.trim() || null,
-          source_page: sourcePage,
-        }, { onConflict: 'email' })
-
-      if (error) throw error
-
-      // Trigger guide delivery edge function (fire and forget)
-      fetch(`${process.env.REACT_APP_SUPABASE_URL}/functions/v1/send-couple-guide`, {
+      const response = await fetch(`${process.env.REACT_APP_SUPABASE_URL}/functions/v1/send-couple-guide`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -103,13 +103,30 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
           interest,
           city: city.trim() || null,
           state: state.trim() || null,
+          source_page: sourcePage,
         })
-      }).catch(() => {}) // Don't block on this
+      })
+
+      const payload = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        throw new Error(payload.error || 'Unable to save your request')
+      }
 
       localStorage.setItem('wc_guide_subscribed', '1')
+      localStorage.removeItem('wc_guide_dismissed')
+      trackEvent('couple_guide_capture_success', {
+        source_page: sourcePage,
+        interest,
+        event_category: 'conversion',
+      })
       setStatus('success')
     } catch (err) {
       console.error('Email capture error:', err)
+      trackEvent('couple_guide_capture_error', {
+        source_page: sourcePage,
+        interest,
+        event_category: 'conversion',
+      })
       setStatus('error')
     }
   }

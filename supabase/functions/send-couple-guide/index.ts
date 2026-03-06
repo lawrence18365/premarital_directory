@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4"
+import { normalizeCoupleSubscription } from "../_shared/coupleSubscription.ts"
 
 /**
  * Send Couple Guide — triggers immediately when a couple subscribes.
@@ -33,24 +34,24 @@ serve(async (req) => {
 
   try {
     const body = await req.json()
-    const { email, first_name, interest, city, state } = body
+    const subscriber = normalizeCoupleSubscription(body)
+    const firstName = subscriber.firstName || 'there'
 
-    if (!email) {
-      return new Response(JSON.stringify({ error: 'Email required' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      })
-    }
-
-    const normalizedEmail = email.toLowerCase().trim()
-    const name = first_name?.trim() || ''
-    const firstName = name || 'there'
-
-    // Check if guide already sent
-    const { data: existing } = await supabase
+    const { data: existing, error: upsertError } = await supabase
       .from('couple_subscribers')
+      .upsert({
+        email: subscriber.email,
+        first_name: subscriber.firstName,
+        interest: subscriber.interest,
+        city: subscriber.city,
+        state: subscriber.stateAbbr,
+        source_page: subscriber.sourcePage,
+        unsubscribed_at: null,
+      }, { onConflict: 'email' })
       .select('guide_sent_at')
-      .eq('email', normalizedEmail)
       .single()
+
+    if (upsertError) throw upsertError
 
     if (existing?.guide_sent_at) {
       return new Response(JSON.stringify({ success: true, already_sent: true }), {
@@ -58,17 +59,16 @@ serve(async (req) => {
       })
     }
 
-    // Build location-aware content
-    const locationStr = city && state ? `${city}, ${state}` : city || state || 'your area'
-    const directoryLink = city && state
-      ? `https://www.weddingcounselors.com/premarital-counseling/${state.toLowerCase().replace(/\s+/g, '-')}/${city.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')}`
-      : 'https://www.weddingcounselors.com/premarital-counseling'
-
-    const interestLabel = interest === 'officiant' ? 'a wedding officiant'
-      : interest === 'both' ? 'premarital counseling and a wedding officiant'
+    const interestLabel = subscriber.interest === 'officiant' ? 'a wedding officiant'
+      : subscriber.interest === 'both' ? 'premarital counseling and a wedding officiant'
       : 'premarital counseling'
 
-    const guideHtml = generateGuideEmail({ firstName, locationStr, directoryLink, interestLabel })
+    const guideHtml = generateGuideEmail({
+      firstName,
+      locationStr: subscriber.locationLabel,
+      directoryLink: subscriber.directoryLink,
+      interestLabel,
+    })
 
     // Send via Resend
     const res = await fetch('https://api.resend.com/emails', {
@@ -79,7 +79,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: 'Wedding Counselors <hello@weddingcounselors.com>',
-        to: [normalizedEmail],
+        to: [subscriber.email],
         subject: `${firstName}, here's your guide — 10 Questions Every Couple Should Discuss`,
         html: guideHtml,
       }),
@@ -91,10 +91,12 @@ serve(async (req) => {
     }
 
     // Mark as sent
-    await supabase
+    const { error: updateError } = await supabase
       .from('couple_subscribers')
       .update({ guide_sent_at: new Date().toISOString() })
-      .eq('email', normalizedEmail)
+      .eq('email', subscriber.email)
+
+    if (updateError) throw updateError
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -102,8 +104,11 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Send couple guide error:', error)
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    const status = message === 'Email required' ? 400 : 500
+
+    return new Response(JSON.stringify({ error: message }), {
+      status, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
   }
 })

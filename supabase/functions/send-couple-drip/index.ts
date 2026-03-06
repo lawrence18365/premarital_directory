@@ -1,6 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4"
 import { requireInternalKey } from "../_shared/auth.ts"
+import {
+  buildDirectoryLink,
+  buildLocationLabel,
+  getStateName,
+  normalizeStateAbbr,
+} from "../_shared/coupleSubscription.ts"
 
 /**
  * Couple Drip Emails — runs daily via GitHub Actions.
@@ -20,13 +26,6 @@ const DISCOUNT_STATES: Record<string, { discount: string; link: string }> = {
   'SC': { discount: '$25', link: '/premarital-counseling/marriage-license-discount/south-carolina' },
   'TN': { discount: '$60', link: '/premarital-counseling/marriage-license-discount/tennessee' },
   'TX': { discount: '$60', link: '/premarital-counseling/marriage-license-discount/texas' },
-}
-
-const STATE_ABBR_MAP: Record<string, string> = {
-  'florida': 'FL', 'georgia': 'GA', 'maryland': 'MD', 'minnesota': 'MN',
-  'oklahoma': 'OK', 'south carolina': 'SC', 'tennessee': 'TN', 'texas': 'TX',
-  'fl': 'FL', 'ga': 'GA', 'md': 'MD', 'mn': 'MN',
-  'ok': 'OK', 'sc': 'SC', 'tn': 'TN', 'tx': 'TX',
 }
 
 const BASE = 'https://www.weddingcounselors.com'
@@ -68,36 +67,38 @@ serve(async (req) => {
     const createdAt = new Date(sub.created_at)
     const daysSinceSignup = (now.getTime() - createdAt.getTime()) / 86400000
     const firstName = sub.first_name || 'there'
-    const locationStr = sub.city && sub.state ? `${sub.city}, ${sub.state}` : sub.city || sub.state || 'your area'
+    const locationStr = buildLocationLabel(sub.city, sub.state)
+    const stateAbbr = normalizeStateAbbr(sub.state)
+    const stateName = getStateName(sub.state) || sub.state || 'your state'
+    const normalizedCity = typeof sub.city === 'string' ? sub.city.trim() || null : null
 
     // --- DAY 3: Personalized counselor recommendations ---
     if (daysSinceSignup >= 3 && !sub.drip_day3_sent_at) {
-      const stateSlug = sub.state
-        ? sub.state.toLowerCase().replace(/\s+/g, '-')
-        : null
-      const citySlug = sub.city
-        ? sub.city.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
-        : null
-
-      const directoryLink = stateSlug && citySlug
-        ? `${BASE}/premarital-counseling/${stateSlug}/${citySlug}`
-        : `${BASE}/premarital-counseling`
+      const directoryLink = buildDirectoryLink(normalizedCity, stateAbbr)
 
       // Count providers in their area
       let providerCount = 0
-      if (stateSlug) {
-        const query = supabase
+      const buildProfileCountQuery = () => supabase
           .from('profiles')
           .select('id', { count: 'exact', head: true })
           .eq('is_hidden', false)
           .in('moderation_status', ['approved'])
 
-        if (sub.state && sub.state.length === 2) {
-          query.eq('state_province', sub.state.toUpperCase())
+      if (stateAbbr) {
+        if (normalizedCity) {
+          const { count: cityCount } = await buildProfileCountQuery()
+            .eq('state_province', stateAbbr)
+            .ilike('city', normalizedCity)
+
+          providerCount = cityCount || 0
         }
 
-        const { count } = await query
-        providerCount = count || 0
+        if (!providerCount) {
+          const { count: stateCount } = await buildProfileCountQuery()
+            .eq('state_province', stateAbbr)
+
+          providerCount = stateCount || 0
+        }
       }
 
       const interestMsg = sub.interest === 'officiant'
@@ -176,8 +177,6 @@ serve(async (req) => {
 
     // --- DAY 7: Marriage license discount (if applicable state) ---
     if (daysSinceSignup >= 7 && !sub.drip_day7_sent_at && sub.drip_day3_sent_at) {
-      const stateNorm = (sub.state || '').toLowerCase().trim()
-      const stateAbbr = stateNorm.length === 2 ? stateNorm.toUpperCase() : STATE_ABBR_MAP[stateNorm]
       const discountInfo = stateAbbr ? DISCOUNT_STATES[stateAbbr] : null
 
       let html: string
@@ -185,7 +184,7 @@ serve(async (req) => {
 
       if (discountInfo) {
         // They're in a discount state — lead with the savings
-        subject = `${firstName}, save ${discountInfo.discount} on your ${sub.state} marriage license`
+        subject = `${firstName}, save ${discountInfo.discount} on your ${stateName} marriage license`
         html = `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
             <div style="padding: 32px 24px;">
@@ -194,13 +193,13 @@ serve(async (req) => {
               </h2>
 
               <p style="font-size: 15px; line-height: 1.7; margin-bottom: 16px;">
-                ${firstName}, ${sub.state} is one of eight states that reduces your marriage license fee when you complete premarital counseling.
+                ${firstName}, ${stateName} is one of eight states that reduces your marriage license fee when you complete premarital counseling.
                 That's <strong>${discountInfo.discount} back in your pocket</strong> — and for many couples, it covers most or all of the counseling cost.
               </p>
 
               <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 20px; margin-bottom: 24px; text-align: center;">
                 <div style="font-size: 28px; font-weight: 700; color: #0d9488;">${discountInfo.discount}</div>
-                <div style="font-size: 14px; color: #666; margin-top: 4px;">marriage license discount in ${sub.state}</div>
+                <div style="font-size: 14px; color: #666; margin-top: 4px;">marriage license discount in ${stateName}</div>
               </div>
 
               <p style="font-size: 15px; line-height: 1.7; margin-bottom: 24px;">
@@ -209,7 +208,7 @@ serve(async (req) => {
 
               <div style="text-align: center; margin-bottom: 24px;">
                 <a href="${BASE}${discountInfo.link}" style="display: inline-block; padding: 14px 28px; background: #0d9488; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">
-                  See ${sub.state} Discount Details
+                  See ${stateName} Discount Details
                 </a>
               </div>
 

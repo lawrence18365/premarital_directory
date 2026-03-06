@@ -36,3 +36,13 @@ entrypoint = "./functions/process-concierge-lead/index.ts"
 enabled = true
 verify_jwt = false
 entrypoint = "./functions/send-lead-followup/index.ts"
+
+[functions.send-couple-guide]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/send-couple-guide/index.ts"
+
+[functions.send-couple-drip]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/send-couple-drip/index.ts"
