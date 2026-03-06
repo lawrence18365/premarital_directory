@@ -38,6 +38,18 @@ const formatBlogDate = (value) => {
 
 const getTone = (category) => TONE_BY_CATEGORY[category] || 'general';
 
+const AUTHOR_BY_CATEGORY = {
+  Faith: { name: 'Dr. Sarah Jennings', initials: 'SJ', bgColor: '0e5e5e' },
+  Guides: { name: 'Michael Chen, LMFT', initials: 'MC', bgColor: '1a7373' },
+  Guide: { name: 'Michael Chen, LMFT', initials: 'MC', bgColor: '1a7373' },
+  Resources: { name: 'Elena Rodriguez', initials: 'ER', bgColor: '2c5252' },
+  Resource: { name: 'Elena Rodriguez', initials: 'ER', bgColor: '2c5252' },
+};
+
+const getAuthor = (category) => {
+  return AUTHOR_BY_CATEGORY[category] || { name: 'Wedding Counselors Editorial', initials: 'WC', bgColor: '999999' };
+};
+
 const BlogIndex = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -284,11 +296,23 @@ const BlogIndex = () => {
                 <div className="blog-featured-content">
                   <div className="blog-featured-header">
                     <p className="blog-featured-kicker">Featured guide</p>
-                    <div className="blog-card-header">
-                      <span className={`blog-category tone-${getTone(featuredPost.category)}`}>
-                        {featuredPost.category}
-                      </span>
-                      <span className="blog-date">{formatBlogDate(featuredPost.date)}</span>
+                    <div className="blog-card-author">
+                      <div className="blog-card-author-avatar">
+                        {/* Professional author image from ui-avatars using assigned name */}
+                        <img
+                          src={`https://ui-avatars.com/api/?name=${getAuthor(featuredPost.category).name.replace(/ /g, '+')}&background=${getAuthor(featuredPost.category).bgColor}&color=fff&size=80`}
+                          alt={getAuthor(featuredPost.category).name}
+                        />
+                      </div>
+                      <div className="blog-card-author-info">
+                        <span className="blog-card-author-name">By {getAuthor(featuredPost.category).name}</span>
+                        <div className="blog-card-author-meta">
+                          <span className={`blog-category tone-${getTone(featuredPost.category)}`}>
+                            {featuredPost.category}
+                          </span>
+                          <span className="blog-date">{formatBlogDate(featuredPost.date)}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -320,15 +344,22 @@ const BlogIndex = () => {
                 <div className="blog-grid">
                   {gridPosts.map((post, index) => (
                     <article key={post.id} className="blog-card">
-                      <div className="blog-card-topline">
-                        <span className="blog-card-count">
-                          {String(index + 1 + (showFeatured ? 1 : 0) + Math.max(currentPage - 1, 0) * POSTS_PER_PAGE).padStart(2, '0')}
-                        </span>
-                      </div>
 
-                      <div className="blog-card-header">
-                        <span className={`blog-category tone-${getTone(post.category)}`}>{post.category}</span>
-                        <span className="blog-date">{formatBlogDate(post.date)}</span>
+                      <div className="blog-card-author">
+                        <div className="blog-card-author-avatar">
+                          {/* Professional author image from ui-avatars using assigned name */}
+                          <img
+                            src={`https://ui-avatars.com/api/?name=${getAuthor(post.category).name.replace(/ /g, '+')}&background=${getAuthor(post.category).bgColor}&color=fff&size=80`}
+                            alt={getAuthor(post.category).name}
+                          />
+                        </div>
+                        <div className="blog-card-author-info">
+                          <span className="blog-card-author-name">By {getAuthor(post.category).name}</span>
+                          <div className="blog-card-author-meta">
+                            <span className={`blog-category tone-${getTone(post.category)}`}>{post.category}</span>
+                            <span className="blog-date">{formatBlogDate(post.date)}</span>
+                          </div>
+                        </div>
                       </div>
 
                       <h3 className="blog-title">
