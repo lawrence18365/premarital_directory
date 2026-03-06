@@ -1,12 +1,54 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { supabase } from '../../lib/supabaseClient';
 import { Helmet } from 'react-helmet';
+import { supabase } from '../../lib/supabaseClient';
 import { SEOHelmet } from '../../components/analytics';
 import Breadcrumbs, { generateBreadcrumbs } from '../../components/common/Breadcrumbs';
 import '../../assets/css/blog.css';
 
 const POSTS_PER_PAGE = 12;
+
+const TONE_BY_CATEGORY = {
+  Faith: 'faith',
+  Guides: 'guide',
+  Guide: 'guide',
+  Resources: 'resource',
+  Resource: 'resource',
+};
+
+const BLOG_STATE_GUIDES = [
+  { slug: 'premarital-counseling-texas', label: 'Texas' },
+  { slug: 'premarital-counseling-florida', label: 'Florida' },
+  { slug: 'premarital-counseling-new-york', label: 'New York' },
+  { slug: 'premarital-counseling-illinois', label: 'Illinois' },
+  { slug: 'premarital-counseling-minnesota', label: 'Minnesota' },
+  { slug: 'premarital-counseling-chicago', label: 'Chicago' },
+  { slug: 'premarital-counseling-nashville', label: 'Nashville' },
+  { slug: 'premarital-counseling-phoenix', label: 'Phoenix' },
+];
+
+const formatBlogDate = (value) => {
+  if (!value) return '';
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date(value));
+};
+
+const getPostMonogram = (post) => {
+  const source = `${post?.category || ''} ${post?.title || ''}`.replace(/[^A-Za-z0-9 ]/g, ' ').trim();
+  const tokens = source.split(/\s+/).filter(Boolean);
+
+  if (tokens.length >= 2) {
+    return `${tokens[0][0]}${tokens[1][0]}`.toUpperCase();
+  }
+
+  const fallback = source.replace(/\s+/g, '').slice(0, 2).toUpperCase();
+  return fallback || 'WC';
+};
+
+const getTone = (category) => TONE_BY_CATEGORY[category] || 'general';
 
 const BlogIndex = () => {
   const [posts, setPosts] = useState([]);
@@ -15,24 +57,23 @@ const BlogIndex = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const activeCategory = searchParams.get('category') || 'All';
+  const activeQuery = searchParams.get('q') || '';
+  const deferredQuery = useDeferredValue(activeQuery.trim().toLowerCase());
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const { data, error } = await supabase
+        const { data, error: fetchError } = await supabase
           .from('posts')
           .select('*')
           .eq('status', 'published')
           .order('date', { ascending: false });
 
-        if (error) {
-          throw error;
-        }
-
-        setPosts(data);
-      } catch (error) {
-        setError(error.message);
+        if (fetchError) throw fetchError;
+        setPosts(data || []);
+      } catch (fetchError) {
+        setError(fetchError.message);
       } finally {
         setLoading(false);
       }
@@ -42,57 +83,104 @@ const BlogIndex = () => {
   }, []);
 
   const categories = useMemo(() => {
-    const cats = [...new Set(posts.map(p => p.category).filter(Boolean))];
+    const cats = [...new Set(posts.map((post) => post.category).filter(Boolean))];
     cats.sort();
     return ['All', ...cats];
   }, [posts]);
 
   const filteredPosts = useMemo(() => {
-    if (activeCategory === 'All') return posts;
-    return posts.filter(p => p.category === activeCategory);
-  }, [posts, activeCategory]);
+    const matchesCategory = activeCategory === 'All'
+      ? posts
+      : posts.filter((post) => post.category === activeCategory);
 
-  // Page 1: featured + first POSTS_PER_PAGE-1 grid cards. Page 2+: POSTS_PER_PAGE grid cards.
+    if (!deferredQuery) return matchesCategory;
+
+    return matchesCategory.filter((post) => {
+      const haystack = [
+        post.title,
+        post.excerpt,
+        post.category,
+        post.meta_description,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return haystack.includes(deferredQuery);
+    });
+  }, [activeCategory, deferredQuery, posts]);
+
   const paginatedPosts = useMemo(() => {
     if (currentPage === 1) {
       return filteredPosts.slice(0, POSTS_PER_PAGE);
     }
+
     const start = POSTS_PER_PAGE + (currentPage - 2) * POSTS_PER_PAGE;
     return filteredPosts.slice(start, start + POSTS_PER_PAGE);
-  }, [filteredPosts, currentPage]);
+  }, [currentPage, filteredPosts]);
 
   const actualTotalPages = useMemo(() => {
-    if (filteredPosts.length === 0) return 1;
-    if (filteredPosts.length <= POSTS_PER_PAGE) return 1;
+    if (filteredPosts.length === 0 || filteredPosts.length <= POSTS_PER_PAGE) return 1;
     return Math.ceil((filteredPosts.length - POSTS_PER_PAGE) / POSTS_PER_PAGE) + 1;
-  }, [filteredPosts]);
+  }, [filteredPosts.length]);
 
-  const setCategory = (cat) => {
+  const newestPostDate = useMemo(() => {
+    if (!posts.length) return '';
+    return formatBlogDate(posts[0].updated_at || posts[0].date || posts[0].created_at);
+  }, [posts]);
+
+  const showFeatured = currentPage === 1 && paginatedPosts.length > 0;
+  const featuredPost = showFeatured ? paginatedPosts[0] : null;
+  const gridPosts = showFeatured ? paginatedPosts.slice(1) : paginatedPosts;
+  const breadcrumbItems = generateBreadcrumbs.blogIndex();
+
+  const setCategory = (category) => {
     const params = new URLSearchParams(searchParams);
-    if (cat === 'All') {
+
+    if (category === 'All') {
       params.delete('category');
     } else {
-      params.set('category', cat);
+      params.set('category', category);
     }
+
     params.delete('page');
     setSearchParams(params);
   };
 
+  const setQuery = (value) => {
+    const params = new URLSearchParams(searchParams);
+
+    if (value.trim()) {
+      params.set('q', value);
+    } else {
+      params.delete('q');
+    }
+
+    params.delete('page');
+    setSearchParams(params, { replace: true });
+  };
+
   const setPage = (page) => {
     const params = new URLSearchParams(searchParams);
+
     if (page <= 1) {
       params.delete('page');
     } else {
       params.set('page', String(page));
     }
+
     setSearchParams(params);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const clearFilters = () => {
+    setSearchParams({});
   };
 
   if (loading) {
     return (
       <div className="blog-index">
-        <div className="container" style={{ textAlign: 'center', padding: 'var(--space-16) 0' }}>
+        <div className="container blog-loading-state">
           <div className="loading-spinner" />
           <p>Loading articles…</p>
         </div>
@@ -103,16 +191,12 @@ const BlogIndex = () => {
   if (error) {
     return (
       <div className="blog-index">
-        <div className="container" style={{ textAlign: 'center', padding: 'var(--space-16) 0' }}>
+        <div className="container blog-loading-state">
           <div className="error-message">{error}</div>
         </div>
       </div>
     );
   }
-
-  const breadcrumbItems = generateBreadcrumbs.blogIndex()
-  const showFeatured = currentPage === 1 && paginatedPosts.length > 0;
-  const gridPosts = showFeatured ? paginatedPosts.slice(1) : paginatedPosts;
 
   return (
     <div className="blog-index">
@@ -123,91 +207,162 @@ const BlogIndex = () => {
         breadcrumbs={breadcrumbItems}
       />
       <Helmet>
-        <link rel="alternate" type="application/rss+xml" title="Wedding Counselors Blog RSS" href={`${process.env.REACT_APP_SUPABASE_URL}/functions/v1/blog-rss`} />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Wedding Counselors Blog RSS"
+          href={`${process.env.REACT_APP_SUPABASE_URL}/functions/v1/blog-rss`}
+        />
       </Helmet>
+
       <div className="container">
         <Breadcrumbs items={breadcrumbItems} />
-      </div>
 
-      <div className="container">
         <header className="blog-header">
-          <h1>Marriage & Relationship Guidance</h1>
-          <p className="blog-subtitle">
-            Expert insights and practical advice for couples preparing for marriage
-          </p>
+          <div className="blog-header-copy">
+            <p className="blog-eyebrow">The Journal</p>
+            <h1>Guides for couples who want more than generic marriage advice.</h1>
+            <p className="blog-subtitle">
+              Plain-English explainers on premarital counseling, church marriage prep, assessments,
+              costs, and finding the right support before the wedding.
+            </p>
+          </div>
+
+          <div className="blog-header-panels" aria-label="Blog overview">
+            <div className="blog-stat-card">
+              <span className="blog-stat-value">{posts.length}</span>
+              <span className="blog-stat-label">Published guides</span>
+            </div>
+            <div className="blog-stat-card">
+              <span className="blog-stat-value">{Math.max(categories.length - 1, 0)}</span>
+              <span className="blog-stat-label">Core topics</span>
+            </div>
+            <div className="blog-stat-card">
+              <span className="blog-stat-value">{newestPostDate || 'Recently'}</span>
+              <span className="blog-stat-label">Latest refresh</span>
+            </div>
+          </div>
         </header>
 
-        {/* Category filters */}
-        {categories.length > 2 && (
-          <div className="blog-filters" role="navigation" aria-label="Filter articles by category">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                className={`blog-filter-chip${activeCategory === cat ? ' active' : ''}`}
-                onClick={() => setCategory(cat)}
-                aria-pressed={activeCategory === cat}
-              >
-                {cat}
+        <section className="blog-tools" aria-label="Browse articles">
+          <label className="blog-search">
+            <span className="blog-search-label">Search guides</span>
+            <input
+              type="search"
+              className="blog-search-input"
+              value={activeQuery}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search topics like Pre-Cana, SYMBIS, pastor counseling..."
+            />
+          </label>
+
+          {categories.length > 2 && (
+            <div className="blog-filters" role="navigation" aria-label="Filter articles by category">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  className={`blog-filter-chip${activeCategory === category ? ' active' : ''}`}
+                  onClick={() => setCategory(category)}
+                  aria-pressed={activeCategory === category}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="blog-results-bar" aria-live="polite">
+            <p className="blog-results-copy">
+              Showing <strong>{filteredPosts.length}</strong> guide{filteredPosts.length === 1 ? '' : 's'}
+              {activeCategory !== 'All' ? ` in ${activeCategory}` : ''}
+              {activeQuery ? ` for "${activeQuery}"` : ''}
+            </p>
+            {(activeCategory !== 'All' || activeQuery) && (
+              <button className="blog-reset-link" onClick={clearFilters}>
+                Reset filters
               </button>
-            ))}
+            )}
           </div>
-        )}
+        </section>
 
         {paginatedPosts.length > 0 ? (
           <>
-            {/* Featured post (page 1 only) */}
-            {showFeatured && (
+            {featuredPost && (
               <article className="blog-featured">
-                <div className="blog-featured-banner" aria-hidden="true" />
+                <div className={`blog-featured-mark tone-${getTone(featuredPost.category)}`} aria-hidden="true">
+                  <span>{getPostMonogram(featuredPost)}</span>
+                </div>
                 <div className="blog-featured-content">
-                  <div className="blog-card-header">
-                    <span className="blog-category">{paginatedPosts[0].category}</span>
-                    <span className="blog-date">{new Date(paginatedPosts[0].date).toLocaleDateString()}</span>
+                  <div className="blog-featured-header">
+                    <p className="blog-featured-kicker">Featured guide</p>
+                    <div className="blog-card-header">
+                      <span className={`blog-category tone-${getTone(featuredPost.category)}`}>
+                        {featuredPost.category}
+                      </span>
+                      <span className="blog-date">{formatBlogDate(featuredPost.date)}</span>
+                    </div>
                   </div>
+
                   <h2 className="blog-featured-title">
-                    <Link to={`/blog/${paginatedPosts[0].slug}`}>{paginatedPosts[0].title}</Link>
+                    <Link to={`/blog/${featuredPost.slug}`}>{featuredPost.title}</Link>
                   </h2>
-                  {paginatedPosts[0].excerpt && (
-                    <p className="blog-featured-excerpt">{paginatedPosts[0].excerpt}</p>
+
+                  {featuredPost.excerpt && (
+                    <p className="blog-featured-excerpt">{featuredPost.excerpt}</p>
                   )}
+
                   <div className="blog-card-footer">
-                    <span className="read-time">{paginatedPosts[0].read_time}</span>
-                    <Link to={`/blog/${paginatedPosts[0].slug}`} className="read-more">
-                      Read Article
+                    <span className="read-time">{featuredPost.read_time}</span>
+                    <Link to={`/blog/${featuredPost.slug}`} className="read-more">
+                      Read article
                     </Link>
                   </div>
                 </div>
               </article>
             )}
 
-            {/* Posts grid */}
             {gridPosts.length > 0 && (
-              <div className="blog-grid">
-                {gridPosts.map((post) => (
-                  <article key={post.id} className="blog-card">
-                    <div className="blog-card-banner" aria-hidden="true" />
-                    <div className="blog-card-inner">
-                      <div className="blog-card-header">
-                        <span className="blog-category">{post.category}</span>
-                        <span className="blog-date">{new Date(post.date).toLocaleDateString()}</span>
+              <section className="blog-collection" aria-labelledby="latest-guides-heading">
+                <div className="blog-collection-header">
+                  <h2 id="latest-guides-heading">Latest guides</h2>
+                  <p>Research-backed answers, practical frameworks, and faith-aware explainers.</p>
+                </div>
+
+                <div className="blog-grid">
+                  {gridPosts.map((post, index) => (
+                    <article key={post.id} className="blog-card">
+                      <div className="blog-card-topline">
+                        <div className={`blog-card-mark tone-${getTone(post.category)}`} aria-hidden="true">
+                          {getPostMonogram(post)}
+                        </div>
+                        <span className="blog-card-count">
+                          {String(index + 1 + (showFeatured ? 1 : 0) + Math.max(currentPage - 1, 0) * POSTS_PER_PAGE).padStart(2, '0')}
+                        </span>
                       </div>
-                      <h2 className="blog-title">
+
+                      <div className="blog-card-header">
+                        <span className={`blog-category tone-${getTone(post.category)}`}>{post.category}</span>
+                        <span className="blog-date">{formatBlogDate(post.date)}</span>
+                      </div>
+
+                      <h3 className="blog-title">
                         <Link to={`/blog/${post.slug}`}>{post.title}</Link>
-                      </h2>
+                      </h3>
+
                       {post.excerpt && <p className="blog-excerpt">{post.excerpt}</p>}
+
                       <div className="blog-card-footer">
                         <span className="read-time">{post.read_time}</span>
                         <Link to={`/blog/${post.slug}`} className="read-more">
-                          Read Article
+                          Read article
                         </Link>
                       </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
             )}
 
-            {/* Pagination */}
             {actualTotalPages > 1 && (
               <nav className="blog-pagination" aria-label="Blog pagination">
                 <button
@@ -218,7 +373,7 @@ const BlogIndex = () => {
                 >
                   ← Prev
                 </button>
-                {Array.from({ length: actualTotalPages }, (_, i) => i + 1).map((page) => (
+                {Array.from({ length: actualTotalPages }, (_, index) => index + 1).map((page) => (
                   <button
                     key={page}
                     className={`blog-pagination-btn${page === currentPage ? ' active' : ''}`}
@@ -241,58 +396,44 @@ const BlogIndex = () => {
             )}
           </>
         ) : (
-          <div className="no-posts">
-            <p>
-              {activeCategory !== 'All'
-                ? `No articles in "${activeCategory}" yet. Try another category.`
-                : 'No posts yet. Check back soon!'}
-            </p>
+          <div className="blog-empty-state">
+            <div className="blog-empty-mark" aria-hidden="true">WC</div>
+            <h2>No guides match that combination yet.</h2>
+            <p>Try another category, clear your filters, or browse our latest articles instead.</p>
+            <button className="btn btn-outline" onClick={clearFilters}>
+              Reset filters
+            </button>
           </div>
         )}
 
-        <section className="blog-cta">
-          <h3>Need Personalized Guidance?</h3>
-          <p>Find qualified premarital counselors in your area</p>
-          <Link to="/premarital-counseling" className="btn btn-primary">Find Counselors</Link>
+        <section className="blog-directory-panel">
+          <div>
+            <p className="blog-panel-eyebrow">Need more than an article?</p>
+            <h2>Find a premarital counselor who matches your style, faith, and budget.</h2>
+            <p>
+              Browse licensed therapists, Christian counselors, and structured marriage-prep providers
+              in your area.
+            </p>
+          </div>
+          <div className="blog-directory-actions">
+            <Link to="/premarital-counseling" className="btn btn-primary">
+              Find Counselors
+            </Link>
+            <Link to="/quiz/relationship-readiness" className="btn btn-outline">
+              Take the Readiness Quiz
+            </Link>
+          </div>
         </section>
 
-        {/* State Guides — internal links for SEO discovery */}
-        <section style={{
-          marginTop: 'var(--space-12)',
-          padding: 'var(--space-8)',
-          background: 'var(--gray-50, #f9fafb)',
-          borderRadius: 'var(--radius-lg, 12px)'
-        }}>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: 'var(--space-4)', fontWeight: 600 }}>
-            Premarital Counseling by State
-          </h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
-            {[
-              { slug: 'premarital-counseling-texas', label: 'Texas' },
-              { slug: 'premarital-counseling-florida', label: 'Florida' },
-              { slug: 'premarital-counseling-new-york', label: 'New York' },
-              { slug: 'premarital-counseling-illinois', label: 'Illinois' },
-              { slug: 'premarital-counseling-minnesota', label: 'Minnesota' },
-              { slug: 'premarital-counseling-chicago', label: 'Chicago' },
-              { slug: 'premarital-counseling-nashville', label: 'Nashville' },
-              { slug: 'premarital-counseling-phoenix', label: 'Phoenix' },
-            ].map(s => (
-              <Link
-                key={s.slug}
-                to={`/blog/${s.slug}`}
-                style={{
-                  display: 'inline-block',
-                  padding: '6px 14px',
-                  border: '1px solid var(--gray-200, #e5e7eb)',
-                  borderRadius: 'var(--radius-md, 8px)',
-                  fontSize: '0.85rem',
-                  color: 'var(--gray-700, #374151)',
-                  textDecoration: 'none',
-                  background: '#fff',
-                  transition: 'border-color 0.15s'
-                }}
-              >
-                {s.label}
+        <section className="blog-state-links" aria-labelledby="blog-state-links-heading">
+          <div className="blog-state-links-header">
+            <p className="blog-panel-eyebrow">Regional guides</p>
+            <h2 id="blog-state-links-heading">Popular state and city explainers</h2>
+          </div>
+          <div className="blog-state-links-grid">
+            {BLOG_STATE_GUIDES.map((guide) => (
+              <Link key={guide.slug} to={`/blog/${guide.slug}`} className="blog-state-link">
+                {guide.label}
               </Link>
             ))}
           </div>
