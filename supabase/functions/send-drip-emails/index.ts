@@ -26,6 +26,8 @@ interface DripStep {
   html: (profile: any, stats: any) => string
 }
 
+const getStepKey = (step: string | number) => String(step)
+
 const DRIP_STEPS: DripStep[] = [
   {
     step: 1,
@@ -110,10 +112,10 @@ serve(async (req) => {
       .in('profile_id', profileIds)
 
     // Build sent steps map: profileId -> Set of sent steps
-    const sentSteps: Record<string, Set<number>> = {}
+    const sentSteps: Record<string, Set<string>> = {}
     for (const log of (dripLogs || [])) {
       if (!sentSteps[log.profile_id]) sentSteps[log.profile_id] = new Set()
-      sentSteps[log.profile_id].add(log.step)
+      sentSteps[log.profile_id].add(getStepKey(log.step))
     }
 
     // Get view stats for step 2 (first week recap)
@@ -141,7 +143,7 @@ serve(async (req) => {
         : (profile.email_preferences || {}).marketing !== false
       if (!optedIn) { skipped++; continue }
 
-      const profileSentSteps = sentSteps[profile.id] || new Set()
+      const profileSentSteps = sentSteps[profile.id] || new Set<string>()
       const referenceDate = new Date(profile.claimed_at || profile.created_at)
       const daysSinceCreation = Math.floor((now.getTime() - referenceDate.getTime()) / (1000 * 60 * 60 * 24))
       const dripType = profile.is_claimed ? 'claim_welcome' : 'welcome'
@@ -152,7 +154,7 @@ serve(async (req) => {
         // Don't send steps that are way too late (more than 7 days past threshold)
         if (daysSinceCreation > dripStep.daysAfter + 7) continue
         // Check idempotency
-        if (profileSentSteps.has(dripStep.step)) continue
+        if (profileSentSteps.has(getStepKey(dripStep.step))) continue
 
         const stats = { totalViews: viewCounts[profile.id] || 0 }
         const html = dripStep.html(profile, stats)
@@ -185,7 +187,7 @@ serve(async (req) => {
           await supabase.from('drip_email_log').insert({
             profile_id: profile.id,
             drip_type: dripType,
-            step: dripStep.step,
+            step: getStepKey(dripStep.step),
             email_id: result.id,
           })
 

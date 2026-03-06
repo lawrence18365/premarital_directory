@@ -24,6 +24,8 @@ interface Milestone {
   html: (profile: any, stats: ProfileStats) => string
 }
 
+const getStepKey = (step: string | number) => String(step)
+
 interface ProfileStats {
   views: number
   reveals: number
@@ -204,10 +206,10 @@ serve(async (req) => {
       .eq('drip_type', 'engagement')
       .in('profile_id', profileIds)
 
-    const sentSteps: Record<string, Set<number>> = {}
+    const sentSteps: Record<string, Set<string>> = {}
     for (const log of (dripLogs || [])) {
       if (!sentSteps[log.profile_id]) sentSteps[log.profile_id] = new Set()
-      sentSteps[log.profile_id].add(log.step)
+      sentSteps[log.profile_id].add(getStepKey(log.step))
     }
 
     // Get view counts per profile
@@ -255,7 +257,7 @@ serve(async (req) => {
         : (profile.email_preferences || {}).marketing !== false
       if (!optedIn) { skipped++; continue }
 
-      const profileSent = sentSteps[profile.id] || new Set()
+      const profileSent = sentSteps[profile.id] || new Set<string>()
       const stats: ProfileStats = {
         views: viewCounts[profile.id] || 0,
         reveals: revealCounts[profile.id] || 0,
@@ -263,7 +265,7 @@ serve(async (req) => {
       }
 
       for (const milestone of MILESTONES) {
-        if (profileSent.has(milestone.step)) continue
+        if (profileSent.has(getStepKey(milestone.step))) continue
         if (!milestone.check(stats)) continue
 
         const subject = milestone.subject(
@@ -297,7 +299,7 @@ serve(async (req) => {
           await supabase.from('drip_email_log').insert({
             profile_id: profile.id,
             drip_type: 'engagement',
-            step: milestone.step,
+            step: getStepKey(milestone.step),
             email_id: result.id,
           })
 

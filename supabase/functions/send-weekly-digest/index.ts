@@ -59,7 +59,7 @@ serve(async (req) => {
     // Get all active, claimed, approved profiles
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
-      .select('id, email, full_name, city, state_province, created_at, email_preferences')
+      .select('id, email, full_name, city, state_province, created_at, claimed_at, email_preferences')
       .eq('is_claimed', true)
       .eq('is_hidden', false)
       .eq('moderation_status', 'approved')
@@ -100,7 +100,7 @@ serve(async (req) => {
       .from('drip_email_log')
       .select('profile_id')
       .in('drip_type', ['badge_campaign', 'welcome', 'claim_welcome'])
-      .eq('step', 4)
+      .in('step', ['4', 'backlink_ask'])
 
     const alreadyReceivedBadgeAsk = new Set((badgeDripLogs || []).map(d => d.profile_id))
 
@@ -187,7 +187,7 @@ serve(async (req) => {
 
       // Only show badge CTA if: not yet verified, not already asked via drip/campaign,
       // and claimed within the last 30 days (don't nag long-term providers forever)
-      const claimedAt = new Date(profile.created_at)
+      const claimedAt = new Date(profile.claimed_at || profile.created_at)
       const daysSinceClaim = Math.floor((now.getTime() - claimedAt.getTime()) / (1000 * 60 * 60 * 24))
       const showBadgeCta = !badgeVerifiedIds.has(profile.id)
         && !alreadyReceivedBadgeAsk.has(profile.id)

@@ -72,7 +72,7 @@ serve(async (req) => {
     .from('drip_email_log')
     .select('profile_id')
     .in('drip_type', ['welcome', 'claim_welcome'])
-    .eq('step', 4)
+    .eq('step', '4')
 
   for (const r of (dripBadgeSent || [])) {
     sentIds.add((r as { profile_id: string }).profile_id)
