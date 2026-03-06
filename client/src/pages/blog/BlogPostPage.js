@@ -43,18 +43,6 @@ const formatBlogDate = (value) => {
   }).format(new Date(value));
 };
 
-const getPostMonogram = (post) => {
-  const source = `${post?.category || ''} ${post?.title || ''}`.replace(/[^A-Za-z0-9 ]/g, ' ').trim();
-  const tokens = source.split(/\s+/).filter(Boolean);
-
-  if (tokens.length >= 2) {
-    return `${tokens[0][0]}${tokens[1][0]}`.toUpperCase();
-  }
-
-  const fallback = source.replace(/\s+/g, '').slice(0, 2).toUpperCase();
-  return fallback || 'WC';
-};
-
 const getTone = (category) => TONE_BY_CATEGORY[category] || 'general';
 
 const buildHeadingList = (content) => {
@@ -164,6 +152,10 @@ const BlogPostPage = () => {
   const breadcrumbItems = useMemo(() => generateBreadcrumbs.blogPost(post?.title || 'Blog post'), [post?.title]);
   const articleStructuredData = useMemo(() => generateArticleStructuredData(post), [post]);
   const tableOfContents = useMemo(() => buildHeadingList(post?.content), [post?.content]);
+  const primaryJumpLinks = useMemo(
+    () => tableOfContents.filter((heading) => heading.level === 2).slice(0, 4),
+    [tableOfContents],
+  );
 
   const markdownComponents = (() => {
     const seen = new Map();
@@ -218,7 +210,7 @@ const BlogPostPage = () => {
     );
   }
 
-  const tone = getTone(post.category);
+  const topicLabel = post.category || 'Guide';
   const publishedDate = formatBlogDate(post.date);
   const updatedDate = formatBlogDate(post.updated_at || post.date || post.created_at);
   const hasToc = tableOfContents.length >= 3;
@@ -238,49 +230,65 @@ const BlogPostPage = () => {
 
         <div className="blog-post-layout">
           <article className="blog-post">
-            <header className="blog-post-header">
-              <div className="blog-post-heading">
-                <div className={`blog-post-mark tone-${tone}`} aria-hidden="true">
-                  {getPostMonogram(post)}
+            <header className="blog-post-header editorial-theme">
+              <div className="editorial-header-inner">
+                <div className="editorial-kicker-wrapper">
+                  <div className="editorial-kicker-line"></div>
+                  <span className="editorial-kicker">{topicLabel}</span>
+                  <div className="editorial-kicker-line"></div>
                 </div>
 
-                <div className="blog-post-heading-copy">
-                  <div className="blog-post-kicker-row">
-                    <span className={`blog-category tone-${tone}`}>{post.category || 'Guide'}</span>
-                    <span className="blog-post-updated">Updated {updatedDate}</span>
+                <h1 className="editorial-title">{post.title}</h1>
+
+                {post.excerpt && (
+                  <p className="editorial-lead">{post.excerpt}</p>
+                )}
+
+                <div className="editorial-meta-bar">
+                  <div className="editorial-meta-info">
+                    <div className="editorial-meta-item">
+                      <span className="editorial-meta-label">Written by</span>
+                      <span className="editorial-meta-value">The Wedding Counselors</span>
+                    </div>
+                    <div className="editorial-meta-item">
+                      <span className="editorial-meta-label">Published</span>
+                      <span className="editorial-meta-value">{publishedDate}</span>
+                    </div>
+                    {updatedDate !== publishedDate && (
+                      <div className="editorial-meta-item">
+                        <span className="editorial-meta-label">Updated</span>
+                        <span className="editorial-meta-value">{updatedDate}</span>
+                      </div>
+                    )}
+                    <div className="editorial-meta-item">
+                      <span className="editorial-meta-label">Read time</span>
+                      <span className="editorial-meta-value">{post.read_time}</span>
+                    </div>
                   </div>
 
-                  <h1>{post.title}</h1>
-
-                  {post.excerpt && (
-                    <p className="blog-post-lead">{post.excerpt}</p>
-                  )}
-
-                  <div className="blog-post-meta-strip">
-                    <div className="blog-post-meta-card">
-                      <span className="blog-post-meta-label">Published</span>
-                      <span className="blog-post-meta-value">{publishedDate}</span>
-                    </div>
-                    <div className="blog-post-meta-card">
-                      <span className="blog-post-meta-label">Read time</span>
-                      <span className="blog-post-meta-value">{post.read_time}</span>
-                    </div>
-                    <div className="blog-post-meta-card">
-                      <span className="blog-post-meta-label">Topic</span>
-                      <span className="blog-post-meta-value">{post.category}</span>
-                    </div>
+                  <div className="editorial-share-wrapper">
+                    <span className="editorial-share-label">Share</span>
+                    <ShareButton
+                      url={`/blog/${post.slug}`}
+                      title={post.title}
+                      text={post.excerpt || post.title}
+                      variant="pill"
+                    />
                   </div>
                 </div>
 
-                <div className="blog-post-share">
-                  <p className="blog-post-share-label">Share this guide</p>
-                  <ShareButton
-                    url={`/blog/${post.slug}`}
-                    title={post.title}
-                    text={post.excerpt || post.title}
-                    variant="pill"
-                  />
-                </div>
+                {primaryJumpLinks.length > 0 && (
+                  <div className="editorial-jump-nav" aria-label="Jump to article sections">
+                    <span className="editorial-jump-label">In this guide</span>
+                    <div className="editorial-jump-links">
+                      {primaryJumpLinks.map((heading) => (
+                        <a key={heading.id} href={`#${heading.id}`} className="editorial-jump-link">
+                          {heading.title}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {hasToc && (

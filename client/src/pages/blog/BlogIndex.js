@@ -36,18 +36,6 @@ const formatBlogDate = (value) => {
   }).format(new Date(value));
 };
 
-const getPostMonogram = (post) => {
-  const source = `${post?.category || ''} ${post?.title || ''}`.replace(/[^A-Za-z0-9 ]/g, ' ').trim();
-  const tokens = source.split(/\s+/).filter(Boolean);
-
-  if (tokens.length >= 2) {
-    return `${tokens[0][0]}${tokens[1][0]}`.toUpperCase();
-  }
-
-  const fallback = source.replace(/\s+/g, '').slice(0, 2).toUpperCase();
-  return fallback || 'WC';
-};
-
 const getTone = (category) => TONE_BY_CATEGORY[category] || 'general';
 
 const BlogIndex = () => {
@@ -220,7 +208,11 @@ const BlogIndex = () => {
 
         <header className="blog-header">
           <div className="blog-header-copy">
-            <p className="blog-eyebrow">The Journal</p>
+            <div className="blog-eyebrow-container">
+              <div className="blog-eyebrow-line"></div>
+              <p className="blog-eyebrow">The Journal</p>
+              <div className="blog-eyebrow-line"></div>
+            </div>
             <h1>Guides for couples who want more than generic marriage advice.</h1>
             <p className="blog-subtitle">
               Plain-English explainers on premarital counseling, church marriage prep, assessments,
@@ -289,9 +281,6 @@ const BlogIndex = () => {
           <>
             {featuredPost && (
               <article className="blog-featured">
-                <div className={`blog-featured-mark tone-${getTone(featuredPost.category)}`} aria-hidden="true">
-                  <span>{getPostMonogram(featuredPost)}</span>
-                </div>
                 <div className="blog-featured-content">
                   <div className="blog-featured-header">
                     <p className="blog-featured-kicker">Featured guide</p>
@@ -332,9 +321,6 @@ const BlogIndex = () => {
                   {gridPosts.map((post, index) => (
                     <article key={post.id} className="blog-card">
                       <div className="blog-card-topline">
-                        <div className={`blog-card-mark tone-${getTone(post.category)}`} aria-hidden="true">
-                          {getPostMonogram(post)}
-                        </div>
                         <span className="blog-card-count">
                           {String(index + 1 + (showFeatured ? 1 : 0) + Math.max(currentPage - 1, 0) * POSTS_PER_PAGE).padStart(2, '0')}
                         </span>
