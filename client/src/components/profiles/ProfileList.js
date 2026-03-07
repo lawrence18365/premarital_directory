@@ -84,8 +84,8 @@ const ProfileList = ({ profiles, loading, error, showViewAll = false }) => {
         {sponsoredProfiles.length > 0 && (
           <>
             <div className="section-header">
-              <h2 className="font-display">Featured Professionals</h2>
-              <p>Premium listings from counselors who chose to be featured</p>
+              <h2 className="font-display">Featured Placements</h2>
+              <p>Clearly labeled promotional placements from counselors who chose extra merchandising.</p>
             </div>
             <div className="profiles-grid">
               {sponsoredProfiles.map(profile => (
@@ -99,7 +99,7 @@ const ProfileList = ({ profiles, loading, error, showViewAll = false }) => {
           <>
             <div className="section-header">
               <h2 className="font-display">
-                {sponsoredProfiles.length > 0 ? 'More Professionals' : 'Premarital Counseling Professionals'}
+                {sponsoredProfiles.length > 0 ? 'Organic Results' : 'Premarital Counseling Professionals'}
               </h2>
               <p>
                 Showing {regularProfiles.length} professional{regularProfiles.length !== 1 ? 's' : ''}

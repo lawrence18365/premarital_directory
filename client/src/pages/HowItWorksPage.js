@@ -99,8 +99,10 @@ const HowItWorksPage = () => {
             <h2>Our Commitment</h2>
             <p>
               We are committed to helping engaged couples find qualified premarital counseling
-              professionals. Our directory is free for couples to use, and we do not accept payment
-              in exchange for favorable placement in search results. Read our{' '}
+              professionals. Our directory is free for couples to use. Organic ranking is based on
+              listing quality signals like claim status, profile completeness, pricing/session detail,
+              and freshness. If we run clearly labeled featured placements or sponsorship modules,
+              they are disclosed and do not rewrite those organic criteria. Read our{' '}
               <Link to="/editorial-standards">editorial standards</Link> and{' '}
               <Link to="/guidelines">community guidelines</Link> for more information.
             </p>

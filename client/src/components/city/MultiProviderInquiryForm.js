@@ -3,11 +3,6 @@ import { supabase } from '../../lib/supabaseClient'
 
 const MAX_SELECTABLE = 5
 
-const getTierPriority = (tier) => {
-  const order = { area_spotlight: 1, local_featured: 2, community: 3 }
-  return order[tier] || 99
-}
-
 /**
  * Optional multi-provider inquiry form.
  * Couples explicitly choose the counselors to contact.
@@ -29,7 +24,6 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
         const aFit = Number(a.premaritalFitScore) || 0
         const bFit = Number(b.premaritalFitScore) || 0
         if (bFit !== aFit) return bFit - aFit
-        if (getTierPriority(a.tier) !== getTierPriority(b.tier)) return getTierPriority(a.tier) - getTierPriority(b.tier)
         return new Date(b.created_at) - new Date(a.created_at)
       })
       .slice(0, 18)
@@ -84,9 +78,17 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
       if (insertError) throw insertError
 
       // Send all emails server-side via edge function (no provider emails exposed client-side)
-      await supabase.functions.invoke('send-inquiry-notifications', {
+      const { data: notificationResult, error: notificationError } = await supabase.functions.invoke('send-inquiry-notifications', {
         body: { inquiryId: inserted.id }
       })
+
+      if (notificationError) {
+        throw new Error('We saved your request, but could not notify counselors yet. Please try again in a moment.')
+      }
+
+      if (!notificationResult?.success) {
+        throw new Error(notificationResult?.error || 'We saved your request, but could not notify counselors yet. Please try again in a moment.')
+      }
 
       setSubmitted(true)
     } catch (submitError) {

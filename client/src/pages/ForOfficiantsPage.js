@@ -32,6 +32,7 @@ const CITY_LINKS = [
 
 const ForOfficiantsPage = () => {
   const [copiedSnippet, setCopiedSnippet] = useState(null)
+  const partnerToolsUrl = '/partners?audience=officiant'
 
   const handleCopy = (snippet, label) => {
     navigator.clipboard.writeText(snippet).then(() => {
@@ -90,13 +91,13 @@ const ForOfficiantsPage = () => {
               website, or booking confirmation.
             </p>
             <div style={{ display: 'flex', gap: 'var(--space-4)', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a
-                href="#city-link-section"
+              <Link
+                to={partnerToolsUrl}
                 className="btn btn-primary"
                 style={{ background: 'white', color: 'var(--primary)', fontWeight: 600 }}
               >
-                Get Your Free City Link
-              </a>
+                Generate My Tracked Link
+              </Link>
               <a
                 href="#how-it-works"
                 className="btn btn-outline"
@@ -125,7 +126,7 @@ const ForOfficiantsPage = () => {
                   margin: '0 auto var(--space-3)', fontSize: '1.25rem', fontWeight: 700
                 }}>1</div>
                 <h3>We send you a link</h3>
-                <p>A personalized city page URL for your area — like weddingcounselors.com/premarital-counseling/texas/dallas.</p>
+                <p>A personalized city page URL for your area, with tracking included, like weddingcounselors.com/premarital-counseling/texas/dallas.</p>
               </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{
@@ -169,8 +170,7 @@ const ForOfficiantsPage = () => {
           }}>
             <h2 style={{ marginTop: 0 }}>Get Your Free City Link</h2>
             <p>
-              Tell us your city and we will send you a personalized directory link.
-              Or grab it yourself — here are some of our most popular cities:
+              Build a tracked city link yourself in the partner tools. If you just want a quick starting point, here are some of our most popular cities:
             </p>
 
             <div style={{
@@ -207,14 +207,14 @@ const ForOfficiantsPage = () => {
               and we will send you the exact link:
             </p>
             <div style={{ marginTop: 'var(--space-4)' }}>
-              <a
-                href="mailto:hello@weddingcounselors.com?subject=City link request&body=Hi! I'm a wedding officiant in [YOUR CITY, STATE]. Please send me a directory link I can share with my couples."
+              <Link
+                to={partnerToolsUrl}
                 className="btn btn-primary btn-large"
               >
-                Email Us Your City
-              </a>
+                Open Partner Tools
+              </Link>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: 'var(--space-2)' }}>
-                hello@weddingcounselors.com — we will reply within 1 business day.
+                Generate your own tracked city link, widget, or planner version instantly.
               </p>
             </div>
           </div>
@@ -292,7 +292,7 @@ const ForOfficiantsPage = () => {
             </div>
 
             <p style={{ marginTop: 'var(--space-6)', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              Need help? Email us your page URL at{' '}
+              Need help? Build a tracked version in the <Link to={partnerToolsUrl}>partner tools</Link> or email us your page URL at{' '}
               <a href="mailto:hello@weddingcounselors.com">hello@weddingcounselors.com</a>{' '}
               and we will generate the exact embed code for your site.
             </p>

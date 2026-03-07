@@ -21,6 +21,7 @@ const EMBED_SNIPPET_SCRIPT = `<div id="wc-widget"></div>
 
 const ForChurchesPage = () => {
   const [copiedSnippet, setCopiedSnippet] = useState(null)
+  const partnerToolsUrl = '/partners?audience=church'
 
   const handleCopy = (snippet, label) => {
     navigator.clipboard.writeText(snippet).then(() => {
@@ -79,13 +80,13 @@ const ForChurchesPage = () => {
               and evidence-based approaches.
             </p>
             <div style={{ display: 'flex', gap: 'var(--space-4)', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a
-                href="#embed-section"
+              <Link
+                to={partnerToolsUrl}
                 className="btn btn-primary"
                 style={{ background: 'white', color: 'var(--primary)', fontWeight: 600 }}
               >
-                Embed the Search Box
-              </a>
+                Generate My Widget
+              </Link>
               <a
                 href="#list-program"
                 className="btn btn-outline"
@@ -114,7 +115,7 @@ const ForChurchesPage = () => {
                   margin: '0 auto var(--space-3)', fontSize: '1.25rem', fontWeight: 700
                 }}>1</div>
                 <h3>Embed the widget</h3>
-                <p>Copy a short code snippet and paste it on your marriage prep page. Takes 60 seconds.</p>
+                <p>Copy a short code snippet and paste it on your marriage prep page. The ref code makes later reporting possible.</p>
               </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{
@@ -217,7 +218,7 @@ const ForChurchesPage = () => {
             </div>
 
             <p style={{ marginTop: 'var(--space-6)', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              Need help? Email us your page URL at{' '}
+              Need help? Build a tracked version in the <Link to={partnerToolsUrl}>partner tools</Link> or email us your page URL at{' '}
               <a href="mailto:hello@weddingcounselors.com">hello@weddingcounselors.com</a>{' '}
               and we will generate the exact embed code for your site.
             </p>

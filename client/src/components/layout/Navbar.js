@@ -29,6 +29,13 @@ const STATE_LINKS = [
   { slug: 'pennsylvania', label: 'Pennsylvania' },
 ]
 
+const actionLinkStyle = {
+  color: 'var(--text-secondary)',
+  fontSize: '0.92rem',
+  fontWeight: 600,
+  textDecoration: 'none'
+}
+
 const Navbar = () => {
   const location = useLocation()
   const { user, signOut } = useAuth()
@@ -175,6 +182,15 @@ const Navbar = () => {
                 How It Works
               </Link>
             </li>
+
+            <li>
+              <Link
+                to="/partners"
+                className={location.pathname.startsWith('/partners') || location.pathname.startsWith('/for-officiants') || location.pathname.startsWith('/for-churches') ? 'active' : ''}
+              >
+                Partners
+              </Link>
+            </li>
           </ul>
 
           {/* Right login / logout */}
@@ -190,10 +206,16 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link to="/professional/signup" className="btn btn-primary">
+                <Link to="/for-officiants" className="btn btn-primary">
+                  For Officiants
+                </Link>
+                <Link to="/for-churches" className="btn btn-outline">
+                  For Churches
+                </Link>
+                <Link to="/professional/signup" style={actionLinkStyle}>
                   Join Directory
                 </Link>
-                <Link to="/professional/login" className="btn btn-outline">
+                <Link to="/professional/login" style={actionLinkStyle}>
                   Login
                 </Link>
               </>
@@ -253,6 +275,9 @@ const Navbar = () => {
             <li>
               <Link to="/how-it-works" onClick={() => setMobileMenuOpen(false)}>How It Works</Link>
             </li>
+            <li>
+              <Link to="/partners" onClick={() => setMobileMenuOpen(false)}>Partners</Link>
+            </li>
 
             {/* Specialty links in mobile */}
             <li className="mobile-section-label" style={{ padding: '16px 0 4px', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af', fontWeight: 600 }}>
@@ -298,6 +323,25 @@ const Navbar = () => {
               </Link>
             </li>
 
+            <li className="mobile-section-label" style={{ padding: '16px 0 4px', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af', fontWeight: 600 }}>
+              Partners
+            </li>
+            <li>
+              <Link to="/for-officiants" onClick={() => setMobileMenuOpen(false)}>
+                For Officiants
+              </Link>
+            </li>
+            <li>
+              <Link to="/for-churches" onClick={() => setMobileMenuOpen(false)}>
+                For Churches
+              </Link>
+            </li>
+            <li>
+              <Link to="/partners" onClick={() => setMobileMenuOpen(false)}>
+                Partner Tools
+              </Link>
+            </li>
+
             {user ? (
               <>
                 <li className="mobile-user-section">
@@ -320,24 +364,44 @@ const Navbar = () => {
                 </li>
               </>
             ) : (
-              <li className="mobile-auth-section">
-                <Link
-                  to="/professional/signup"
-                  className="btn btn-primary btn-full mobile-auth-btn"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <i className="fa fa-user-plus" aria-hidden="true"></i>
-                  Create Free Profile
-                </Link>
-                <Link
-                  to="/professional/login"
-                  className="btn btn-outline btn-full mobile-auth-btn"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <i className="fa fa-sign-in-alt" aria-hidden="true"></i>
-                  Professional Login
-                </Link>
-              </li>
+              <>
+                <li className="mobile-auth-section">
+                  <Link
+                    to="/for-officiants"
+                    className="btn btn-primary btn-full mobile-auth-btn"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <i className="fa fa-link" aria-hidden="true"></i>
+                    For Officiants
+                  </Link>
+                  <Link
+                    to="/for-churches"
+                    className="btn btn-outline btn-full mobile-auth-btn"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <i className="fa fa-church" aria-hidden="true"></i>
+                    For Churches
+                  </Link>
+                </li>
+                <li className="mobile-auth-section">
+                  <Link
+                    to="/professional/signup"
+                    className="btn btn-outline btn-full mobile-auth-btn"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <i className="fa fa-user-plus" aria-hidden="true"></i>
+                    Join Directory
+                  </Link>
+                  <Link
+                    to="/professional/login"
+                    className="btn btn-outline btn-full mobile-auth-btn"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <i className="fa fa-sign-in-alt" aria-hidden="true"></i>
+                    Professional Login
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
         </div>

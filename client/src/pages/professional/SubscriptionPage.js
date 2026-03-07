@@ -25,20 +25,20 @@ const SubscriptionPage = () => {
           'Email notifications for new inquiries'
         ],
         limitations: [
-          'Standard placement in search results',
+          'Organic ranking is based on profile quality and verification',
           'Basic analytics only'
         ]
       },
       featured: {
         name: 'Featured',
         price: '$29/month',
-        description: 'Stand out and get more visibility with premium placement.',
+        description: 'Stand out with richer merchandising and stronger analytics.',
         features: [
           'Everything in Community, plus:',
-          'Priority placement in city search results',
           'Featured badge on your profile',
           'Enhanced profile with photos and video',
           'Advanced analytics and insights',
+          'Eligibility for clearly labeled featured modules when launched',
           'Priority email support'
         ],
         limitations: []
@@ -46,15 +46,15 @@ const SubscriptionPage = () => {
       premium: {
         name: 'Premium',
         price: '$79/month',
-        description: 'Maximum visibility and exclusive features for top professionals.',
+        description: 'Expanded city coverage, reporting, and future promotional modules.',
         features: [
           'Everything in Featured, plus:',
-          'Top placement in all searches',
+          'Multi-city profile merchandising',
           'Highlighted profile card design',
-          'Lead priority notifications',
+          'Monthly performance reports',
           'Dedicated account manager',
           'Custom profile URL',
-          'Monthly performance reports'
+          'Future labeled spotlight modules'
         ],
         limitations: []
       }
@@ -197,7 +197,7 @@ const SubscriptionPage = () => {
         <div className="dashboard-section" style={{ marginTop: 'var(--space-8)' }}>
           <h2>Upgrade Options</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-6)' }}>
-            Get more visibility and features to grow your practice
+            Organic ranking is quality-driven. Upgrades focus on better merchandising, analytics, and future clearly labeled promotional surfaces.
           </p>
 
           <div style={{
@@ -241,7 +241,7 @@ const SubscriptionPage = () => {
                     $29<span style={{ fontSize: '1rem', fontWeight: '400', color: 'var(--text-secondary)' }}>/month</span>
                   </div>
                   <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-4)' }}>
-                    Stand out with premium placement and enhanced features
+                    Stand out with richer profile merchandising and enhanced reporting
                   </p>
                   <ul style={{
                     listStyle: 'none',
@@ -253,11 +253,11 @@ const SubscriptionPage = () => {
                   }}>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                       <i className="fa fa-star" style={{ color: 'var(--warning, #0e5e5e)' }} aria-hidden="true"></i>
-                      Priority search placement
+                      Featured badge
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                       <i className="fa fa-star" style={{ color: 'var(--warning, #0e5e5e)' }} aria-hidden="true"></i>
-                      Featured badge
+                      Highlighted profile card
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                       <i className="fa fa-star" style={{ color: 'var(--warning, #0e5e5e)' }} aria-hidden="true"></i>
@@ -323,7 +323,7 @@ const SubscriptionPage = () => {
                     $79<span style={{ fontSize: '1rem', fontWeight: '400', color: 'var(--text-secondary)' }}>/month</span>
                   </div>
                   <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-4)' }}>
-                    Maximum visibility with exclusive premium features
+                    Expand into more markets with premium reporting and merchandising
                   </p>
                   <ul style={{
                     listStyle: 'none',
@@ -335,7 +335,7 @@ const SubscriptionPage = () => {
                   }}>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                       <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>
-                      Top placement everywhere
+                      Multi-city profile coverage
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                       <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>
@@ -343,7 +343,7 @@ const SubscriptionPage = () => {
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                       <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>
-                      Priority lead notifications
+                      Monthly performance reporting
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                       <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>

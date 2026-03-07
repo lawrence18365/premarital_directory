@@ -9,6 +9,7 @@ import FAQ, { premaritalCounselingFAQs } from '../components/common/FAQ'
 import heroBg from '../assets/images/oil_painting_premarital_couple_in_distress.webp'
 import { STATE_CONFIG } from '../data/locationConfig'
 import CoupleEmailCapture from '../components/leads/CoupleEmailCapture'
+import { PARTNER_AUDIENCES } from '../data/growthConfig'
 
 const FALLBACK_POPULAR_CITIES = [
   // Top metro areas by wedding volume
@@ -437,6 +438,55 @@ const HomePage = () => {
           </div>
         </section>
 
+        <section style={{ padding: 'var(--space-12) 0' }} aria-labelledby="partner-distribution-heading">
+          <div className="container">
+            <div style={{ textAlign: 'center', marginBottom: 'var(--space-8)' }}>
+              <p className="section-eyebrow">Distribution layer</p>
+              <h2 id="partner-distribution-heading">For Officiants, Churches, and Wedding Planners</h2>
+              <p style={{ color: 'var(--text-secondary)', maxWidth: 760, margin: '0 auto' }}>
+                The cleanest growth loop is partner-driven distribution. Generate a tracked city link or widget once, then reuse it across packets, websites, and planning resources.
+              </p>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: 'var(--space-4)',
+              maxWidth: 1080,
+              margin: '0 auto'
+            }}>
+              {PARTNER_AUDIENCES.map((item) => (
+                <Link
+                  key={item.value}
+                  to={item.route}
+                  style={{
+                    display: 'block',
+                    padding: 'var(--space-6)',
+                    background: 'white',
+                    borderRadius: 'var(--radius-xl)',
+                    border: '1px solid rgba(14, 94, 94, 0.1)',
+                    textDecoration: 'none',
+                    boxShadow: 'var(--shadow)'
+                  }}
+                >
+                  <p className="section-eyebrow" style={{ marginBottom: '0.65rem' }}>
+                    {item.shortLabel}
+                  </p>
+                  <h3 style={{ fontSize: '1.2rem', marginBottom: '0.55rem', color: 'var(--primary-dark)' }}>
+                    {item.label}
+                  </h3>
+                  <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-4)' }}>
+                    {item.description}
+                  </p>
+                  <span style={{ color: 'var(--primary)', fontWeight: 600 }}>
+                    Open tools ->
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* FAQ Section */}
         <FAQ
           faqs={premaritalCounselingFAQs.slice(0, 6)}
@@ -470,10 +520,10 @@ const HomePage = () => {
           <div className="container">
             <div className="provider-cta__content">
               <div className="provider-cta__copy">
-                <p className="section-eyebrow">For premarital counselors, therapists & clergy</p>
+                <p className="section-eyebrow">For counselors, therapists & clergy</p>
                 <h3 id="provider-cta-heading">Get Found by Engaged Couples</h3>
                 <p className="provider-cta__subtitle">
-                  Create a clean professional profile and receive direct inquiries from couples in your city.
+                  Provider signup still matters. It just becomes stronger once partner distribution and local demand are already working.
                 </p>
               </div>
               <div className="provider-cta__actions">

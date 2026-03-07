@@ -96,12 +96,13 @@ const Footer = () => {
               <li><Link to="/locations">All Locations</Link></li>
               <li><Link to="/contact">Contact Us</Link></li>
             </ul>
-            <h4 style={{ marginTop: '1.5rem' }}>For Professionals</h4>
+            <h4 style={{ marginTop: '1.5rem' }}>For Partners & Providers</h4>
             <ul>
+              <li><Link to="/for-officiants">For Officiants</Link></li>
+              <li><Link to="/for-churches">For Churches</Link></li>
+              <li><Link to="/partners">Partner Tools</Link></li>
               <li><Link to="/professional/signup" rel="nofollow">List Your Practice</Link></li>
               <li><Link to="/claim-profile">Claim Profile</Link></li>
-              <li><Link to="/for-churches">For Churches</Link></li>
-              <li><Link to="/for-officiants">For Officiants</Link></li>
               <li><Link to="/features">Features</Link></li>
               <li><Link to="/pricing">Pricing</Link></li>
             </ul>

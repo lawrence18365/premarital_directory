@@ -30,7 +30,6 @@ import {
   getPriceMidpoint,
   hasInsurance,
   isSelfPayOnly,
-  getTierPriority,
   formatFaithTradition,
   formatTypeList,
   METHOD_FILTERS,
@@ -257,9 +256,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
         if (b.premaritalFitScore !== a.premaritalFitScore) return b.premaritalFitScore - a.premaritalFitScore
       }
 
-      if (getTierPriority(a) !== getTierPriority(b)) return getTierPriority(a) - getTierPriority(b)
-
-      // Verified providers get a significant boost within their tier
+      // Verified providers get a significant boost after relevance-specific sorting.
       const aVerified = Boolean(a.badge_verified)
       const bVerified = Boolean(b.badge_verified)
       if (aVerified !== bVerified) return Number(bVerified) - Number(aVerified)
@@ -333,31 +330,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
       if (error) {
         setError(error.message)
       } else {
-        // Sort profiles by tier: Area Spotlight > Local Featured > Community
-        const tierSortedProfiles = (data || []).sort((a, b) => {
-          const claimedDelta = Number(Boolean(b.is_claimed)) - Number(Boolean(a.is_claimed))
-          if (claimedDelta !== 0) {
-            return claimedDelta
-          }
-
-          const tierOrder = {
-            'area_spotlight': 1,
-            'local_featured': 2,
-            'community': 3
-          }
-
-          const aTier = tierOrder[a.tier] || 999
-          const bTier = tierOrder[b.tier] || 999
-
-          if (aTier !== bTier) {
-            return aTier - bTier
-          }
-
-          // If same tier, sort by created_at (newest first)
-          return new Date(b.created_at) - new Date(a.created_at)
-        })
-
-        setProfiles(tierSortedProfiles)
+        setProfiles(data || [])
       }
     } catch (err) {
       setError('Failed to load professionals for this city')

@@ -12,7 +12,7 @@ const pricingFAQs = [
   },
   {
     question: "Can I upgrade later?",
-    answer: "Yes, you can upgrade to a paid tier at any time from your dashboard. Your profile information stays the same - you just unlock additional visibility features and placement benefits. Downgrade anytime too, no questions asked."
+    answer: "Yes, you can upgrade to a paid tier at any time from your dashboard. Your profile information stays the same. Paid plans add merchandising tools, richer media, and deeper analytics. If we launch featured placements later, they will be clearly labeled rather than blended into organic ranking."
   },
   {
     question: "How do I get leads?",
@@ -20,7 +20,7 @@ const pricingFAQs = [
   },
   {
     question: "What's the difference between tiers?",
-    answer: "The main differences are visibility and placement. Free listings appear in city results. Local Featured adds a badge, priority ranking in your city, and a photo gallery. Area Spotlight gives you top placement across multiple cities and homepage visibility for maximum exposure."
+    answer: "The main differences are profile merchandising and reporting. Community keeps you in the organic directory. Local Featured adds richer media, a featured badge, and stronger analytics. Area Spotlight expands that with multi-city merchandising and reporting. Organic ranking still depends on profile quality and verification."
   }
 ]
 
@@ -33,7 +33,7 @@ const PricingPage = () => {
       description: 'Everything you need to get started and connect with local couples.',
       features: [
         'Basic listing on city pages',
-        'City page placement',
+        'Organic directory visibility',
         'Direct leads to your email',
         'Basic analytics dashboard'
       ],
@@ -46,13 +46,13 @@ const PricingPage = () => {
       name: 'Local Featured',
       price: '$49',
       pricePeriod: '/month',
-      description: 'Stand out in your city with premium visibility and enhanced profile features.',
+      description: 'Stand out with richer profile merchandising and stronger performance visibility.',
       features: [
         'Everything in Community',
         'Featured badge on profile',
-        'Priority ranking in your city',
         'Photo gallery (up to 6 images)',
-        'Highlighted profile card'
+        'Highlighted profile card',
+        'Advanced analytics and reporting'
       ],
       cta: 'Join Waitlist',
       ctaLink: null,
@@ -63,12 +63,12 @@ const PricingPage = () => {
       name: 'Area Spotlight',
       price: '$99',
       pricePeriod: '/month',
-      description: 'Maximum visibility across your service area with premium placement everywhere.',
+      description: 'Expand into multiple markets with deeper reporting and future featured modules.',
       features: [
         'Everything in Local Featured',
-        'Top placement in search results',
-        'Multi-city featuring (up to 5 cities)',
-        'Homepage spotlight rotation',
+        'Multi-city profile coverage (up to 5 cities)',
+        'Monthly performance summary',
+        'Eligibility for clearly labeled featured modules when launched',
         'Priority support'
       ],
       cta: 'Coming Soon',
@@ -82,7 +82,7 @@ const PricingPage = () => {
     <div className="page-container features-page pricing-page">
       <SEOHelmet
         title="Pricing for Premarital Counselors"
-        description="List your premarital counseling practice for free. Upgrade for featured placement, priority ranking, and multi-city visibility. No per-lead fees, ever."
+        description="List your premarital counseling practice for free. Upgrade for richer profile merchandising, analytics, and multi-city visibility. No per-lead fees, ever."
         url="/pricing"
         noindex={false}
         keywords="premarital counselor listing, therapist directory pricing, counselor marketing, get more clients"
@@ -94,6 +94,9 @@ const PricingPage = () => {
           <p className="lead">
             Start free and grow your practice. No per-lead fees, no commissions -
             couples contact you directly.
+          </p>
+          <p style={{ color: 'var(--text-secondary)', maxWidth: 760, margin: 'var(--space-4) auto 0' }}>
+            Organic ranking is based on profile quality and verification. If featured placements launch later, they will be clearly labeled.
           </p>
         </div>
 

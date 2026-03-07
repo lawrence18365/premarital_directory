@@ -212,6 +212,18 @@ const AdminDashboard = () => {
             <i className="fa fa-envelope" aria-hidden="true"></i>
             Email Campaigns
           </a>
+          <a href="/admin/partners" className="btn btn-outline">
+            <i className="fa fa-link" aria-hidden="true"></i>
+            Partner Reporting
+          </a>
+          <a href="/admin/clusters" className="btn btn-outline">
+            <i className="fa fa-map-marker" aria-hidden="true"></i>
+            Supply Clusters
+          </a>
+          <a href="/admin/distribution" className="btn btn-outline">
+            <i className="fa fa-bullhorn" aria-hidden="true"></i>
+            Distribution Ops
+          </a>
           <button onClick={() => loadAdminData()} className="btn btn-outline">
             <i className="fa fa-refresh" aria-hidden="true"></i>
             Refresh

@@ -66,11 +66,16 @@ const EditorialStandardsPage = () => {
 
             <h2>What We Do Not Do</h2>
             <ul>
-              <li>We do not accept payment for higher placement in organic search results.</li>
+              <li>We do not sell undisclosed pay-to-play placement inside organic search results.</li>
               <li>We do not fabricate reviews or endorsements.</li>
               <li>We do not guarantee the quality of any professional's services.</li>
               <li>We do not verify specific clinical outcomes or success rates.</li>
             </ul>
+
+            <p>
+              We may offer clearly labeled featured placements, sponsorship modules, or profile merchandising tools.
+              Those are disclosed as promotional surfaces and do not replace our underlying organic ranking rules.
+            </p>
 
             <h2>Profile Enrichment</h2>
             <p>

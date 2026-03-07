@@ -132,10 +132,14 @@ const ClaimSuccessPage = React.lazy(() => import('./pages/ClaimSuccessPage'))
 const ClaimProgramPage = React.lazy(() => import('./pages/ClaimProgramPage'))
 const ForChurchesPage = React.lazy(() => import('./pages/ForChurchesPage'))
 const ForOfficiantsPage = React.lazy(() => import('./pages/ForOfficiantsPage'))
+const PartnerToolsPage = React.lazy(() => import('./pages/PartnerToolsPage'))
 const EmbedFindPage = React.lazy(() => import('./pages/EmbedFindPage'))
 const HowItWorksPage = React.lazy(() => import('./pages/HowItWorksPage'))
 const EditorialStandardsPage = React.lazy(() => import('./pages/EditorialStandardsPage'))
 const CorrectionsPage = React.lazy(() => import('./pages/CorrectionsPage'))
+const PartnerAttributionDashboard = React.lazy(() => import('./pages/admin/PartnerAttributionDashboard'))
+const SupplyClustersDashboard = React.lazy(() => import('./pages/admin/SupplyClustersDashboard'))
+const DistributionOpsDashboard = React.lazy(() => import('./pages/admin/DistributionOpsDashboard'))
 
 // Test functions for AI content generation (development only)
 if (process.env.NODE_ENV === 'development') {
@@ -240,6 +244,7 @@ function AppInner() {
             <Route path="/guidelines" element={<GuidelinesPage />} />
             <Route path="/for-churches" element={<ForChurchesPage />} />
             <Route path="/for-officiants" element={<ForOfficiantsPage />} />
+            <Route path="/partners" element={<PartnerToolsPage />} />
             <Route path="/embed/find" element={<EmbedFindPage />} />
             <Route path="/go/:profileSlug" element={<BoostLandingPage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
@@ -406,6 +411,30 @@ function AppInner() {
               element={
                 <ProtectedRoute requireAdmin={true}>
                   <CityHealthDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/partners"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <PartnerAttributionDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/clusters"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <SupplyClustersDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/distribution"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <DistributionOpsDashboard />
                 </ProtectedRoute>
               }
             />

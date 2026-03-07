@@ -45,27 +45,9 @@ const hasPricingInfo = (profile) => Boolean(
   Number(profile?.session_fee_max) > 0
 )
 
-const tierWeight = (tier) => {
-  const weights = {
-    area_spotlight: 3,
-    local_featured: 2,
-    community: 1
-  }
-  return weights[tier] || 0
-}
-
 const compareProfilesForCouples = (a, b) => {
   const claimedDelta = Number(Boolean(b?.is_claimed)) - Number(Boolean(a?.is_claimed))
   if (claimedDelta !== 0) return claimedDelta
-
-  const sponsoredRankDelta = (Number(b?.sponsored_rank) || 0) - (Number(a?.sponsored_rank) || 0)
-  if (sponsoredRankDelta !== 0) return sponsoredRankDelta
-
-  const sponsoredDelta = Number(Boolean(b?.is_sponsored)) - Number(Boolean(a?.is_sponsored))
-  if (sponsoredDelta !== 0) return sponsoredDelta
-
-  const tierDelta = tierWeight(b?.tier) - tierWeight(a?.tier)
-  if (tierDelta !== 0) return tierDelta
 
   const completenessDelta = (Number(b?.profile_completeness_score) || 0) - (Number(a?.profile_completeness_score) || 0)
   if (completenessDelta !== 0) return completenessDelta

@@ -114,15 +114,6 @@ const ProfessionalsPage = () => {
       if (a.is_claimed !== b.is_claimed) {
         return Number(Boolean(b.is_claimed)) - Number(Boolean(a.is_claimed))
       }
-
-      // First: Sort by sponsored rank (Premium=2, Featured=1, Free=0)
-      const rankA = a.sponsored_rank || 0
-      const rankB = b.sponsored_rank || 0
-      if (rankA !== rankB) return rankB - rankA
-      
-      // Second: Within same rank, prioritize is_sponsored (legacy support)
-      if (a.is_sponsored && !b.is_sponsored) return -1
-      if (!a.is_sponsored && b.is_sponsored) return 1
       
       switch (sortBy) {
         case 'name':
@@ -135,7 +126,9 @@ const ProfessionalsPage = () => {
           return new Date(b.created_at) - new Date(a.created_at)
         case 'relevance':
         default:
-          // Relevance: sponsored first, then by match quality, then by date
+          if ((b.profile_completeness_score || 0) !== (a.profile_completeness_score || 0)) {
+            return (b.profile_completeness_score || 0) - (a.profile_completeness_score || 0)
+          }
           return new Date(b.created_at) - new Date(a.created_at)
       }
     })
