@@ -134,7 +134,7 @@ export const useOnboardingState = () => {
 
       try {
         // Check if user already has a profile
-        const { data: existingProfile, error: fetchError } = await supabase
+        let { data: existingProfile, error: fetchError } = await supabase
           .from('profiles')
           .select(PROFILE_SELECT_COLUMNS)
           .eq('user_id', user.id)
@@ -142,9 +142,38 @@ export const useOnboardingState = () => {
 
         if (fetchError) throw fetchError
 
+        // No profile linked by user_id yet — check for an unclaimed imported
+        // profile with the same email and auto-claim it instead of creating a new one.
+        if (!existingProfile && user.email) {
+          const { data: unclaimedProfile } = await supabase
+            .from('profiles')
+            .select(PROFILE_SELECT_COLUMNS)
+            .ilike('email', user.email)
+            .is('user_id', null)
+            .maybeSingle()
+
+          if (unclaimedProfile) {
+            const { error: claimError } = await supabase
+              .from('profiles')
+              .update({
+                user_id: user.id,
+                is_claimed: true,
+                claimed_at: new Date().toISOString(),
+                onboarding_step: unclaimedProfile.onboarding_step || 1,
+                onboarding_started_at: unclaimedProfile.onboarding_started_at || new Date().toISOString(),
+                onboarding_last_saved_at: new Date().toISOString()
+              })
+              .eq('id', unclaimedProfile.id)
+              .is('user_id', null)
+
+            if (!claimError) {
+              existingProfile = { ...unclaimedProfile, user_id: user.id }
+            }
+          }
+        }
+
         if (existingProfile) {
-          // Profile exists - load it for resume
-          setProfileId(existingProfile.id)
+          // Profile exists (or was just auto-claimed) - load it for resume
           setProfileId(existingProfile.id)
 
           let loadedData = {
