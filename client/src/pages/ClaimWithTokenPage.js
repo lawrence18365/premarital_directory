@@ -21,7 +21,7 @@ const ClaimWithTokenPage = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [step, setStep] = useState('verify'); // verify, logged_in_warning, auth, claiming, success
+  const [step, setStep] = useState('verify'); // verify, logged_in_warning, auth, confirm_email, claiming, success
   const [authMode, setAuthMode] = useState('signup');
   const [formData, setFormData] = useState({
     email: '',
@@ -83,12 +83,20 @@ const ClaimWithTokenPage = () => {
           throw new Error('Password must be at least 8 characters');
         }
 
-        const { error } = await signUp(formData.email, formData.password);
+        // After signup, Supabase requires email confirmation before a session is created.
+        // Redirect the confirmation email to /claim-success so claiming happens after verification.
+        const claimRedirect = `${window.location.origin}/claim-success?token=${encodeURIComponent(token)}`;
+        const { data, error } = await signUp(formData.email, formData.password, {}, claimRedirect);
         if (error) throw error;
 
-        // After signup, proceed to claim
-        setStep('claiming');
-        await claimProfile();
+        // If Supabase returned a session (e.g. email confirmation disabled), claim immediately
+        if (data?.session) {
+          setStep('claiming');
+          await claimProfile();
+        } else {
+          // No session yet — email confirmation required. Show "check your email" screen.
+          setStep('confirm_email');
+        }
       } else {
         const { error } = await signIn(formData.email, formData.password);
         if (error) throw error;
@@ -179,6 +187,53 @@ const ClaimWithTokenPage = () => {
             <Link to="/claim-profile" className="btn btn-primary">
               Request New Claim Link
             </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === 'confirm_email') {
+    return (
+      <div className="auth-page">
+        <div className="auth-container">
+          <div className="auth-card" style={{ textAlign: 'center' }}>
+            <div style={{
+              width: '80px',
+              height: '80px',
+              background: 'var(--ds-accent-soft)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto var(--space-6)',
+              fontSize: '2rem'
+            }}>
+              <i className="fa fa-envelope" aria-hidden="true"></i>
+            </div>
+            <h2 style={{ marginBottom: 'var(--space-3)' }}>Check Your Email</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-4)' }}>
+              We sent a confirmation link to <strong>{formData.email}</strong>.
+              Click it to verify your account and claim your profile automatically.
+            </p>
+            <div style={{
+              background: 'var(--bg-secondary)',
+              padding: 'var(--space-4)',
+              borderRadius: 'var(--radius-md)',
+              fontSize: '0.9rem',
+              color: 'var(--text-secondary)'
+            }}>
+              <p style={{ margin: 0 }}>
+                Don't see it? Check your spam folder or{' '}
+                <button
+                  className="link-button"
+                  onClick={() => { setStep('auth'); setError(null); }}
+                  style={{ color: 'var(--color-primary)', fontWeight: '500' }}
+                >
+                  try again
+                </button>.
+              </p>
+            </div>
           </div>
         </div>
       </div>

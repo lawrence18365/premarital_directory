@@ -212,13 +212,13 @@ export const AuthProvider = ({ children }) => {
     return { data, error }
   }
 
-  const signUp = async (email, password, profileData = {}) => {
+  const signUp = async (email, password, profileData = {}, redirectTo = null) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: profileData,
-        emailRedirectTo: `${window.location.origin}/professional/email-verified`
+        emailRedirectTo: redirectTo || `${window.location.origin}/professional/email-verified`
       }
     })
 
