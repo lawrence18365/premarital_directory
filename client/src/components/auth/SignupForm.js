@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useAuth } from '../../contexts/AuthContext'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { profileOperations } from '../../lib/supabaseClient'
+import { profileOperations, supabase } from '../../lib/supabaseClient'
 import '../../assets/css/professional-auth.css'
 
 const featureList = [
@@ -27,6 +27,8 @@ const SignupForm = () => {
   const [mode, setMode] = useState(searchParams.get('mode') === 'login' ? 'login' : 'signup')
   const [loginPassword, setLoginPassword] = useState('')
   const [resetEmailSent, setResetEmailSent] = useState(false)
+  const [emailNotConfirmed, setEmailNotConfirmed] = useState(false)
+  const [resendStatus, setResendStatus] = useState(null)
 
   const { signUp, signIn, resetPassword, user, profile } = useAuth()
   const navigate = useNavigate()
@@ -103,7 +105,12 @@ const SignupForm = () => {
     })
 
     if (error) {
-      setError(error.message)
+      if (error.message?.toLowerCase().includes('email not confirmed')) {
+        setEmailNotConfirmed(true)
+        setError('')
+      } else {
+        setError(error.message)
+      }
       setLoading(false)
       return
     }
@@ -141,7 +148,12 @@ const SignupForm = () => {
       )
       const { error } = await Promise.race([signIn(loginEmail, loginPassword), timeoutPromise])
       if (error) {
-        setError(error.message)
+        if (error.message?.toLowerCase().includes('email not confirmed')) {
+          setEmailNotConfirmed(true)
+          setError('')
+        } else {
+          setError(error.message)
+        }
         setLoading(false)
         return
       }
@@ -167,6 +179,63 @@ const SignupForm = () => {
       setResetEmailSent(true)
     }
     setLoading(false)
+  }
+
+  const handleResendConfirmation = async () => {
+    setResendStatus('sending')
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: (formData.email || '').trim()
+      })
+      setResendStatus(error ? 'error' : 'success')
+    } catch {
+      setResendStatus('error')
+    }
+  }
+
+  if (emailNotConfirmed) {
+    return (
+      <div className="professional-auth professional-auth--success">
+        <div className="professional-auth__success-card">
+          <div className="professional-auth__success-icon">
+            <i className="fa fa-envelope" aria-hidden="true"></i>
+          </div>
+          <p className="section-eyebrow">Email not yet verified</p>
+          <h1>Confirm your email to continue</h1>
+          <p className="professional-auth__success-lead">
+            Your account exists but your email <strong>{formData.email}</strong> hasn't been verified yet.
+            Check your inbox for a confirmation link, or resend it below.
+          </p>
+          {resendStatus === 'success' ? (
+            <p style={{ color: 'var(--ds-accent, green)', textAlign: 'center' }}>
+              <i className="fa fa-check-circle" aria-hidden="true"></i>{' '}
+              Confirmation email sent! Check your inbox and spam folder.
+            </p>
+          ) : (
+            <button
+              className="professional-auth__button professional-auth__button--primary"
+              onClick={handleResendConfirmation}
+              disabled={resendStatus === 'sending'}
+            >
+              {resendStatus === 'sending' ? 'Sending...' : 'Resend Confirmation Email'}
+            </button>
+          )}
+          {resendStatus === 'error' && (
+            <p style={{ color: 'red', textAlign: 'center', marginTop: '0.5rem' }}>
+              Failed to resend. Please try again.
+            </p>
+          )}
+          <button
+            className="professional-auth__button"
+            onClick={() => { setEmailNotConfirmed(false); setResendStatus(null); setMode('login') }}
+            style={{ marginTop: '0.75rem' }}
+          >
+            Back to Login
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (resetEmailSent) {

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useAuth } from '../../contexts/AuthContext'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { supabase } from '../../lib/supabaseClient'
 
 const LoginForm = () => {
   const [email, setEmail] = useState('')
@@ -9,6 +10,8 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [resetEmailSent, setResetEmailSent] = useState(false)
+  const [emailNotConfirmed, setEmailNotConfirmed] = useState(false)
+  const [resendStatus, setResendStatus] = useState(null) // 'sending', 'success', 'error'
 
   const { signIn, resetPassword } = useAuth()
   const navigate = useNavigate()
@@ -35,7 +38,12 @@ const LoginForm = () => {
       const { error } = await Promise.race([signIn(email, password), timeoutPromise])
 
       if (error) {
-        setError(error.message)
+        if (error.message?.toLowerCase().includes('email not confirmed')) {
+          setEmailNotConfirmed(true)
+          setError('')
+        } else {
+          setError(error.message)
+        }
       } else {
         // AuthContext automatically fetches the profile in the background after session established.
         // The safest redirect is still to the dashboard, and let the dashboard's new logic 
@@ -69,6 +77,60 @@ const LoginForm = () => {
     }
 
     setLoading(false)
+  }
+
+  const handleResendConfirmation = async () => {
+    setResendStatus('sending')
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email.trim()
+      })
+      setResendStatus(error ? 'error' : 'success')
+    } catch {
+      setResendStatus('error')
+    }
+  }
+
+  if (emailNotConfirmed) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h2>Confirm Your Email</h2>
+            <p>Your account exists but your email hasn't been verified yet. Check your inbox for a confirmation link from when you signed up.</p>
+          </div>
+          <div className="auth-form">
+            {resendStatus === 'success' ? (
+              <p style={{ color: 'green', textAlign: 'center' }}>
+                <i className="fa fa-check-circle" aria-hidden="true"></i>{' '}
+                Confirmation email sent to <strong>{email}</strong>. Check your inbox and spam folder.
+              </p>
+            ) : (
+              <button
+                className="btn btn-primary btn-full"
+                onClick={handleResendConfirmation}
+                disabled={resendStatus === 'sending'}
+              >
+                {resendStatus === 'sending' ? 'Sending...' : 'Resend Confirmation Email'}
+              </button>
+            )}
+            {resendStatus === 'error' && (
+              <p style={{ color: 'red', textAlign: 'center', marginTop: '0.5rem' }}>
+                Failed to resend. Please try again.
+              </p>
+            )}
+            <button
+              className="btn btn-outline"
+              onClick={() => { setEmailNotConfirmed(false); setResendStatus(null) }}
+              style={{ marginTop: '0.75rem' }}
+            >
+              Back to Login
+            </button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (resetEmailSent) {
