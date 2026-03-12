@@ -21,6 +21,8 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
     source: 'directory'
   })
 
+  const [honeypot, setHoneypot] = useState('')
+  const formLoadedAt = useRef(Date.now())
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -99,7 +101,9 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
           timeline: formData.timeline || undefined,
           location: formData.location || undefined,
           message: formData.message
-        }
+        },
+        _hp: honeypot,
+        _t: Date.now() - formLoadedAt.current,
       }
 
       const { data, error: functionError } = await supabase.functions.invoke('process-lead-submission', {
@@ -334,6 +338,20 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
             </select>
           </div>
         </details>
+
+        {/* Honeypot — invisible to real users, bots auto-fill it */}
+        <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', top: '-9999px', height: 0, overflow: 'hidden', tabIndex: -1 }}>
+          <label htmlFor="website">Website</label>
+          <input
+            type="text"
+            id="website"
+            name="website"
+            autoComplete="off"
+            tabIndex={-1}
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </div>
 
         <div className="form-actions">
           <button

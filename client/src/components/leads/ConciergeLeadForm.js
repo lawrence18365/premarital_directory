@@ -12,6 +12,8 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
         preference: 'Not Sure',
         message: ''
     })
+    const [honeypot, setHoneypot] = useState('')
+    const formLoadedAt = useRef(Date.now())
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [success, setSuccess] = useState(false)
@@ -81,7 +83,9 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
                 message: formData.message,
                 city: city,
                 state: state,
-                sourceUrl: sourceUrl || window.location.href
+                sourceUrl: sourceUrl || window.location.href,
+                _hp: honeypot,
+                _t: Date.now() - formLoadedAt.current,
             }
 
             const { data, error: functionError } = await supabase.functions.invoke('process-concierge-lead', {
@@ -250,6 +254,20 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
                                     rows={3}
                                     placeholder="e.g. We want to work on communication and finances."
                                 />
+                            </div>
+
+                            {/* Honeypot — invisible to real users, bots auto-fill it */}
+                            <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', top: '-9999px', height: 0, overflow: 'hidden', tabIndex: -1 }}>
+                              <label htmlFor="concierge_website">Website</label>
+                              <input
+                                type="text"
+                                id="concierge_website"
+                                name="website"
+                                autoComplete="off"
+                                tabIndex={-1}
+                                value={honeypot}
+                                onChange={(e) => setHoneypot(e.target.value)}
+                              />
                             </div>
 
                             <button

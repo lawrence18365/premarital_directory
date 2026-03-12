@@ -8,6 +8,7 @@ interface LeadNotificationRequest {
   profileId: string | null
   isUnmatchedLead?: boolean
   matchContext?: string
+  requestIp?: string
   coupleData: {
     name: string
     email: string
@@ -35,6 +36,9 @@ serve(async (req) => {
       )
     }
 
+    const { leadId, profileId, coupleData, isUnmatchedLead, matchContext, requestIp }: LeadNotificationRequest = await req.json()
+    const rateLimitIp = origin ? getRequestIp(req) : requestIp || getRequestIp(req)
+
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -45,7 +49,7 @@ serve(async (req) => {
       supabaseUrl: Deno.env.get('SUPABASE_URL') ?? '',
       serviceKey: Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       endpoint: 'send-lead-notification',
-      ipAddress: getRequestIp(req),
+      ipAddress: rateLimitIp,
       windowSeconds: 3600,
       maxRequests: 10
     })
@@ -65,8 +69,6 @@ serve(async (req) => {
     if (!RESEND_API_KEY) {
       throw new Error('RESEND_API_KEY not configured')
     }
-
-    const { leadId, profileId, coupleData, isUnmatchedLead, matchContext }: LeadNotificationRequest = await req.json()
 
     // Verify lead exists
     const { data: leadRecord, error: leadError } = await supabaseClient

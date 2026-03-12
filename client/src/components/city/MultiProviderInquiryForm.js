@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 
 const MAX_SELECTABLE = 5
@@ -13,6 +13,8 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
     email: '',
     message: ''
   })
+  const [honeypot, setHoneypot] = useState('')
+  const formLoadedAt = useRef(Date.now())
   const [selectedProviderIds, setSelectedProviderIds] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -52,6 +54,12 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
     setError(null)
 
     try {
+      // Anti-spam: honeypot or too-fast submission
+      if (honeypot || (Date.now() - formLoadedAt.current) < 2000) {
+        setSubmitted(true)
+        return
+      }
+
       if (selectedProviders.length === 0) {
         throw new Error('Select at least one counselor before sending.')
       }
@@ -283,6 +291,20 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
             {error}
           </div>
         )}
+
+        {/* Honeypot — invisible to real users, bots auto-fill it */}
+        <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', top: '-9999px', height: 0, overflow: 'hidden' }}>
+          <label htmlFor="multi_website">Website</label>
+          <input
+            type="text"
+            id="multi_website"
+            name="website"
+            autoComplete="off"
+            tabIndex={-1}
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </div>
 
         <button
           type="submit"

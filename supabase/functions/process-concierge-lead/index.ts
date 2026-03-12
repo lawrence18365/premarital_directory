@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.6"
+import { checkForSpam, silentSpamResponse } from "../_shared/spamDetection.ts"
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
-const PLATFORM_EMAIL = 'support@weddingcounselors.com' // Send leads to platform owner
+const PLATFORM_EMAIL = 'hello@weddingcounselors.com' // Send leads to platform owner
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -37,7 +38,9 @@ serve(async (req) => {
       message,
       city,
       state,
-      sourceUrl
+      sourceUrl,
+      _hp,
+      _t,
     } = payload
 
     if (!email || !name) {
@@ -45,6 +48,18 @@ serve(async (req) => {
         JSON.stringify({ error: 'Name and email are required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
+    }
+
+    // --- Spam detection ---
+    const spamCheck = checkForSpam({
+      honeypot: _hp,
+      elapsedMs: _t,
+      name,
+      message,
+    })
+    if (spamCheck.isSpam) {
+      console.warn(`Spam concierge lead blocked (score=${spamCheck.score}, reason=${spamCheck.reason}):`, email)
+      return silentSpamResponse(corsHeaders)
     }
 
     console.log(`Processing Concierge Lead from ${name} (${email}) for ${city}, ${state}`)

@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 import { getAllowedOrigins, getCorsHeaders, getRequestIp, isOriginAllowed } from "../_shared/auth.ts"
 import { enforceRateLimit } from "../_shared/rateLimit.ts"
+import { checkForSpam, silentSpamResponse } from "../_shared/spamDetection.ts"
 
 interface Attribution {
     utm_source?: string
@@ -37,6 +38,9 @@ interface ProcessLeadRequest {
         location?: string
         message: string
     }
+    // Anti-spam fields (set by frontend)
+    _hp?: string   // honeypot — must be empty
+    _t?: number    // milliseconds elapsed since form loaded
 }
 
 serve(async (req) => {
@@ -48,6 +52,7 @@ serve(async (req) => {
     try {
         const origin = req.headers.get('origin')
         const allowedOrigins = getAllowedOrigins()
+        const requestIp = getRequestIp(req)
 
         // Strict CORS checking
         if (!isOriginAllowed(origin, allowedOrigins)) {
@@ -68,7 +73,7 @@ serve(async (req) => {
             supabaseUrl: Deno.env.get('SUPABASE_URL') ?? '',
             serviceKey: Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
             endpoint: 'process-lead-submission',
-            ipAddress: getRequestIp(req),
+            ipAddress: requestIp,
             windowSeconds: 3600,
             maxRequests: 5 // Max 5 leads per IP per hour
         })
@@ -94,6 +99,21 @@ serve(async (req) => {
                 JSON.stringify({ success: false, error: 'Missing required fields' }),
                 { status: 400, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
             )
+        }
+
+        // --- Spam detection ---
+        const coupleName = coupleData.partner_two_name
+            ? `${coupleData.partner_one_name} ${coupleData.partner_two_name}`
+            : coupleData.partner_one_name
+        const spamCheck = checkForSpam({
+            honeypot: payload._hp,
+            elapsedMs: payload._t,
+            name: coupleName,
+            message: coupleData.message,
+        })
+        if (spamCheck.isSpam) {
+            console.warn(`Spam lead blocked (score=${spamCheck.score}, reason=${spamCheck.reason}):`, coupleData.email)
+            return silentSpamResponse(getCorsHeaders(origin))
         }
 
         // Prepare lead data for DB
@@ -154,6 +174,7 @@ serve(async (req) => {
                         profileId: null,
                         isUnmatchedLead: true,
                         matchContext,
+                        requestIp,
                         coupleData: {
                             name: coupleName,
                             email: coupleData.email,
@@ -171,6 +192,7 @@ serve(async (req) => {
                     body: {
                         leadId,
                         profileId,
+                        requestIp,
                         coupleData: {
                             name: coupleName,
                             email: coupleData.email,
