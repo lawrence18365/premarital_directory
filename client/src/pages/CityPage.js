@@ -483,6 +483,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
         description={`Find premarital and marriage counseling in ${cityName}, ${stateName}. Compare ${profiles.length || 'top'} ${inventoryDescriptor} — prices from $${costStartingAt}/session. Read profiles, filter by method & faith, and message a counselor today.`}
         keywords={seoKeywords}
         structuredData={structuredData}
+        breadcrumbs={breadcrumbData}
         faqs={cityFAQs}
         noindex={shouldNoindex}
         canonicalUrl={`/premarital-counseling/${state}/${city}`}

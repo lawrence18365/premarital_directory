@@ -132,7 +132,9 @@ const SEOHelmet = ({
   }
 
   const fullUrl = resolveAbsoluteUrl(effectivePath)
-  const fullTitle = title ? `${title} | ${siteName}` : siteName
+  // Keep titles under ~60 chars for SERP display; drop brand suffix if too long
+  const brandedTitle = title ? `${title} | ${siteName}` : siteName
+  const fullTitle = (title && brandedTitle.length > 60) ? title : brandedTitle
   const defaultDescription = process.env.REACT_APP_SITE_DESCRIPTION || 'Find qualified premarital counselors, therapists, and coaches near you. Complete directory of wedding counseling professionals.'
 
 
@@ -205,9 +207,17 @@ const SEOHelmet = ({
           if (allData.length === 1) {
             return JSON.stringify(allData[0]);
           }
+          // Strip redundant @context from child nodes — the @graph wrapper provides it
+          const cleanedData = allData.map(item => {
+            if (item && item['@context']) {
+              const { '@context': _, ...rest } = item;
+              return rest;
+            }
+            return item;
+          });
           return JSON.stringify({
             "@context": "https://schema.org",
-            "@graph": allData
+            "@graph": cleanedData
           });
         })()}
       </script>

@@ -119,6 +119,7 @@ const BlogPostPage = () => {
         const { data, error: postError } = await supabase
           .from('posts')
           .select('*')
+          .eq('status', 'published')
           .eq('slug', slug)
           .single();
 
@@ -221,6 +222,7 @@ const BlogPostPage = () => {
         title={post.meta_title || post.title}
         description={post.meta_description || post.excerpt || `Read: ${post.title}`}
         url={`/blog/${post.slug}`}
+        canonicalUrl={`/blog/${post.slug}`}
         breadcrumbs={breadcrumbItems}
         structuredData={articleStructuredData}
       />

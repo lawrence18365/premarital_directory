@@ -18,6 +18,7 @@ import {
   normalizeProgramRecord
 } from '../lib/programCatalog'
 import { supabase, rankProfilesForCouples } from '../lib/supabaseClient'
+import { buildApprovedSpecialtyFilter } from '../lib/utils'
 import '../assets/css/specialty-page.css'
 
 const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) => {
@@ -121,9 +122,7 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
         setPrograms([])
       }
 
-      const filterConditions = specialty.filterTerms
-        .map(term => `bio.ilike.%${term}%,specialties.cs.{${term}}`)
-        .join(',')
+      const filterConditions = buildApprovedSpecialtyFilter(specialty.filterTerms)
       
       const { data, error } = await supabase
         .from('profiles')

@@ -202,6 +202,56 @@ jobs:
                 "status": 301
               },
               {
+                "src": "/professionals",
+                "headers": { "Location": "/premarital-counseling" },
+                "status": 301
+              },
+              {
+                "src": "/professionals/(.*)",
+                "headers": { "Location": "/premarital-counseling/$1" },
+                "status": 301
+              },
+              {
+                "src": "/states",
+                "headers": { "Location": "/premarital-counseling" },
+                "status": 301
+              },
+              {
+                "src": "/states/(.*)",
+                "headers": { "Location": "/premarital-counseling/$1" },
+                "status": 301
+              },
+              {
+                "src": "/find-counselor",
+                "headers": { "Location": "/premarital-counseling" },
+                "status": 301
+              },
+              {
+                "src": "/find-counselors",
+                "headers": { "Location": "/premarital-counseling" },
+                "status": 301
+              },
+              {
+                "src": "/counselors",
+                "headers": { "Location": "/premarital-counseling" },
+                "status": 301
+              },
+              {
+                "src": "/pre-cana",
+                "headers": { "Location": "/premarital-counseling/catholic" },
+                "status": 301
+              },
+              {
+                "src": "/pre-cana/(.*)",
+                "headers": { "Location": "/premarital-counseling/catholic" },
+                "status": 301
+              },
+              {
+                "src": "/professionals-list",
+                "headers": { "Location": "/premarital-counseling" },
+                "status": 301
+              },
+              {
                 "src": "/profile/(.*)",
                 "headers": { "X-Robots-Tag": "noindex, follow" },
                 "continue": true

@@ -11,6 +11,9 @@ Disallow: /api/
 # Block legacy profile URLs (canonical URLs are under /premarital-counseling/)
 Disallow: /profile/
 
+# Block legacy /professionals/ URLs (301 redirected to /premarital-counseling/)
+Disallow: /professionals/
+
 # Block private professional areas (dashboards, editing, analytics)
 # But allow public auth pages (signup, login) — they have noindex meta tags
 Disallow: /professional/dashboard

@@ -18,6 +18,7 @@ import {
   normalizeProgramRecord
 } from '../lib/programCatalog'
 import { supabase, rankProfilesForCouples } from '../lib/supabaseClient'
+import { buildApprovedSpecialtyFilter } from '../lib/utils'
 import '../assets/css/specialty-page.css'
 
 const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
@@ -89,18 +90,8 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
         setPrograms([])
       }
 
-      // Build OR conditions for filterTerms
-      // AND filter by state
-      const filterConditions = specialty.filterTerms
-        .map(term => `bio.ilike.%${term}%,specialties.cs.{${term}}`)
-        .join(',')
+      const filterConditions = buildApprovedSpecialtyFilter(specialty.filterTerms)
 
-      // Supabase doesn't easily support (A OR B) AND C in one simple query string builder
-      // But we can chain .eq('state_province', stateConfig.abbr) 
-      // However, .or() applies to the whole query usually unless scoped.
-      // Actually, .or() takes a filter string.
-      // .eq('state_province', 'TX').or('bio.ilike.%Christian%') -> WHERE state='TX' AND (bio like ... OR ...)
-      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -219,6 +210,7 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
         url={shouldNoindex
           ? `/premarital-counseling/${stateSlug}`
           : `/premarital-counseling/${specialtySlug}/${stateSlug}`}
+        canonicalUrl={`/premarital-counseling/${specialtySlug}/${stateSlug}`}
         breadcrumbs={breadcrumbItems}
         faqs={allFaqs.length > 0 ? allFaqs : null}
         noindex={shouldNoindex}
