@@ -126,6 +126,7 @@ const ThankYouPage = React.lazy(() => import('./pages/ThankYouPage'))
 const ProfessionalsPage = React.lazy(() => import('./pages/ProfessionalsPage'))
 const ConfirmEmailPage = React.lazy(() => import('./pages/ConfirmEmailPage'))
 const EmailVerifiedPage = React.lazy(() => import('./pages/EmailVerifiedPage'))
+const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage'))
 const SEOContentPage = React.lazy(() => import('./pages/SEOContentPage'))
 const ClaimWithTokenPage = React.lazy(() => import('./pages/ClaimWithTokenPage'))
 const ClaimSuccessPage = React.lazy(() => import('./pages/ClaimSuccessPage'))
@@ -160,6 +161,16 @@ function AppInner() {
     (prefix) => location.pathname === prefix || location.pathname.startsWith(`${prefix}/`)
   )
   const isOnboardingRoute = location.pathname.startsWith('/professional/onboarding')
+  // Auth-related routes that should never be intercepted by the onboarding redirect.
+  // Without this, users with broken/missing profiles get trapped in an infinite
+  // redirect loop with no way to log out, reset their password, or re-verify.
+  const isAuthRoute = [
+    '/professional/login',
+    '/professional/signup',
+    '/professional/confirm-email',
+    '/professional/email-verified',
+    '/reset-password'
+  ].includes(location.pathname)
   const hasIncompleteOnboarding =
     !loading &&
     user &&
@@ -167,7 +178,7 @@ function AppInner() {
     !profileLoadFailed &&
     (!profile || !profile.onboarding_completed)
 
-  if (hasIncompleteOnboarding && !isOnboardingRoute) {
+  if (hasIncompleteOnboarding && !isOnboardingRoute && !isAuthRoute) {
     return <Navigate to="/professional/onboarding" replace />
   }
 
@@ -266,6 +277,7 @@ function AppInner() {
             <Route path="/professional/signup" element={<SignupForm />} />
             <Route path="/professional/confirm-email" element={<ConfirmEmailPage />} />
             <Route path="/professional/email-verified" element={<EmailVerifiedPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route
               path="/professional/onboarding"
               element={

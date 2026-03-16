@@ -35,6 +35,20 @@ const STEP_NAMES = {
 // Max step in simplified flow (used to clamp legacy users)
 const MAX_STEP = 7
 
+const getOnboardingAttribution = (searchParams) => {
+  const storedRef = typeof window !== 'undefined'
+    ? sessionStorage.getItem('wc_referral_code') || ''
+    : ''
+
+  return {
+    utm_source: searchParams.get('utm_source') || '',
+    utm_medium: searchParams.get('utm_medium') || '',
+    utm_campaign: searchParams.get('utm_campaign') || '',
+    signup_source: searchParams.get('source') || 'organic',
+    referral_code: searchParams.get('ref') || storedRef
+  }
+}
+
 /**
  * Custom hook for managing onboarding state, auto-save, and navigation
  * Handles loading profile data, updating fields, saving progress, and resuming
@@ -105,22 +119,7 @@ export const useOnboardingState = () => {
   const [error, setError] = useState('')
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState('')
-
-  // UTM tracking
-  const [utmParams, setUtmParams] = useState({})
-
-  // Capture UTM parameters + referral code on mount
-  useEffect(() => {
-    const storedRef = sessionStorage.getItem('wc_referral_code') || ''
-    const params = {
-      utm_source: searchParams.get('utm_source') || '',
-      utm_medium: searchParams.get('utm_medium') || '',
-      utm_campaign: searchParams.get('utm_campaign') || '',
-      signup_source: searchParams.get('source') || 'organic',
-      referral_code: searchParams.get('ref') || storedRef
-    }
-    setUtmParams(params)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const utmParams = getOnboardingAttribution(searchParams)
 
   // Load existing profile data or create draft on mount
   useEffect(() => {
@@ -284,6 +283,7 @@ export const useOnboardingState = () => {
           if (createError) {
             // Duplicate key — profile was created between our check and insert (race condition)
             if (createError.code === '23505') {
+              // First check: did our own user_id race-create a profile?
               const { data: raceProfile } = await supabase
                 .from('profiles')
                 .select('id')
@@ -294,9 +294,34 @@ export const useOnboardingState = () => {
                 setProfileData(prev => ({ ...prev, email: user.email }))
                 return
               }
-              // If it's a unique constraint on email but not matching this user_id, 
-              // it means the email is claimed by another account.
-              throw new Error('This email is already associated with another directory profile. Please contact support if you need to recover it.')
+              // Second check: is there an unclaimed profile with this email we can claim?
+              const { data: orphanProfile } = await supabase
+                .from('profiles')
+                .select('id')
+                .ilike('email', user.email)
+                .is('user_id', null)
+                .maybeSingle()
+              if (orphanProfile) {
+                const { error: claimErr } = await supabase
+                  .from('profiles')
+                  .update({
+                    user_id: user.id,
+                    is_claimed: true,
+                    claimed_at: new Date().toISOString(),
+                    onboarding_step: 1,
+                    onboarding_started_at: new Date().toISOString(),
+                    onboarding_last_saved_at: new Date().toISOString()
+                  })
+                  .eq('id', orphanProfile.id)
+                  .is('user_id', null)
+                if (!claimErr) {
+                  setProfileId(orphanProfile.id)
+                  setProfileData(prev => ({ ...prev, email: user.email }))
+                  return
+                }
+              }
+              // Email is claimed by another auth account — unrecoverable without support
+              throw new Error('This email is already associated with another directory profile. Please contact hello@weddingcounselors.com to recover it.')
             }
             throw createError
           }

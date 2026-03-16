@@ -91,13 +91,13 @@ const SignupForm = () => {
     if (checkError) {
       console.error('Error checking email:', checkError)
       // Continue with signup if check fails (don't block on this)
-    } else if (exists && existingProfile?.is_claimed && existingProfile?.user_id) {
-      // Only block if the profile is already claimed by someone with an account
+    } else if (exists && existingProfile?.user_id) {
+      // Profile already linked to an auth account (claimed or draft) — they need to log in
       setError('EXISTING_PROFILE')
       setLoading(false)
       return
     }
-    // If profile exists but is unclaimed (imported), let them sign up -
+    // If profile exists but is unclaimed (no user_id / imported), let them sign up -
     // CreateProfilePage will auto-claim it after email verification
 
     const { data, error } = await signUp(formData.email, formData.password, {

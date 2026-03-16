@@ -18,9 +18,9 @@ import '../../../assets/css/professional-signup.css'
 import './onboarding.css'
 
 const OnboardingPage = () => {
-  const { user, profile, loading: authLoading } = useAuth()
+  const { user, profile, loading: authLoading, signOut } = useAuth()
   const onboardingState = useOnboardingState()
-  const { currentStep, loading } = onboardingState
+  const { currentStep, loading, error, profileId } = onboardingState
 
   // Redirect to login if not authenticated
   if (!authLoading && !user) {
@@ -39,6 +39,37 @@ const OnboardingPage = () => {
         <div style={{ textAlign: 'center' }}>
           <i className="fa fa-spinner fa-spin fa-2x" style={{ color: 'var(--primary)' }}></i>
           <p style={{ marginTop: '1rem', color: 'var(--slate)' }}>Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Initialization failed — show error with escape hatch so user isn't trapped
+  if (!loading && error && !profileId) {
+    return (
+      <div className="professional-signup" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', maxWidth: '480px', padding: '2rem' }}>
+          <i className="fa fa-exclamation-triangle fa-2x" style={{ color: '#e74c3c' }}></i>
+          <h2 style={{ margin: '1rem 0 0.5rem' }}>Something went wrong</h2>
+          <p style={{ color: 'var(--slate)', marginBottom: '1.5rem' }}>{error}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <button
+              className="btn btn-primary"
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </button>
+            <button
+              className="btn btn-outline"
+              onClick={async () => { await signOut(); window.location.href = '/professional/login' }}
+            >
+              Log Out &amp; Start Over
+            </button>
+            <p style={{ fontSize: '0.85rem', color: 'var(--slate)', marginTop: '0.5rem' }}>
+              If this keeps happening, contact us at{' '}
+              <a href="mailto:hello@weddingcounselors.com">hello@weddingcounselors.com</a>
+            </p>
+          </div>
         </div>
       </div>
     )

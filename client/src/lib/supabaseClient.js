@@ -578,14 +578,15 @@ export const profileOperations = {
     return { data: rankProfilesForCouples(data || []), error }
   },
 
-  // Check if a visible profile already exists with this email (for signup dedup)
+  // Check if ANY profile already exists with this email (for signup dedup).
+  // Must include all moderation statuses (draft, pending, approved) so we
+  // catch abandoned draft profiles that would cause a unique-constraint
+  // collision downstream.
   async checkEmailExists(email) {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, full_name, is_claimed, user_id')
+      .select('id, full_name, is_claimed, user_id, moderation_status')
       .ilike('email', email.trim())
-      .eq('is_hidden', false)
-      .or('moderation_status.eq.approved,moderation_status.is.null')
       .maybeSingle()
 
     return { exists: !!data, profile: data, error }
