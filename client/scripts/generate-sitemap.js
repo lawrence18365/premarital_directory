@@ -244,7 +244,7 @@ async function fetchProfileCounts() {
     // Fetch all profiles with their slugs for sitemap
     const { data: profiles, error } = await supabase
       .from('profiles')
-      .select('id, slug, city, state_province, full_name, bio, specialties, onboarding_last_saved_at, created_at, is_hidden')
+      .select('id, slug, city, state_province, full_name, bio, specialties, onboarding_last_saved_at, created_at, is_hidden, is_claimed, photo_url')
       .eq('is_hidden', false)
       .or('moderation_status.eq.approved,moderation_status.is.null')
       .order('created_at', { ascending: false })
@@ -612,29 +612,44 @@ async function main() {
   fs.writeFileSync(path.join(publicDir, 'sitemap-blog.xml'), blogSitemap)
   console.log(`✅ Generated sitemap-blog.xml (${blogUrls.length} URLs)`)
 
-  // 4. NEW: Profile URLs sitemap (individual professional profiles)
+  // 4. Profile URLs sitemap — only include quality profiles to protect crawl budget.
+  // Quality = has a bio (not thin content). Claimed profiles get higher priority.
   const profileUrls = []
+  let skippedThinProfiles = 0
   if (allProfiles && allProfiles.length > 0) {
     allProfiles.forEach(profile => {
-      if (profile.slug && profile.city && profile.state_province) {
-        const stateSlug = getStateSlug(profile.state_province)
-        const citySlug = getCitySlug(profile.city)
-        const lastmod = profile.onboarding_last_saved_at
-          ? new Date(profile.onboarding_last_saved_at).toISOString().split('T')[0]
-          : today
+      if (!profile.slug || !profile.city || !profile.state_province) return
 
-        profileUrls.push({
-          url: `/premarital-counseling/${stateSlug}/${citySlug}/${profile.slug}`,
-          priority: 0.6,
-          changefreq: 'weekly',
-          lastmod: lastmod
-        })
+      // Skip thin profiles: no bio or bio too short to be meaningful
+      const hasBio = profile.bio && profile.bio.trim().length >= 50
+      if (!hasBio) {
+        skippedThinProfiles++
+        return
       }
+
+      const stateSlug = getStateSlug(profile.state_province)
+      const citySlug = getCitySlug(profile.city)
+      const lastmod = profile.onboarding_last_saved_at
+        ? new Date(profile.onboarding_last_saved_at).toISOString().split('T')[0]
+        : today
+
+      // Claimed profiles with photos get higher priority
+      const hasPhoto = !!profile.photo_url
+      const isClaimed = !!profile.is_claimed
+      const priority = (isClaimed && hasPhoto) ? 0.7 : isClaimed ? 0.6 : 0.5
+
+      profileUrls.push({
+        url: `/premarital-counseling/${stateSlug}/${citySlug}/${profile.slug}`,
+        priority,
+        changefreq: isClaimed ? 'weekly' : 'monthly',
+        lastmod: lastmod
+      })
     })
 
     const profileSitemap = generateSitemapXML(profileUrls)
     fs.writeFileSync(path.join(publicDir, 'sitemap-profiles.xml'), profileSitemap)
-    console.log(`✅ Generated sitemap-profiles.xml (${profileUrls.length} URLs - individual profiles)`)
+    console.log(`✅ Generated sitemap-profiles.xml (${profileUrls.length} URLs - quality profiles)`)
+    console.log(`   - Skipped ${skippedThinProfiles} thin profiles (no/short bio)`)
   } else {
     console.log('⚠️  No profiles found, skipping sitemap-profiles.xml')
   }

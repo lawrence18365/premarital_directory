@@ -194,9 +194,9 @@ const SEOHelmet = ({
           if (breadcrumbs) {
             allData.push(generateBreadcrumbStructuredData(breadcrumbs, siteUrl));
           }
-          if (faqs) {
-            allData.push(generateFAQStructuredData(faqs));
-          }
+          // FAQPage schema removed — Google restricted FAQ rich results to
+          // authoritative government/health sites (Aug 2023). FAQ content is
+          // still rendered visually on the page via the <FAQ> component.
           if (reviews && professional) {
             allData.push(...generateReviewStructuredData(reviews, professional));
           }
