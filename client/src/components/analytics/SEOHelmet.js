@@ -19,23 +19,6 @@ const generateBreadcrumbStructuredData = (breadcrumbs, siteUrl = 'https://www.we
   }
 }
 
-const generateFAQStructuredData = (faqs) => {
-  if (!faqs || faqs.length === 0) return null
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqs.map(faq => ({
-      "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
-  }
-}
-
 const generateOrganizationStructuredData = (siteUrl) => {
   return {
     "@context": "https://schema.org",
