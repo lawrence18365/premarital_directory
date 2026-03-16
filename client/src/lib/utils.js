@@ -173,3 +173,29 @@ export const normalizeStateAbbr = (value) => {
   const match = Object.keys(STATE_ABBR).find(k => k.toLowerCase() === trimmed.toLowerCase())
   return match ? STATE_ABBR[match] : trimmed
 }
+
+const PUBLIC_PROFILE_MODERATION_CLAUSES = [
+  'moderation_status.eq.approved',
+  'moderation_status.is.null'
+]
+
+const escapePostgrestFilterValue = (value) => String(value || '').trim().replace(/,/g, '\\,')
+
+// Build a PostgREST OR filter that matches specialty terms only on public-approved profiles.
+export const buildApprovedSpecialtyFilter = (terms = [], { includeArrayMatch = true } = {}) => {
+  return terms
+    .map(escapePostgrestFilterValue)
+    .filter(Boolean)
+    .flatMap((term) => {
+      const termClauses = [`bio.ilike.%${term}%`]
+
+      if (includeArrayMatch) {
+        termClauses.push(`specialties.cs.{${term}}`)
+      }
+
+      return PUBLIC_PROFILE_MODERATION_CLAUSES.flatMap((moderationClause) =>
+        termClauses.map((termClause) => `and(${moderationClause},${termClause})`)
+      )
+    })
+    .join(',')
+}
