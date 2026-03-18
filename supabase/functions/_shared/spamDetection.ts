@@ -34,14 +34,28 @@ function isGibberish(text: string): boolean {
     // 5+ consecutive consonants is extremely rare in real names
     if (/[bcdfghjklmnpqrstvwxyz]{5,}/i.test(word)) return true
 
-    // Excessive case toggling (e.g. "BaNCNICiPTCKoSvm")
-    if (word.length >= 5 && caseChangeRatio(word) > 0.55) return true
+    // Case toggling — real names have at most 2–3 changes (e.g. "McDonald" = 3).
+    // Bot strings like "BaNCNICiPTCKoSvm" have 7+ changes with high ratios.
+    // Require BOTH a high ratio AND 4+ absolute changes to avoid false positives
+    // on legitimate names like "McDonald" (ratio 0.43, 3 changes) or "DuBois".
+    if (word.length >= 5) {
+      let changes = 0
+      for (let i = 1; i < word.length; i++) {
+        const prevUpper = word[i - 1] !== word[i - 1].toLowerCase()
+        const currUpper = word[i] !== word[i].toLowerCase()
+        if (prevUpper !== currUpper) changes++
+      }
+      if (changes >= 4 && caseChangeRatio(word) > 0.35) return true
+    }
 
     // Very low vowel ratio — most languages need vowels
     if (word.length >= 5) {
       const vowels = (word.match(/[aeiou]/gi) || []).length
       if (vowels / word.length < 0.12) return true
     }
+
+    // Single words over 18 chars are almost never real names
+    if (word.length > 18) return true
   }
 
   return false
