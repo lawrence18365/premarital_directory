@@ -48,6 +48,24 @@ const supabase = createClient(
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
 
+// Map state abbreviations to full slugs (must match sitemap & canonical URLs)
+const STATE_SLUG_MAP = {
+  TX:'texas',CA:'california',NY:'new-york',FL:'florida',IL:'illinois',GA:'georgia',
+  CO:'colorado',PA:'pennsylvania',AZ:'arizona',WA:'washington',NC:'north-carolina',
+  NJ:'new-jersey',VA:'virginia',MA:'massachusetts',MI:'michigan',OH:'ohio',
+  TN:'tennessee',IN:'indiana',MO:'missouri',MD:'maryland',WI:'wisconsin',MN:'minnesota',
+  SC:'south-carolina',AL:'alabama',LA:'louisiana',KY:'kentucky',OR:'oregon',OK:'oklahoma',
+  CT:'connecticut',IA:'iowa',UT:'utah',NV:'nevada',AR:'arkansas',MS:'mississippi',
+  KS:'kansas',NM:'new-mexico',NE:'nebraska',WV:'west-virginia',ID:'idaho',HI:'hawaii',
+  NH:'new-hampshire',ME:'maine',MT:'montana',RI:'rhode-island',DE:'delaware',
+  SD:'south-dakota',ND:'north-dakota',AK:'alaska',VT:'vermont',WY:'wyoming',DC:'washington-dc',
+};
+
+function getStateSlug(abbr) {
+  if (!abbr) return '';
+  return STATE_SLUG_MAP[abbr.toUpperCase()] || abbr.toLowerCase().replace(/\s+/g, '-');
+}
+
 // ── Dedup & Quota ───────────────────────────────────────────────────
 
 async function getRecentlySubmitted() {
@@ -235,7 +253,7 @@ async function submitNewProfiles() {
   const urls = profiles
     .filter(p => p.slug)
     .map(p => {
-      const stateSlug = (p.state_province || '').toLowerCase().replace(/\s+/g, '-');
+      const stateSlug = getStateSlug(p.state_province);
       const citySlug = (p.city || '').toLowerCase().replace(/\s+/g, '-').replace(/'/g, '');
       return `${BASE_URL}/premarital-counseling/${stateSlug}/${citySlug}/${p.slug}`;
     });
@@ -269,7 +287,7 @@ async function submitImportantPages() {
   const stateSet = new Set();
   (profiles || []).forEach(p => {
     if (p.state_province) {
-      const stateSlug = p.state_province.toLowerCase().replace(/\s+/g, '-');
+      const stateSlug = getStateSlug(p.state_province);
       stateSet.add(stateSlug);
       if (p.city) {
         const citySlug = p.city.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '');
