@@ -135,8 +135,8 @@ const MarriageLicenseDiscountPage = () => {
   return (
     <>
       <SEOHelmet
-        title="Marriage License Discount: Save $20–$75 in 10 States (2026 Guide)"
-        description="FL, TX, MN, TN, OK, GA & more — complete a premarital course, get your certificate, and save on your marriage license fee. See requirements by state."
+        title="Get $20–$75 Off Your Marriage License (10 States, 2026)"
+        description="Complete a premarital course and save $20–$75 on your marriage license in FL, TX, MN, GA, TN, OK, IN, MD, UT, or WV. State-by-state requirements, exact savings, and approved providers listed."
         url="/premarital-counseling/marriage-license-discount"
         keywords="marriage license discount premarital counseling, marriage certificate discount, twogether in texas, twogether in texas online course, texas premarital education course, texas premarital course, premarital counseling for marriage license, qualifying premarital education program, how to get marriage license discount, florida marriage license discount, texas marriage license discount, save money on marriage license, california marriage license fee discount premarital counseling, georgia marriage license discount, utah marriage license discount, marriage license fee reduction"
         breadcrumbs={breadcrumbItems}
