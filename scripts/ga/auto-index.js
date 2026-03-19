@@ -30,20 +30,35 @@ import https from 'https';
 import fs from 'fs';
 import path from 'path';
 
-const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET
-);
-oauth2Client.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
-
 const BASE_URL = 'https://www.weddingcounselors.com';
 const DAILY_LIMIT = 200;
 const DEDUP_HOURS = 48;
 
-const supabase = createClient(
-  'https://bkjwctlolhoxhnoospwp.supabase.co',
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+// Lazy-init: Google OAuth and Supabase are only needed for modes that call
+// the Indexing API or query the database. The --ping-sitemap mode needs
+// neither, so we defer initialization to avoid crashing when secrets aren't set.
+let _oauth2Client;
+function getOAuth2Client() {
+  if (!_oauth2Client) {
+    _oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET
+    );
+    _oauth2Client.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
+  }
+  return _oauth2Client;
+}
+
+let _supabase;
+function getSupabase() {
+  if (!_supabase) {
+    _supabase = createClient(
+      'https://bkjwctlolhoxhnoospwp.supabase.co',
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+  }
+  return _supabase;
+}
 
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
@@ -70,7 +85,7 @@ function getStateSlug(abbr) {
 
 async function getRecentlySubmitted() {
   const since = new Date(Date.now() - DEDUP_HOURS * 60 * 60 * 1000).toISOString();
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('indexing_submissions')
     .select('url')
     .gte('submitted_at', since)
@@ -92,7 +107,7 @@ async function getTodayQuotaUsed() {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
-  const { count, error } = await supabase
+  const { count, error } = await getSupabase()
     .from('indexing_submissions')
     .select('id', { count: 'exact', head: true })
     .gte('submitted_at', todayStart.toISOString())
@@ -103,7 +118,7 @@ async function getTodayQuotaUsed() {
 }
 
 async function logSubmission(url, statusCode, response, source) {
-  await supabase
+  await getSupabase()
     .from('indexing_submissions')
     .insert({ url, status_code: statusCode, response, source })
     .then(() => {})  // fire and forget
@@ -141,7 +156,7 @@ async function dedup(urls, source) {
 // ── Indexing API ────────────────────────────────────────────────────
 
 async function getAccessToken() {
-  const { token } = await oauth2Client.getAccessToken();
+  const { token } = await getOAuth2Client().getAccessToken();
   return token;
 }
 
@@ -233,7 +248,7 @@ async function submitNewProfiles() {
 
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-  const { data: profiles, error } = await supabase
+  const { data: profiles, error } = await getSupabase()
     .from('profiles')
     .select('slug, city, state_province')
     .or(`created_at.gte.${since},claimed_at.gte.${since}`)
@@ -276,7 +291,7 @@ async function submitImportantPages() {
     `${BASE_URL}/premarital-counseling/affordable`,
   ];
 
-  const { data: profiles } = await supabase
+  const { data: profiles } = await getSupabase()
     .from('profiles')
     .select('city, state_province')
     .eq('is_hidden', false)
@@ -397,7 +412,7 @@ async function submitFromFile(filePath) {
 async function submitBlogPosts() {
   console.log('\n=== Submitting Blog Posts ===\n');
 
-  const { data: posts, error } = await supabase
+  const { data: posts, error } = await getSupabase()
     .from('posts')
     .select('slug')
     .eq('status', 'published');
