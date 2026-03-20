@@ -69,6 +69,38 @@ jobs:
           REACT_APP_SUPABASE_URL: ${{ secrets.REACT_APP_SUPABASE_URL }}
           REACT_APP_SUPABASE_ANON_KEY: ${{ secrets.REACT_APP_SUPABASE_ANON_KEY }}
 
+      - name: Validate sitemaps
+        run: |
+          echo "=== Sitemap Health Check ==="
+          CITIES=$(grep -c '<url>' client/public/sitemap-cities.xml 2>/dev/null || echo 0)
+          SPECIALTIES=$(grep -c '<url>' client/public/sitemap-specialties.xml 2>/dev/null || echo 0)
+          CORE=$(grep -c '<url>' client/public/sitemap-core.xml 2>/dev/null || echo 0)
+          BLOG=$(grep -c '<url>' client/public/sitemap-blog.xml 2>/dev/null || echo 0)
+
+          echo "sitemap-core.xml: $CORE URLs"
+          echo "sitemap-cities.xml: $CITIES URLs"
+          echo "sitemap-specialties.xml: $SPECIALTIES URLs"
+          echo "sitemap-blog.xml: $BLOG URLs"
+
+          if [ "$CITIES" -eq 0 ]; then
+            echo "::warning::sitemap-cities.xml is EMPTY — Google cannot discover state/city pages"
+          fi
+          if [ "$SPECIALTIES" -eq 0 ]; then
+            echo "::warning::sitemap-specialties.xml is EMPTY — Google cannot discover specialty+location pages"
+          fi
+          if [ "$CORE" -lt 10 ]; then
+            echo "::warning::sitemap-core.xml has fewer than 10 URLs — expected 40+"
+          fi
+
+          # Check health file if it exists
+          if [ -f client/public/.sitemap-health.json ]; then
+            echo ""
+            echo "Health check details:"
+            cat client/public/.sitemap-health.json
+          fi
+
+          echo "=== Sitemap check complete ==="
+
       - name: Webpack build (CRA)
         run: npx react-scripts build
         working-directory: client

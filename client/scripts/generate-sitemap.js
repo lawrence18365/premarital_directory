@@ -54,6 +54,8 @@ const CORE_PAGES = [
   { url: '/premarital-counseling/marriage-license-discount/georgia', priority: 0.85, changefreq: 'monthly' },
   { url: '/premarital-counseling/marriage-license-discount/maryland', priority: 0.85, changefreq: 'monthly' },
   { url: '/premarital-counseling/marriage-license-discount/indiana', priority: 0.85, changefreq: 'monthly' },
+  { url: '/premarital-counseling/marriage-license-discount/utah', priority: 0.85, changefreq: 'monthly' },
+  { url: '/premarital-counseling/marriage-license-discount/west-virginia', priority: 0.85, changefreq: 'monthly' },
   { url: '/premarital-counseling/christian', priority: 0.85, changefreq: 'weekly' },
   { url: '/premarital-counseling/catholic', priority: 0.85, changefreq: 'weekly' },
   { url: '/premarital-counseling/lgbtq', priority: 0.85, changefreq: 'weekly' },
@@ -177,6 +179,57 @@ const MIN_SPECIALTY_ANCHOR_CITY_PROFILES = 1
 const MIN_VERIFIED_CATHOLIC_PROGRAMS = 3
 
 const DOMAIN = 'https://www.weddingcounselors.com'
+
+// Anchor cities that are always indexed regardless of profile count.
+// Used as a static fallback when Supabase is unavailable.
+const ANCHOR_CITIES = {
+  'texas': ['austin', 'dallas', 'houston', 'san-antonio'],
+  'california': ['los-angeles', 'san-francisco', 'san-diego'],
+  'new-york': ['new-york'],
+  'florida': ['miami'],
+  'illinois': ['chicago'],
+  'georgia': ['atlanta'],
+  'colorado': ['denver'],
+  'arizona': ['phoenix'],
+  'michigan': ['detroit'],
+  'tennessee': ['nashville'],
+  'north-carolina': ['raleigh', 'charlotte'],
+  'washington': ['seattle'],
+  'oregon': ['portland'],
+  'massachusetts': ['boston'],
+  'pennsylvania': ['philadelphia'],
+  'minnesota': ['minneapolis']
+}
+
+/**
+ * Read existing sitemap and count its URLs.
+ * Used to avoid overwriting a good sitemap with an empty one.
+ */
+function countExistingSitemapUrls(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8')
+    const matches = content.match(/<url>/g)
+    return matches ? matches.length : 0
+  } catch {
+    return 0
+  }
+}
+
+/**
+ * Safe write: only overwrite if new sitemap has >= URLs than existing,
+ * OR if existing is already empty. Prevents data loss on Supabase outages.
+ */
+function safeWriteSitemap(filePath, xml, newUrlCount, label) {
+  const existingCount = countExistingSitemapUrls(filePath)
+
+  if (newUrlCount === 0 && existingCount > 0) {
+    console.log(`⚠️  PRESERVED ${label}: new sitemap is empty but existing has ${existingCount} URLs — keeping existing`)
+    return false
+  }
+
+  fs.writeFileSync(filePath, xml)
+  return true
+}
 
 function generateSitemapXML(urls) {
   const today = new Date().toISOString().split('T')[0]
@@ -435,79 +488,103 @@ async function main() {
   const allCities = []
   let includedStatePages = 0
   let skippedStatePages = 0
-  Object.keys(STATE_CONFIG).forEach(stateSlug => {
-    const stateData = STATE_CONFIG[stateSlug]
-    const hasStateProfiles = (stateProfileCounts[stateSlug] || 0) > 0
+  let usingStaticFallback = false
 
-    // Fail closed: never include state URLs when coverage is unavailable.
-    // This prevents indexing thin pages if Supabase data is missing at build time.
-    if (!hasProfileCoverage) {
-      skippedStatePages++
-    } else if (hasStateProfiles) {
+  if (!hasProfileCoverage) {
+    // === STATIC FALLBACK MODE ===
+    // Supabase is unavailable. Instead of generating an empty sitemap,
+    // include all states and anchor cities — these pages are always indexed
+    // and exist as valid routes regardless of profile data.
+    usingStaticFallback = true
+    console.log('⚠️  Supabase unavailable — using static fallback for city/state sitemap')
+
+    // Include ALL state pages (they all have valid routes)
+    Object.keys(STATE_CONFIG).forEach(stateSlug => {
       cityUrls.push({
         url: `/premarital-counseling/${stateSlug}`,
-        priority: 0.8,
+        priority: 0.7,
         changefreq: 'weekly',
         lastmod: today
       })
       includedStatePages++
-    } else {
-      skippedStatePages++
-    }
+    })
 
-    // Add City Pages
-    stateData.major_cities.forEach(cityName => {
-      allCities.push({
-        stateSlug,
-        stateName: stateData.name,
-        cityName,
-        citySlug: getCitySlug(cityName)
+    // Include all anchor cities (always indexed, never noindexed)
+    Object.entries(ANCHOR_CITIES).forEach(([stateSlug, citySlugs]) => {
+      citySlugs.forEach(citySlug => {
+        cityUrls.push({
+          url: `/premarital-counseling/${stateSlug}/${citySlug}`,
+          priority: 0.8,
+          changefreq: 'daily',
+          lastmod: today
+        })
       })
     })
-  })
+  } else {
+    // === LIVE DATA MODE ===
+    Object.keys(STATE_CONFIG).forEach(stateSlug => {
+      const stateData = STATE_CONFIG[stateSlug]
+      const hasStateProfiles = (stateProfileCounts[stateSlug] || 0) > 0
 
-  // Calculate stats for priorities
-  let maxProfileCount = 1
-  if (profileCounts) {
+      if (hasStateProfiles) {
+        cityUrls.push({
+          url: `/premarital-counseling/${stateSlug}`,
+          priority: 0.8,
+          changefreq: 'weekly',
+          lastmod: today
+        })
+        includedStatePages++
+      } else {
+        skippedStatePages++
+      }
+
+      // Add City Pages
+      stateData.major_cities.forEach(cityName => {
+        allCities.push({
+          stateSlug,
+          stateName: stateData.name,
+          cityName,
+          citySlug: getCitySlug(cityName)
+        })
+      })
+    })
+
+    // Calculate stats for priorities
+    let maxProfileCount = 1
     const counts = Object.values(profileCounts)
     if (counts.length > 0) maxProfileCount = Math.max(...counts)
+
+    // Generate URLs for all cities
+    allCities.forEach(city => {
+      const key = `${city.cityName.toLowerCase()}|${city.stateSlug}`
+      const profileCount = profileCounts[key] || 0
+
+      const isAnchor = CITY_CONFIG[city.stateSlug]?.[city.citySlug]?.is_anchor === true
+      const wouldBeNoindex = profileCount === 0 || (!isAnchor && profileCount < 3)
+      if (wouldBeNoindex) return
+
+      const priority = calculatePriority(profileCount, maxProfileCount, isAnchor)
+
+      cityUrls.push({
+        url: `/premarital-counseling/${city.stateSlug}/${city.citySlug}`,
+        priority: priority,
+        changefreq: 'daily',
+        lastmod: today
+      })
+    })
   }
 
-  // Generate URLs for all cities
-  allCities.forEach(city => {
-    // Fail closed when coverage is unavailable
-    if (!hasProfileCoverage) return
-
-    const key = `${city.cityName.toLowerCase()}|${city.stateSlug}`
-    const profileCount = profileCounts ? (profileCounts[key] || 0) : 0
-
-    // Check if it's an anchor city in CITY_CONFIG
-    const isAnchor = CITY_CONFIG[city.stateSlug]?.[city.citySlug]?.is_anchor === true
-    // Match CityPage noindex logic: exclude non-anchor cities with <3 profiles
-    // CityPage.js:808: shouldNoindex = profiles.length === 0 || (!isAnchor && profiles.length < 3)
-    const wouldBeNoindex = profileCount === 0 || (!isAnchor && profileCount < 3)
-    if (wouldBeNoindex) return
-
-    const priority = calculatePriority(profileCount, maxProfileCount, isAnchor)
-
-    cityUrls.push({
-      url: `/premarital-counseling/${city.stateSlug}/${city.citySlug}`,
-      priority: priority,
-      changefreq: 'daily',
-      lastmod: today
-    })
-  })
-
   const citySitemap = generateSitemapXML(cityUrls)
-  fs.writeFileSync(path.join(publicDir, 'sitemap-cities.xml'), citySitemap)
+  const citySitemapPath = path.join(publicDir, 'sitemap-cities.xml')
+  const citySitemapWritten = safeWriteSitemap(citySitemapPath, citySitemap, cityUrls.length, 'sitemap-cities.xml')
   console.log(`\n✅ Generated sitemap-cities.xml (${cityUrls.length} URLs)`)
-  if (hasProfileCoverage) {
+  if (usingStaticFallback) {
+    console.log(`   - STATIC FALLBACK: included ${includedStatePages} state pages + ${Object.values(ANCHOR_CITIES).flat().length} anchor cities`)
+    console.log('   - Non-anchor cities skipped (cannot verify profile counts)')
+  } else if (hasProfileCoverage) {
     console.log(`   - Included state pages with active profiles: ${includedStatePages}`)
     console.log(`   - Skipped thin state pages: ${skippedStatePages}`)
     console.log('   - Included city pages with active profiles only')
-  } else {
-    console.log(`   - Coverage data unavailable: skipped all ${skippedStatePages} state pages`)
-    console.log('   - Coverage data unavailable: skipped all city pages')
   }
 
   // 2.5 Programmatic Specialty Sitemap (quality-gated to avoid thin URL bloat)
@@ -587,8 +664,29 @@ async function main() {
     })
   })
 
+  // Static fallback for specialties when Supabase is unavailable:
+  // Include high-traffic specialties at the state level for anchor states
+  if (!hasSpecialtyDepthData && specialtyUrls.length === 0) {
+    console.log('⚠️  Supabase unavailable — using static fallback for specialty sitemap')
+    const highTrafficSpecialties = ['christian', 'online', 'gottman', 'prepare-enrich', 'lgbtq', 'affordable']
+    const anchorStates = Object.keys(ANCHOR_CITIES)
+
+    highTrafficSpecialties.forEach(specialty => {
+      anchorStates.forEach(stateSlug => {
+        specialtyUrls.push({
+          url: `/premarital-counseling/${specialty}/${stateSlug}`,
+          priority: 0.7,
+          changefreq: 'weekly',
+          lastmod: today
+        })
+        includedSpecialtyStatePages++
+      })
+    })
+  }
+
   const specialtySitemap = generateSitemapXML(specialtyUrls)
-  fs.writeFileSync(path.join(publicDir, 'sitemap-specialties.xml'), specialtySitemap)
+  const specialtySitemapPath = path.join(publicDir, 'sitemap-specialties.xml')
+  safeWriteSitemap(specialtySitemapPath, specialtySitemap, specialtyUrls.length, 'sitemap-specialties.xml')
   console.log(`✅ Generated sitemap-specialties.xml (${specialtyUrls.length} URLs - quality-gated Programmatic SEO)`)
   console.log(`   - Specialty state pages kept: ${includedSpecialtyStatePages}`)
   console.log(`   - Specialty city pages kept: ${includedSpecialtyCityPages}`)
@@ -669,7 +767,7 @@ async function main() {
   fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapIndex)
   console.log(`✅ Generated sitemap.xml (index file)`)
 
-  // Summary
+  // Summary & Health Check
   const totalUrls = coreUrls.length + cityUrls.length + specialtyUrls.length + blogUrls.length + profileUrls.length
   console.log(`\n📊 Total URLs in sitemap: ${totalUrls}`)
   console.log('   - Core pages:', coreUrls.length)
@@ -677,9 +775,35 @@ async function main() {
   console.log('   - Specialty pages:', specialtyUrls.length)
   console.log('   - Blog posts:', blogUrls.length)
   console.log('   - Individual profiles:', profileUrls.length)
-  console.log('\n🎯 Focused on higher-signal pages to reduce thin-index coverage')
-  console.log('🏆 Cities with more profiles get higher sitemap priority')
-  console.log('👤 All visible profiles now included in sitemap')
+
+  // Health check: warn if sitemaps look suspiciously small
+  const issues = []
+  if (cityUrls.length === 0) issues.push('sitemap-cities.xml has 0 URLs')
+  if (specialtyUrls.length === 0) issues.push('sitemap-specialties.xml has 0 URLs')
+  if (profileUrls.length === 0) issues.push('sitemap-profiles.xml has 0 URLs')
+  if (blogUrls.length < 10) issues.push(`sitemap-blog.xml has only ${blogUrls.length} URLs (expected 30+)`)
+  if (totalUrls < 50) issues.push(`Total sitemap URLs is only ${totalUrls} (expected 500+)`)
+
+  if (issues.length > 0) {
+    console.log('\n🚨 SITEMAP HEALTH CHECK WARNINGS:')
+    issues.forEach(issue => console.log(`   ⚠️  ${issue}`))
+    // Write health check file for CI to read
+    const healthFile = path.join(publicDir, '.sitemap-health.json')
+    fs.writeFileSync(healthFile, JSON.stringify({
+      generated: today,
+      totalUrls,
+      core: coreUrls.length,
+      cities: cityUrls.length,
+      specialties: specialtyUrls.length,
+      blog: blogUrls.length,
+      profiles: profileUrls.length,
+      issues,
+      usedStaticFallback: usingStaticFallback,
+      supabaseAvailable: hasProfileCoverage
+    }, null, 2))
+  } else {
+    console.log('\n✅ Sitemap health check passed — all sitemaps populated')
+  }
 }
 
 main().catch(err => {

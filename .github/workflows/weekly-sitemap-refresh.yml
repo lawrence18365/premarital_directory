@@ -1,0 +1,140 @@
+name: Weekly Sitemap Refresh
+
+# Regenerates sitemaps from live Supabase data and commits them to the repo.
+# This ensures there's always a "last known good" baseline in version control,
+# so even if the build-time generation has a Supabase connectivity issue,
+# the deploy uses valid sitemaps (not empty ones).
+
+on:
+  schedule:
+    # Every Sunday at 4:00 AM UTC (11 PM EST Saturday)
+    - cron: '0 4 * * 0'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Generate but do not commit'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+jobs:
+  refresh-sitemaps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --prefix client
+
+      - name: Snapshot existing sitemap counts
+        id: before
+        run: |
+          CITIES_BEFORE=$(grep -c '<url>' client/public/sitemap-cities.xml 2>/dev/null || echo 0)
+          SPECIALTIES_BEFORE=$(grep -c '<url>' client/public/sitemap-specialties.xml 2>/dev/null || echo 0)
+          PROFILES_BEFORE=$(grep -c '<url>' client/public/sitemap-profiles.xml 2>/dev/null || echo 0)
+          BLOG_BEFORE=$(grep -c '<url>' client/public/sitemap-blog.xml 2>/dev/null || echo 0)
+          echo "cities=$CITIES_BEFORE" >> "$GITHUB_OUTPUT"
+          echo "specialties=$SPECIALTIES_BEFORE" >> "$GITHUB_OUTPUT"
+          echo "profiles=$PROFILES_BEFORE" >> "$GITHUB_OUTPUT"
+          echo "blog=$BLOG_BEFORE" >> "$GITHUB_OUTPUT"
+          echo "Before: cities=$CITIES_BEFORE specialties=$SPECIALTIES_BEFORE profiles=$PROFILES_BEFORE blog=$BLOG_BEFORE"
+
+      - name: Regenerate sitemaps
+        run: node scripts/generate-sitemap.js
+        working-directory: client
+        env:
+          REACT_APP_SUPABASE_URL: ${{ secrets.REACT_APP_SUPABASE_URL }}
+          REACT_APP_SUPABASE_ANON_KEY: ${{ secrets.REACT_APP_SUPABASE_ANON_KEY }}
+
+      - name: Compare and validate
+        id: diff
+        run: |
+          CITIES_AFTER=$(grep -c '<url>' client/public/sitemap-cities.xml 2>/dev/null || echo 0)
+          SPECIALTIES_AFTER=$(grep -c '<url>' client/public/sitemap-specialties.xml 2>/dev/null || echo 0)
+          PROFILES_AFTER=$(grep -c '<url>' client/public/sitemap-profiles.xml 2>/dev/null || echo 0)
+          BLOG_AFTER=$(grep -c '<url>' client/public/sitemap-blog.xml 2>/dev/null || echo 0)
+
+          echo "After: cities=$CITIES_AFTER specialties=$SPECIALTIES_AFTER profiles=$PROFILES_AFTER blog=$BLOG_AFTER"
+
+          # Check for improvements
+          CITIES_BEFORE=${{ steps.before.outputs.cities }}
+          SPECIALTIES_BEFORE=${{ steps.before.outputs.specialties }}
+          PROFILES_BEFORE=${{ steps.before.outputs.profiles }}
+
+          CHANGED="false"
+          if [ "$CITIES_AFTER" -ne "$CITIES_BEFORE" ] || [ "$SPECIALTIES_AFTER" -ne "$SPECIALTIES_BEFORE" ] || [ "$PROFILES_AFTER" -ne "$PROFILES_BEFORE" ] || [ "$BLOG_AFTER" -ne "${{ steps.before.outputs.blog }}" ]; then
+            CHANGED="true"
+          fi
+
+          echo "changed=$CHANGED" >> "$GITHUB_OUTPUT"
+          echo "cities=$CITIES_AFTER" >> "$GITHUB_OUTPUT"
+          echo "specialties=$SPECIALTIES_AFTER" >> "$GITHUB_OUTPUT"
+          echo "profiles=$PROFILES_AFTER" >> "$GITHUB_OUTPUT"
+          echo "blog=$BLOG_AFTER" >> "$GITHUB_OUTPUT"
+
+          # Health warnings
+          if [ "$CITIES_AFTER" -eq 0 ]; then
+            echo "::warning::sitemap-cities.xml is still EMPTY after regeneration"
+          fi
+          if [ "$SPECIALTIES_AFTER" -eq 0 ]; then
+            echo "::warning::sitemap-specialties.xml is still EMPTY after regeneration"
+          fi
+
+          # Remove health check file (not for version control)
+          rm -f client/public/.sitemap-health.json
+
+      - name: Commit updated sitemaps
+        if: steps.diff.outputs.changed == 'true' && (github.event.inputs.dry_run != 'true')
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add client/public/sitemap*.xml
+          git diff --cached --quiet && echo "No sitemap changes to commit" && exit 0
+
+          CITIES_BEFORE=${{ steps.before.outputs.cities }}
+          CITIES_AFTER=${{ steps.diff.outputs.cities }}
+          SPECIALTIES_BEFORE=${{ steps.before.outputs.specialties }}
+          SPECIALTIES_AFTER=${{ steps.diff.outputs.specialties }}
+          PROFILES_BEFORE=${{ steps.before.outputs.profiles }}
+          PROFILES_AFTER=${{ steps.diff.outputs.profiles }}
+
+          git commit -m "$(cat <<EOF
+          chore: refresh sitemaps from live data
+
+          cities: $CITIES_BEFORE → $CITIES_AFTER URLs
+          specialties: $SPECIALTIES_BEFORE → $SPECIALTIES_AFTER URLs
+          profiles: $PROFILES_BEFORE → $PROFILES_AFTER URLs
+          EOF
+          )"
+
+          git push
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Sitemap Refresh Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Sitemap | Before | After | Change |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|--------|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Cities | ${{ steps.before.outputs.cities }} | ${{ steps.diff.outputs.cities }} | $(( ${{ steps.diff.outputs.cities }} - ${{ steps.before.outputs.cities }} )) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Specialties | ${{ steps.before.outputs.specialties }} | ${{ steps.diff.outputs.specialties }} | $(( ${{ steps.diff.outputs.specialties }} - ${{ steps.before.outputs.specialties }} )) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Profiles | ${{ steps.before.outputs.profiles }} | ${{ steps.diff.outputs.profiles }} | $(( ${{ steps.diff.outputs.profiles }} - ${{ steps.before.outputs.profiles }} )) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Blog | ${{ steps.before.outputs.blog }} | ${{ steps.diff.outputs.blog }} | $(( ${{ steps.diff.outputs.blog }} - ${{ steps.before.outputs.blog }} )) |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Changed:** ${{ steps.diff.outputs.changed }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "**Mode:** Dry run (no commit)" >> $GITHUB_STEP_SUMMARY
+          fi
