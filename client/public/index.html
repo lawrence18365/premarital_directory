@@ -2,9 +2,17 @@
 <html lang="en">
 
 <head>
-  <!-- Google tag (gtag.js) — skip during react-snap prerender -->
+  <!-- Google tag (gtag.js) — skip during react-snap prerender and for bots -->
   <script>
-    if (navigator.userAgent !== 'ReactSnap') {
+    (function() {
+      var ua = (navigator.userAgent || '').toLowerCase();
+      if (ua === 'reactsnap') return;
+      var bots = ['bot','crawl','spider','scrape','fetch','headless','phantom','puppeteer',
+        'playwright','selenium','lighthouse','pagespeed','python-requests','python-urllib',
+        'go-http-client','curl/','wget/','httpx','aiohttp','node-fetch','ahrefsbot',
+        'semrushbot','dotbot','mj12bot','bytespider','petalbot','yandexbot'];
+      for (var i = 0; i < bots.length; i++) { if (ua.indexOf(bots[i]) !== -1) return; }
+      if (navigator.webdriver) return;
       var s = document.createElement('script');
       s.async = true;
       s.src = 'https://www.googletagmanager.com/gtag/js?id=G-3DMVJVG5VF';
@@ -13,7 +21,7 @@
       function gtag() { dataLayer.push(arguments); }
       gtag('js', new Date());
       gtag('config', 'G-3DMVJVG5VF');
-    }
+    })();
   </script>
 
   <meta charset="utf-8" />
@@ -244,15 +252,16 @@
       }
     });
 
-    // Google Analytics 4 Setup
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
+    // Google Analytics 4 Setup — skip for bots
+    if (!navigator.webdriver) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
 
-    // GA4 Configuration - will be populated from environment variables
-    const ga4Id = '%REACT_APP_GA4_MEASUREMENT_ID%';
-    if (ga4Id && ga4Id !== '%REACT_APP_GA4_MEASUREMENT_ID%') {
-      gtag('config', ga4Id);
+      const ga4Id = '%REACT_APP_GA4_MEASUREMENT_ID%';
+      if (ga4Id && ga4Id !== '%REACT_APP_GA4_MEASUREMENT_ID%') {
+        gtag('config', ga4Id);
+      }
     }
   </script>
 </body>

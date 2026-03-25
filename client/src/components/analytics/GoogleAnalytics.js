@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { isLikelyBot } from '../../utils/botDetection'
 
 // Google Analytics 4 Component
 export const GoogleAnalytics = () => {
@@ -7,7 +8,7 @@ export const GoogleAnalytics = () => {
   const GA4_MEASUREMENT_ID = process.env.REACT_APP_GA4_MEASUREMENT_ID
 
   useEffect(() => {
-    if (!GA4_MEASUREMENT_ID) return
+    if (!GA4_MEASUREMENT_ID || isLikelyBot()) return
 
     // Load gtag script
     const script = document.createElement('script')
@@ -21,7 +22,7 @@ export const GoogleAnalytics = () => {
       window.dataLayer.push(arguments)
     }
     window.gtag = gtag
-    
+
     gtag('js', new Date())
     gtag('config', GA4_MEASUREMENT_ID, {
       page_title: document.title,
@@ -53,7 +54,7 @@ export const GoogleAnalytics = () => {
 
 // Track custom events
 export const trackEvent = (eventName, parameters = {}) => {
-  if (window.gtag) {
+  if (window.gtag && !isLikelyBot()) {
     window.gtag('event', eventName, parameters)
   }
 }
