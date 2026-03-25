@@ -40,6 +40,11 @@
       "linkedinbot"
     ]
 
+# Edge function — block scrapers, rate-limit burst traffic
+[[edge_functions]]
+  function = "bot-guard"
+  path = "/*"
+
 # Domain redirects handled by _redirects file
 
 # Redirect rules for single page application
