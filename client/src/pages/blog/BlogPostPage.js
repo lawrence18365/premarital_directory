@@ -74,7 +74,10 @@ const buildHeadingList = (content) => {
 const generateArticleStructuredData = (post) => {
   if (!post) return null;
 
-  return {
+  const wordCount = post.content ? post.content.split(/\s+/).length : undefined;
+  const featuredImage = post.featured_image || post.image;
+
+  const schema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
@@ -83,11 +86,9 @@ const generateArticleStructuredData = (post) => {
     dateModified: post.updated_at
       ? new Date(post.updated_at).toISOString()
       : (post.date ? new Date(post.date).toISOString() : new Date(post.created_at).toISOString()),
-    author: {
-      '@type': 'Organization',
-      name: 'Wedding Counselors',
-      url: 'https://www.weddingcounselors.com',
-    },
+    author: post.author_name
+      ? { '@type': 'Person', name: post.author_name, url: 'https://www.weddingcounselors.com/about' }
+      : { '@type': 'Organization', name: 'Wedding Counselors', url: 'https://www.weddingcounselors.com' },
     publisher: {
       '@type': 'Organization',
       name: 'Wedding Counselors',
@@ -103,7 +104,18 @@ const generateArticleStructuredData = (post) => {
     },
     articleSection: post.category || 'Relationship Guidance',
     keywords: `premarital counseling, ${post.category?.toLowerCase() || 'marriage preparation'}, engaged couples, relationship advice`,
+    inLanguage: 'en-US',
   };
+
+  if (wordCount) schema.wordCount = wordCount;
+  if (featuredImage) {
+    schema.image = {
+      '@type': 'ImageObject',
+      url: featuredImage.startsWith('http') ? featuredImage : `https://www.weddingcounselors.com${featuredImage}`,
+    };
+  }
+
+  return schema;
 };
 
 const BlogPostPage = () => {

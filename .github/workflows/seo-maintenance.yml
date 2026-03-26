@@ -1,0 +1,107 @@
+name: SEO Maintenance (Daily Recrawl + Weekly Audit)
+
+# Daily: submit non-indexed URLs for re-crawling
+# Weekly: pull fresh GSC/GA4 data, check index coverage, score opportunities
+
+on:
+  schedule:
+    # Daily at 9:17 AM UTC — submit recrawl batch
+    - cron: '17 9 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Run mode'
+        required: true
+        default: 'daily'
+        type: choice
+        options:
+          - daily
+          - weekly
+          - full-coverage
+
+jobs:
+  seo-maintenance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+      GSC_SITE_URL: sc-domain:weddingcounselors.com
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install googleapis @supabase/supabase-js @anthropic-ai/sdk dotenv
+
+      # ── Daily: Submit non-indexed URLs for re-crawling ──────────────
+      - name: Pull fresh GSC data
+        run: node scripts/gsc/pull-data.js
+
+      - name: Submit recrawl batch (200 URLs)
+        run: |
+          if [ -f scripts/ga/output/non-indexed-urls-*.txt ]; then
+            LATEST=$(ls -t scripts/ga/output/non-indexed-urls-*.txt | head -1)
+            echo "Using non-indexed URL list: $LATEST"
+            node scripts/gsc/request-recrawl.js --from-file "$LATEST" --limit 200
+          else
+            echo "No non-indexed URL list found. Running coverage sample first..."
+            node scripts/ga/index-coverage-report.js --sample 50
+            LATEST=$(ls -t scripts/ga/output/non-indexed-urls-*.txt | head -1)
+            node scripts/gsc/request-recrawl.js --from-file "$LATEST" --limit 200
+          fi
+
+      # ── Weekly (Monday only): Full audit ────────────────────────────
+      - name: Weekly GA4 + GSC audit
+        if: github.event.schedule == '17 9 * * 1' || github.event.inputs.mode == 'weekly' || github.event.inputs.mode == 'full-coverage'
+        run: |
+          echo "=== Weekly SEO Audit ==="
+          node scripts/ga/pull-analytics.js
+          node scripts/gsc/score-opportunities.js
+
+      - name: Weekly index coverage check
+        if: github.event.schedule == '17 9 * * 1' || github.event.inputs.mode == 'weekly' || github.event.inputs.mode == 'full-coverage'
+        run: |
+          SAMPLE_SIZE=100
+          if [ "${{ github.event.inputs.mode }}" = "full-coverage" ]; then
+            SAMPLE_SIZE=500
+          fi
+          node scripts/ga/index-coverage-report.js --sample $SAMPLE_SIZE
+
+      # ── Save outputs as artifacts ───────────────────────────────────
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-reports-${{ github.run_number }}
+          path: |
+            scripts/gsc/output/
+            scripts/ga/output/
+          retention-days: 30
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### SEO Maintenance Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          if [ -f scripts/gsc/output/totals.json ]; then
+            CLICKS=$(node -e "console.log(require('./scripts/gsc/output/totals.json').trueTotals.clicks)")
+            IMPRESSIONS=$(node -e "console.log(require('./scripts/gsc/output/totals.json').trueTotals.impressions)")
+            CTR=$(node -e "console.log(require('./scripts/gsc/output/totals.json').trueTotals.ctr)")
+            echo "- **GSC (28d):** $CLICKS clicks / $IMPRESSIONS impressions / $CTR% CTR" >> $GITHUB_STEP_SUMMARY
+          fi
+          COVERAGE_FILE=$(ls -t scripts/ga/output/coverage-report-*.json 2>/dev/null | head -1)
+          if [ -n "$COVERAGE_FILE" ]; then
+            INDEXED=$(node -e "console.log(require('./$COVERAGE_FILE').indexed)")
+            TOTAL=$(node -e "console.log(require('./$COVERAGE_FILE').totalChecked)")
+            echo "- **Index coverage:** $INDEXED/$TOTAL indexed" >> $GITHUB_STEP_SUMMARY
+          fi

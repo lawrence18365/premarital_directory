@@ -209,6 +209,17 @@ jobs:
           echo "Static files in .vercel/output/static: $STATIC_FILE_COUNT"
           echo "STATIC_FILE_COUNT=$STATIC_FILE_COUNT" >> $GITHUB_ENV
 
+          # Create Edge Middleware for bot/geo blocking
+          mkdir -p .vercel/output/functions/_middleware.func
+          cp client/vercel-middleware/index.js .vercel/output/functions/_middleware.func/index.js
+          cat > .vercel/output/functions/_middleware.func/.vc-config.json << 'MWCONFIG'
+          {
+            "runtime": "edge",
+            "entrypoint": "index.js"
+          }
+          MWCONFIG
+          echo "Edge middleware created for bot/geo blocking"
+
           cat > .vercel/output/config.json << 'VCONFIG'
           {
             "version": 3,
