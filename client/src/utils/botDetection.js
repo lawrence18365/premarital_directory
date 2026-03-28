@@ -66,7 +66,7 @@ export function isLikelyBot() {
       // No connection info (many headless envs lack this)
       !navigator.connection && !navigator.mozConnection && !navigator.webkitConnection,
       // Zero screen dimensions
-      (screen.width === 0 || screen.height === 0),
+      (window.screen.width === 0 || window.screen.height === 0),
       // Language doesn't include English
       navigator.languages && navigator.languages.length > 0 && !navigator.languages.some(l => l.startsWith('en')),
     ].filter(Boolean).length;
