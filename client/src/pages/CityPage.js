@@ -474,7 +474,7 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   // With dynamic stats blocks added, we can index pages with fewer profiles
   // Anchor cities are always indexable to build SEO authority regardless of profile count
   const isAnchor = isAnchorCity(state, city)
-  const shouldNoindex = profiles.length === 0 || (!isAnchor && profiles.length < 3)
+  const shouldNoindex = profiles.length === 0 || (!isAnchor && profiles.length < 5)
 
   return (
     <div className="city-page">

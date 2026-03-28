@@ -55,6 +55,30 @@ const GLOBAL_PATHS = [
   '/manifest',
 ];
 
+// State abbreviation → full slug (for server-side 301 redirects)
+const STATE_ABBR_MAP = {
+  al: 'alabama', ak: 'alaska', az: 'arizona', ar: 'arkansas',
+  ca: 'california', co: 'colorado', ct: 'connecticut', de: 'delaware',
+  fl: 'florida', ga: 'georgia', hi: 'hawaii', id: 'idaho',
+  il: 'illinois', in: 'indiana', ia: 'iowa', ks: 'kansas',
+  ky: 'kentucky', la: 'louisiana', me: 'maine', md: 'maryland',
+  ma: 'massachusetts', mi: 'michigan', mn: 'minnesota', ms: 'mississippi',
+  mo: 'missouri', mt: 'montana', ne: 'nebraska', nv: 'nevada',
+  nh: 'new-hampshire', nj: 'new-jersey', nm: 'new-mexico', ny: 'new-york',
+  nc: 'north-carolina', nd: 'north-dakota', oh: 'ohio', ok: 'oklahoma',
+  or: 'oregon', pa: 'pennsylvania', ri: 'rhode-island', sc: 'south-carolina',
+  sd: 'south-dakota', tn: 'tennessee', tx: 'texas', ut: 'utah',
+  vt: 'vermont', va: 'virginia', wa: 'washington', wv: 'west-virginia',
+  wi: 'wisconsin', wy: 'wyoming',
+};
+
+// Specialty slugs that appear as the first segment after /premarital-counseling/
+const SPECIALTY_SLUGS = new Set([
+  'christian', 'catholic', 'lgbtq', 'online', 'gottman',
+  'prepare-enrich', 'interfaith', 'second-marriages', 'military',
+  'affordable', 'marriage-license-discount',
+]);
+
 export default function middleware(request) {
   const url = new URL(request.url);
   const ua = (request.headers.get('user-agent') || '').toLowerCase();
@@ -64,6 +88,39 @@ export default function middleware(request) {
   // Skip static assets entirely
   if (path.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|map|xml|txt|webmanifest)$/)) {
     return;
+  }
+
+  // Block encoded/gibberish path probes (base64-like segments)
+  // Real routes are always lowercase-hyphenated. Base64 probes have mixed case (e.g. cHJlbWFyaX).
+  const segments = path.split('/').filter(Boolean);
+  if (segments.some(seg => seg.length >= 8 && /[A-Z]/.test(seg) && /[a-z]/.test(seg) && /^[A-Za-z0-9+/=]+$/.test(seg))) {
+    return new Response('Not Found', { status: 404 });
+  }
+
+  // State abbreviation → full name 301 redirects (runs before bot checks so crawlers follow them)
+  if (path.startsWith('/premarital-counseling/')) {
+    const rest = path.slice('/premarital-counseling/'.length);
+    const segments = rest.split('/').filter(Boolean);
+
+    if (segments.length > 0) {
+      let redirected = false;
+
+      // /premarital-counseling/{abbr}[/city[/slug]]
+      if (STATE_ABBR_MAP[segments[0]]) {
+        segments[0] = STATE_ABBR_MAP[segments[0]];
+        redirected = true;
+      }
+      // /premarital-counseling/{specialty}/{abbr}[/city[/slug]]
+      else if (segments.length >= 2 && SPECIALTY_SLUGS.has(segments[0]) && STATE_ABBR_MAP[segments[1]]) {
+        segments[1] = STATE_ABBR_MAP[segments[1]];
+        redirected = true;
+      }
+
+      if (redirected) {
+        const newPath = '/premarital-counseling/' + segments.join('/');
+        return Response.redirect(new URL(newPath + url.search, url.origin), 301);
+      }
+    }
   }
 
   // Always allow search engine crawlers

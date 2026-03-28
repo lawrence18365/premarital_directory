@@ -21,11 +21,6 @@
       "statusCode": 301
     },
     {
-      "source": "/profile/:id",
-      "destination": "/premarital-counseling",
-      "statusCode": 301
-    },
-    {
       "source": "/states",
       "destination": "/premarital-counseling",
       "statusCode": 301
