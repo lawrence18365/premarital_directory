@@ -15,7 +15,8 @@
  *   node scripts/ga/auto-index.js --ping-sitemap     # Ping Google to re-crawl sitemap (RECOMMENDED)
  *   node scripts/ga/auto-index.js --url <url>        # Submit a single URL via Indexing API
  *   node scripts/ga/auto-index.js --sitemap          # Parse sitemap and submit all URLs
- *   node scripts/ga/auto-index.js --new-profiles     # Submit recently created/claimed profiles
+ *   node scripts/ga/auto-index.js --claimed           # Submit ALL claimed (real user) profiles
+ *   node scripts/ga/auto-index.js --new-profiles     # Submit recently created/claimed profiles (24h)
  *   node scripts/ga/auto-index.js --priority         # Submit top non-indexed URLs from coverage report
  *   node scripts/ga/auto-index.js --from-file <path> # Submit URLs from a text file (one per line)
  *   node scripts/ga/auto-index.js --dry-run          # Show what would be submitted without calling API
@@ -277,6 +278,38 @@ async function submitNewProfiles() {
   await batchSubmit(urls, 'cron-new-profiles');
 }
 
+async function submitClaimedProfiles() {
+  console.log('\n=== Submitting All Claimed (Real User) Profiles ===\n');
+
+  const { data: profiles, error } = await getSupabase()
+    .from('profiles')
+    .select('slug, city, state_province, full_name')
+    .not('user_id', 'is', null)
+    .eq('is_hidden', false)
+    .or('moderation_status.eq.approved,moderation_status.is.null');
+
+  if (error) {
+    console.error('Supabase error:', error.message);
+    return;
+  }
+
+  if (!profiles || profiles.length === 0) {
+    console.log('No claimed profiles found.');
+    return;
+  }
+
+  const urls = profiles
+    .filter(p => p.slug && p.city && p.state_province)
+    .map(p => {
+      const stateSlug = getStateSlug(p.state_province);
+      const citySlug = (p.city || '').toLowerCase().replace(/\s+/g, '-').replace(/'/g, '');
+      return `${BASE_URL}/premarital-counseling/${stateSlug}/${citySlug}/${p.slug}`;
+    });
+
+  console.log(`Found ${urls.length} claimed (real user) profiles`);
+  await batchSubmit(urls, 'cron-claimed-profiles');
+}
+
 async function submitImportantPages() {
   console.log('\n=== Submitting Important Pages ===\n');
 
@@ -493,6 +526,8 @@ if (args.includes('--ping-sitemap')) {
   submitSingleUrl(url);
 } else if (args.includes('--sitemap')) {
   submitFromSitemap();
+} else if (args.includes('--claimed')) {
+  submitClaimedProfiles();
 } else if (args.includes('--new-profiles')) {
   submitNewProfiles();
 } else if (args.includes('--blog')) {

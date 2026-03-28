@@ -18,6 +18,7 @@ on:
         type: choice
         options:
           - ping-sitemap
+          - claimed
           - new-profiles
           - priority
           - sitemap
@@ -42,6 +43,16 @@ jobs:
       - name: Ping Google & Bing to re-crawl sitemap
         if: github.event_name == 'schedule' || github.event.inputs.mode == 'ping-sitemap'
         run: node scripts/ga/auto-index.js --ping-sitemap
+
+      # Step 0.5: Always re-submit claimed (real user) profiles — these are gold
+      - name: Submit claimed profiles to Indexing API
+        if: github.event_name == 'schedule' || github.event.inputs.mode == 'claimed'
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/ga/auto-index.js --claimed
 
       # Step 1: Submit new/claimed profiles (daily)
       - name: Submit new profiles to Indexing API
