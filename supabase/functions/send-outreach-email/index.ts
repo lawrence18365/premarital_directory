@@ -211,6 +211,10 @@ function generateOutreachHTML(request: OutreachEmailRequest): string {
           <strong>Why did I receive this?</strong><br>
           We created your profile from publicly available information about your practice. We believe you offer premarital counseling services and may benefit from being listed.
         </p>
+
+        <p style="color: #9ca3af; font-size: 12px; margin-top: 16px;">
+          <a href="https://www.weddingcounselors.com/unsubscribe" style="color: #9ca3af; text-decoration: underline;">Unsubscribe</a> from future emails.
+        </p>
       </div>
     `
   }
@@ -234,6 +238,12 @@ function generateOutreachHTML(request: OutreachEmailRequest): string {
 
       <p style="color: #666; font-size: 14px; margin-top: 24px;">
         (Reply "remove me" if you want to be unlisted, and we'll take care of it immediately.)
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
+
+      <p style="color: #9ca3af; font-size: 12px;">
+        <a href="https://www.weddingcounselors.com/unsubscribe" style="color: #9ca3af; text-decoration: underline;">Unsubscribe</a> from future emails.
       </p>
     </div>
   `

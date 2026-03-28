@@ -138,6 +138,7 @@ const EmbedFindPage = React.lazy(() => import('./pages/EmbedFindPage'))
 const HowItWorksPage = React.lazy(() => import('./pages/HowItWorksPage'))
 const EditorialStandardsPage = React.lazy(() => import('./pages/EditorialStandardsPage'))
 const CorrectionsPage = React.lazy(() => import('./pages/CorrectionsPage'))
+const UnsubscribePage = React.lazy(() => import('./pages/UnsubscribePage'))
 const PartnerAttributionDashboard = React.lazy(() => import('./pages/admin/PartnerAttributionDashboard'))
 const SupplyClustersDashboard = React.lazy(() => import('./pages/admin/SupplyClustersDashboard'))
 const DistributionOpsDashboard = React.lazy(() => import('./pages/admin/DistributionOpsDashboard'))
@@ -261,6 +262,7 @@ function AppInner() {
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/editorial-standards" element={<EditorialStandardsPage />} />
             <Route path="/corrections" element={<CorrectionsPage />} />
+            <Route path="/unsubscribe" element={<UnsubscribePage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/blog" element={<BlogIndex />} />

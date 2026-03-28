@@ -97,7 +97,7 @@ function generateEmailHTML(data: {
 
       <p style="color: #9ca3af; font-size: 11px; line-height: 1.5;">
         You're receiving this one-time email because you're listed as a wedding officiant in ${location}.
-        If you'd prefer not to hear from us, simply reply "unsubscribe" and we'll remove you immediately.
+        <a href="https://www.weddingcounselors.com/unsubscribe" style="color: #9ca3af; text-decoration: underline;">Unsubscribe</a> or reply "unsubscribe" to be removed immediately.
       </p>
     </div>
   `

@@ -98,6 +98,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/unsubscribe",
+      "destination": "https://bkjwctlolhoxhnoospwp.supabase.co/functions/v1/unsubscribe-digest"
+    },
+    {
       "source": "/auth/v1/:path*",
       "destination": "https://bkjwctlolhoxhnoospwp.supabase.co/auth/v1/:path*"
     },

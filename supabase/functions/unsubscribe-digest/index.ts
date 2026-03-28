@@ -2,22 +2,35 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4"
 
 /**
- * One-click unsubscribe from weekly digest emails.
- * GET /unsubscribe-digest?profile_id=X&type=weekly_digest
+ * One-click unsubscribe from emails.
  *
- * Returns a simple HTML page confirming unsubscription.
- * No auth required - the profile_id acts as the token.
+ * Supports two modes:
+ * 1. Profile-based: GET ?profile_id=X&type=weekly_digest  (returns HTML page)
+ * 2. Email-based:   GET ?email=X  (returns HTML page, adds to do_not_contact)
+ *
+ * No auth required - the profile_id or email acts as the token.
  */
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+}
+
 serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
   const url = new URL(req.url)
   const profileId = url.searchParams.get('profile_id')
+  const email = url.searchParams.get('email')?.trim().toLowerCase()
   const type = url.searchParams.get('type') || 'weekly_digest'
 
-  if (!profileId) {
-    return new Response(renderHTML('Missing profile ID', false), {
+  if (!profileId && !email) {
+    return new Response(renderHTML('Missing profile ID or email', false), {
       status: 400,
-      headers: { 'Content-Type': 'text/html' },
+      headers: { ...corsHeaders, 'Content-Type': 'text/html' },
     })
   }
 
@@ -26,38 +39,85 @@ serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
   try {
-    // Get current preferences
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('id, full_name, email_preferences')
-      .eq('id', profileId)
-      .single()
+    // Mode 1: Profile-based unsubscribe (from digest/drip emails)
+    if (profileId) {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, email, email_preferences')
+        .eq('id', profileId)
+        .single()
 
-    if (error || !profile) {
-      return new Response(renderHTML('Profile not found', false), {
-        status: 404,
-        headers: { 'Content-Type': 'text/html' },
+      if (error || !profile) {
+        return new Response(renderHTML('Profile not found', false), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'text/html' },
+        })
+      }
+
+      // Update preference
+      const prefs = profile.email_preferences || {}
+      prefs[type] = false
+
+      await supabase
+        .from('profiles')
+        .update({ email_preferences: prefs })
+        .eq('id', profileId)
+
+      // Also add to do_not_contact if unsubscribing from marketing
+      if (type === 'marketing' && profile.email) {
+        await supabase.from('do_not_contact').upsert(
+          { email: profile.email.toLowerCase(), reason: 'unsubscribe', notes: `Unsubscribed from ${type} via email link` },
+          { onConflict: 'email' }
+        )
+      }
+
+      return new Response(renderHTML(profile.full_name, true), {
+        headers: { ...corsHeaders, 'Content-Type': 'text/html' },
       })
     }
 
-    // Update preference
-    const prefs = profile.email_preferences || {}
-    prefs[type] = false
+    // Mode 2: Email-based unsubscribe (from outreach/couple emails)
+    if (email) {
+      // Add to do_not_contact
+      await supabase.from('do_not_contact').upsert(
+        { email, reason: 'unsubscribe', notes: 'Self-service unsubscribe page' },
+        { onConflict: 'email' }
+      )
 
-    await supabase
-      .from('profiles')
-      .update({ email_preferences: prefs })
-      .eq('id', profileId)
+      // Also update profile email_preferences if they have a profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id, email_preferences')
+        .eq('email', email)
+        .single()
 
-    return new Response(renderHTML(profile.full_name, true), {
-      headers: { 'Content-Type': 'text/html' },
-    })
+      if (profile) {
+        const prefs = profile.email_preferences || {}
+        prefs.weekly_digest = false
+        prefs.marketing = false
+        await supabase
+          .from('profiles')
+          .update({ email_preferences: prefs, marketing_opt_in: false })
+          .eq('id', profile.id)
+      }
+
+      // Also mark couple subscriber as unsubscribed
+      await supabase
+        .from('couple_subscribers')
+        .update({ unsubscribed_at: new Date().toISOString() })
+        .eq('email', email)
+
+      return new Response(
+        JSON.stringify({ success: true }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
   } catch (err) {
     console.error('Unsubscribe error:', err)
     return new Response(renderHTML('Something went wrong', false), {
       status: 500,
-      headers: { 'Content-Type': 'text/html' },
+      headers: { ...corsHeaders, 'Content-Type': 'text/html' },
     })
   }
 })
@@ -81,8 +141,8 @@ function renderHTML(nameOrError: string, success: boolean): string {
   <div class="card">
     ${success ? `
       <h1>Unsubscribed</h1>
-      <p>Hi ${nameOrError}, you've been unsubscribed from weekly digest emails. You can re-enable them anytime from your <a href="https://www.weddingcounselors.com/professional/dashboard">dashboard</a>.</p>
-      <p>You'll still receive inquiry notifications when couples contact you.</p>
+      <p>Hi ${nameOrError}, you've been unsubscribed. You will not receive any further emails from us.</p>
+      <p>If you change your mind, you can re-enable emails from your <a href="https://www.weddingcounselors.com/professional/dashboard">dashboard</a>.</p>
     ` : `
       <h1>Error</h1>
       <p>${nameOrError}. Please contact <a href="mailto:hello@weddingcounselors.com">hello@weddingcounselors.com</a> for help.</p>

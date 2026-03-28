@@ -321,6 +321,10 @@ jobs:
                 "handle": "filesystem"
               },
               {
+                "src": "/api/unsubscribe(.*)",
+                "dest": "https://bkjwctlolhoxhnoospwp.supabase.co/functions/v1/unsubscribe-digest$1"
+              },
+              {
                 "src": "/auth/v1/(.*)",
                 "dest": "https://bkjwctlolhoxhnoospwp.supabase.co/auth/v1/$1"
               },
