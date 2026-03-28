@@ -16,6 +16,7 @@
     radial-gradient(circle at 100% 0, rgba(14, 94, 94, 0.12), rgba(14, 94, 94, 0) 34%),
     linear-gradient(180deg, #eff7f7 0%, #f7fbfb 34%, #f2f8f8 100%);
   color: var(--profile-ink);
+  overflow-x: hidden;
 }
 
 .profile-page.profile-premium .container {
@@ -115,9 +116,11 @@
 .profile-premium-identity h1 {
   margin: 0;
   color: var(--profile-ink);
-  font-size: clamp(1.4rem, 1.4vw + 0.9rem, 2rem);
+  font-family: var(--font-display, "Cormorant Garamond", Georgia, serif);
+  font-size: clamp(1.5rem, 1.4vw + 0.9rem, 2.1rem);
+  font-weight: 700;
   line-height: 1.15;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .profile-premium-role {
@@ -198,7 +201,7 @@
 .profile-premium-grid {
   margin-top: 0.95rem;
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
   gap: 0.9rem;
   align-items: start;
 }
@@ -224,7 +227,9 @@
 
 .profile-premium-card h2 {
   margin: 0;
-  font-size: 1.05rem;
+  font-family: var(--font-display, "Cormorant Garamond", Georgia, serif);
+  font-size: 1.2rem;
+  font-weight: 700;
   color: var(--profile-ink);
   letter-spacing: -0.01em;
 }
@@ -900,7 +905,60 @@
   color: var(--ds-accent, #0e5e5e);
 }
 
-/* Hide the sidebar duplicate on mobile since form is now in main */
+/* ============================================
+   STICKY MOBILE CTA
+   ============================================ */
+.profile-sticky-cta {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--profile-line);
+  padding: 0.65rem 1rem;
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 -4px 20px rgba(6, 34, 34, 0.08);
+}
+
+.profile-sticky-cta-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-sticky-cta-name {
+  font-family: var(--font-display, "Cormorant Garamond", Georgia, serif);
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  color: var(--profile-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-sticky-cta-sub {
+  font-size: 0.72rem;
+  color: rgba(11, 62, 62, 0.56);
+  line-height: 1.3;
+}
+
+.profile-sticky-cta .btn {
+  white-space: nowrap;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.82rem;
+  border-radius: 10px;
+  min-height: 38px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   RESPONSIVE: Tablet — sidebar collapses
+   ============================================ */
 @media (max-width: 1120px) {
   .profile-premium-grid {
     grid-template-columns: 1fr;
@@ -915,9 +973,13 @@
   }
 }
 
+/* ============================================
+   RESPONSIVE: Medium — hero stacks
+   ============================================ */
 @media (max-width: 860px) {
   .profile-premium-hero {
     grid-template-columns: 1fr;
+    text-align: center;
   }
 
   .profile-premium-photo-wrap {
@@ -935,12 +997,14 @@
   }
 
   .profile-premium-quickfacts {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .profile-premium-hero-actions {
     width: 100%;
     grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
   }
 
   .profile-checklist-grid {
@@ -951,40 +1015,410 @@
   .profile-premium-hero {
     border-radius: 14px;
   }
+
+  /* Show sticky CTA on tablet and below */
+  .profile-sticky-cta {
+    display: flex;
+  }
+
+  /* Add bottom clearance so content isn't hidden behind sticky CTA */
+  .profile-premium-shell {
+    padding-bottom: 4.5rem;
+  }
+
+  /* Badges flow below photo instead of stacking on it */
+  .profile-premium-badge {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    margin-top: 0.35rem;
+  }
+
+  .profile-premium-photo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
 }
 
+/* ============================================
+   RESPONSIVE: Mobile — full reflow
+   ============================================ */
 @media (max-width: 640px) {
+  /* Lock horizontal scroll */
+  .profile-page.profile-premium {
+    max-width: 100vw;
+  }
+
   .profile-page.profile-premium .container {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .profile-premium-shell {
-    padding-top: 0.7rem;
+    padding-top: 0.5rem;
+    padding-bottom: 5rem;
+  }
+
+  /* Breadcrumbs — compact and prevent overflow */
+  .profile-premium-breadcrumbs {
+    margin-bottom: 0.6rem;
+    overflow: hidden;
+  }
+
+  .profile-premium-breadcrumbs .breadcrumb-list {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .profile-premium-breadcrumbs .breadcrumb-link,
+  .profile-premium-breadcrumbs .breadcrumb-current {
+    font-size: 0.72rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+
+  /* Hero — tighter mobile layout */
+  .profile-premium-hero {
+    padding: 0.85rem;
+    gap: 0.7rem;
+    border-radius: 12px;
   }
 
   .profile-premium-photo {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
+    border-radius: 14px;
+  }
+
+  .profile-premium-eyebrow {
+    font-size: 0.65rem;
+    margin-bottom: 0.25rem;
   }
 
   .profile-premium-identity h1 {
-    font-size: 1.45rem;
+    font-size: 1.35rem;
   }
 
+  .profile-premium-role {
+    font-size: 0.88rem;
+  }
+
+  .profile-premium-meta {
+    gap: 0.35rem;
+    margin-top: 0.55rem;
+  }
+
+  .profile-premium-meta span {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.48rem;
+  }
+
+  .profile-premium-quickfacts {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  .profile-premium-quickfact {
+    padding: 0.42rem 0.5rem;
+    border-radius: 9px;
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+  }
+
+  .profile-premium-quickfact span {
+    font-size: 0.63rem;
+  }
+
+  .profile-premium-quickfact strong {
+    font-size: 0.8rem;
+    text-align: right;
+  }
+
+  .profile-premium-top-tags {
+    gap: 0.3rem;
+    margin-top: 0.55rem;
+  }
+
+  .profile-chip {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.48rem;
+  }
+
+  .profile-premium-hero-actions {
+    max-width: 100%;
+  }
+
+  .profile-premium-hero-actions .btn {
+    min-height: 44px;
+    font-size: 0.88rem;
+    border-radius: 10px;
+  }
+
+  /* Cards — reduced padding, tighter spacing */
+  .profile-premium-card {
+    padding: 0.78rem;
+    border-radius: 12px;
+  }
+
+  .profile-premium-card h2 {
+    font-size: 1.1rem;
+  }
+
+  .profile-premium-main,
+  .profile-premium-side {
+    gap: 0.65rem;
+  }
+
+  .profile-premium-grid {
+    gap: 0.65rem;
+    margin-top: 0.7rem;
+  }
+
+  /* Detail rows — clean stacking */
   .profile-detail-row {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.25rem;
+    padding: 0.55rem 0.6rem;
+    border-radius: 10px;
   }
 
+  .profile-detail-row > strong {
+    margin-left: 0;
+    text-align: left;
+    font-size: 0.85rem;
+  }
+
+  .profile-detail-stack {
+    gap: 0.4rem;
+  }
+
+  /* Contact rows — clean stacking */
   .profile-contact-row {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 0.35rem;
+    padding: 0.55rem 0.6rem;
   }
 
-  .profile-reveal-btn,
+  .profile-reveal-btn {
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem 0.6rem;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 0.82rem;
+  }
+
   .profile-contact-link {
     width: 100%;
-    text-align: left;
+    display: block;
+    padding: 0.35rem 0;
+    font-size: 0.85rem;
+  }
+
+  /* Form inputs — mobile touch targets */
+  .profile-premium .lead-contact-form input,
+  .profile-premium .lead-contact-form select,
+  .profile-premium .lead-contact-form textarea {
+    padding: 0.72rem 0.65rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    -webkit-appearance: none;
+  }
+
+  .profile-premium .lead-contact-form textarea {
+    min-height: 96px;
+  }
+
+  .profile-premium .lead-contact-form .btn {
+    min-height: 46px;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
+
+  /* FAQ items — tighter */
+  .profile-faq-item {
+    padding: 0.55rem;
+    border-radius: 10px;
+  }
+
+  .profile-faq-item h3 {
+    font-size: 0.82rem;
+  }
+
+  .profile-faq-item p {
+    font-size: 0.84rem;
+    line-height: 1.5;
+  }
+
+  /* Group rows — tighter */
+  .profile-group-row {
+    padding: 0.55rem;
+    border-radius: 10px;
+    gap: 0.4rem;
+  }
+
+  .profile-chip-list {
+    gap: 0.3rem;
+  }
+
+  /* Link rows — better touch targets */
+  .profile-link-row {
+    padding: 0.72rem 0.65rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    font-size: 0.84rem;
+  }
+
+  /* KPI rows in emphasis card */
+  .profile-kpi-row {
+    padding: 0.5rem;
+    border-radius: 9px;
+  }
+
+  .profile-kpi-row span {
+    font-size: 0.7rem;
+  }
+
+  .profile-kpi-row strong {
+    font-size: 0.82rem;
+  }
+
+  /* Claim card */
+  .profile-premium-card-claim p {
+    font-size: 0.84rem;
+  }
+
+  /* Status pills */
+  .profile-status-pill {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.48rem;
+  }
+
+  /* Premarital note */
+  .profile-premarital-note {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem !important;
+    border-radius: 10px;
+  }
+
+  /* Checklist */
+  .profile-checklist-column {
+    padding: 0.5rem;
+    border-radius: 10px;
+  }
+
+  .profile-checklist li {
+    font-size: 0.82rem;
+  }
+
+  /* Note inline */
+  .profile-note-inline {
+    padding: 0.55rem;
+    border-radius: 10px;
+  }
+
+  /* Contact note */
+  .profile-contact-note {
+    padding: 0.48rem 0.55rem;
+    font-size: 0.78rem !important;
+  }
+
+  /* Sticky CTA adjustments */
+  .profile-sticky-cta {
+    padding: 0.6rem 0.75rem;
+    gap: 0.6rem;
+  }
+
+  .profile-sticky-cta-name {
+    font-size: 0.88rem;
+  }
+}
+
+/* ============================================
+   RESPONSIVE: Small phones (< 400px)
+   ============================================ */
+@media (max-width: 400px) {
+  .profile-page.profile-premium .container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .profile-premium-hero {
+    padding: 0.65rem;
+  }
+
+  .profile-premium-photo {
+    width: 84px;
+    height: 84px;
+    border-radius: 12px;
+  }
+
+  .profile-premium-identity h1 {
+    font-size: 1.2rem;
+  }
+
+  .profile-premium-role {
+    font-size: 0.82rem;
+  }
+
+  .profile-premium-meta span {
+    font-size: 0.68rem;
+    padding: 0.18rem 0.4rem;
+  }
+
+  .profile-premium-card {
+    padding: 0.62rem;
+  }
+
+  .profile-premium-card h2 {
+    font-size: 1rem;
+  }
+
+  .profile-premium-badge {
+    font-size: 0.6rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .profile-premium-eyebrow {
+    font-size: 0.6rem;
+  }
+
+  .profile-chip {
+    font-size: 0.68rem;
+    padding: 0.18rem 0.4rem;
+  }
+
+  .profile-sticky-cta {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .profile-sticky-cta-name {
+    font-size: 0.82rem;
+  }
+
+  .profile-sticky-cta-sub {
+    font-size: 0.66rem;
+  }
+
+  .profile-sticky-cta .btn {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.78rem;
   }
 }

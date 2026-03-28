@@ -1180,37 +1180,13 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
         </section>
       </div>
 
-      {/* Sticky mobile CTA — persistent contact button on profile pages */}
-      <div
-        className="profile-sticky-cta"
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: 90,
-          background: '#fff',
-          borderTop: '1px solid var(--gray-200, #e5e7eb)',
-          padding: '10px 16px',
-          display: 'flex',
-          gap: '10px',
-          alignItems: 'center',
-          boxShadow: '0 -2px 8px rgba(0,0,0,0.08)'
-        }}
-      >
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {profile.full_name}
-          </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--gray-500, #6b7280)' }}>
-            Free to contact — no fees
-          </div>
+      {/* Sticky mobile CTA — visible on tablet/mobile only via CSS */}
+      <div className="profile-sticky-cta">
+        <div className="profile-sticky-cta-info">
+          <div className="profile-sticky-cta-name">{profile.full_name}</div>
+          <div className="profile-sticky-cta-sub">Free to contact — no fees</div>
         </div>
-        <button
-          onClick={scrollToContact}
-          className="btn btn-primary"
-          style={{ whiteSpace: 'nowrap', padding: '8px 16px', fontSize: '0.85rem' }}
-        >
+        <button onClick={scrollToContact} className="btn btn-primary">
           Send Message
         </button>
       </div>
