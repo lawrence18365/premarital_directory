@@ -37,6 +37,7 @@ const CORE_PAGES = [
   { url: '/contact', priority: 0.6, changefreq: 'monthly' },
   { url: '/support', priority: 0.6, changefreq: 'monthly' },
   { url: '/guidelines', priority: 0.5, changefreq: 'monthly' },
+  { url: '/for-providers/founding', priority: 0.7, changefreq: 'monthly' },
   { url: '/for-churches', priority: 0.7, changefreq: 'monthly' },
   { url: '/how-it-works', priority: 0.6, changefreq: 'monthly' },
   { url: '/editorial-standards', priority: 0.5, changefreq: 'monthly' },
@@ -393,9 +394,9 @@ function getStateSlug(stateName) {
   return stateMap[stateName] || stateName.toLowerCase().replace(/\s+/g, '-')
 }
 
-// Helper to generate city slug
+// Helper to generate city slug — must match generateSlug() in client/src/lib/utils.js
 function getCitySlug(cityName) {
-  return cityName.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+  return cityName.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').trim()
 }
 
 function getProfileSearchText(profile) {

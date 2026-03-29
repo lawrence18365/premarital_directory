@@ -111,8 +111,10 @@ class SitemapService {
       profiles
         .filter(profile => profile.slug && profile.city && profile.state_province)
         .map(profile => {
-          const stateSlug = profile.state_province.toLowerCase().replace(/\s+/g, '-')
-          const citySlug = profile.city.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+          // Map state abbreviation (e.g., "OH") to full slug (e.g., "ohio") via STATE_CONFIG
+          const stateEntry = Object.entries(STATE_CONFIG).find(([_, cfg]) => cfg.abbr === profile.state_province.toUpperCase())
+          const stateSlug = stateEntry ? stateEntry[0] : profile.state_province.toLowerCase().replace(/\s+/g, '-')
+          const citySlug = profile.city.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').trim()
           const lastmod = profile.onboarding_last_saved_at || profile.created_at
           return {
             url: `https://www.weddingcounselors.com/premarital-counseling/${stateSlug}/${citySlug}/${profile.slug}`,

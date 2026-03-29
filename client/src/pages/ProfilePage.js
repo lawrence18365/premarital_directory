@@ -729,7 +729,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                     Also serving:{' '}
                     {additionalLocations.map((loc, i) => {
                       const stateSlug = getStateSlugFromAbbr(loc.state_province)
-                      const citySlug = loc.city.toLowerCase().replace(/\s+/g, '-').replace(/'/g, '')
+                      const citySlug = generateSlug(loc.city)
                       return (
                         <span key={loc.id}>
                           {i > 0 && ' | '}
