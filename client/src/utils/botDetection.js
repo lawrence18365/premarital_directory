@@ -37,8 +37,40 @@ export function isLikelyBot() {
       return true;
     }
 
-    // 3. Timezone check — this is a US premarital counseling directory.
-    //    Bots from Singapore/Asia use US Chrome UAs but can't fake timezone.
+    // 3. Automation framework properties leaked onto window/document
+    const automationProps = [
+      '_phantom', 'callPhantom', '__phantomas',
+      '__nightmare', 'domAutomation', 'domAutomationController',
+      '_selenium', '__selenium_unwrapped',
+      '__webdriver_evaluate', '__driver_evaluate',
+      '__webdriver_unwrapped', '__driver_unwrapped',
+      '__fxdriver_unwrapped',
+    ];
+    if (automationProps.some(prop => prop in window || prop in document)) {
+      _isBotCached = true;
+      return true;
+    }
+
+    // 4. WebGL renderer — headless Chrome uses SwiftShader, not a real GPU
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (gl) {
+        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+        if (debugInfo) {
+          const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL).toLowerCase();
+          if (renderer.includes('swiftshader') || renderer.includes('llvmpipe') || renderer.includes('mesa')) {
+            _isBotCached = true;
+            return true;
+          }
+        }
+      }
+    } catch (e) {
+      // WebGL not available — continue
+    }
+
+    // 5. Timezone check — this is a US premarital counseling directory.
+    //    Bots from Singapore/Asia use US Chrome UAs but can't always fake timezone.
     try {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
       const tzOffset = new Date().getTimezoneOffset();
@@ -55,7 +87,7 @@ export function isLikelyBot() {
       // Timezone detection failed — continue to other checks
     }
 
-    // 4. Combine weak signals — need 2+ to flag as bot
+    // 6. Combine weak signals — need 2+ to flag as bot
     const weakSignals = [
       // No browser plugins (headless browsers typically have 0)
       !navigator.plugins || navigator.plugins.length === 0,
@@ -67,8 +99,12 @@ export function isLikelyBot() {
       !navigator.connection && !navigator.mozConnection && !navigator.webkitConnection,
       // Zero screen dimensions
       (window.screen.width === 0 || window.screen.height === 0),
+      // Zero outer dimensions (common in headless browsers)
+      (window.outerWidth === 0 || window.outerHeight === 0),
       // Language doesn't include English
       navigator.languages && navigator.languages.length > 0 && !navigator.languages.some(l => l.startsWith('en')),
+      // No hardware concurrency info or zero cores
+      !navigator.hardwareConcurrency || navigator.hardwareConcurrency === 0,
     ].filter(Boolean).length;
 
     if (weakSignals >= 2) {

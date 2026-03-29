@@ -86,7 +86,7 @@ const CityOrProfilePage = ({ stateOverride, cityOrSlugOverride }) => {
   if (isCity) {
     return <CityPage stateOverride={state} cityOverride={cityOrSlug} />
   } else {
-    return <ProfilePage stateOverride={state} cityOverride={cityOrSlug} />
+    return <ProfilePage stateOverride={state} profileSlugOverride={cityOrSlug} />
   }
 }
 

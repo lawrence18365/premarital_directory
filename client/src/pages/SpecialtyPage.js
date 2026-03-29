@@ -11,6 +11,7 @@ import { getSpecialtyBySlug, getAllSpecialties } from '../data/specialtyConfig'
 import { STATE_CONFIG } from '../data/locationConfig'
 import { buildCatholicProgramsQuery, isCatholicSpecialty, normalizeProgramRecord } from '../lib/programCatalog'
 import { supabase, rankProfilesForCouples } from '../lib/supabaseClient'
+import { buildApprovedSpecialtyFilter } from '../lib/utils'
 import CoupleEmailCapture from '../components/leads/CoupleEmailCapture'
 import SpecialtyBlogLinks from '../components/state/SpecialtyBlogLinks'
 import '../assets/css/specialty-page.css'
@@ -56,9 +57,7 @@ const SpecialtyPage = () => {
       }
 
       // Build OR conditions for filterTerms
-      const filterConditions = specialty.filterTerms
-        .map(term => `bio.ilike.%${term}%,specialties.cs.{${term}}`)
-        .join(',')
+      const filterConditions = buildApprovedSpecialtyFilter(specialty.filterTerms)
 
       const { data, error } = await supabase
         .from('profiles')
@@ -74,9 +73,7 @@ const SpecialtyPage = () => {
         console.error('Error loading specialty profiles:', error)
         // Fallback: try simpler search
         const fallbackTerms = specialty.filterTerms.slice(0, 3)
-        const simpleConditions = fallbackTerms
-          .map(term => `bio.ilike.%${term}%`)
-          .join(',')
+        const simpleConditions = buildApprovedSpecialtyFilter(fallbackTerms, { includeArrayMatch: false })
 
         const { data: fallbackData } = await supabase
           .from('profiles')
