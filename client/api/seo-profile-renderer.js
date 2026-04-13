@@ -106,9 +106,17 @@ module.exports = async function (req, res) {
     const slug = urlParts[urlParts.length - 1]; // "heidi-farrell"
 
     // 2. Load the generic React index.html envelope.
-    const indexPath = path.resolve('./client/build/index.html');
+    const indexCandidates = [
+        path.resolve(process.cwd(), 'build/index.html'),
+        path.resolve(process.cwd(), 'client/build/index.html'),
+        path.resolve(__dirname, '../build/index.html')
+    ];
+    const indexPath = indexCandidates.find((candidate) => fs.existsSync(candidate));
     let htmlData;
     try {
+        if (!indexPath) {
+            throw new Error(`index.html not found in any known build path: ${indexCandidates.join(', ')}`);
+        }
         htmlData = fs.readFileSync(indexPath, 'utf8');
     } catch (err) {
         console.error('Error reading index.html:', err);
