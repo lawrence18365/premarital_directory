@@ -174,10 +174,19 @@ const SPECIALTY_MATCH_TERMS = {
   affordable: ['affordable', 'low cost', 'sliding scale', 'budget', 'reduced fee']
 }
 
-const MIN_SPECIALTY_STATE_PROFILES = 3
-const MIN_SPECIALTY_CITY_PROFILES = 2
-const MIN_SPECIALTY_ANCHOR_CITY_PROFILES = 1
-const MIN_VERIFIED_CATHOLIC_PROGRAMS = 3
+// 2026-05-17: thresholds raised after GSC showed 89% of URLs in
+// "Crawled — currently not indexed". These must stay in sync with the
+// page-level shouldNoindex logic in StatePage, CityPage, SpecialtyPage,
+// SpecialtyStatePage, and SpecialtyCityPage.
+const MIN_STATE_PROFILES = 10
+const MIN_CITY_PROFILES = 10
+const MIN_ANCHOR_CITY_PROFILES = 5
+const MIN_SPECIALTY_HUB_PROFILES = 20
+const MIN_SPECIALTY_STATE_PROFILES = 10
+const MIN_SPECIALTY_CITY_PROFILES = 5
+const MIN_SPECIALTY_ANCHOR_CITY_PROFILES = 3
+const MIN_VERIFIED_CATHOLIC_PROGRAMS = 5
+const MIN_PROFILE_BIO_CHARS = 400
 
 const DOMAIN = 'https://www.weddingcounselors.com'
 
@@ -457,11 +466,30 @@ async function main() {
   const { stateCounts: specialtyStateCounts, cityCounts: specialtyCityCounts } = buildSpecialtyDepth(allProfiles)
   const hasSpecialtyDepthData = Array.isArray(allProfiles) && allProfiles.length > 0
 
+  // Aggregate specialty hub totals so we can gate thin specialty hubs out of
+  // the sitemap (matches SpecialtyPage.js noindex logic).
+  const specialtyHubCounts = {}
+  if (hasSpecialtyDepthData) {
+    Object.entries(specialtyStateCounts).forEach(([key, count]) => {
+      const [specialty] = key.split('|')
+      specialtyHubCounts[specialty] = (specialtyHubCounts[specialty] || 0) + count
+    })
+  }
+
   // 1. Core pages sitemap
   const corePages = CORE_PAGES.filter((page) => {
-    if (page.url !== '/premarital-counseling/catholic') return true
-    if (!hasCatholicProgramCoverage) return false
-    return totalCatholicPrograms >= MIN_VERIFIED_CATHOLIC_PROGRAMS
+    // Catholic hub: gate on verified program coverage.
+    if (page.url === '/premarital-counseling/catholic') {
+      if (!hasCatholicProgramCoverage) return false
+      return totalCatholicPrograms >= MIN_VERIFIED_CATHOLIC_PROGRAMS
+    }
+    // Other specialty hubs: gate on profile count to match SpecialtyPage noindex.
+    const specialtyHubMatch = page.url.match(/^\/premarital-counseling\/([a-z-]+)$/)
+    if (specialtyHubMatch && SPECIALTY_SLUGS.includes(specialtyHubMatch[1])) {
+      if (!hasSpecialtyDepthData) return false
+      return (specialtyHubCounts[specialtyHubMatch[1]] || 0) >= MIN_SPECIALTY_HUB_PROFILES
+    }
+    return true
   })
 
   const coreUrls = corePages.map(page => ({
@@ -525,9 +553,10 @@ async function main() {
     // === LIVE DATA MODE ===
     Object.keys(STATE_CONFIG).forEach(stateSlug => {
       const stateData = STATE_CONFIG[stateSlug]
-      const hasStateProfiles = (stateProfileCounts[stateSlug] || 0) > 0
+      const stateProfileCount = stateProfileCounts[stateSlug] || 0
+      const stateMeetsThreshold = stateProfileCount >= MIN_STATE_PROFILES
 
-      if (hasStateProfiles) {
+      if (stateMeetsThreshold) {
         cityUrls.push({
           url: `/premarital-counseling/${stateSlug}`,
           priority: 0.8,
@@ -561,8 +590,10 @@ async function main() {
       const profileCount = profileCounts[key] || 0
 
       const isAnchor = CITY_CONFIG[city.stateSlug]?.[city.citySlug]?.is_anchor === true
-      const wouldBeNoindex = profileCount === 0 || (!isAnchor && profileCount < 3)
-      if (wouldBeNoindex) return
+      // Match CityPage.js noindex logic (2026-05-17 tightening).
+      const meetsThreshold = profileCount >= MIN_CITY_PROFILES
+        || (isAnchor && profileCount >= MIN_ANCHOR_CITY_PROFILES)
+      if (!meetsThreshold) return
 
       const priority = calculatePriority(profileCount, maxProfileCount, isAnchor)
 
@@ -719,9 +750,14 @@ async function main() {
     allProfiles.forEach(profile => {
       if (!profile.slug || !profile.city || !profile.state_province) return
 
-      // Skip thin profiles: no bio or bio too short to be meaningful
-      const hasBio = profile.bio && profile.bio.trim().length >= 50
-      if (!hasBio) {
+      // Skip thin profiles. Two ways to qualify for the sitemap:
+      //   (a) profile is claimed by a real human (always include), OR
+      //   (b) bio is at least MIN_PROFILE_BIO_CHARS (real, edited copy).
+      // 2026-05-17: bar raised to 400 chars to shrink sitemap to ~500 URLs
+      // and stop signalling 1,500 mediocre seed profiles as "quality" to Google.
+      const bioLen = profile.bio ? profile.bio.trim().length : 0
+      const isQualityProfile = profile.is_claimed || bioLen >= MIN_PROFILE_BIO_CHARS
+      if (!isQualityProfile) {
         skippedThinProfiles++
         return
       }

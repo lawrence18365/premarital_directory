@@ -1,790 +1,775 @@
 {
-  "generatedAt": "2026-03-28T03:11:47.212Z",
+  "generatedAt": "2026-05-17T17:36:38.982Z",
   "period": {},
   "weekOverWeek": {
     "thisWeek": {
-      "users": 748,
-      "sessions": 763,
-      "pageViews": 1193,
-      "avgDuration": 18.894582095674966,
-      "bounceRate": 0.8833551769331586,
-      "engagedSessions": 89,
-      "newUsers": 737
+      "users": 173,
+      "sessions": 181,
+      "pageViews": 1123,
+      "avgDuration": 123.30403460773479,
+      "bounceRate": 0.34806629834254144,
+      "engagedSessions": 118,
+      "newUsers": 170
     },
     "lastWeek": {
-      "users": 329,
-      "sessions": 370,
-      "pageViews": 1538,
-      "avgDuration": 138.22770850540542,
-      "bounceRate": 0.5675675675675675,
-      "engagedSessions": 160,
-      "newUsers": 313
+      "users": 158,
+      "sessions": 180,
+      "pageViews": 990,
+      "avgDuration": 186.49036075555554,
+      "bounceRate": 0.2777777777777778,
+      "engagedSessions": 130,
+      "newUsers": 153
     },
     "deltas": {
-      "users": 127,
-      "sessions": 106,
-      "pageViews": -22,
-      "avgDuration": -86,
-      "bounceRate": 56,
-      "engagedSessions": -44,
-      "newUsers": 135
+      "users": 9,
+      "sessions": 1,
+      "pageViews": 13,
+      "avgDuration": -34,
+      "bounceRate": 25,
+      "engagedSessions": -9,
+      "newUsers": 11
     }
   },
   "topPages": [
     {
       "path": "/professional/signup",
-      "views": 50,
-      "users": 30,
-      "avgDuration": 88,
-      "bounceRate": 3
-    },
-    {
-      "path": "/",
-      "views": 37,
-      "users": 39,
-      "avgDuration": 24,
-      "bounceRate": 5
-    },
-    {
-      "path": "/professional/onboarding",
-      "views": 28,
-      "users": 4,
-      "avgDuration": 390,
+      "views": 102,
+      "users": 54,
+      "avgDuration": 20,
       "bounceRate": 0
     },
     {
-      "path": "/contact",
-      "views": 22,
-      "users": 22,
+      "path": "/",
+      "views": 85,
+      "users": 88,
+      "avgDuration": 7,
+      "bounceRate": 15
+    },
+    {
+      "path": "/professional/login",
+      "views": 53,
+      "users": 53,
       "avgDuration": 14,
       "bounceRate": 0
     },
     {
       "path": "/premarital-counseling/new-york",
-      "views": 21,
-      "users": 21,
+      "views": 52,
+      "users": 52,
       "avgDuration": 10,
       "bounceRate": 0
     },
     {
       "path": "/claim-profile",
-      "views": 20,
-      "users": 20,
+      "views": 51,
+      "users": 51,
       "avgDuration": 10,
       "bounceRate": 0
     },
     {
-      "path": "/premarital-counseling/new-york/new-york",
-      "views": 20,
-      "users": 20,
-      "avgDuration": 10,
-      "bounceRate": 5
-    },
-    {
-      "path": "/professional/login",
-      "views": 20,
-      "users": 20,
+      "path": "/contact",
+      "views": 50,
+      "users": 50,
       "avgDuration": 12,
       "bounceRate": 0
     },
     {
-      "path": "/partners",
-      "views": 13,
-      "users": 6,
-      "avgDuration": 7,
-      "bounceRate": 33
-    },
-    {
-      "path": "/premarital-counseling/marriage-license-discount",
-      "views": 13,
-      "users": 10,
-      "avgDuration": 14,
-      "bounceRate": 38
-    },
-    {
-      "path": "/blog/prepare-enrich-vs-gottman-vs-symbis",
-      "views": 10,
-      "users": 8,
-      "avgDuration": 111,
-      "bounceRate": 40
-    },
-    {
-      "path": "/premarital-counseling/new-york/rochester",
-      "views": 10,
-      "users": 10,
+      "path": "/premarital-counseling/new-york/new-york",
+      "views": 50,
+      "users": 50,
       "avgDuration": 10,
-      "bounceRate": 10
-    },
-    {
-      "path": "/unsubscribe",
-      "views": 10,
-      "users": 12,
-      "avgDuration": 7,
-      "bounceRate": 17
-    },
-    {
-      "path": "/premarital-counseling/gottman/new-york",
-      "views": 8,
-      "users": 8,
-      "avgDuration": 6,
-      "bounceRate": 13
-    },
-    {
-      "path": "/premarital-counseling/new-york/new-york/jinal-mehta",
-      "views": 8,
-      "users": 9,
-      "avgDuration": 13,
       "bounceRate": 0
     },
     {
-      "path": "/premarital-counseling/catholic/new-york",
-      "views": 7,
-      "users": 7,
-      "avgDuration": 5,
-      "bounceRate": 14
+      "path": "/premarital-counseling/new-york/buffalo",
+      "views": 27,
+      "users": 27,
+      "avgDuration": 24,
+      "bounceRate": 0
     },
     {
-      "path": "/premarital-counseling/interfaith/new-york",
-      "views": 7,
-      "users": 7,
-      "avgDuration": 6,
-      "bounceRate": 14
+      "path": "/premarital-counseling/new-york/rochester",
+      "views": 24,
+      "users": 24,
+      "avgDuration": 17,
+      "bounceRate": 0
     },
     {
-      "path": "/premarital-counseling/prepare-enrich/new-york",
-      "views": 7,
-      "users": 7,
+      "path": "/premarital-counseling/gottman/new-york",
+      "views": 21,
+      "users": 21,
       "avgDuration": 7,
-      "bounceRate": 14
-    },
-    {
-      "path": "/professional/dashboard",
-      "views": 7,
-      "users": 5,
-      "avgDuration": 47,
       "bounceRate": 0
     },
     {
       "path": "/premarital-counseling/christian/new-york",
-      "views": 6,
-      "users": 6,
-      "avgDuration": 4,
-      "bounceRate": 17
+      "views": 19,
+      "users": 19,
+      "avgDuration": 12,
+      "bounceRate": 0
     },
     {
-      "path": "/premarital-counseling/new-york/buffalo",
-      "views": 6,
-      "users": 6,
-      "avgDuration": 9,
-      "bounceRate": 17
+      "path": "/premarital-counseling/interfaith/new-york",
+      "views": 19,
+      "users": 19,
+      "avgDuration": 12,
+      "bounceRate": 0
     },
     {
-      "path": "/premarital-counseling/new-york/yonkers",
-      "views": 6,
-      "users": 6,
-      "avgDuration": 6,
-      "bounceRate": 17
+      "path": "/premarital-counseling/prepare-enrich/new-york",
+      "views": 19,
+      "users": 19,
+      "avgDuration": 7,
+      "bounceRate": 0
+    },
+    {
+      "path": "/blog/questions-to-ask-before-getting-married",
+      "views": 18,
+      "users": 2,
+      "avgDuration": 1176,
+      "bounceRate": 0
+    },
+    {
+      "path": "/premarital-counseling/lgbtq/new-york",
+      "views": 17,
+      "users": 17,
+      "avgDuration": 8,
+      "bounceRate": 0
     },
     {
       "path": "/premarital-counseling/second-marriages/new-york",
-      "views": 6,
-      "users": 6,
-      "avgDuration": 9,
-      "bounceRate": 17
+      "views": 17,
+      "users": 17,
+      "avgDuration": 18,
+      "bounceRate": 0
     },
     {
-      "path": "/blog/premarital-counseling-curriculum-comparison",
-      "views": 5,
-      "users": 2,
-      "avgDuration": 17,
-      "bounceRate": 80
-    },
-    {
-      "path": "/cHJlbWFyaX",
-      "views": 5,
-      "users": 10,
+      "path": "/unsubscribe",
+      "views": 17,
+      "users": 21,
       "avgDuration": 4,
-      "bounceRate": 40
+      "bounceRate": 19
     },
     {
-      "path": "/premarital-counseling/bWFycmlhZ2",
-      "views": 5,
-      "users": 7,
-      "avgDuration": 2,
-      "bounceRate": 14
+      "path": "/premarital-counseling/new-york/new-york/pamela-price-lerner",
+      "views": 16,
+      "users": 16,
+      "avgDuration": 7,
+      "bounceRate": 0
+    },
+    {
+      "path": "/premarital-counseling/online/new-york",
+      "views": 16,
+      "users": 16,
+      "avgDuration": 12,
+      "bounceRate": 0
     },
     {
       "path": "/premarital-counseling/military/new-york",
-      "views": 5,
+      "views": 13,
+      "users": 13,
+      "avgDuration": 6,
+      "bounceRate": 0
+    },
+    {
+      "path": "/premarital-counseling/new-york/new-york/robin-a-bryant-phd-pc",
+      "views": 13,
+      "users": 13,
+      "avgDuration": 7,
+      "bounceRate": 0
+    },
+    {
+      "path": "/premarital-counseling/new-york/new-york/jinal-mehta",
+      "views": 12,
+      "users": 12,
+      "avgDuration": 18,
+      "bounceRate": 0
+    },
+    {
+      "path": "/premarital-counseling/new-york/rye/james-w-walkup-jim",
+      "views": 11,
+      "users": 11,
+      "avgDuration": 16,
+      "bounceRate": 0
+    },
+    {
+      "path": "/premarital-counseling/affordable/new-york",
+      "views": 10,
+      "users": 10,
+      "avgDuration": 16,
+      "bounceRate": 0
+    },
+    {
+      "path": "/premarital-counseling/catholic/new-york",
+      "views": 10,
+      "users": 10,
+      "avgDuration": 7,
+      "bounceRate": 0
+    },
+    {
+      "path": "/blog/premarital-counseling-questions-pastor",
+      "views": 9,
       "users": 5,
-      "avgDuration": 27,
+      "avgDuration": 117,
+      "bounceRate": 38
+    },
+    {
+      "path": "/cHJlbWFyaX",
+      "views": 9,
+      "users": 10,
+      "avgDuration": 4,
+      "bounceRate": 10
+    },
+    {
+      "path": "/premarital-counseling/new-york/new-york/vanessa-m-bing",
+      "views": 9,
+      "users": 9,
+      "avgDuration": 7,
+      "bounceRate": 0
+    },
+    {
+      "path": "/premarital-counseling/bWFycmlhZ2",
+      "views": 8,
+      "users": 10,
+      "avgDuration": 5,
       "bounceRate": 20
     },
     {
-      "path": "/premarital-counseling/new-york/new-york/andrew-sidi",
-      "views": 5,
-      "users": 5,
-      "avgDuration": 19,
-      "bounceRate": 0
-    },
-    {
-      "path": "/premarital-counseling/new-york/new-york/sobeyda-valle-ellis-lcsw",
-      "views": 5,
-      "users": 6,
-      "avgDuration": 11,
-      "bounceRate": 0
-    },
-    {
-      "path": "/premarital-counseling/new-york/new-york/tasha-valentino-807",
-      "views": 5,
-      "users": 5,
-      "avgDuration": 8,
+      "path": "/premarital-counseling/new-york/albany",
+      "views": 8,
+      "users": 8,
+      "avgDuration": 58,
       "bounceRate": 0
     }
   ],
   "trafficSources": [
     {
       "channel": "Direct",
-      "sessions": 698,
-      "engagementRate": 7,
-      "pagesPerSession": "1.5"
+      "sessions": 116,
+      "engagementRate": 79,
+      "pagesPerSession": "7.7"
     },
     {
       "channel": "Organic Search",
-      "sessions": 52,
-      "engagementRate": 63,
-      "pagesPerSession": "1.3"
+      "sessions": 58,
+      "engagementRate": 62,
+      "pagesPerSession": "1.4"
     },
     {
       "channel": "Email",
-      "sessions": 9,
-      "engagementRate": 89,
-      "pagesPerSession": "5.7"
+      "sessions": 2,
+      "engagementRate": 50,
+      "pagesPerSession": "2.5"
     },
     {
       "channel": "Referral",
-      "sessions": 3,
-      "engagementRate": 67,
-      "pagesPerSession": "3.0"
+      "sessions": 2,
+      "engagementRate": 0,
+      "pagesPerSession": "1.0"
     },
     {
       "channel": "Unassigned",
-      "sessions": 1,
-      "engagementRate": 0,
-      "pagesPerSession": "0.0"
+      "sessions": 2,
+      "engagementRate": 50,
+      "pagesPerSession": "2.5"
     }
   ],
   "events": [
     {
       "event": "web_vitals",
-      "count": 1742,
-      "users": 657
+      "count": 1354,
+      "users": 141
     },
     {
       "event": "page_view",
-      "count": 1193,
-      "users": 747
-    },
-    {
-      "event": "session_start",
-      "count": 764,
-      "users": 747
-    },
-    {
-      "event": "first_visit",
-      "count": 737,
-      "users": 737
-    },
-    {
-      "event": "directory_launch",
-      "count": 658,
-      "users": 643
-    },
-    {
-      "event": "couple_guide_capture_view",
-      "count": 224,
-      "users": 101
-    },
-    {
-      "event": "location_page_view",
-      "count": 207,
-      "users": 160
-    },
-    {
-      "event": "scroll",
-      "count": 162,
-      "users": 140
+      "count": 990,
+      "users": 158
     },
     {
       "event": "form_start",
-      "count": 133,
-      "users": 26
+      "count": 290,
+      "users": 61
     },
     {
-      "event": "lead_form_view",
-      "count": 89,
-      "users": 40
+      "event": "session_start",
+      "count": 181,
+      "users": 158
     },
     {
-      "event": "profile_view",
-      "count": 89,
-      "users": 40
+      "event": "first_visit",
+      "count": 153,
+      "users": 153
     },
     {
-      "event": "lead_form_start",
-      "count": 57,
-      "users": 16
+      "event": "couple_guide_capture_view",
+      "count": 106,
+      "users": 68
+    },
+    {
+      "event": "directory_launch",
+      "count": 100,
+      "users": 72
+    },
+    {
+      "event": "scroll",
+      "count": 82,
+      "users": 30
     },
     {
       "event": "user_engagement",
-      "count": 51,
-      "users": 32
-    },
-    {
-      "event": "contact_form_error",
-      "count": 48,
-      "users": 16
-    },
-    {
-      "event": "lead_form_error",
-      "count": 48,
-      "users": 16
-    },
-    {
-      "event": "lead_form_submit",
-      "count": 48,
-      "users": 16
-    },
-    {
-      "event": "couple_guide_capture_submit",
       "count": 25,
       "users": 21
     },
     {
-      "event": "couple_guide_capture_success",
-      "count": 19,
+      "event": "lead_form_view",
+      "count": 23,
       "users": 19
     },
     {
-      "event": "onboarding_step_completed",
-      "count": 19,
-      "users": 3
+      "event": "profile_view",
+      "count": 21,
+      "users": 18
     },
     {
-      "event": "couple_guide_capture_error",
-      "count": 6,
+      "event": "location_page_view",
+      "count": 13,
+      "users": 9
+    },
+    {
+      "event": "click",
+      "count": 3,
       "users": 2
+    },
+    {
+      "event": "lead_form_start",
+      "count": 2,
+      "users": 2
+    },
+    {
+      "event": "lead_form_submit",
+      "count": 2,
+      "users": 2
+    },
+    {
+      "event": "lead_form_success",
+      "count": 2,
+      "users": 2
+    },
+    {
+      "event": "form_submit",
+      "count": 1,
+      "users": 1
     }
   ],
   "organicLandingPages": [
     {
-      "path": "/premarital-counseling/marriage-license-discount",
-      "sessions": 10,
-      "bounceRate": 50,
-      "avgDuration": 17
-    },
-    {
-      "path": "/blog/prepare-enrich-vs-gottman-vs-symbis",
+      "path": "/blog/premarital-counseling-questions-pastor",
       "sessions": 7,
-      "bounceRate": 14,
-      "avgDuration": 158
-    },
-    {
-      "path": "/blog/premarital-counseling-curriculum-comparison",
-      "sessions": 4,
-      "bounceRate": 75,
-      "avgDuration": 21
+      "bounceRate": 29,
+      "avgDuration": 134
     },
     {
       "path": "(not set)",
-      "sessions": 2,
+      "sessions": 4,
       "bounceRate": 100,
       "avgDuration": 0
     },
     {
-      "path": "/premarital-counseling/indiana/indianapolis/ellen-cohen",
-      "sessions": 2,
-      "bounceRate": 0,
-      "avgDuration": 54
+      "path": "/blog/foccus-explained",
+      "sessions": 4,
+      "bounceRate": 50,
+      "avgDuration": 105
     },
     {
-      "path": "/premarital-counseling/maryland/baltimore/racheldvoskin-636",
+      "path": "/blog/prepare-enrich-explained",
+      "sessions": 4,
+      "bounceRate": 0,
+      "avgDuration": 129
+    },
+    {
+      "path": "/blog/prepare-enrich-vs-gottman-vs-symbis",
+      "sessions": 3,
+      "bounceRate": 33,
+      "avgDuration": 133
+    },
+    {
+      "path": "/premarital-counseling/marriage-license-discount",
+      "sessions": 3,
+      "bounceRate": 67,
+      "avgDuration": 14
+    },
+    {
+      "path": "/blog/premarital-counseling-nashville",
       "sessions": 2,
       "bounceRate": 50,
-      "avgDuration": 25
+      "avgDuration": 38
     },
     {
-      "path": "/blog/how-to-find-gottman-certified-therapist",
-      "sessions": 1,
-      "bounceRate": 100,
-      "avgDuration": 7
-    },
-    {
-      "path": "/blog/premarital-counseling-florida",
-      "sessions": 1,
-      "bounceRate": 0,
-      "avgDuration": 79
-    },
-    {
-      "path": "/premarital-counseling/al/birmingham/william-stephen-sweatt",
-      "sessions": 1,
-      "bounceRate": 0,
-      "avgDuration": 12
-    },
-    {
-      "path": "/premarital-counseling/alabama/birmingham",
-      "sessions": 1,
-      "bounceRate": 0,
-      "avgDuration": 32
-    },
-    {
-      "path": "/premarital-counseling/georgia/savannah",
-      "sessions": 1,
-      "bounceRate": 0,
-      "avgDuration": 10
-    },
-    {
-      "path": "/premarital-counseling/georgia/savannah/lexie-beady-858",
-      "sessions": 1,
-      "bounceRate": 0,
-      "avgDuration": 37
-    },
-    {
-      "path": "/premarital-counseling/hawaii/honolulu/melinda-timmons-630",
-      "sessions": 1,
-      "bounceRate": 0,
-      "avgDuration": 21
-    },
-    {
-      "path": "/premarital-counseling/idaho/boise/madi-galer-anxiety-and-trauma-therapist-557",
-      "sessions": 1,
+      "path": "/blog/premarital-counseling-with-pastor",
+      "sessions": 2,
       "bounceRate": 100,
       "avgDuration": 6
     },
     {
-      "path": "/premarital-counseling/kansas/wichita/heather-eckermanpetricek-696",
-      "sessions": 1,
-      "bounceRate": 0,
-      "avgDuration": 15
-    },
-    {
-      "path": "/premarital-counseling/kentucky/louisville",
-      "sessions": 1,
-      "bounceRate": 0,
-      "avgDuration": 72
-    },
-    {
-      "path": "/premarital-counseling/lgbtq",
+      "path": "/",
       "sessions": 1,
       "bounceRate": 100,
       "avgDuration": 4
     },
     {
-      "path": "/premarital-counseling/marriage-license-discount/minnesota",
+      "path": "/blog/church-premarital-counseling-by-denomination",
       "sessions": 1,
       "bounceRate": 0,
-      "avgDuration": 29
+      "avgDuration": 273
     },
     {
-      "path": "/premarital-counseling/md/baltimore/sarita-weiss-olson",
+      "path": "/blog/symbis-explained",
       "sessions": 1,
       "bounceRate": 0,
-      "avgDuration": 21
+      "avgDuration": 91
     },
     {
-      "path": "/premarital-counseling/minnesota/minneapolis",
+      "path": "/blog/twogether-in-texas",
       "sessions": 1,
       "bounceRate": 0,
-      "avgDuration": 197
+      "avgDuration": 654
+    },
+    {
+      "path": "/premarital-counseling/alabama/birmingham",
+      "sessions": 1,
+      "bounceRate": 0,
+      "avgDuration": 79
+    },
+    {
+      "path": "/premarital-counseling/colorado/denver/ryan-gardiner-959",
+      "sessions": 1,
+      "bounceRate": 100,
+      "avgDuration": 3
+    },
+    {
+      "path": "/premarital-counseling/connecticut/hartford/rachel-chernyavskiy-294",
+      "sessions": 1,
+      "bounceRate": 100,
+      "avgDuration": 3
+    },
+    {
+      "path": "/premarital-counseling/gottman",
+      "sessions": 1,
+      "bounceRate": 0,
+      "avgDuration": 271
+    },
+    {
+      "path": "/premarital-counseling/hawaii/honolulu/monica-tatekawachen-psyd-llc",
+      "sessions": 1,
+      "bounceRate": 0,
+      "avgDuration": 18
+    },
+    {
+      "path": "/premarital-counseling/idaho/boise",
+      "sessions": 1,
+      "bounceRate": 0,
+      "avgDuration": 114
+    },
+    {
+      "path": "/premarital-counseling/illinois/chicago/diana-thomas-656",
+      "sessions": 1,
+      "bounceRate": 100,
+      "avgDuration": 9
+    },
+    {
+      "path": "/premarital-counseling/illinois/chicago/marlene-arteaga-213",
+      "sessions": 1,
+      "bounceRate": 0,
+      "avgDuration": 38
     }
   ],
   "devices": [
     {
       "device": "desktop",
-      "users": 721,
-      "sessions": 722,
-      "bounceRate": 91
+      "users": 133,
+      "sessions": 141,
+      "bounceRate": 26
     },
     {
       "device": "mobile",
-      "users": 27,
-      "sessions": 41,
-      "bounceRate": 39
+      "users": 25,
+      "sessions": 39,
+      "bounceRate": 33
     }
   ],
   "topCities": [
     {
-      "city": "Singapore",
-      "region": "(not set)",
-      "users": 585,
-      "sessions": 583
-    },
-    {
       "city": "(not set)",
       "region": "(not set)",
-      "users": 380,
-      "sessions": 381
+      "users": 51,
+      "sessions": 53
     },
     {
-      "city": "",
-      "region": "",
-      "users": 12,
-      "sessions": 12
-    },
-    {
-      "city": "Dublin",
-      "region": "County Dublin",
-      "users": 10,
-      "sessions": 10
-    },
-    {
-      "city": "Singapore",
-      "region": "",
-      "users": 9,
-      "sessions": 9
-    },
-    {
-      "city": "Stockholm",
-      "region": "Stockholm County",
-      "users": 9,
-      "sessions": 9
-    },
-    {
-      "city": "Vancouver",
-      "region": "British Columbia",
-      "users": 2,
-      "sessions": 6
+      "city": "Amsterdam",
+      "region": "North Holland",
+      "users": 18,
+      "sessions": 18
     },
     {
       "city": "Bissen",
-      "region": "(not set)",
-      "users": 5,
-      "sessions": 5
+      "region": "Mersch",
+      "users": 15,
+      "sessions": 15
     },
     {
-      "city": "Mougins",
-      "region": "Provence-Alpes-Cote d'Azur",
-      "users": 5,
-      "sessions": 5
-    },
-    {
-      "city": "Nuremberg",
-      "region": "Bavaria",
-      "users": 5,
-      "sessions": 5
+      "city": "Saint Petersburg",
+      "region": "Saint Petersburg",
+      "users": 13,
+      "sessions": 13
     },
     {
       "city": "Sundbyberg",
       "region": "Stockholm County",
-      "users": 5,
-      "sessions": 5
+      "users": 13,
+      "sessions": 13
     },
     {
-      "city": "New York",
-      "region": "New York",
-      "users": 4,
-      "sessions": 5
-    },
-    {
-      "city": "Seattle",
-      "region": "Washington",
-      "users": 3,
-      "sessions": 5
-    },
-    {
-      "city": "Chicago",
-      "region": "Illinois",
-      "users": 4,
-      "sessions": 4
+      "city": "Berlin",
+      "region": "Berlin",
+      "users": 10,
+      "sessions": 10
     },
     {
       "city": "Des Moines",
       "region": "Iowa",
-      "users": 4,
-      "sessions": 4
+      "users": 9,
+      "sessions": 9
+    },
+    {
+      "city": "Chicago",
+      "region": "Illinois",
+      "users": 6,
+      "sessions": 9
+    },
+    {
+      "city": "Moscow",
+      "region": "Moscow",
+      "users": 8,
+      "sessions": 8
+    },
+    {
+      "city": "Nuremberg",
+      "region": "Bavaria",
+      "users": 8,
+      "sessions": 8
+    },
+    {
+      "city": "Engstingen",
+      "region": "Baden-Wurttemberg",
+      "users": 6,
+      "sessions": 6
+    },
+    {
+      "city": "Juterbog",
+      "region": "Brandenburg",
+      "users": 6,
+      "sessions": 6
+    },
+    {
+      "city": "Tolyatti",
+      "region": "Samara Oblast",
+      "users": 6,
+      "sessions": 6
+    },
+    {
+      "city": "",
+      "region": "",
+      "users": 5,
+      "sessions": 5
+    },
+    {
+      "city": "(not set)",
+      "region": "Novgorod Oblast",
+      "users": 5,
+      "sessions": 5
     }
   ],
   "topSearchQueries": [
     {
-      "query": "ellen cohen therapist",
+      "query": "holly eliza jones",
       "clicks": 1,
-      "impressions": 1,
-      "ctr": 100,
-      "position": 3
+      "impressions": 3,
+      "ctr": 33.33,
+      "position": 7
     },
     {
-      "query": "rachel dvoskin",
+      "query": "pre marital counselling near me",
       "clicks": 1,
-      "impressions": 4,
-      "ctr": 25,
+      "impressions": 11,
+      "ctr": 9.09,
+      "position": 14.1
+    },
+    {
+      "query": "shawne sisk",
+      "clicks": 1,
+      "impressions": 6,
+      "ctr": 16.67,
+      "position": 11.5
+    },
+    {
+      "query": "\"rula\" \"counselling near me\" or \"counseling near me\"",
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
       "position": 10
-    },
-    {
-      "query": "symbis vs prepare enrich",
-      "clicks": 1,
-      "impressions": 5,
-      "ctr": 20,
-      "position": 9.2
     },
     {
       "query": "a marriage counselor",
       "clicks": 0,
-      "impressions": 7,
+      "impressions": 4,
       "ctr": 0,
-      "position": 23.4
+      "position": 23
     },
     {
-      "query": "ashleigh woods",
+      "query": "affordable couples counseling near me",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
-      "position": 9
+      "position": 17
     },
     {
-      "query": "average cost of premarital counseling",
-      "clicks": 0,
-      "impressions": 1,
-      "ctr": 0,
-      "position": 66
-    },
-    {
-      "query": "best christian marriage counseling near me",
-      "clicks": 0,
-      "impressions": 1,
-      "ctr": 0,
-      "position": 72
-    },
-    {
-      "query": "best christian marriage counselors near me",
-      "clicks": 0,
-      "impressions": 1,
-      "ctr": 0,
-      "position": 61
-    },
-    {
-      "query": "best marital counselor near me",
+      "query": "affordable marriage counseling in texas",
       "clicks": 0,
       "impressions": 2,
       "ctr": 0,
-      "position": 86.5
+      "position": 87.5
     },
     {
-      "query": "best marriage and family therapists in minneapolis",
+      "query": "alan moreland",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
-      "position": 65
+      "position": 10
     },
     {
-      "query": "best marriage counseling louisville ky",
-      "clicks": 0,
-      "impressions": 1,
-      "ctr": 0,
-      "position": 52
-    },
-    {
-      "query": "best marriage counselors in los angeles",
-      "clicks": 0,
-      "impressions": 6,
-      "ctr": 0,
-      "position": 58
-    },
-    {
-      "query": "best marriage counselors near me",
-      "clicks": 0,
-      "impressions": 4,
-      "ctr": 0,
-      "position": 70.5
-    },
-    {
-      "query": "best online premarital counseling",
-      "clicks": 0,
-      "impressions": 1,
-      "ctr": 0,
-      "position": 49
-    },
-    {
-      "query": "best premarital counseling",
-      "clicks": 0,
-      "impressions": 6,
-      "ctr": 0,
-      "position": 52
-    },
-    {
-      "query": "best premarital counseling near me",
-      "clicks": 0,
-      "impressions": 4,
-      "ctr": 0,
-      "position": 34.5
-    },
-    {
-      "query": "best premarital course",
+      "query": "alisha bond",
       "clicks": 0,
       "impressions": 2,
       "ctr": 0,
-      "position": 26
+      "position": 8.5
     },
     {
-      "query": "catholic church premarital counseling",
+      "query": "are there online premarital counseling options in maryland?",
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 5.5
+    },
+    {
+      "query": "atlanta marriage counseling",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
-      "position": 85
+      "position": 82
     },
     {
-      "query": "catholic marriage counseling",
+      "query": "atlanta marriage counselor",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 88
+    },
+    {
+      "query": "atlanta premarital counseling",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 56
+    },
+    {
+      "query": "average cost of marriage counseling sessions 2025 or 2026",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 14
+    },
+    {
+      "query": "best christian marriage counselors",
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 21
+    },
+    {
+      "query": "best christian premarital counseling books",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 70
+    },
+    {
+      "query": "best couples therapy miami",
       "clicks": 0,
       "impressions": 3,
       "ctr": 0,
-      "position": 95
+      "position": 63.3
     },
     {
-      "query": "catholic marriage counseling near me",
+      "query": "best marriage counseling",
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 45.3
+    },
+    {
+      "query": "best marriage counseling chicago",
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 73
+    },
+    {
+      "query": "best marriage counseling miami",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
-      "position": 60
+      "position": 63
     },
     {
-      "query": "catholic marriage counselling",
+      "query": "best marriage counseling nashville tn",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
-      "position": 99
+      "position": 80
     },
     {
-      "query": "catholic marriage counselor",
+      "query": "best marriage counseling near me",
+      "clicks": 0,
+      "impressions": 8,
+      "ctr": 0,
+      "position": 73
+    },
+    {
+      "query": "best marriage counselor in nyc",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
       "position": 94
     },
     {
-      "query": "catholic pre marriage counseling",
-      "clicks": 0,
-      "impressions": 2,
-      "ctr": 0,
-      "position": 70
-    },
-    {
-      "query": "catholic premarital counseling",
+      "query": "best marriage counselor near me",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
-      "position": 72
+      "position": 49
     },
     {
-      "query": "certified gottman therapist birmingham",
+      "query": "best marriage counselors in dallas",
       "clicks": 0,
-      "impressions": 8,
+      "impressions": 1,
       "ctr": 0,
-      "position": 14.8
+      "position": 95
     }
   ],
   "gscTotals": {
     "clicks": 32,
-    "impressions": 2330,
-    "ctr": 0.013733905579399141,
-    "position": 36.25364806866953
+    "impressions": 4311,
+    "ctr": 0.007422871723498028,
+    "position": 30.289723961957783
   }
 }

@@ -1,14 +1,16 @@
 name: Daily Google Indexing
 
-# ⚠️  NOTE: Google's Indexing API is officially restricted to JobPosting and
-# BroadcastEvent pages. Sitemap ping is the recommended compliant approach
-# for directory and blog content. The Indexing API steps are kept but
-# should be used sparingly — consider disabling them if Google warns you.
+# DISABLED 2026-05-17.
+# Google's Indexing API is officially only for JobPosting / BroadcastEvent.
+# Daily runs were burning the 200/day quota AND submitting URLs Google had
+# already rejected (89% of submissions returning 429 RESOURCE_EXHAUSTED).
+# Per project rule: never use the Indexing API on counselor profile pages.
+# Keeping the file so it can be re-enabled later with workflow_dispatch only.
 
 on:
-  schedule:
-    # 6:00 AM UTC daily
-    - cron: '0 6 * * *'
+  # schedule: cron disabled — re-enable only if you re-scope this workflow
+  #   to JobPosting URLs only.
+  # - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       mode:

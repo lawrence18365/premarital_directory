@@ -175,6 +175,12 @@ const SpecialtyPage = () => {
 
   if (loading) return <LoadingSpinner />
 
+  // 2026-05-17: noindex thin specialty hubs. Need ≥20 profiles OR ≥5 programs
+  // (Catholic) to earn the slot.
+  const shouldNoindex = isCatholicSpecialty(specialty)
+    ? programs.length < 5
+    : profiles.length < 20
+
   return (
     <>
       <SEOHelmet
@@ -185,6 +191,7 @@ const SpecialtyPage = () => {
         breadcrumbs={breadcrumbItems}
         structuredData={[serviceStructuredData, faqStructuredData].filter(Boolean)}
         canonicalUrl={`https://www.weddingcounselors.com/premarital-counseling/${specialtySlug}`}
+        noindex={shouldNoindex}
       />
 
       <div className="specialty-page">

@@ -174,8 +174,9 @@ const StatePage = () => {
   const hasStateData = stateData !== null
   const hasStateProfiles = (stateData?.totalProfiles || 0) > 0
 
-  // Noindex states without active counselor inventory
-  const shouldNoindex = hasStateData && !hasStateProfiles
+  // Noindex states with weak inventory. 2026-05-17: tightened from "0 profiles"
+  // to "<10 profiles" to match GSC's actual indexing behavior on this domain.
+  const shouldNoindex = hasStateData && (stateData?.totalProfiles || 0) < 10
 
   // Generate ItemList structured data for cities
   const citiesItemList = hasActiveCities ? {

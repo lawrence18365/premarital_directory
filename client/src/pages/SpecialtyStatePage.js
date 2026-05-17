@@ -185,9 +185,10 @@ const SpecialtyStatePage = ({ specialtyOverride, stateOverride }) => {
     : specialty.stateMetaDescription
       ? specialty.stateMetaDescription(stateName, profiles.length)
       : `Compare ${profileCountText} ${specialty.name.toLowerCase()} premarital counselors in ${stateName}. Browse profiles, see pricing & availability. Contact a therapist directly.`
+  // 2026-05-17: tightened non-Catholic threshold from <3 to <10.
   const shouldNoindex = isCatholic
     ? programs.length < MIN_VERIFIED_PROGRAMS_FOR_INDEX
-    : profiles.length < 3
+    : profiles.length < 10
 
   // Get major cities from config
   const majorCities = availableCities
