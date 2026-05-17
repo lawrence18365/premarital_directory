@@ -470,11 +470,12 @@ const CityPage = ({ stateOverride, cityOverride }) => {
   }
   const seoKeywords = keywordBlocks.join(', ')
 
-  // Determine if page should be noindexed (thin content detection)
-  // With dynamic stats blocks added, we can index pages with fewer profiles
-  // Anchor cities are always indexable to build SEO authority regardless of profile count
+  // Noindex thin city pages. 2026-05-17: tightened from "<5 non-anchor" to
+  // "<10 for everyone" after GSC showed 0/8 sampled city pages indexed and
+  // anchor cities (Miami, LA, Chicago) ranking position 50+ with 0 clicks —
+  // anchor-status alone wasn't earning the index slot.
   const isAnchor = isAnchorCity(state, city)
-  const shouldNoindex = profiles.length === 0 || (!isAnchor && profiles.length < 5)
+  const shouldNoindex = profiles.length < 10 && !(isAnchor && profiles.length >= 5)
 
   return (
     <div className="city-page">

@@ -1,12 +1,13 @@
-name: SEO Maintenance (Daily Recrawl + Weekly Audit)
+name: SEO Maintenance (Weekly Audit)
 
-# Daily: submit non-indexed URLs for re-crawling
-# Weekly: pull fresh GSC/GA4 data, check index coverage, score opportunities
+# 2026-05-17: daily recrawl batch DISABLED. It was re-submitting URLs Google
+# had already chosen not to index, which is a negative quality signal.
+# Now only weekly read-only audit runs on Mondays.
 
 on:
   schedule:
-    # Daily at 9:17 AM UTC — submit recrawl batch
-    - cron: '17 9 * * *'
+    # Weekly Mon at 9:17 AM UTC — read-only audit (no submissions)
+    - cron: '17 9 * * 1'
   workflow_dispatch:
     inputs:
       mode:
@@ -43,22 +44,13 @@ jobs:
       - name: Install dependencies
         run: npm install googleapis @supabase/supabase-js @anthropic-ai/sdk dotenv
 
-      # ── Daily: Submit non-indexed URLs for re-crawling ──────────────
+      # ── Pull fresh GSC data (read-only) ────────────────────────────
       - name: Pull fresh GSC data
         run: node scripts/gsc/pull-data.js
 
-      - name: Submit recrawl batch (200 URLs)
-        run: |
-          if [ -f scripts/ga/output/non-indexed-urls-*.txt ]; then
-            LATEST=$(ls -t scripts/ga/output/non-indexed-urls-*.txt | head -1)
-            echo "Using non-indexed URL list: $LATEST"
-            node scripts/gsc/request-recrawl.js --from-file "$LATEST" --limit 200
-          else
-            echo "No non-indexed URL list found. Running coverage sample first..."
-            node scripts/ga/index-coverage-report.js --sample 50
-            LATEST=$(ls -t scripts/ga/output/non-indexed-urls-*.txt | head -1)
-            node scripts/gsc/request-recrawl.js --from-file "$LATEST" --limit 200
-          fi
+      # Submit-recrawl step intentionally removed 2026-05-17.
+      # Re-requesting indexing on URLs Google has already declined hurts
+      # domain-level quality signal. Use sitemap pings only.
 
       # ── Weekly (Monday only): Full audit ────────────────────────────
       - name: Weekly GA4 + GSC audit

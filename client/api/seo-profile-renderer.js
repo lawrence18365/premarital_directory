@@ -11,6 +11,35 @@ const DEFAULT_TITLE = 'Premarital Counseling Near Me | Find Marriage Counselors 
 const DEFAULT_DESC = 'Find qualified premarital counselors, therapists, and coaches near you.';
 
 /**
+ * Convert state abbreviation (e.g., "OH") to full slug (e.g., "ohio").
+ * Falls back to lowercased input if abbreviation is not recognized.
+ */
+const STATE_ABBR_TO_SLUG = {
+    'AL': 'alabama', 'AK': 'alaska', 'AZ': 'arizona', 'AR': 'arkansas', 'CA': 'california',
+    'CO': 'colorado', 'CT': 'connecticut', 'DE': 'delaware', 'FL': 'florida', 'GA': 'georgia',
+    'HI': 'hawaii', 'ID': 'idaho', 'IL': 'illinois', 'IN': 'indiana', 'IA': 'iowa',
+    'KS': 'kansas', 'KY': 'kentucky', 'LA': 'louisiana', 'ME': 'maine', 'MD': 'maryland',
+    'MA': 'massachusetts', 'MI': 'michigan', 'MN': 'minnesota', 'MS': 'mississippi', 'MO': 'missouri',
+    'MT': 'montana', 'NE': 'nebraska', 'NV': 'nevada', 'NH': 'new-hampshire', 'NJ': 'new-jersey',
+    'NM': 'new-mexico', 'NY': 'new-york', 'NC': 'north-carolina', 'ND': 'north-dakota', 'OH': 'ohio',
+    'OK': 'oklahoma', 'OR': 'oregon', 'PA': 'pennsylvania', 'RI': 'rhode-island', 'SC': 'south-carolina',
+    'SD': 'south-dakota', 'TN': 'tennessee', 'TX': 'texas', 'UT': 'utah', 'VT': 'vermont',
+    'VA': 'virginia', 'WA': 'washington', 'WV': 'west-virginia', 'WI': 'wisconsin', 'WY': 'wyoming',
+    'DC': 'washington-dc'
+};
+
+function getStateSlug(stateProvince) {
+    if (!stateProvince) return null;
+    const upper = stateProvince.trim().toUpperCase();
+    return STATE_ABBR_TO_SLUG[upper] || stateProvince.toLowerCase().replace(/\s+/g, '-');
+}
+
+function getCitySlug(city) {
+    if (!city) return null;
+    return city.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').trim();
+}
+
+/**
  * Helper to escape HTML to prevent XSS.
  */
 function escapeHtml(unsafe) {
@@ -49,7 +78,7 @@ function generateSchema(profile) {
         "@type": schemaType,
         "name": profile.full_name,
         "description": stripMarkdown(profile.bio),
-        "url": `https://www.weddingcounselors.com/premarital-counseling/${profile.state_province?.toLowerCase()}/${profile.city?.toLowerCase()}/${profile.slug}`,
+        "url": `https://www.weddingcounselors.com/premarital-counseling/${getStateSlug(profile.state_province)}/${getCitySlug(profile.city)}/${profile.slug}`,
         "image": imageUrl,
         "address": {
             "@type": "PostalAddress",
@@ -77,9 +106,17 @@ module.exports = async function (req, res) {
     const slug = urlParts[urlParts.length - 1]; // "heidi-farrell"
 
     // 2. Load the generic React index.html envelope.
-    const indexPath = path.resolve('./client/build/index.html');
+    const indexCandidates = [
+        path.resolve(process.cwd(), 'build/index.html'),
+        path.resolve(process.cwd(), 'client/build/index.html'),
+        path.resolve(__dirname, '../build/index.html')
+    ];
+    const indexPath = indexCandidates.find((candidate) => fs.existsSync(candidate));
     let htmlData;
     try {
+        if (!indexPath) {
+            throw new Error(`index.html not found in any known build path: ${indexCandidates.join(', ')}`);
+        }
         htmlData = fs.readFileSync(indexPath, 'utf8');
     } catch (err) {
         console.error('Error reading index.html:', err);
@@ -114,7 +151,7 @@ module.exports = async function (req, res) {
         const metaTitle = `${profile.full_name} | ${titleSuffix} in ${profile.city}, ${profile.state_province} | Wedding Counselors`;
 
         // Custom Canonical
-        const canonicalUrl = `https://www.weddingcounselors.com/premarital-counseling/${profile.state_province?.toLowerCase()}/${profile.city?.toLowerCase()}/${profile.slug}`;
+        const canonicalUrl = `https://www.weddingcounselors.com/premarital-counseling/${getStateSlug(profile.state_province)}/${getCitySlug(profile.city)}/${profile.slug}`;
 
         // Prepare the JSON-LD Script
         const schemaString = generateSchema(profile);

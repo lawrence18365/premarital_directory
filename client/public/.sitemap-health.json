@@ -1,0 +1,14 @@
+{
+  "generated": "2026-05-17",
+  "totalUrls": 243,
+  "core": 27,
+  "cities": 73,
+  "specialties": 96,
+  "blog": 47,
+  "profiles": 0,
+  "issues": [
+    "sitemap-profiles.xml has 0 URLs"
+  ],
+  "usedStaticFallback": true,
+  "supabaseAvailable": false
+}
