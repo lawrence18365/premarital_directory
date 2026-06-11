@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabaseClient'
+import { getStateNameFromAbbr } from '../../lib/utils'
 import { Link, useSearchParams } from 'react-router-dom'
 
 const AdminLeadsPage = () => {
@@ -219,7 +220,7 @@ const AdminLeadsPage = () => {
                     <td style={{ padding: '10px 8px' }}>
                       {lead.profile ? (
                         <Link
-                          to={`/premarital-counseling/${lead.profile.state_province?.toLowerCase().replace(/\s+/g, '-')}/${lead.profile.city?.toLowerCase().replace(/\s+/g, '-')}/${lead.profile.slug}`}
+                          to={`/premarital-counseling/${getStateNameFromAbbr(lead.profile.state_province) || lead.profile.state_province?.toLowerCase().replace(/\s+/g, '-')}/${lead.profile.city?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')}/${lead.profile.slug}`}
                           style={{ color: '#0d9488', textDecoration: 'underline' }}
                         >
                           {lead.profile.full_name}

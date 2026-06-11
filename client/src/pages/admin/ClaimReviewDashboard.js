@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { profileOperations, supabase } from '../../lib/supabaseClient'
 import { Link } from 'react-router-dom'
 import { sendClaimApprovedEmail, sendClaimRejectedEmail } from '../../lib/emailNotifications'
+import { getStateNameFromAbbr } from '../../lib/utils'
 
 const ClaimReviewDashboard = () => {
   const { signOut } = useAuth()
@@ -94,8 +95,10 @@ const ClaimReviewDashboard = () => {
 
       // Send approval email (non-blocking)
       try {
+        const stateSlug = getStateNameFromAbbr(claim.profile?.state_province) || claim.profile?.state_province?.toLowerCase().replace(/\s+/g, '-')
+        const citySlug = claim.profile?.city?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
         const profileUrl = claim.profile_id
-          ? `https://www.weddingcounselors.com/premarital-counseling/${claim.profile?.state_province?.toLowerCase().replace(/\s+/g, '-')}/${claim.profile?.city?.toLowerCase().replace(/\s+/g, '-')}/${claim.profile?.slug}`
+          ? `https://www.weddingcounselors.com/premarital-counseling/${stateSlug}/${citySlug}/${claim.profile?.slug}`
           : 'https://www.weddingcounselors.com'
         await sendClaimApprovedEmail(claim.submitted_by_email, claim.claim_data, profileUrl)
       } catch (emailError) {

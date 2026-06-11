@@ -1,16 +1,25 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import { supabase } from '../lib/supabaseClient'
 
-const ContactPage = () => {
-  const [contactForm, setContactForm] = useState({
+const VALID_CONTACT_TYPES = new Set(['general', 'couple', 'professional', 'support', 'partnership'])
+
+const getInitialContactForm = (searchParams) => {
+  const requestedType = searchParams.get('type')
+
+  return {
     name: '',
     email: '',
-    subject: '',
-    message: '',
-    type: 'general'
-  })
+    subject: searchParams.get('subject') || '',
+    message: searchParams.get('message') || '',
+    type: VALID_CONTACT_TYPES.has(requestedType) ? requestedType : 'general'
+  }
+}
+
+const ContactPage = () => {
+  const [searchParams] = useSearchParams()
+  const [contactForm, setContactForm] = useState(() => getInitialContactForm(searchParams))
   const [submitted, setSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')

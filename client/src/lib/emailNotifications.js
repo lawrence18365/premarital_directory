@@ -1,4 +1,19 @@
 import { supabase } from './supabaseClient'
+import { getStateNameFromAbbr } from './utils'
+
+/**
+ * Convert state abbreviation to URL slug using full state name.
+ * e.g., "OH" -> "ohio", "NC" -> "north-carolina"
+ */
+const toStateSlug = (stateProvince) => {
+  if (!stateProvince) return ''
+  return getStateNameFromAbbr(stateProvince) || stateProvince.toLowerCase().replace(/\s+/g, '-')
+}
+
+const toCitySlug = (city) => {
+  if (!city) return ''
+  return city.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+}
 
 /**
  * Email Notification Helpers
@@ -25,8 +40,8 @@ const sendEmail = async (to, subject, template, data) => {
  * Send email when a profile is approved by admin
  */
 export const sendProfileApprovedEmail = async (email, profileData) => {
-  const stateSlug = profileData.state_province?.toLowerCase().replace(/\s+/g, '-') || ''
-  const citySlug = profileData.city?.toLowerCase().replace(/\s+/g, '-') || ''
+  const stateSlug = toStateSlug(profileData.state_province)
+  const citySlug = toCitySlug(profileData.city)
   const profileSlug = profileData.slug || profileData.id
 
   return sendEmail(
@@ -132,8 +147,8 @@ export const sendClaimRejectedEmail = async (email, claimData, reason) => {
  * Notify admin when a new profile is created
  */
 export const sendAdminNewSignupAlert = async (profileData) => {
-  const stateSlug = profileData.state_province?.toLowerCase().replace(/\s+/g, '-') || ''
-  const citySlug = profileData.city?.toLowerCase().replace(/\s+/g, '-') || ''
+  const stateSlug = toStateSlug(profileData.state_province)
+  const citySlug = toCitySlug(profileData.city)
   const profileSlug = profileData.slug || profileData.id
 
   return sendEmail(

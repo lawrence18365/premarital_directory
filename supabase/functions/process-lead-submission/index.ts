@@ -103,7 +103,7 @@ serve(async (req) => {
 
         // --- Spam detection ---
         const coupleName = coupleData.partner_two_name
-            ? `${coupleData.partner_one_name} ${coupleData.partner_two_name}`
+            ? `${coupleData.partner_one_name} & ${coupleData.partner_two_name}`
             : coupleData.partner_one_name
         const spamCheck = checkForSpam({
             honeypot: payload._hp,
@@ -119,9 +119,6 @@ serve(async (req) => {
         // Prepare lead data for DB
         const timelinePrefix = coupleData.timeline ? `Timeline: ${coupleData.timeline}\n\n` : ''
         const outboundMessage = `${timelinePrefix}${coupleData.message}`
-        const coupleName = coupleData.partner_two_name
-            ? `${coupleData.partner_one_name} & ${coupleData.partner_two_name}`
-            : coupleData.partner_one_name
 
         const isUnmatchedLead = !profileId
         const leadStatus = isProfileClaimed ? 'new' : 'pending_claim'

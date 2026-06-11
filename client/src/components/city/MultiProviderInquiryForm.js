@@ -68,26 +68,17 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
         throw new Error(`Please select no more than ${MAX_SELECTABLE} counselors.`)
       }
 
-      const { data: inserted, error: insertError } = await supabase
-        .from('city_inquiries')
-        .insert({
-          couple_name: formData.name || null,
-          couple_email: formData.email,
-          couple_message: formData.message,
-          preferred_type: 'custom_select',
+      const { data: notificationResult, error: notificationError } = await supabase.functions.invoke('send-inquiry-notifications', {
+        body: {
+          coupleName: formData.name || null,
+          coupleEmail: formData.email,
+          coupleMessage: formData.message,
           city: cityName,
           state: stateName,
-          provider_ids: selectedProviders.map((provider) => provider.id),
+          providerIds: selectedProviders.map((provider) => provider.id),
+          preferredType: 'custom_select',
           source: 'city_page_selected'
-        })
-        .select()
-        .single()
-
-      if (insertError) throw insertError
-
-      // Send all emails server-side via edge function (no provider emails exposed client-side)
-      const { data: notificationResult, error: notificationError } = await supabase.functions.invoke('send-inquiry-notifications', {
-        body: { inquiryId: inserted.id }
+        }
       })
 
       if (notificationError) {

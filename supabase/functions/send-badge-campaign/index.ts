@@ -2,6 +2,31 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4"
 import { requireInternalKey } from "../_shared/auth.ts"
 
+// Map state abbreviations to full URL slugs for canonical profile URLs
+const STATE_ABBR_TO_SLUG: Record<string, string> = {
+  'AL': 'alabama', 'AK': 'alaska', 'AZ': 'arizona', 'AR': 'arkansas', 'CA': 'california',
+  'CO': 'colorado', 'CT': 'connecticut', 'DE': 'delaware', 'FL': 'florida', 'GA': 'georgia',
+  'HI': 'hawaii', 'ID': 'idaho', 'IL': 'illinois', 'IN': 'indiana', 'IA': 'iowa',
+  'KS': 'kansas', 'KY': 'kentucky', 'LA': 'louisiana', 'ME': 'maine', 'MD': 'maryland',
+  'MA': 'massachusetts', 'MI': 'michigan', 'MN': 'minnesota', 'MS': 'mississippi', 'MO': 'missouri',
+  'MT': 'montana', 'NE': 'nebraska', 'NV': 'nevada', 'NH': 'new-hampshire', 'NJ': 'new-jersey',
+  'NM': 'new-mexico', 'NY': 'new-york', 'NC': 'north-carolina', 'ND': 'north-dakota', 'OH': 'ohio',
+  'OK': 'oklahoma', 'OR': 'oregon', 'PA': 'pennsylvania', 'RI': 'rhode-island', 'SC': 'south-carolina',
+  'SD': 'south-dakota', 'TN': 'tennessee', 'TX': 'texas', 'UT': 'utah', 'VT': 'vermont',
+  'VA': 'virginia', 'WA': 'washington', 'WV': 'west-virginia', 'WI': 'wisconsin', 'WY': 'wyoming',
+  'DC': 'washington-dc',
+}
+
+function getStateSlug(abbr: string | null): string | null {
+  if (!abbr) return null
+  return STATE_ABBR_TO_SLUG[abbr.toUpperCase()] || abbr.toLowerCase().replace(/\s+/g, '-')
+}
+
+function getCitySlug(city: string | null): string | null {
+  if (!city) return null
+  return city.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
+}
+
 /**
  * Badge/Backlink Campaign — one-time email to claimed providers
  *
@@ -104,13 +129,9 @@ serve(async (req) => {
     const views = viewCount || 0
     const firstName = provider.full_name?.split(' ')[0] || 'there'
 
-    // Build profile URL
-    const stateSlug = provider.state_province
-      ? provider.state_province.toLowerCase().replace(/\s+/g, '-')
-      : null
-    const citySlug = provider.city
-      ? provider.city.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-')
-      : null
+    // Build profile URL — use full state name slug (e.g., "ohio" not "oh")
+    const stateSlug = getStateSlug(provider.state_province)
+    const citySlug = getCitySlug(provider.city)
     const profileUrl = stateSlug && citySlug && provider.slug
       ? `https://www.weddingcounselors.com/premarital-counseling/${stateSlug}/${citySlug}/${provider.slug}`
       : `https://www.weddingcounselors.com/profile/${provider.id}`

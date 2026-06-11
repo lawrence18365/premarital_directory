@@ -121,8 +121,7 @@ const SupportPage = () => {
               <div className="faq-item">
                 <h4>How much does it cost to be listed?</h4>
                 <p>
-                  Basic listings are free! We also offer enhanced visibility options with 
-                  our Professional and Premium plans. View our <Link to="/pricing">pricing page</Link> for details.
+                  Basic listings are free. We also offer one-time founder visibility packages for providers who want profile help and featured placement. View our <Link to="/pricing">pricing page</Link> for details.
                 </p>
               </div>
               

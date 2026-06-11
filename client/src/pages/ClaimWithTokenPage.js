@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
+import { getStateNameFromAbbr } from '../lib/utils';
 import SEOHelmet from '../components/analytics/SEOHelmet';
 
 /**
@@ -154,8 +155,8 @@ const ClaimWithTokenPage = () => {
   // Generate the public profile URL
   const getPublicProfileUrl = () => {
     if (!profile) return '';
-    const stateSlug = profile.state_province?.toLowerCase().replace(/\s+/g, '-');
-    const citySlug = profile.city?.toLowerCase().replace(/\s+/g, '-');
+    const stateSlug = getStateNameFromAbbr(profile.state_province) || profile.state_province?.toLowerCase().replace(/\s+/g, '-');
+    const citySlug = profile.city?.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-');
     return `https://www.weddingcounselors.com/premarital-counseling/${stateSlug}/${citySlug}/${profile.slug}`;
   };
 

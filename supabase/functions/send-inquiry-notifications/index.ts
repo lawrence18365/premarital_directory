@@ -4,7 +4,25 @@ import { getAllowedOrigins, getCorsHeaders, getRequestIp, isOriginAllowed } from
 import { enforceRateLimit } from "../_shared/rateLimit.ts"
 
 interface InquiryNotificationRequest {
-  inquiryId: string
+  inquiryId?: string
+  coupleName?: string | null
+  coupleEmail?: string
+  coupleMessage?: string
+  city?: string
+  state?: string
+  providerIds?: string[]
+  preferredType?: string | null
+  source?: string | null
+}
+
+interface ResolvedInquiry {
+  id: string
+  couple_name: string | null
+  couple_email: string
+  couple_message: string
+  city: string
+  state: string
+  provider_ids: string[]
 }
 
 serve(async (req) => {
@@ -47,30 +65,82 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { inquiryId }: InquiryNotificationRequest = await req.json()
+    const {
+      inquiryId,
+      coupleName,
+      coupleEmail,
+      coupleMessage,
+      city,
+      state,
+      providerIds: requestedProviderIds,
+      preferredType,
+      source,
+    }: InquiryNotificationRequest = await req.json()
 
-    if (!inquiryId) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'inquiryId is required' }),
-        { status: 400, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
-      )
+    let inquiry: ResolvedInquiry | null = null
+    let providerIds: string[] = []
+    let persistedInquiryId: string | null = null
+
+    if (inquiryId) {
+      const { data: existingInquiry, error: inquiryError } = await supabaseClient
+        .from('city_inquiries')
+        .select('*')
+        .eq('id', inquiryId)
+        .single()
+
+      if (inquiryError || !existingInquiry) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Inquiry not found' }),
+          { status: 404, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
+        )
+      }
+
+      inquiry = existingInquiry
+      providerIds = existingInquiry.provider_ids || []
+      persistedInquiryId = existingInquiry.id
+    } else {
+      if (!coupleEmail || !coupleMessage || !city || !state || !requestedProviderIds?.length) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'coupleEmail, coupleMessage, city, state, and providerIds are required' }),
+          { status: 400, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
+        )
+      }
+
+      providerIds = requestedProviderIds
+      inquiry = {
+        id: crypto.randomUUID(),
+        couple_name: coupleName ?? null,
+        couple_email: coupleEmail,
+        couple_message: coupleMessage,
+        city,
+        state,
+        provider_ids: requestedProviderIds
+      }
+
+      // Best-effort persistence so notifications still work even if city_inquiries is missing in the live schema.
+      const { data: insertedInquiry, error: insertError } = await supabaseClient
+        .from('city_inquiries')
+        .insert({
+          couple_name: coupleName ?? null,
+          couple_email: coupleEmail,
+          couple_message: coupleMessage,
+          preferred_type: preferredType ?? 'custom_select',
+          city,
+          state,
+          provider_ids: requestedProviderIds,
+          source: source ?? 'city_page_selected'
+        })
+        .select()
+        .single()
+
+      if (insertError) {
+        console.warn('city_inquiries persistence skipped, continuing with notifications:', insertError.message)
+      } else if (insertedInquiry) {
+        inquiry = insertedInquiry
+        persistedInquiryId = insertedInquiry.id
+      }
     }
 
-    // Look up the inquiry record
-    const { data: inquiry, error: inquiryError } = await supabaseClient
-      .from('city_inquiries')
-      .select('*')
-      .eq('id', inquiryId)
-      .single()
-
-    if (inquiryError || !inquiry) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Inquiry not found' }),
-        { status: 404, headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
-      )
-    }
-
-    const providerIds: string[] = inquiry.provider_ids || []
     if (!providerIds.length) {
       return new Response(
         JSON.stringify({ success: false, error: 'No providers in inquiry' }),
@@ -177,7 +247,7 @@ serve(async (req) => {
     // Send admin notification
     try {
       const adminHtml = generateAdminNotificationHTML({
-        inquiryId,
+        inquiryId: persistedInquiryId || inquiry.id,
         coupleName: inquiry.couple_name || 'Anonymous',
         coupleEmail: inquiry.couple_email,
         city: inquiry.city,
@@ -211,6 +281,7 @@ serve(async (req) => {
         success: true,
         notified: successfulProviders,
         failed: failedProviders,
+        inquiryId: persistedInquiryId,
       }),
       { headers: { ...getCorsHeaders(origin), 'Content-Type': 'application/json' } }
     )
