@@ -7,6 +7,7 @@ import { SEOHelmet } from '../../components/analytics';
 import Breadcrumbs, { generateBreadcrumbs } from '../../components/common/Breadcrumbs';
 import CoupleEmailCapture from '../../components/leads/CoupleEmailCapture';
 import ShareButton from '../../components/common/ShareButton';
+import AffiliateOffers from '../../components/monetization/AffiliateOffers';
 import '../../assets/css/blog.css';
 import '../../assets/css/share-button.css';
 
@@ -16,6 +17,11 @@ const TONE_BY_CATEGORY = {
   Guide: 'guide',
   Resources: 'resource',
   Resource: 'resource',
+};
+
+const AFFILIATE_CONTEXT_BY_SLUG = {
+  'prepare-enrich-vs-gottman-vs-symbis': 'therapy',
+  'best-premarital-counseling-books': 'books',
 };
 
 const slugify = (value) => value
@@ -227,6 +233,7 @@ const BlogPostPage = () => {
   const publishedDate = formatBlogDate(post.date);
   const updatedDate = formatBlogDate(post.updated_at || post.date || post.created_at);
   const hasToc = tableOfContents.length >= 3;
+  const affiliateContext = AFFILIATE_CONTEXT_BY_SLUG[post.slug];
 
   return (
     <div className="blog-post-page">
@@ -347,6 +354,10 @@ const BlogPostPage = () => {
                     {post.content}
                   </ReactMarkdown>
                 </div>
+
+                {affiliateContext && (
+                  <AffiliateOffers context={affiliateContext} />
+                )}
 
                 <aside className="blog-post-cta">
                   <div>

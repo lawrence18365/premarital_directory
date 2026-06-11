@@ -4,6 +4,7 @@ import SEOHelmet from '../components/analytics/SEOHelmet'
 import Breadcrumbs from '../components/common/Breadcrumbs'
 import FAQ from '../components/common/FAQ'
 import ConciergeLeadForm from '../components/leads/ConciergeLeadForm'
+import AffiliateOffers from '../components/monetization/AffiliateOffers'
 import { STATE_DISCOUNT_CONFIG, getStatesWithDiscounts } from '../data/specialtyConfig'
 import { STATE_CONFIG } from '../data/locationConfig'
 import { supabase } from '../lib/supabaseClient'
@@ -288,6 +289,10 @@ const MarriageLicenseDiscountPage = () => {
               })}
             </div>
           </div>
+        </div>
+
+        <div className="discount-container">
+          <AffiliateOffers context="license" />
         </div>
 
         {/* How It Works */}

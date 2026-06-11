@@ -6,10 +6,29 @@ import {
   CONTACT_EMAIL,
   FOUNDING_PAGE_PATH,
   FOUNDING_PACKAGES,
-  buildFoundingInquiryPath,
-  buildFoundingMailto
+  buildFoundingMailto,
+  getFoundingPaymentLink
 } from '../lib/providerOffers'
 import '../assets/css/founding-provider.css'
+
+const FoundingCta = ({ pkg = 'founding-listing', className, children }) => {
+  const paymentLink = getFoundingPaymentLink(pkg)
+  const mailtoTarget = buildFoundingMailto(typeof pkg === 'object' ? pkg : null)
+
+  if (paymentLink) {
+    return (
+      <a href={paymentLink} className={className} target="_blank" rel="sponsored noopener noreferrer">
+        {children}
+      </a>
+    )
+  }
+
+  return (
+    <a href={mailtoTarget} className={className}>
+      {children}
+    </a>
+  )
+}
 
 const fitSignals = [
   {
@@ -97,9 +116,9 @@ const FoundingProviderPage = () => {
             </div>
 
             <div className="founding-actions">
-              <Link to={buildFoundingInquiryPath()} className="btn btn-primary">
+              <FoundingCta className="btn btn-primary">
                 Apply as Founding Provider
-              </Link>
+              </FoundingCta>
               <a href={buildFoundingMailto()} className="btn btn-outline">
                 Email {CONTACT_EMAIL}
               </a>
@@ -185,12 +204,14 @@ const FoundingProviderPage = () => {
                 </ul>
 
                 <div className="founding-package-card__actions">
-                  <Link to={buildFoundingInquiryPath(pkg)} className="btn btn-primary">
+                  <FoundingCta pkg={pkg} className="btn btn-primary">
                     {pkg.cta}
-                  </Link>
-                  <a href={buildFoundingMailto(pkg)} className="founding-package-card__link">
-                    Prefer email instead
-                  </a>
+                  </FoundingCta>
+                  {getFoundingPaymentLink(pkg) && (
+                    <a href={buildFoundingMailto(pkg)} className="founding-package-card__link">
+                      Prefer email instead
+                    </a>
+                  )}
                 </div>
               </article>
             ))}
@@ -238,9 +259,9 @@ const FoundingProviderPage = () => {
             <h2>Apply now or start with a free profile if you are not ready for placement yet</h2>
           </div>
           <div className="founding-bottom-cta__actions">
-            <Link to={buildFoundingInquiryPath()} className="btn btn-primary">
+            <FoundingCta className="btn btn-primary">
               Apply as Founding Provider
-            </Link>
+            </FoundingCta>
             <Link to="/professional/signup" className="btn btn-outline" rel="nofollow">
               Create Free Profile
             </Link>

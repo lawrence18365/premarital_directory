@@ -1,5 +1,10 @@
 export const CONTACT_EMAIL = 'hello@weddingcounselors.com'
 export const FOUNDING_PAGE_PATH = '/for-providers/founding'
+export const FOUNDING_PAYMENT_LINKS = {
+  'founding-listing': process.env.REACT_APP_FOUNDING_LINK_LISTING || '',
+  'founding-pro': process.env.REACT_APP_FOUNDING_LINK_PRO || '',
+  'city-category-sponsor': process.env.REACT_APP_FOUNDING_LINK_SPONSOR || '',
+}
 
 const CONTACT_TYPES = new Set(['general', 'couple', 'professional', 'support', 'partnership'])
 
@@ -201,4 +206,9 @@ export const buildFoundingMailto = (pkg = null) => {
     subject: pkg.contactSubject,
     body: pkg.contactMessage
   })
+}
+
+export const getFoundingPaymentLink = (pkgOrId = 'founding-listing') => {
+  const id = typeof pkgOrId === 'string' ? pkgOrId : pkgOrId?.id
+  return FOUNDING_PAYMENT_LINKS[id] || ''
 }
