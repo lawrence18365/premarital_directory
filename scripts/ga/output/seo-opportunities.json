@@ -1,121 +1,139 @@
 {
-  "generatedAt": "2026-03-16T17:50:55.173Z",
+  "generatedAt": "2026-05-19T17:25:34.181Z",
   "totalOpportunities": 500,
   "opportunities": [
     {
-      "path": "/premarital-counseling/marriage-license-discount",
-      "gsc": {
-        "clicks": 3,
-        "impressions": 1263,
-        "ctr": 0.24,
-        "position": 5.7
-      },
-      "ga": {
-        "views": 40,
-        "users": 13,
-        "avgDuration": 169,
-        "bounceRate": 21,
-        "engagedSessions": 15
-      },
-      "score": 110,
-      "type": "title_rewrite",
-      "recommendation": "Position 5.7 but only 0.2% CTR. Rewrite title/meta description.",
-      "queries": [
-        {
-          "query": "california county marriage license fee discount premarital counseling",
-          "clicks": 0,
-          "impressions": 16,
-          "position": 6.1
-        },
-        {
-          "query": "marriage certificate discount",
-          "clicks": 0,
-          "impressions": 14,
-          "position": 18.3
-        },
-        {
-          "query": "california marriage license fee discount premarital counseling",
-          "clicks": 0,
-          "impressions": 1,
-          "position": 11
-        }
-      ]
-    },
-    {
-      "path": "/blog/prepare-enrich-vs-gottman-vs-symbis",
-      "gsc": {
-        "clicks": 14,
-        "impressions": 269,
-        "ctr": 5.2,
-        "position": 4.2
-      },
-      "ga": {
-        "views": 42,
-        "users": 24,
-        "avgDuration": 276,
-        "bounceRate": 27,
-        "engagedSessions": 22
-      },
-      "score": 107,
-      "type": "title_rewrite",
-      "recommendation": "Position 4.2 but only 5.2% CTR. Rewrite title/meta description.",
-      "queries": [
-        {
-          "query": "symbis vs prepare enrich",
-          "clicks": 2,
-          "impressions": 15,
-          "position": 5.8
-        },
-        {
-          "query": "prepare enrich vs symbis",
-          "clicks": 1,
-          "impressions": 11,
-          "position": 4.8
-        },
-        {
-          "query": "is prepare enrich religious",
-          "clicks": 0,
-          "impressions": 1,
-          "position": 43
-        },
-        {
-          "query": "is prepare/enrich christian",
-          "clicks": 0,
-          "impressions": 1,
-          "position": 56
-        }
-      ]
-    },
-    {
-      "path": "/blog/premarital-counseling-curriculum-comparison",
+      "path": "/premarital-counseling/marriage-license-discount/texas",
       "gsc": {
         "clicks": 0,
-        "impressions": 161,
+        "impressions": 459,
         "ctr": 0,
-        "position": 6.8
+        "position": 9.7
       },
       "ga": {
         "views": 1,
         "users": 1,
-        "avgDuration": 381,
+        "avgDuration": 99,
         "bounceRate": 0,
         "engagedSessions": 1
       },
-      "score": 96,
+      "score": 105,
       "type": "title_rewrite",
-      "recommendation": "Position 6.8 but only 0.0% CTR. Rewrite title/meta description.",
+      "recommendation": "Position 9.7 but only 0.0% CTR. Rewrite title/meta description.",
       "queries": [
         {
-          "query": "marriage curriculum for churches",
+          "query": "marriage certificate discount",
           "clicks": 0,
-          "impressions": 2,
-          "position": 73.5
+          "impressions": 9,
+          "position": 32
         },
         {
-          "query": "christian premarital counseling curriculum",
+          "query": "certificate of marriage counseling",
+          "clicks": 0,
+          "impressions": 2,
+          "position": 66
+        },
+        {
+          "query": "discount marriage license",
+          "clicks": 0,
+          "impressions": 2,
+          "position": 35
+        },
+        {
+          "query": "affordable marriage counseling in texas",
           "clicks": 0,
           "impressions": 1,
-          "position": 29
+          "position": 94
+        }
+      ]
+    },
+    {
+      "path": "/blog/premarital-counseling-statistics",
+      "gsc": {
+        "clicks": 1,
+        "impressions": 745,
+        "ctr": 0.13,
+        "position": 6.7
+      },
+      "ga": {
+        "views": 6,
+        "users": 5,
+        "avgDuration": 257,
+        "bounceRate": 33,
+        "engagedSessions": 4
+      },
+      "score": 100,
+      "type": "title_rewrite",
+      "recommendation": "Position 6.7 but only 0.1% CTR. Rewrite title/meta description.",
+      "queries": [
+        {
+          "query": "\"rula\" \"counselling near me\" or \"counseling near me\"",
+          "clicks": 0,
+          "impressions": 6,
+          "position": 9.2
+        },
+        {
+          "query": "premarital counseling divorce rate reduction statistics",
+          "clicks": 0,
+          "impressions": 4,
+          "position": 10.3
+        },
+        {
+          "query": "premarital counseling effectiveness statistics divorce rates",
+          "clicks": 0,
+          "impressions": 2,
+          "position": 14
+        },
+        {
+          "query": "premarital counseling benefits statistics",
+          "clicks": 0,
+          "impressions": 1,
+          "position": 10
+        }
+      ]
+    },
+    {
+      "path": "/blog/premarital-counseling-cost",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 174,
+        "ctr": 0,
+        "position": 6.9
+      },
+      "ga": {
+        "views": 3,
+        "users": 3,
+        "avgDuration": 511,
+        "bounceRate": 0,
+        "engagedSessions": 3
+      },
+      "score": 97,
+      "type": "title_rewrite",
+      "recommendation": "Position 6.9 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": [
+        {
+          "query": "average cost of marriage counseling sessions 2025 or 2026",
+          "clicks": 0,
+          "impressions": 5,
+          "position": 9
+        },
+        {
+          "query": "average cost of marriage counseling 2025 or 2026",
+          "clicks": 0,
+          "impressions": 3,
+          "position": 9.7
+        },
+        {
+          "query": "average cost of marriage counseling 2026",
+          "clicks": 0,
+          "impressions": 3,
+          "position": 6.7
+        },
+        {
+          "query": "average cost of couples counseling 2026",
+          "clicks": 0,
+          "impressions": 1,
+          "position": 10
         }
       ]
     },
@@ -123,984 +141,543 @@
       "path": "/blog/church-premarital-counseling-by-denomination",
       "gsc": {
         "clicks": 0,
-        "impressions": 2771,
+        "impressions": 645,
         "ctr": 0,
-        "position": 3.7
+        "position": 5.6
       },
       "ga": {
-        "views": 16,
-        "users": 14,
-        "avgDuration": 63,
-        "bounceRate": 87,
+        "views": 4,
+        "users": 4,
+        "avgDuration": 149,
+        "bounceRate": 50,
         "engagedSessions": 2
       },
-      "score": 90,
+      "score": 95,
       "type": "title_rewrite",
-      "recommendation": "Position 3.7 but only 0.0% CTR. Rewrite title/meta description.",
+      "recommendation": "Position 5.6 but only 0.0% CTR. Rewrite title/meta description.",
       "queries": [
         {
-          "query": "pca presbyterian church in america marriage preparation premarital counseling",
+          "query": "pca presbyterian church in america premarital counseling requirements",
           "clicks": 0,
-          "impressions": 35,
-          "position": 8.2
+          "impressions": 22,
+          "position": 6.2
         },
         {
           "query": "pca presbyterian church in america marriage preparation premarital counseling requirements",
           "clicks": 0,
-          "impressions": 28,
-          "position": 2
-        },
-        {
-          "query": "pca presbyterian church in america premarital counseling marriage preparation",
-          "clicks": 0,
-          "impressions": 19,
-          "position": 6.1
+          "impressions": 13,
+          "position": 3.1
         },
         {
           "query": "pca premarital counseling requirements",
           "clicks": 0,
           "impressions": 9,
-          "position": 6.9
+          "position": 9.3
+        },
+        {
+          "query": "pca premarital counseling number of sessions",
+          "clicks": 0,
+          "impressions": 8,
+          "position": 7.3
+        },
+        {
+          "query": "pca presbyterian church in america premarital counseling marriage preparation requirements",
+          "clicks": 0,
+          "impressions": 2,
+          "position": 4
         }
       ]
     },
     {
-      "path": "/blog",
+      "path": "/premarital-counseling/marriage-license-discount",
       "gsc": {
-        "clicks": 0,
-        "impressions": 6,
-        "ctr": 0,
-        "position": 5.8
+        "clicks": 21,
+        "impressions": 713,
+        "ctr": 2.95,
+        "position": 6.7
       },
       "ga": {
-        "views": 18,
-        "users": 9,
-        "avgDuration": 138,
-        "bounceRate": 13,
-        "engagedSessions": 13
+        "views": 29,
+        "users": 28,
+        "avgDuration": 81,
+        "bounceRate": 28,
+        "engagedSessions": 21
       },
-      "score": 81,
-      "type": "title_rewrite",
-      "recommendation": "Position 5.8 but only 0.0% CTR. Rewrite title/meta description.",
-      "queries": []
-    },
-    {
-      "path": "/",
-      "gsc": {
-        "clicks": 3,
-        "impressions": 48,
-        "ctr": 6.25,
-        "position": 2.9
-      },
-      "ga": {
-        "views": 245,
-        "users": 148,
-        "avgDuration": 105,
-        "bounceRate": 16,
-        "engagedSessions": 154
-      },
-      "score": 80,
-      "type": "title_rewrite",
-      "recommendation": "Position 2.9 but only 6.3% CTR. Rewrite title/meta description.",
-      "queries": []
-    },
-    {
-      "path": "/premarital-counseling/alabama/birmingham/ashley-gilbert-820",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 2,
-        "ctr": 0,
-        "position": 4.5
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 285,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 80,
-      "type": "title_rewrite",
-      "recommendation": "Position 4.5 but only 0.0% CTR. Rewrite title/meta description.",
-      "queries": []
-    },
-    {
-      "path": "/premarital-counseling/state-requirements",
-      "gsc": {
-        "clicks": 3,
-        "impressions": 129,
-        "ctr": 2.33,
-        "position": 5.1
-      },
-      "ga": {
-        "views": 6,
-        "users": 4,
-        "avgDuration": 158,
-        "bounceRate": 0,
-        "engagedSessions": 4
-      },
-      "score": 78,
+      "score": 90,
       "type": "general",
       "recommendation": "",
       "queries": [
         {
-          "query": "california marriage license fee discount premarital counseling",
+          "query": "marriage certificate discount",
           "clicks": 0,
-          "impressions": 4,
-          "position": 6
+          "impressions": 40,
+          "position": 16.5
         },
         {
-          "query": "california county marriage license fee discount premarital counseling",
+          "query": "premarital counseling discount marriage license",
           "clicks": 0,
-          "impressions": 3,
-          "position": 3.3
+          "impressions": 7,
+          "position": 4.1
         },
         {
-          "query": "california marriage license requirements premarital counseling waiting period",
+          "query": "discount marriage license",
+          "clicks": 0,
+          "impressions": 6,
+          "position": 15.8
+        },
+        {
+          "query": "marriage license discount",
           "clicks": 0,
           "impressions": 2,
-          "position": 5
-        },
-        {
-          "query": "california marriage license premarital counseling waiting period requirements",
-          "clicks": 0,
-          "impressions": 1,
-          "position": 5
+          "position": 6
         }
       ]
     },
     {
-      "path": "/for-churches",
+      "path": "/blog/prepare-enrich-vs-gottman-vs-symbis",
       "gsc": {
-        "clicks": 0,
-        "impressions": 6,
-        "ctr": 0,
-        "position": 7
+        "clicks": 13,
+        "impressions": 734,
+        "ctr": 1.77,
+        "position": 4.6
       },
       "ga": {
-        "views": 18,
-        "users": 11,
-        "avgDuration": 64,
-        "bounceRate": 21,
-        "engagedSessions": 11
+        "views": 28,
+        "users": 24,
+        "avgDuration": 101,
+        "bounceRate": 50,
+        "engagedSessions": 14
       },
-      "score": 76,
+      "score": 90,
       "type": "title_rewrite",
-      "recommendation": "Position 7.0 but only 0.0% CTR. Rewrite title/meta description.",
+      "recommendation": "Position 4.6 but only 1.8% CTR. Rewrite title/meta description.",
+      "queries": [
+        {
+          "query": "symbis vs prepare enrich",
+          "clicks": 1,
+          "impressions": 19,
+          "position": 4.6
+        },
+        {
+          "query": "prepare enrich vs symbis",
+          "clicks": 1,
+          "impressions": 16,
+          "position": 3.7
+        },
+        {
+          "query": "how good is it",
+          "clicks": 0,
+          "impressions": 1,
+          "position": 6
+        },
+        {
+          "query": "is prepare/enrich christian",
+          "clicks": 0,
+          "impressions": 1,
+          "position": 67
+        }
+      ]
+    },
+    {
+      "path": "/blog/twogether-in-texas",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 62,
+        "ctr": 0,
+        "position": 9.8
+      },
+      "ga": {
+        "views": 2,
+        "users": 2,
+        "avgDuration": 140,
+        "bounceRate": 0,
+        "engagedSessions": 2
+      },
+      "score": 86,
+      "type": "title_rewrite",
+      "recommendation": "Position 9.8 but only 0.0% CTR. Rewrite title/meta description.",
       "queries": []
     },
     {
-      "path": "/blog/premarital-counseling-statistics",
+      "path": "/blog/premarital-counseling-curriculum-comparison",
+      "gsc": {
+        "clicks": 2,
+        "impressions": 610,
+        "ctr": 0.33,
+        "position": 7.6
+      },
+      "ga": {
+        "views": 11,
+        "users": 8,
+        "avgDuration": 24,
+        "bounceRate": 55,
+        "engagedSessions": 5
+      },
+      "score": 85,
+      "type": "title_rewrite",
+      "recommendation": "Position 7.6 but only 0.3% CTR. Rewrite title/meta description.",
+      "queries": [
+        {
+          "query": "marriage curriculum",
+          "clicks": 0,
+          "impressions": 4,
+          "position": 76
+        },
+        {
+          "query": "marriage curriculum for churches",
+          "clicks": 0,
+          "impressions": 4,
+          "position": 68.3
+        },
+        {
+          "query": "is prepare/enrich christian",
+          "clicks": 0,
+          "impressions": 2,
+          "position": 78.5
+        },
+        {
+          "query": "christian premarital counseling curriculum",
+          "clicks": 0,
+          "impressions": 1,
+          "position": 56
+        },
+        {
+          "query": "is symbis christian",
+          "clicks": 0,
+          "impressions": 1,
+          "position": 52
+        }
+      ]
+    },
+    {
+      "path": "/premarital-counseling/marriage-license-discount/minnesota",
       "gsc": {
         "clicks": 0,
-        "impressions": 197,
+        "impressions": 37,
         "ctr": 0,
-        "position": 7
+        "position": 8.7
+      },
+      "ga": {
+        "views": 2,
+        "users": 2,
+        "avgDuration": 829,
+        "bounceRate": 0,
+        "engagedSessions": 2
+      },
+      "score": 84,
+      "type": "title_rewrite",
+      "recommendation": "Position 8.7 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": []
+    },
+    {
+      "path": "/blog/signs-youre-ready-for-marriage",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 31,
+        "ctr": 0,
+        "position": 8.9
+      },
+      "ga": {
+        "views": 1,
+        "users": 1,
+        "avgDuration": 557,
+        "bounceRate": 0,
+        "engagedSessions": 1
+      },
+      "score": 83,
+      "type": "title_rewrite",
+      "recommendation": "Position 8.9 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": []
+    },
+    {
+      "path": "/blog/best-premarital-counseling-books",
+      "gsc": {
+        "clicks": 1,
+        "impressions": 175,
+        "ctr": 0.57,
+        "position": 19.6
+      },
+      "ga": {
+        "views": 8,
+        "users": 7,
+        "avgDuration": 109,
+        "bounceRate": 25,
+        "engagedSessions": 6
+      },
+      "score": 78,
+      "type": "almost_page_1",
+      "recommendation": "Position 19.6 with 175 impressions. A few backlinks or content improvements could push to page 1.",
+      "queries": [
+        {
+          "query": "premarital counseling books",
+          "clicks": 0,
+          "impressions": 18,
+          "position": 33.4
+        },
+        {
+          "query": "premarital counseling book",
+          "clicks": 0,
+          "impressions": 9,
+          "position": 45.4
+        },
+        {
+          "query": "best christian premarital counseling books",
+          "clicks": 0,
+          "impressions": 5,
+          "position": 40.8
+        },
+        {
+          "query": "best premarital books",
+          "clicks": 0,
+          "impressions": 4,
+          "position": 38.5
+        },
+        {
+          "query": "best premarital counseling books",
+          "clicks": 0,
+          "impressions": 4,
+          "position": 17.8
+        }
+      ]
+    },
+    {
+      "path": "/premarital-counseling/interfaith",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 80,
+        "ctr": 0,
+        "position": 9.1
+      },
+      "ga": {
+        "views": 4,
+        "users": 4,
+        "avgDuration": 4,
+        "bounceRate": 25,
+        "engagedSessions": 3
+      },
+      "score": 78,
+      "type": "title_rewrite",
+      "recommendation": "Position 9.1 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": [
+        {
+          "query": "interfaith premarital counseling",
+          "clicks": 0,
+          "impressions": 2,
+          "position": 26.5
+        }
+      ]
+    },
+    {
+      "path": "/blog/indiana-marriage-license-discount",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 10,
+        "ctr": 0,
+        "position": 2.8
+      },
+      "ga": {
+        "views": 1,
+        "users": 1,
+        "avgDuration": 82,
+        "bounceRate": 0,
+        "engagedSessions": 1
+      },
+      "score": 76,
+      "type": "title_rewrite",
+      "recommendation": "Position 2.8 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": []
+    },
+    {
+      "path": "/premarital-counseling/kansas/wichita",
+      "gsc": {
+        "clicks": 5,
+        "impressions": 352,
+        "ctr": 1.42,
+        "position": 25.9
+      },
+      "ga": {
+        "views": 7,
+        "users": 4,
+        "avgDuration": 411,
+        "bounceRate": 25,
+        "engagedSessions": 3
+      },
+      "score": 75,
+      "type": "content_opportunity",
+      "recommendation": "High impressions (352) at position 25.9. Needs content depth + backlinks.",
+      "queries": [
+        {
+          "query": "marriage counseling",
+          "clicks": 0,
+          "impressions": 32,
+          "position": 27.8
+        },
+        {
+          "query": "marriage counseling focus on the family",
+          "clicks": 0,
+          "impressions": 26,
+          "position": 27
+        },
+        {
+          "query": "focus on the family marriage counselors",
+          "clicks": 0,
+          "impressions": 25,
+          "position": 26.9
+        },
+        {
+          "query": "a marriage counselor",
+          "clicks": 0,
+          "impressions": 23,
+          "position": 24.3
+        },
+        {
+          "query": "in person marriage counseling",
+          "clicks": 0,
+          "impressions": 17,
+          "position": 21.2
+        }
+      ]
+    },
+    {
+      "path": "/premarital-counseling/florida/tampa/amanda-wagner-462",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 3.5
+      },
+      "ga": {
+        "views": 1,
+        "users": 1,
+        "avgDuration": 100,
+        "bounceRate": 0,
+        "engagedSessions": 1
+      },
+      "score": 75,
+      "type": "title_rewrite",
+      "recommendation": "Position 3.5 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": []
+    },
+    {
+      "path": "/blog/how-to-find-gottman-certified-therapist",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 83,
+        "ctr": 0,
+        "position": 11.6
+      },
+      "ga": {
+        "views": 2,
+        "users": 2,
+        "avgDuration": 124,
+        "bounceRate": 0,
+        "engagedSessions": 2
+      },
+      "score": 73,
+      "type": "almost_page_1",
+      "recommendation": "Position 11.6 with 83 impressions. A few backlinks or content improvements could push to page 1.",
+      "queries": [
+        {
+          "query": "gottman certification consultation",
+          "clicks": 0,
+          "impressions": 6,
+          "position": 19.2
+        },
+        {
+          "query": "accredited gottman training",
+          "clicks": 0,
+          "impressions": 1,
+          "position": 34
+        }
+      ]
+    },
+    {
+      "path": "/premarital-counseling/wa/seattle/yolanda-christianson",
+      "gsc": {
+        "clicks": 1,
+        "impressions": 11,
+        "ctr": 9.09,
+        "position": 2.5
       },
       "ga": {
         "views": 1,
         "users": 1,
         "avgDuration": 0,
-        "bounceRate": 100,
-        "engagedSessions": 0
-      },
-      "score": 75,
-      "type": "title_rewrite",
-      "recommendation": "Position 7.0 but only 0.0% CTR. Rewrite title/meta description.",
-      "queries": [
-        {
-          "query": "does premarital counseling reduce divorce rates",
-          "clicks": 0,
-          "impressions": 1,
-          "position": 62
-        }
-      ]
-    },
-    {
-      "path": "/blog/premarital-counseling-with-pastor",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 203,
-        "ctr": 0,
-        "position": 7
-      },
-      "ga": null,
-      "score": 75,
-      "type": "title_rewrite",
-      "recommendation": "Position 7.0 but only 0.0% CTR. Rewrite title/meta description.",
-      "queries": [
-        {
-          "query": "pastor premarital counseling",
-          "clicks": 0,
-          "impressions": 2,
-          "position": 39.5
-        }
-      ]
-    },
-    {
-      "path": "/about",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 24,
-        "ctr": 0,
-        "position": 5.8
-      },
-      "ga": {
-        "views": 6,
-        "users": 5,
-        "avgDuration": 21,
-        "bounceRate": 17,
-        "engagedSessions": 5
-      },
-      "score": 72,
-      "type": "title_rewrite",
-      "recommendation": "Position 5.8 but only 0.0% CTR. Rewrite title/meta description.",
-      "queries": []
-    },
-    {
-      "path": "/for-officiants",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 3,
-        "ctr": 0,
-        "position": 3.3
-      },
-      "ga": {
-        "views": 6,
-        "users": 6,
-        "avgDuration": 6,
-        "bounceRate": 17,
-        "engagedSessions": 5
-      },
-      "score": 70,
-      "type": "title_rewrite",
-      "recommendation": "Position 3.3 but only 0.0% CTR. Rewrite title/meta description.",
-      "queries": []
-    },
-    {
-      "path": "/how-it-works",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 1,
-        "ctr": 0,
-        "position": 7
-      },
-      "ga": {
-        "views": 14,
-        "users": 11,
-        "avgDuration": 47,
-        "bounceRate": 29,
-        "engagedSessions": 10
-      },
-      "score": 70,
-      "type": "title_rewrite",
-      "recommendation": "Position 7.0 but only 0.0% CTR. Rewrite title/meta description.",
-      "queries": []
-    },
-    {
-      "path": "/premarital-counseling/affordable/new-york",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 1,
-        "ctr": 0,
-        "position": 6
-      },
-      "ga": {
-        "views": 14,
-        "users": 14,
-        "avgDuration": 12,
-        "bounceRate": 0,
-        "engagedSessions": 14
-      },
-      "score": 70,
-      "type": "title_rewrite",
-      "recommendation": "Position 6.0 but only 0.0% CTR. Rewrite title/meta description.",
-      "queries": []
-    },
-    {
-      "path": "/premarital-counseling/california/tustin/kaytie-allah-261",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 1,
-        "ctr": 0,
-        "position": 6
-      },
-      "ga": {
-        "views": 2,
-        "users": 2,
-        "avgDuration": 12,
-        "bounceRate": 0,
-        "engagedSessions": 2
-      },
-      "score": 70,
-      "type": "title_rewrite",
-      "recommendation": "Position 6.0 but only 0.0% CTR. Rewrite title/meta description.",
-      "queries": [
-        {
-          "query": "kaytie allah",
-          "clicks": 0,
-          "impressions": 1,
-          "position": 6
-        }
-      ]
-    },
-    {
-      "path": "/premarital-counseling/catholic/new-mexico",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 2,
-        "ctr": 0,
-        "position": 10
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 4,
         "bounceRate": 0,
         "engagedSessions": 1
       },
-      "score": 70,
+      "score": 71,
       "type": "title_rewrite",
-      "recommendation": "Position 10.0 but only 0.0% CTR. Rewrite title/meta description.",
+      "recommendation": "Position 2.5 but only 9.1% CTR. Rewrite title/meta description.",
       "queries": []
     },
     {
-      "path": "/premarital-counseling/vermont/burlington",
+      "path": "/blog/pastors-guide-premarital-counseling-program",
       "gsc": {
-        "clicks": 2,
-        "impressions": 23,
-        "ctr": 8.7,
-        "position": 14.4
-      },
-      "ga": {
-        "views": 5,
-        "users": 2,
-        "avgDuration": 122,
-        "bounceRate": 0,
-        "engagedSessions": 2
-      },
-      "score": 67,
-      "type": "almost_page_1",
-      "recommendation": "Position 14.4 with 23 impressions. A few backlinks or content improvements could push to page 1.",
-      "queries": [
-        {
-          "query": "pre-marriage counseling",
-          "clicks": 1,
-          "impressions": 1,
-          "position": 5
-        }
-      ]
-    },
-    {
-      "path": "/blog/premarital-counseling-cost",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 123,
-        "ctr": 0.81,
-        "position": 10.9
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 44,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 67,
-      "type": "almost_page_1",
-      "recommendation": "Position 10.9 with 123 impressions. A few backlinks or content improvements could push to page 1.",
-      "queries": [
-        {
-          "query": "cost of premarital counseling",
-          "clicks": 0,
-          "impressions": 12,
-          "position": 14.9
-        },
-        {
-          "query": "how much does premarital counseling cost",
-          "clicks": 0,
-          "impressions": 7,
-          "position": 13.3
-        },
-        {
-          "query": "how much is pre marital counseling",
-          "clicks": 0,
-          "impressions": 2,
-          "position": 10.5
-        },
-        {
-          "query": "how much is premarital counseling",
-          "clicks": 0,
-          "impressions": 2,
-          "position": 26.5
-        },
-        {
-          "query": "pre marriage counseling cost",
-          "clicks": 0,
-          "impressions": 1,
-          "position": 13
-        }
-      ]
-    },
-    {
-      "path": "/premarital-counseling/hi/honolulu/brian-kanno-lcsw-375",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 10,
-        "ctr": 10,
-        "position": 9.6
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 319,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 66,
-      "type": "general",
-      "recommendation": "",
-      "queries": [
-        {
-          "query": "brian kanno",
-          "clicks": 0,
-          "impressions": 1,
-          "position": 6
-        }
-      ]
-    },
-    {
-      "path": "/profile/2745dd17-293e-4e1d-a1d5-067ebeba46a2",
-      "gsc": {
-        "clicks": 1,
+        "clicks": 0,
         "impressions": 14,
-        "ctr": 7.14,
-        "position": 5
-      },
-      "ga": {
-        "views": 16,
-        "users": 6,
-        "avgDuration": 135,
-        "bounceRate": 13,
-        "engagedSessions": 13
-      },
-      "score": 66,
-      "type": "general",
-      "recommendation": "",
-      "queries": []
-    },
-    {
-      "path": "/premarital-counseling/affordable/missouri",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 1,
-        "ctr": 100,
-        "position": 5
+        "ctr": 0,
+        "position": 9.1
       },
       "ga": {
         "views": 2,
-        "users": 1,
-        "avgDuration": 216,
+        "users": 2,
+        "avgDuration": 45,
         "bounceRate": 0,
-        "engagedSessions": 1
+        "engagedSessions": 2
       },
-      "score": 65,
-      "type": "general",
-      "recommendation": "",
-      "queries": []
-    },
-    {
-      "path": "/premarital-counseling/catholic/colorado/denver",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 1,
-        "ctr": 100,
-        "position": 2
-      },
-      "ga": {
-        "views": 2,
-        "users": 1,
-        "avgDuration": 154,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 65,
-      "type": "general",
-      "recommendation": "",
-      "queries": []
-    },
-    {
-      "path": "/premarital-counseling/christian/new-mexico",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 1,
-        "ctr": 100,
-        "position": 2
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 1183,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 65,
-      "type": "general",
-      "recommendation": "",
-      "queries": []
-    },
-    {
-      "path": "/premarital-counseling/interfaith/nevada/reno",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 1,
-        "ctr": 100,
-        "position": 6
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 817,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 65,
-      "type": "general",
-      "recommendation": "",
-      "queries": []
-    },
-    {
-      "path": "/premarital-counseling/nevada/las-vegas/brittany-davis-329",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 2,
-        "ctr": 50,
-        "position": 6.5
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 767,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 65,
-      "type": "general",
-      "recommendation": "",
-      "queries": [
-        {
-          "query": "brittany davis therapist",
-          "clicks": 1,
-          "impressions": 1,
-          "position": 5
-        }
-      ]
-    },
-    {
-      "path": "/premarital-counseling/online/florida/jacksonville",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 1,
-        "ctr": 100,
-        "position": 5
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 7830,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 65,
-      "type": "general",
-      "recommendation": "",
-      "queries": []
-    },
-    {
-      "path": "/premarital-counseling/second-marriages/virginia",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 1,
-        "ctr": 100,
-        "position": 4
-      },
-      "ga": {
-        "views": 2,
-        "users": 1,
-        "avgDuration": 135,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 65,
-      "type": "general",
-      "recommendation": "",
+      "score": 71,
+      "type": "title_rewrite",
+      "recommendation": "Position 9.1 but only 0.0% CTR. Rewrite title/meta description.",
       "queries": []
     },
     {
       "path": "/features",
       "gsc": {
         "clicks": 0,
-        "impressions": 19,
+        "impressions": 2,
         "ctr": 0,
-        "position": 4.2
+        "position": 5
       },
       "ga": {
-        "views": 6,
-        "users": 6,
-        "avgDuration": 50,
-        "bounceRate": 33,
+        "views": 5,
+        "users": 5,
+        "avgDuration": 7,
+        "bounceRate": 20,
         "engagedSessions": 4
       },
-      "score": 62,
+      "score": 70,
       "type": "title_rewrite",
-      "recommendation": "Position 4.2 but only 0.0% CTR. Rewrite title/meta description.",
+      "recommendation": "Position 5.0 but only 0.0% CTR. Rewrite title/meta description.",
       "queries": []
     },
     {
-      "path": "/premarital-counseling/catholic/montana/bozeman",
+      "path": "/for-officiants",
       "gsc": {
-        "clicks": 1,
-        "impressions": 8,
-        "ctr": 12.5,
-        "position": 7.8
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 4
       },
       "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 120,
+        "views": 10,
+        "users": 9,
+        "avgDuration": 9,
         "bounceRate": 0,
-        "engagedSessions": 1
+        "engagedSessions": 9
       },
-      "score": 61,
-      "type": "general",
-      "recommendation": "",
+      "score": 70,
+      "type": "title_rewrite",
+      "recommendation": "Position 4.0 but only 0.0% CTR. Rewrite title/meta description.",
       "queries": []
     },
     {
-      "path": "/premarital-counseling/dc/petworth/amanda-augustenborg",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 6,
-        "ctr": 16.67,
-        "position": 5.8
-      },
-      "ga": {
-        "views": 3,
-        "users": 1,
-        "avgDuration": 105,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 61,
-      "type": "general",
-      "recommendation": ""
-    },
-    {
-      "path": "/blog/how-long-does-premarital-counseling-take",
+      "path": "/guidelines",
       "gsc": {
         "clicks": 0,
-        "impressions": 60,
+        "impressions": 4,
         "ctr": 0,
-        "position": 9
-      },
-      "ga": null,
-      "score": 61,
-      "type": "title_rewrite",
-      "recommendation": "Position 9.0 but only 0.0% CTR. Rewrite title/meta description."
-    },
-    {
-      "path": "/premarital-counseling/lgbtq/georgia/columbus",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 1,
-        "ctr": 100,
-        "position": 8
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 74,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 60,
-      "type": "general",
-      "recommendation": ""
-    },
-    {
-      "path": "/blog/register-premarital-course-provider",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 46,
-        "ctr": 0,
-        "position": 9
-      },
-      "ga": null,
-      "score": 60,
-      "type": "title_rewrite",
-      "recommendation": "Position 9.0 but only 0.0% CTR. Rewrite title/meta description."
-    },
-    {
-      "path": "/professionals/new-york/buffalo/holly-eliza-jones-3",
-      "gsc": {
-        "clicks": 2,
-        "impressions": 39,
-        "ctr": 5.13,
-        "position": 5.4
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 0,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 59,
-      "type": "general",
-      "recommendation": ""
-    },
-    {
-      "path": "/premarital-counseling/ohio/cincinnati/alejandra-weiss",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 36,
-        "ctr": 2.78,
-        "position": 14.1
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 11,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 59,
-      "type": "almost_page_1",
-      "recommendation": "Position 14.1 with 36 impressions. A few backlinks or content improvements could push to page 1."
-    },
-    {
-      "path": "/contact",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 42,
-        "ctr": 0,
-        "position": 18.4
-      },
-      "ga": {
-        "views": 50,
-        "users": 50,
-        "avgDuration": 12,
-        "bounceRate": 4,
-        "engagedSessions": 48
-      },
-      "score": 59,
-      "type": "almost_page_1",
-      "recommendation": "Position 18.4 with 42 impressions. A few backlinks or content improvements could push to page 1."
-    },
-    {
-      "path": "/profile/0d6bb613-4a93-4af0-814d-b3b24b0434d8",
-      "gsc": {
-        "clicks": 2,
-        "impressions": 28,
-        "ctr": 7.14,
-        "position": 10.8
-      },
-      "ga": {
-        "views": 2,
-        "users": 1,
-        "avgDuration": 1,
-        "bounceRate": 0,
-        "engagedSessions": 2
-      },
-      "score": 58,
-      "type": "almost_page_1",
-      "recommendation": "Position 10.8 with 28 impressions. A few backlinks or content improvements could push to page 1."
-    },
-    {
-      "path": "/blog/oklahoma-marriage-license-discount",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 26,
-        "ctr": 3.85,
-        "position": 4.8
-      },
-      "ga": {
-        "views": 8,
-        "users": 8,
-        "avgDuration": 1,
-        "bounceRate": 100,
-        "engagedSessions": 0
-      },
-      "score": 58,
-      "type": "title_rewrite",
-      "recommendation": "Position 4.8 but only 3.8% CTR. Rewrite title/meta description."
-    },
-    {
-      "path": "/blog/georgia-marriage-license-discount",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 34,
-        "ctr": 0,
-        "position": 7.7
-      },
-      "ga": null,
-      "score": 58,
-      "type": "title_rewrite",
-      "recommendation": "Position 7.7 but only 0.0% CTR. Rewrite title/meta description."
-    },
-    {
-      "path": "/professionals/arkansas/little-rock/kelly-n-shermanhester",
-      "gsc": {
-        "clicks": 2,
-        "impressions": 19,
-        "ctr": 10.53,
-        "position": 5.3
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 0,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 57,
-      "type": "general",
-      "recommendation": ""
-    },
-    {
-      "path": "/premarital-counseling/ma/boston/movement-for-the-mind-creative-arts-therapy-pllc",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 15,
-        "ctr": 6.67,
-        "position": 9.8
-      },
-      "ga": {
-        "views": 2,
-        "users": 2,
-        "avgDuration": 2,
-        "bounceRate": 0,
-        "engagedSessions": 2
-      },
-      "score": 57,
-      "type": "general",
-      "recommendation": ""
-    },
-    {
-      "path": "/profile/27f5f04c-b2fb-48b7-ba74-51efdf3e2a81",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 15,
-        "ctr": 6.67,
-        "position": 7.2
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 2,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 57,
-      "type": "general",
-      "recommendation": ""
-    },
-    {
-      "path": "/premarital-counseling/az/prescott/janet-e-bontrager-984",
-      "gsc": {
-        "clicks": 0,
-        "impressions": 17,
-        "ctr": 0,
-        "position": 8.7
-      },
-      "ga": null,
-      "score": 57,
-      "type": "title_rewrite",
-      "recommendation": "Position 8.7 but only 0.0% CTR. Rewrite title/meta description."
-    },
-    {
-      "path": "/premarital-counseling/il/serves-area/sandi-kellerstrass-21",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 7,
-        "ctr": 14.29,
-        "position": 10.3
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 262,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 56,
-      "type": "general",
-      "recommendation": ""
-    },
-    {
-      "path": "/premarital-counseling/mississippi/serves-area/nicole-hiratuka-420",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 8,
-        "ctr": 12.5,
-        "position": 3.8
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 23,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 56,
-      "type": "general",
-      "recommendation": ""
-    },
-    {
-      "path": "/premarital-counseling/nv/las-vegas/ofelia-madrigal-166",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 10,
-        "ctr": 10,
-        "position": 8.2
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 30,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 56,
-      "type": "general",
-      "recommendation": ""
-    },
-    {
-      "path": "/premarital-counseling/pa/philadelphia/kara-devoe-496",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 9,
-        "ctr": 11.11,
-        "position": 7
-      },
-      "ga": {
-        "views": 1,
-        "users": 1,
-        "avgDuration": 18,
-        "bounceRate": 0,
-        "engagedSessions": 1
-      },
-      "score": 56,
-      "type": "general",
-      "recommendation": ""
-    },
-    {
-      "path": "/premarital-counseling/prepare-enrich/kansas/kansas-city",
-      "gsc": {
-        "clicks": 1,
-        "impressions": 6,
-        "ctr": 16.67,
-        "position": 8.3
+        "position": 1.8
       },
       "ga": {
         "views": 1,
@@ -1109,28 +686,536 @@
         "bounceRate": 0,
         "engagedSessions": 1
       },
-      "score": 56,
+      "score": 70,
+      "type": "title_rewrite",
+      "recommendation": "Position 1.8 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": []
+    },
+    {
+      "path": "/how-it-works",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 8
+      },
+      "ga": {
+        "views": 15,
+        "users": 14,
+        "avgDuration": 23,
+        "bounceRate": 14,
+        "engagedSessions": 12
+      },
+      "score": 70,
+      "type": "title_rewrite",
+      "recommendation": "Position 8.0 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": []
+    },
+    {
+      "path": "/premarital-counseling/arizona/scottsdale/allison-oleary",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0,
+        "position": 5.3
+      },
+      "ga": {
+        "views": 1,
+        "users": 1,
+        "avgDuration": 47,
+        "bounceRate": 0,
+        "engagedSessions": 1
+      },
+      "score": 70,
+      "type": "title_rewrite",
+      "recommendation": "Position 5.3 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": []
+    },
+    {
+      "path": "/premarital-counseling/louisiana/new-orleans/emilygerra-990",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0,
+        "position": 9
+      },
+      "ga": {
+        "views": 1,
+        "users": 1,
+        "avgDuration": 30,
+        "bounceRate": 0,
+        "engagedSessions": 1
+      },
+      "score": 70,
+      "type": "title_rewrite",
+      "recommendation": "Position 9.0 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": []
+    },
+    {
+      "path": "/blog/prepare-enrich-explained",
+      "gsc": {
+        "clicks": 1,
+        "impressions": 40,
+        "ctr": 2.5,
+        "position": 9.7
+      },
+      "ga": {
+        "views": 19,
+        "users": 17,
+        "avgDuration": 173,
+        "bounceRate": 22,
+        "engagedSessions": 14
+      },
+      "score": 69,
+      "type": "general",
+      "recommendation": "",
+      "queries": []
+    },
+    {
+      "path": "/blog/georgia-marriage-license-discount",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 131,
+        "ctr": 0,
+        "position": 7.3
+      },
+      "ga": {
+        "views": 1,
+        "users": 1,
+        "avgDuration": 3,
+        "bounceRate": 100,
+        "engagedSessions": 0
+      },
+      "score": 68,
+      "type": "title_rewrite",
+      "recommendation": "Position 7.3 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": []
+    },
+    {
+      "path": "/premarital-counseling/marriage-license-discount/tennessee",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 134,
+        "ctr": 0,
+        "position": 8.3
+      },
+      "ga": {
+        "views": 2,
+        "users": 2,
+        "avgDuration": 1,
+        "bounceRate": 50,
+        "engagedSessions": 1
+      },
+      "score": 68,
+      "type": "title_rewrite",
+      "recommendation": "Position 8.3 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": [
+        {
+          "query": "marriage certificate discount",
+          "clicks": 0,
+          "impressions": 7,
+          "position": 20.1
+        },
+        {
+          "query": "premarital counseling discount marriage license",
+          "clicks": 0,
+          "impressions": 2,
+          "position": 8.5
+        }
+      ]
+    },
+    {
+      "path": "/blog/premarital-counseling-exercises-at-home",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 21,
+        "ctr": 0,
+        "position": 9.7
+      },
+      "ga": {
+        "views": 1,
+        "users": 1,
+        "avgDuration": 1337,
+        "bounceRate": 50,
+        "engagedSessions": 1
+      },
+      "score": 67,
+      "type": "title_rewrite",
+      "recommendation": "Position 9.7 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": []
+    },
+    {
+      "path": "/premarital-counseling/gottman",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 63,
+        "ctr": 0,
+        "position": 13.6
+      },
+      "ga": {
+        "views": 7,
+        "users": 7,
+        "avgDuration": 62,
+        "bounceRate": 0,
+        "engagedSessions": 7
+      },
+      "score": 66,
+      "type": "almost_page_1",
+      "recommendation": "Position 13.6 with 63 impressions. A few backlinks or content improvements could push to page 1.",
+      "queries": [
+        {
+          "query": "marriage and family therapist gottman certified",
+          "clicks": 0,
+          "impressions": 6,
+          "position": 44
+        },
+        {
+          "query": "gottman premarital counseling",
+          "clicks": 0,
+          "impressions": 5,
+          "position": 34.6
+        }
+      ]
+    },
+    {
+      "path": "/blog/how-long-does-premarital-counseling-take",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 98,
+        "ctr": 0,
+        "position": 7.5
+      },
+      "ga": null,
+      "score": 65,
+      "type": "title_rewrite",
+      "recommendation": "Position 7.5 but only 0.0% CTR. Rewrite title/meta description.",
+      "queries": []
+    },
+    {
+      "path": "/premarital-counseling/georgia/atlanta/danielle-jeraci-366",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 10
+      },
+      "ga": {
+        "views": 1,
+        "users": 1,
+        "avgDuration": 699,
+        "bounceRate": 50,
+        "engagedSessions": 1
+      },
+      "score": 65,
+      "type": "title_rewrite",
+      "recommendation": "Position 10.0 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/blog/oklahoma-marriage-license-discount",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 26,
+        "ctr": 0,
+        "position": 5.6
+      },
+      "ga": {
+        "views": 2,
+        "users": 2,
+        "avgDuration": 61,
+        "bounceRate": 50,
+        "engagedSessions": 1
+      },
+      "score": 63,
+      "type": "title_rewrite",
+      "recommendation": "Position 5.6 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/blog/premarital-counseling-with-pastor",
+      "gsc": {
+        "clicks": 1,
+        "impressions": 73,
+        "ctr": 1.37,
+        "position": 8.2
+      },
+      "ga": {
+        "views": 4,
+        "users": 4,
+        "avgDuration": 44,
+        "bounceRate": 75,
+        "engagedSessions": 1
+      },
+      "score": 62,
+      "type": "title_rewrite",
+      "recommendation": "Position 8.2 but only 1.4% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/blog/prepare-enrich-vs-gottman-vs-symbis#prepareenrich-the-clinical-gold-standard",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 58,
+        "ctr": 0,
+        "position": 2.3
+      },
+      "ga": null,
+      "score": 61,
+      "type": "title_rewrite",
+      "recommendation": "Position 2.3 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/blog/premarital-counseling-second-marriages",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 9
+      },
+      "ga": {
+        "views": 3,
+        "users": 3,
+        "avgDuration": 88,
+        "bounceRate": 67,
+        "engagedSessions": 1
+      },
+      "score": 60,
+      "type": "title_rewrite",
+      "recommendation": "Position 9.0 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/blog/symbis-explained",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 46,
+        "ctr": 0,
+        "position": 10.6
+      },
+      "ga": {
+        "views": 14,
+        "users": 12,
+        "avgDuration": 147,
+        "bounceRate": 38,
+        "engagedSessions": 8
+      },
+      "score": 60,
+      "type": "almost_page_1",
+      "recommendation": "Position 10.6 with 46 impressions. A few backlinks or content improvements could push to page 1."
+    },
+    {
+      "path": "/corrections",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 5
+      },
+      "ga": {
+        "views": 3,
+        "users": 3,
+        "avgDuration": 4,
+        "bounceRate": 33,
+        "engagedSessions": 2
+      },
+      "score": 60,
+      "type": "title_rewrite",
+      "recommendation": "Position 5.0 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/premarital-counseling/il/rockford/meerae-zastoupil-578",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 47,
+        "ctr": 0,
+        "position": 7.8
+      },
+      "ga": null,
+      "score": 60,
+      "type": "title_rewrite",
+      "recommendation": "Position 7.8 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/premarital-counseling/oklahoma/oklahoma-city/kimberly-yonikas-114",
+      "gsc": {
+        "clicks": 2,
+        "impressions": 35,
+        "ctr": 5.71,
+        "position": 5.2
+      },
+      "ga": {
+        "views": 2,
+        "users": 2,
+        "avgDuration": 39,
+        "bounceRate": 0,
+        "engagedSessions": 2
+      },
+      "score": 59,
       "type": "general",
       "recommendation": ""
     },
     {
-      "path": "/premarital-counseling/prepare-enrich/new-york",
+      "path": "/premarital-counseling/california/pasadena/jessica-munoz-cohan",
       "gsc": {
         "clicks": 1,
-        "impressions": 10,
-        "ctr": 10,
-        "position": 5.5
+        "impressions": 36,
+        "ctr": 2.78,
+        "position": 5.7
       },
       "ga": {
-        "views": 25,
-        "users": 24,
-        "avgDuration": 6,
-        "bounceRate": 8,
-        "engagedSessions": 23
+        "views": 1,
+        "users": 1,
+        "avgDuration": 58,
+        "bounceRate": 0,
+        "engagedSessions": 1
       },
-      "score": 56,
+      "score": 59,
       "type": "general",
       "recommendation": ""
+    },
+    {
+      "path": "/blog/prepare-enrich-vs-gottman-vs-symbis#gottman-relationship-checkup-the-research-powerhouse",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 38,
+        "ctr": 0,
+        "position": 2
+      },
+      "ga": null,
+      "score": 59,
+      "type": "title_rewrite",
+      "recommendation": "Position 2.0 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/blog/prepare-enrich-vs-gottman-vs-symbis#side-by-side-comparison",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 37,
+        "ctr": 0,
+        "position": 1.9
+      },
+      "ga": null,
+      "score": 59,
+      "type": "title_rewrite",
+      "recommendation": "Position 1.9 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/premarital-counseling/alabama/birmingham/barbara-bernstein",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 35,
+        "ctr": 0,
+        "position": 6.1
+      },
+      "ga": null,
+      "score": 59,
+      "type": "title_rewrite",
+      "recommendation": "Position 6.1 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/blog/minnesota-marriage-license-discount",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 30,
+        "ctr": 0,
+        "position": 8.4
+      },
+      "ga": {
+        "views": 1,
+        "users": 1,
+        "avgDuration": 5,
+        "bounceRate": 100,
+        "engagedSessions": 0
+      },
+      "score": 58,
+      "type": "title_rewrite",
+      "recommendation": "Position 8.4 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/blog/prepare-enrich-vs-gottman-vs-symbis#symbis-the-church-friendly-option",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 33,
+        "ctr": 0,
+        "position": 2.7
+      },
+      "ga": null,
+      "score": 58,
+      "type": "title_rewrite",
+      "recommendation": "Position 2.7 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/premarital-counseling/affordable",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 32,
+        "ctr": 0,
+        "position": 13.8
+      },
+      "ga": {
+        "views": 3,
+        "users": 3,
+        "avgDuration": 5,
+        "bounceRate": 0,
+        "engagedSessions": 3
+      },
+      "score": 58,
+      "type": "almost_page_1",
+      "recommendation": "Position 13.8 with 32 impressions. A few backlinks or content improvements could push to page 1."
+    },
+    {
+      "path": "/premarital-counseling/georgia/atlanta/jamie-johnson-277",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 25,
+        "ctr": 0,
+        "position": 9.2
+      },
+      "ga": null,
+      "score": 58,
+      "type": "title_rewrite",
+      "recommendation": "Position 9.2 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/premarital-counseling/illinois/chicago/patricia-viviana-voloschinweiner-748",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 27,
+        "ctr": 0,
+        "position": 7.1
+      },
+      "ga": null,
+      "score": 58,
+      "type": "title_rewrite",
+      "recommendation": "Position 7.1 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/premarital-counseling/illinois/peoria/seventh-direction-938",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 29,
+        "ctr": 0,
+        "position": 5.8
+      },
+      "ga": null,
+      "score": 58,
+      "type": "title_rewrite",
+      "recommendation": "Position 5.8 but only 0.0% CTR. Rewrite title/meta description."
+    },
+    {
+      "path": "/premarital-counseling/marriage-license-discount/florida",
+      "gsc": {
+        "clicks": 0,
+        "impressions": 32,
+        "ctr": 0,
+        "position": 14
+      },
+      "ga": {
+        "views": 1,
+        "users": 1,
+        "avgDuration": 4,
+        "bounceRate": 0,
+        "engagedSessions": 1
+      },
+      "score": 58,
+      "type": "almost_page_1",
+      "recommendation": "Position 14.0 with 32 impressions. A few backlinks or content improvements could push to page 1."
     }
   ]
 }

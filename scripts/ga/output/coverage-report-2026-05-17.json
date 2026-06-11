@@ -1,0 +1,458 @@
+{
+  "timestamp": "2026-05-17T17:43:11.403Z",
+  "totalChecked": 50,
+  "indexed": 27,
+  "notIndexed": 23,
+  "errors": 0,
+  "byCategory": {
+    "homepage": {
+      "total": 1,
+      "indexed": 1,
+      "notIndexed": 0,
+      "errors": 0
+    },
+    "index": {
+      "total": 1,
+      "indexed": 1,
+      "notIndexed": 0,
+      "errors": 0
+    },
+    "blog": {
+      "total": 7,
+      "indexed": 6,
+      "notIndexed": 1,
+      "errors": 0
+    },
+    "other": {
+      "total": 7,
+      "indexed": 7,
+      "notIndexed": 0,
+      "errors": 0
+    },
+    "state": {
+      "total": 7,
+      "indexed": 3,
+      "notIndexed": 4,
+      "errors": 0
+    },
+    "city": {
+      "total": 8,
+      "indexed": 0,
+      "notIndexed": 8,
+      "errors": 0
+    },
+    "profile": {
+      "total": 19,
+      "indexed": 9,
+      "notIndexed": 10,
+      "errors": 0
+    }
+  },
+  "byReason": {
+    "Crawled - currently not indexed": 17,
+    "Discovered - currently not indexed": 2,
+    "Duplicate without user-selected canonical": 4
+  },
+  "results": [
+    {
+      "url": "https://www.weddingcounselors.com/",
+      "category": "homepage",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-11T22:43:29Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling",
+      "category": "index",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-04-23T04:15:14Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/blog/setting-healthy-boundaries-with-inlaws",
+      "category": "blog",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-02-20T17:00:39Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/blog/premarital-counseling-florida",
+      "category": "blog",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-12T08:36:07Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/blog/premarital-counseling-curriculum-comparison",
+      "category": "blog",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-10T01:26:31Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/blog/minnesota-marriage-license-discount",
+      "category": "blog",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-04-09T02:55:45Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/blog/premarital-counseling-texas",
+      "category": "blog",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-10T12:41:54Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/blog/premarital-counseling-cost",
+      "category": "blog",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-04-19T00:04:29Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/blog",
+      "category": "blog",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-06T02:32:37Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/about",
+      "category": "other",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-05T07:02:40Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/privacy",
+      "category": "other",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-02T23:47:29Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/how-it-works",
+      "category": "other",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-04-23T20:13:24Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/editorial-standards",
+      "category": "other",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-04-14T18:22:13Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/features",
+      "category": "other",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-04-20T01:19:39Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/terms",
+      "category": "other",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-04-26T04:52:05Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/pricing",
+      "category": "other",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-04-24T02:51:36Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/montana",
+      "category": "state",
+      "verdict": "NEUTRAL",
+      "coverageState": "Discovered - currently not indexed",
+      "lastCrawlTime": null,
+      "crawledAs": "CRAWLING_USER_AGENT_UNSPECIFIED"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/marriage-license-discount",
+      "category": "state",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-09T18:18:36Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/arizona",
+      "category": "state",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-01-07T04:54:04Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/georgia",
+      "category": "state",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-07T16:02:35Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/colorado",
+      "category": "state",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-01-06T08:16:19Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/prepare-enrich",
+      "category": "state",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-11T23:56:46Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/washington-dc",
+      "category": "state",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-03-23T05:05:33Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/new-york/new-york",
+      "category": "city",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-01-07T10:20:11Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/illinois/peoria",
+      "category": "city",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-03-05T19:17:01Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/colorado/denver",
+      "category": "city",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-04-11T02:02:40Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/christian/ohio",
+      "category": "city",
+      "verdict": "NEUTRAL",
+      "coverageState": "Duplicate without user-selected canonical",
+      "lastCrawlTime": "2026-01-07T22:00:06Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/christian/north-carolina",
+      "category": "city",
+      "verdict": "NEUTRAL",
+      "coverageState": "Duplicate without user-selected canonical",
+      "lastCrawlTime": "2026-01-07T00:31:39Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/illinois/rockford",
+      "category": "city",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-03-24T14:58:45Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/rhode-island/providence",
+      "category": "city",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-03-13T09:38:03Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/online/virginia/richmond",
+      "category": "profile",
+      "verdict": "NEUTRAL",
+      "coverageState": "Duplicate without user-selected canonical",
+      "lastCrawlTime": "2026-01-10T05:51:57Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/connecticut/serves-area/janice-m-trelease-serves-area",
+      "category": "profile",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-03-29T17:54:14Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/mississippi/jacksonville/jan-gallagher-lmhc-431",
+      "category": "profile",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-03-30T05:37:22Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/oklahoma/oklahoma-city/zander-holland-749",
+      "category": "profile",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-01T05:31:15Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/north-carolina/charlotte/dr-tatjana-farley-125",
+      "category": "profile",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-06T10:25:10Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/georgia/atlanta/zhihan-su-201",
+      "category": "profile",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2025-11-19T18:56:43Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/pennsylvania/pittsburgh/dr-david-menges-327",
+      "category": "profile",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-02T09:22:58Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/nevada/las-vegas/chet-bryant-212",
+      "category": "profile",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-02-11T06:33:22Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/pennsylvania/pittsburgh/lauren-bossert-863",
+      "category": "profile",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-04-09T12:26:38Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/wisconsin/milwaukee/shiona-severson-4",
+      "category": "profile",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-04-08T07:08:13Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/massachusetts/boston",
+      "category": "city",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2025-12-05T08:59:14Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/ohio/columbus/joel-s-ketner",
+      "category": "profile",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-04-17T02:02:17Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/hawaii/honolulu/jina-uyeda-367",
+      "category": "profile",
+      "verdict": "NEUTRAL",
+      "coverageState": "Discovered - currently not indexed",
+      "lastCrawlTime": null,
+      "crawledAs": "CRAWLING_USER_AGENT_UNSPECIFIED"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/california/los-angeles/evan-perlo-892",
+      "category": "profile",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-09T09:56:08Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/indiana/crown-point/jamie-monday",
+      "category": "profile",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-10T08:19:13Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/alaska/anchorage/patricia-estella-gould-329",
+      "category": "profile",
+      "verdict": "NEUTRAL",
+      "coverageState": "Duplicate without user-selected canonical",
+      "lastCrawlTime": "2025-11-19T13:06:44Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/mississippi/jackson/hope-family-counseling-llc-829",
+      "category": "profile",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-04-09T01:47:17Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/new-hampshire/manchester/dr-mitchlisa-marriagecouple-workshop-specialist",
+      "category": "profile",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-11T05:47:12Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/new-jersey/serves-area/staci-vanzant-665",
+      "category": "profile",
+      "verdict": "NEUTRAL",
+      "coverageState": "Crawled - currently not indexed",
+      "lastCrawlTime": "2026-04-03T08:00:19Z",
+      "crawledAs": "MOBILE"
+    },
+    {
+      "url": "https://www.weddingcounselors.com/premarital-counseling/georgia/savannah/ms-paz-counselingmore-peace-counseling",
+      "category": "profile",
+      "verdict": "PASS",
+      "coverageState": "Submitted and indexed",
+      "lastCrawlTime": "2026-05-16T17:27:53Z",
+      "crawledAs": "MOBILE"
+    }
+  ]
+}
