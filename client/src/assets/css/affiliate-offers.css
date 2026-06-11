@@ -1,0 +1,94 @@
+.affiliate-offers {
+  margin: 2.5rem 0;
+  padding: 1.5rem;
+  background: #f9f8f6;
+  border: 1px solid #f4f0ea;
+  border-radius: 16px;
+}
+
+.affiliate-offers__heading {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0 0 0.25rem;
+}
+
+.affiliate-offers__intro {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0 0 1.25rem;
+}
+
+.affiliate-offers__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.affiliate-offers__card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--white);
+  border: 1px solid #f4f0ea;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.affiliate-offers__card-body {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.affiliate-offers__name {
+  font-size: 1.05rem;
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.affiliate-offers__best-for {
+  font-size: var(--text-sm);
+  color: var(--primary);
+  font-weight: var(--weight-medium);
+  margin: 0.15rem 0 0;
+}
+
+.affiliate-offers__blurb {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0.5rem 0 0;
+  line-height: 1.5;
+}
+
+.affiliate-offers__cta {
+  flex: 0 0 auto;
+  display: inline-block;
+  padding: 0.7rem 1.25rem;
+  background: var(--primary);
+  color: var(--white);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+
+.affiliate-offers__cta:hover {
+  opacity: 0.9;
+}
+
+.affiliate-offers__disclosure {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin: 1.25rem 0 0;
+  line-height: 1.5;
+  font-style: italic;
+}
