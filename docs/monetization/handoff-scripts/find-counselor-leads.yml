@@ -1,0 +1,65 @@
+name: Find Counselor Leads (Daily)
+
+# Runs once daily at 13:00 UTC = 6 AM PT, well before the email-cron sending
+# window starts at 16:00 UTC (9 AM PT). New leads found here are picked up
+# by the next email-cron run, which enriches them via lead_enrichment.py and
+# queues them into the 'Wedding Counselors [A] Social Proof' campaign.
+
+on:
+  schedule:
+    - cron: '0 13 * * 1-5'  # Mon–Fri only, matches sending pattern
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Max new leads to add this run (default 50)'
+        required: false
+        default: '50'
+      dry_run:
+        description: 'Search and filter but do not write to DB'
+        required: false
+        default: 'false'
+
+jobs:
+  find-leads:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Find counselor leads
+        env:
+          DATABASE_URI: ${{ secrets.DATABASE_URI }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
+          SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
+          JINA_API_KEY: ${{ secrets.JINA_API_KEY }}
+          LEAD_FINDER_DAILY_CAP: ${{ github.event.inputs.limit || '50' }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python find_counselor_leads.py --dry-run
+          else
+            python find_counselor_leads.py
+          fi
+
+      - name: Notify on failure
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d text="Lead finder workflow failed — check GH Actions logs"
