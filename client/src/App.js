@@ -75,6 +75,7 @@ const PrivacyPage = React.lazy(() => import('./pages/PrivacyPage'))
 const TermsPage = React.lazy(() => import('./pages/TermsPage'))
 const FeaturesPage = React.lazy(() => import('./pages/FeaturesPage'))
 const PricingPage = React.lazy(() => import('./pages/PricingPage'))
+const FoundingProviderPage = React.lazy(() => import('./pages/FoundingProviderPage'))
 const SupportPage = React.lazy(() => import('./pages/SupportPage'))
 const GuidelinesPage = React.lazy(() => import('./pages/GuidelinesPage'))
 const StatesIndexPage = React.lazy(() => import('./pages/StatesIndexPage'))
@@ -252,6 +253,7 @@ function AppInner() {
             {/* /therapists, /coaches, /clergy → 301 to / via Vercel edge redirect */}
             <Route path="/features" element={<FeaturesPage />} />
             <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/for-providers/founding" element={<FoundingProviderPage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/guidelines" element={<GuidelinesPage />} />
             <Route path="/for-churches" element={<ForChurchesPage />} />

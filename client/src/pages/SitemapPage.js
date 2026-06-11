@@ -28,6 +28,7 @@ const SitemapPage = () => {
     { to: '/professional/login', label: 'Professional Login' },
     { to: '/professional/signup', label: 'Professional Signup' },
     { to: '/claim-profile', label: 'Claim Profile' },
+    { to: '/for-providers/founding', label: 'Founding Providers' },
     { to: '/for-churches', label: 'For Churches' },
     { to: '/for-officiants', label: 'For Officiants' }
   ]
@@ -85,4 +86,3 @@ const SitemapPage = () => {
 }
 
 export default SitemapPage
-

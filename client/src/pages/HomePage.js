@@ -531,9 +531,9 @@ const HomePage = () => {
                   <span className="provider-cta__btn-label">Create Your Free Profile</span>
                   <span className="provider-cta__btn-subtext">No credit card required</span>
                 </Link>
-                <Link to="/pricing" className="btn provider-cta__secondary">
-                  <span className="provider-cta__btn-label">View Pricing</span>
-                  <span className="provider-cta__btn-subtext">Upgrade only when ready</span>
+                <Link to="/for-providers/founding" className="btn provider-cta__secondary">
+                  <span className="provider-cta__btn-label">Explore Founder Offer</span>
+                  <span className="provider-cta__btn-subtext">One-time visibility packages</span>
                 </Link>
               </div>
             </div>

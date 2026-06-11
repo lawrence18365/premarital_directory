@@ -486,7 +486,7 @@ const AnalyticsDashboard = () => {
         </div>
       </div>
 
-      {/* Upgrade CTA for non-featured providers */}
+      {/* Visibility CTA for community providers */}
       {profile?.tier === 'community' && (
         <div style={{
           marginTop: 'var(--space-12)',
@@ -500,10 +500,10 @@ const AnalyticsDashboard = () => {
             Want More Visibility?
           </h3>
           <p style={{ marginBottom: 'var(--space-4)', opacity: 0.9 }}>
-            Featured profiles appear at the top of search results for more visibility.
+            The paid provider offer that is live right now is the one-time founder package path.
           </p>
           <Link
-            to="/professional/subscription"
+            to="/for-providers/founding"
             style={{
               display: 'inline-block',
               padding: 'var(--space-3) var(--space-6)',
@@ -514,7 +514,7 @@ const AnalyticsDashboard = () => {
               textDecoration: 'none'
             }}
           >
-            Upgrade to Featured →
+            Explore Founder Offer →
           </Link>
         </div>
       )}

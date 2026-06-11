@@ -1,101 +1,49 @@
-import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { Link, Navigate } from 'react-router-dom';
-import SEOHelmet from '../../components/analytics/SEOHelmet';
+import React from 'react'
+import { Link, Navigate } from 'react-router-dom'
+import { useAuth } from '../../contexts/AuthContext'
+import SEOHelmet from '../../components/analytics/SEOHelmet'
+import {
+  CONTACT_EMAIL,
+  DIRECTORY_PLAN_DETAILS,
+  FOUNDING_PACKAGES,
+  FOUNDING_PAGE_PATH,
+  buildFoundingInquiryPath
+} from '../../lib/providerOffers'
 
-/**
- * Professional Subscription Management Page
- * Shows current plan, what's included, and upgrade options (coming soon)
- */
 const SubscriptionPage = () => {
-  const { user, profile, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth()
 
-  // Current plan features based on tier
-  const getPlanDetails = (tier) => {
-    const plans = {
-      community: {
-        name: 'Community',
-        price: 'Free',
-        description: 'Everything you need to get started and connect with couples.',
-        features: [
-          'Listed in the directory',
-          'Basic profile with bio and contact info',
-          'Receive leads from couples',
-          'View profile analytics',
-          'Email notifications for new inquiries'
-        ],
-        limitations: [
-          'Organic ranking is based on profile quality and verification',
-          'Basic analytics only'
-        ]
-      },
-      featured: {
-        name: 'Featured',
-        price: '$29/month',
-        description: 'Stand out with richer merchandising and stronger analytics.',
-        features: [
-          'Everything in Community, plus:',
-          'Featured badge on your profile',
-          'Enhanced profile with photos and video',
-          'Advanced analytics and insights',
-          'Eligibility for clearly labeled featured modules when launched',
-          'Priority email support'
-        ],
-        limitations: []
-      },
-      premium: {
-        name: 'Premium',
-        price: '$79/month',
-        description: 'Expanded city coverage, reporting, and future promotional modules.',
-        features: [
-          'Everything in Featured, plus:',
-          'Multi-city profile merchandising',
-          'Highlighted profile card design',
-          'Monthly performance reports',
-          'Dedicated account manager',
-          'Custom profile URL',
-          'Future labeled spotlight modules'
-        ],
-        limitations: []
-      }
-    };
-
-    return plans[tier] || plans.community;
-  };
-
-  // Wait for auth to load
   if (authLoading) {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
         <p>Loading...</p>
       </div>
-    );
+    )
   }
 
-  // Redirect users without profiles to create profile
   if (user && !profile) {
-    return <Navigate to="/professional/onboarding" replace />;
+    return <Navigate to="/professional/onboarding" replace />
   }
 
-  const currentTier = profile?.tier || 'community';
-  const currentPlan = getPlanDetails(currentTier);
-  const userEmail = profile?.email || user?.email;
+  const currentTier = profile?.tier || 'community'
+  const currentPlan = DIRECTORY_PLAN_DETAILS[currentTier] || DIRECTORY_PLAN_DETAILS.community
+  const hasManagedUpgrade = currentTier !== 'community'
+  const userEmail = profile?.email || user?.email
 
   return (
     <>
       <SEOHelmet
         title="Subscription Management"
-        description="Manage your Wedding Counselors subscription and billing"
+        description="Manage your Wedding Counselors listing and visibility options."
         noindex={true}
       />
 
       <div className="subscription-container">
-        {/* Header */}
         <div className="subscription-header">
           <div className="dashboard-title">
-            <h1>Subscription & Billing</h1>
-            <p>Manage your plan and see what's included</p>
+            <h1>Visibility & Billing</h1>
+            <p>See your current listing status and the paid options that are actually live.</p>
           </div>
           <div className="dashboard-actions">
             <Link to="/professional/dashboard" className="btn btn-outline">
@@ -105,7 +53,6 @@ const SubscriptionPage = () => {
           </div>
         </div>
 
-        {/* Current Plan Section */}
         <div className="dashboard-section">
           <h2>Your Current Plan</h2>
           <div style={{
@@ -158,7 +105,6 @@ const SubscriptionPage = () => {
             </div>
           </div>
 
-          {/* Plan Features */}
           <div style={{
             background: 'white',
             padding: 'var(--space-6)',
@@ -166,7 +112,7 @@ const SubscriptionPage = () => {
             border: '1px solid var(--gray-200)'
           }}>
             <h4 style={{ marginBottom: 'var(--space-4)', color: 'var(--text-primary)' }}>
-              What's Included in Your Plan
+              Included with your current plan
             </h4>
             <ul style={{
               listStyle: 'none',
@@ -193,253 +139,129 @@ const SubscriptionPage = () => {
           </div>
         </div>
 
-        {/* Upgrade Options */}
         <div className="dashboard-section" style={{ marginTop: 'var(--space-8)' }}>
-          <h2>Upgrade Options</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-6)' }}>
-            Organic ranking is quality-driven. Upgrades focus on better merchandising, analytics, and future clearly labeled promotional surfaces.
+          <h2>Paid Options That Are Live</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-6)', maxWidth: '780px' }}>
+            Self-serve monthly billing is not active yet. If you want better placement or help tightening your profile, use a one-time founder package and we will activate it manually.
           </p>
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: 'var(--space-6)'
           }}>
-            {/* Featured Plan */}
-            {currentTier !== 'featured' && currentTier !== 'premium' && (
-              <div style={{
+            {FOUNDING_PACKAGES.map((pkg) => (
+              <div key={pkg.id} style={{
                 background: 'white',
                 borderRadius: 'var(--radius-lg)',
-                border: '2px solid var(--gray-200)',
-                overflow: 'hidden',
+                border: pkg.highlight ? '2px solid var(--teal)' : '1px solid var(--gray-200)',
+                boxShadow: pkg.highlight ? 'var(--shadow-lg)' : 'var(--shadow-sm)',
+                padding: 'var(--space-6)',
+                display: 'flex',
+                flexDirection: 'column',
                 position: 'relative'
               }}>
-                <div style={{
-                  position: 'absolute',
-                  top: '16px',
-                  right: '16px',
-                  background: 'var(--warning, #0e5e5e)',
-                  color: 'white',
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  fontSize: '0.75rem',
-                  fontWeight: '700',
-                  textTransform: 'uppercase'
-                }}>
-                  Coming Soon
-                </div>
-                <div style={{ padding: 'var(--space-6)' }}>
-                  <h3 style={{ color: 'var(--text-primary)', marginBottom: 'var(--space-2)' }}>
-                    Featured
-                  </h3>
+                {pkg.highlight && (
                   <div style={{
-                    fontSize: '2rem',
+                    position: 'absolute',
+                    top: '-12px',
+                    left: 'var(--space-6)',
+                    background: 'var(--teal)',
+                    color: 'white',
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    fontSize: '0.75rem',
                     fontWeight: '700',
-                    color: 'var(--teal)',
-                    marginBottom: 'var(--space-2)'
+                    textTransform: 'uppercase'
                   }}>
-                    $29<span style={{ fontSize: '1rem', fontWeight: '400', color: 'var(--text-secondary)' }}>/month</span>
+                    Best First Paid Offer
                   </div>
-                  <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-4)' }}>
-                    Stand out with richer profile merchandising and enhanced reporting
-                  </p>
-                  <ul style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    margin: '0 0 var(--space-4) 0',
-                    display: 'grid',
-                    gap: 'var(--space-2)',
-                    fontSize: '0.95rem'
-                  }}>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-star" style={{ color: 'var(--warning, #0e5e5e)' }} aria-hidden="true"></i>
-                      Featured badge
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-star" style={{ color: 'var(--warning, #0e5e5e)' }} aria-hidden="true"></i>
-                      Highlighted profile card
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-star" style={{ color: 'var(--warning, #0e5e5e)' }} aria-hidden="true"></i>
-                      Enhanced profile options
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-star" style={{ color: 'var(--warning, #0e5e5e)' }} aria-hidden="true"></i>
-                      Advanced analytics
-                    </li>
-                  </ul>
-                  <button
-                    disabled
-                    style={{
-                      width: '100%',
-                      padding: 'var(--space-3)',
-                      background: 'var(--gray-200)',
-                      color: 'var(--text-secondary)',
-                      border: 'none',
-                      borderRadius: 'var(--radius-md)',
-                      fontWeight: '600',
-                      cursor: 'not-allowed'
-                    }}
-                  >
-                    Available Soon
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Premium Plan */}
-            {currentTier !== 'premium' && (
-              <div style={{
-                background: 'white',
-                borderRadius: 'var(--radius-lg)',
-                border: '2px solid var(--gray-200)',
-                overflow: 'hidden',
-                position: 'relative'
-              }}>
+                )}
+                <h3 style={{ color: 'var(--text-primary)', marginBottom: 'var(--space-2)' }}>
+                  {pkg.name}
+                </h3>
                 <div style={{
-                  position: 'absolute',
-                  top: '16px',
-                  right: '16px',
-                  background: 'var(--warning, #0e5e5e)',
-                  color: 'white',
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  fontSize: '0.75rem',
+                  fontSize: '2rem',
                   fontWeight: '700',
-                  textTransform: 'uppercase'
+                  color: 'var(--teal)',
+                  marginBottom: 'var(--space-2)'
                 }}>
-                  Coming Soon
+                  {pkg.price}
+                  <span style={{ fontSize: '1rem', fontWeight: '400', color: 'var(--text-secondary)' }}>
+                    {' '}{pkg.priceSuffix}
+                  </span>
                 </div>
-                <div style={{ padding: 'var(--space-6)' }}>
-                  <h3 style={{ color: 'var(--text-primary)', marginBottom: 'var(--space-2)' }}>
-                    Premium
-                  </h3>
-                  <div style={{
-                    fontSize: '2rem',
-                    fontWeight: '700',
-                    color: 'var(--teal)',
-                    marginBottom: 'var(--space-2)'
-                  }}>
-                    $79<span style={{ fontSize: '1rem', fontWeight: '400', color: 'var(--text-secondary)' }}>/month</span>
-                  </div>
-                  <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-4)' }}>
-                    Expand into more markets with premium reporting and merchandising
-                  </p>
-                  <ul style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    margin: '0 0 var(--space-4) 0',
-                    display: 'grid',
-                    gap: 'var(--space-2)',
-                    fontSize: '0.95rem'
-                  }}>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>
-                      Multi-city profile coverage
+                <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-4)' }}>
+                  {pkg.summary}
+                </p>
+                <ul style={{
+                  listStyle: 'none',
+                  padding: 0,
+                  margin: '0 0 var(--space-5) 0',
+                  display: 'grid',
+                  gap: 'var(--space-2)',
+                  fontSize: '0.95rem',
+                  flex: 1
+                }}>
+                  {pkg.features.map((feature) => (
+                    <li key={feature} style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)' }}>
+                      <i className="fa fa-check" style={{ color: 'var(--teal)', marginTop: '4px' }} aria-hidden="true"></i>
+                      <span>{feature}</span>
                     </li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>
-                      Highlighted profile design
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>
-                      Monthly performance reporting
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <i className="fa fa-crown" style={{ color: 'var(--accent, #0e5e5e)' }} aria-hidden="true"></i>
-                      Dedicated account manager
-                    </li>
-                  </ul>
-                  <button
-                    disabled
-                    style={{
-                      width: '100%',
-                      padding: 'var(--space-3)',
-                      background: 'var(--gray-200)',
-                      color: 'var(--text-secondary)',
-                      border: 'none',
-                      borderRadius: 'var(--radius-md)',
-                      fontWeight: '600',
-                      cursor: 'not-allowed'
-                    }}
-                  >
-                    Available Soon
-                  </button>
-                </div>
+                  ))}
+                </ul>
+                <Link
+                  to={buildFoundingInquiryPath(pkg)}
+                  className="btn btn-primary"
+                  style={{ width: '100%', textAlign: 'center' }}
+                >
+                  {pkg.cta}
+                </Link>
               </div>
-            )}
+            ))}
           </div>
         </div>
 
-        {/* Early Access Section */}
         <div style={{
           marginTop: 'var(--space-12)',
           padding: 'var(--space-8)',
           background: 'linear-gradient(135deg, #0e5e5e 0%, #1a7373 100%)',
           borderRadius: 'var(--radius-lg)',
-          color: 'white',
-          textAlign: 'center'
+          color: 'white'
         }}>
-          <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-            <i
-              className="fa fa-bell"
-              style={{ fontSize: '2.5rem', marginBottom: 'var(--space-4)', opacity: 0.9 }}
-              aria-hidden="true"
-            ></i>
-            <h3 style={{ color: 'white', marginBottom: 'var(--space-3)' }}>
-              Want Early Access to Premium Features?
-            </h3>
-            <p style={{ opacity: 0.9, marginBottom: 'var(--space-4)' }}>
-              We're working on exciting new features to help you grow your practice.
-              You'll be the first to know when they launch!
-            </p>
-            <div style={{
-              background: 'rgba(255,255,255,0.15)',
-              padding: 'var(--space-4)',
-              borderRadius: 'var(--radius-md)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 'var(--space-3)'
-            }}>
-              <i className="fa fa-envelope" style={{ opacity: 0.9 }} aria-hidden="true"></i>
-              <span>
-                We'll notify you at <strong>{userEmail}</strong> when upgrades are available
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Help Section */}
-        <div className="dashboard-section" style={{ marginTop: 'var(--space-8)' }}>
-          <h2>Questions About Plans?</h2>
           <div style={{
-            background: 'var(--bg-secondary, #f9fafb)',
-            padding: 'var(--space-6)',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--gray-200)'
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 'var(--space-5)'
           }}>
-            <p style={{ marginBottom: 'var(--space-4)' }}>
-              Have questions about which plan is right for you? We're here to help!
-            </p>
+            <div style={{ maxWidth: '640px' }}>
+              <h3 style={{ color: 'white', marginBottom: 'var(--space-3)' }}>
+                {hasManagedUpgrade ? 'Need changes to your current placement?' : 'Need help choosing the right founder package?'}
+              </h3>
+              <p style={{ opacity: 0.9, marginBottom: 0 }}>
+                {hasManagedUpgrade
+                  ? 'Managed upgrades are handled directly by the team right now. Tell us what you want to change and we will review it manually.'
+                  : `If you reply from ${userEmail || 'your professional email'}, we can recommend the right city or specialty package for your profile.`}
+              </p>
+            </div>
             <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap' }}>
-              <a
-                href="mailto:hello@weddingcounselors.com?subject=Question about subscription plans"
-                className="btn btn-outline"
-              >
-                <i className="fa fa-envelope" aria-hidden="true"></i>
-                Contact Support
-              </a>
-              <Link to="/support" className="btn btn-ghost">
-                <i className="fa fa-question-circle" aria-hidden="true"></i>
-                Visit Help Center
+              <Link to={FOUNDING_PAGE_PATH} className="btn btn-outline" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.8)' }}>
+                View Founder Offer
               </Link>
+              <a
+                href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(hasManagedUpgrade ? 'Placement update request' : 'Founder package recommendation')}`}
+                className="btn btn-primary"
+              >
+                Email Support
+              </a>
             </div>
           </div>
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default SubscriptionPage;
+export default SubscriptionPage

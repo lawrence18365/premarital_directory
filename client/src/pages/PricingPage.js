@@ -2,25 +2,29 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import SEOHelmet from '../components/analytics/SEOHelmet'
 import FAQ from '../components/common/FAQ'
+import {
+  FOUNDING_PACKAGES,
+  FOUNDING_PAGE_PATH,
+  buildFoundingInquiryPath
+} from '../lib/providerOffers'
 import '../assets/css/features.css'
 
-// FAQ data for pricing page
 const pricingFAQs = [
   {
-    question: "Is the free listing really free?",
-    answer: "Yes, absolutely. The Community tier is free forever with no hidden fees. You get a basic listing on city pages, direct leads to your email, and access to basic analytics. We believe every premarital counselor should have access to couples searching for help."
+    question: 'Is the free listing really free?',
+    answer: 'Yes. Community listings are free, and couples can still contact you directly from your profile.'
   },
   {
-    question: "Can I upgrade later?",
-    answer: "Yes, you can upgrade to a paid tier at any time from your dashboard. Your profile information stays the same. Paid plans add merchandising tools, richer media, and deeper analytics. If we launch featured placements later, they will be clearly labeled rather than blended into organic ranking."
+    question: 'Are paid plans monthly?',
+    answer: 'Not right now. The paid provider offer is currently a one-time founding package that we activate manually after confirming fit and placement.'
   },
   {
-    question: "How do I get leads?",
-    answer: "Couples contact you directly through email or phone. When they find your profile in our directory, they reach out to you directly - there's no middleman. You control the relationship from the first contact. We never take a cut or charge per-lead fees."
+    question: 'What do founding packages include?',
+    answer: 'Founding packages focus on profile cleanup, better positioning, and approved featured placement in a target city or specialty.'
   },
   {
-    question: "What's the difference between tiers?",
-    answer: "The main differences are profile merchandising and reporting. Community keeps you in the organic directory. Local Featured adds richer media, a featured badge, and stronger analytics. Area Spotlight expands that with multi-city merchandising and reporting. Organic ranking still depends on profile quality and verification."
+    question: 'Can I start free and upgrade later?',
+    answer: 'Yes. You can create or claim a free profile first, then apply for a founding package when you want more support or visibility.'
   }
 ]
 
@@ -30,78 +34,51 @@ const PricingPage = () => {
       name: 'Community',
       price: 'Free',
       pricePeriod: 'forever',
-      description: 'Everything you need to get started and connect with local couples.',
+      description: 'Get listed, claim your profile, and let couples contact you directly.',
       features: [
-        'Basic listing on city pages',
-        'Organic directory visibility',
-        'Direct leads to your email',
+        'Basic listing on city and specialty pages',
+        'Direct couple inquiries to your email',
+        'Profile ownership and editing tools',
         'Basic analytics dashboard'
       ],
       cta: 'Create Free Profile',
       ctaLink: '/professional/signup',
-      highlighted: false,
-      available: true
+      highlighted: false
     },
-    {
-      name: 'Local Featured',
-      price: '$49',
-      pricePeriod: '/month',
-      description: 'Stand out with richer profile merchandising and stronger performance visibility.',
-      features: [
-        'Everything in Community',
-        'Featured badge on profile',
-        'Photo gallery (up to 6 images)',
-        'Highlighted profile card',
-        'Advanced analytics and reporting'
-      ],
-      cta: 'Join Waitlist',
-      ctaLink: null,
-      highlighted: true,
-      available: false
-    },
-    {
-      name: 'Area Spotlight',
-      price: '$99',
-      pricePeriod: '/month',
-      description: 'Expand into multiple markets with deeper reporting and future featured modules.',
-      features: [
-        'Everything in Local Featured',
-        'Multi-city profile coverage (up to 5 cities)',
-        'Monthly performance summary',
-        'Eligibility for clearly labeled featured modules when launched',
-        'Priority support'
-      ],
-      cta: 'Coming Soon',
-      ctaLink: null,
-      highlighted: false,
-      available: false
-    }
+    ...FOUNDING_PACKAGES.map((pkg) => ({
+      name: pkg.name,
+      price: pkg.price,
+      pricePeriod: pkg.priceSuffix,
+      description: pkg.summary,
+      features: pkg.features,
+      cta: pkg.cta,
+      ctaLink: buildFoundingInquiryPath(pkg),
+      highlighted: pkg.highlight
+    }))
   ]
 
   return (
     <div className="page-container features-page pricing-page">
       <SEOHelmet
         title="Pricing for Premarital Counselors"
-        description="List your premarital counseling practice for free. Upgrade for richer profile merchandising, analytics, and multi-city visibility. No per-lead fees, ever."
+        description="Create a free provider profile or apply for one-time founding visibility packages on WeddingCounselors.com."
         url="/pricing"
         noindex={false}
-        keywords="premarital counselor listing, therapist directory pricing, counselor marketing, get more clients"
+        keywords="premarital counselor pricing, therapist directory pricing, featured counselor listing, founding provider package"
       />
 
       <div className="container">
         <div className="page-header">
-          <h1>Simple, Transparent Pricing</h1>
+          <h1>Clear pricing for providers</h1>
           <p className="lead">
-            Start free and grow your practice. No per-lead fees, no commissions -
-            couples contact you directly.
+            Start with a free community profile or apply for a one-time founding package if you want hands-on placement and profile support.
           </p>
           <p style={{ color: 'var(--text-secondary)', maxWidth: 760, margin: 'var(--space-4) auto 0' }}>
-            Organic ranking is based on profile quality and verification. If featured placements launch later, they will be clearly labeled.
+            Self-serve monthly billing is not live yet. Paid placements are approved manually so city and specialty inventory stays limited and relevant.
           </p>
         </div>
 
         <div className="content-section">
-          {/* Pricing Tiers Grid */}
           <div className="pricing-grid">
             {tiers.map((tier) => (
               <div
@@ -109,7 +86,7 @@ const PricingPage = () => {
                 className={`pricing-card ${tier.highlighted ? 'pricing-card--highlighted' : ''}`}
               >
                 {tier.highlighted && (
-                  <div className="pricing-badge">Most Popular</div>
+                  <div className="pricing-badge">Best First Paid Offer</div>
                 )}
 
                 <div className="pricing-card__header">
@@ -133,68 +110,69 @@ const PricingPage = () => {
                 </div>
 
                 <div className="pricing-card__cta">
-                  {tier.available ? (
-                    <Link
-                      to={tier.ctaLink}
-                      className={`btn ${tier.highlighted ? 'btn-primary' : 'btn-outline'} btn-block`}
-                    >
-                      {tier.cta}
-                    </Link>
-                  ) : (
-                    <button
-                      type="button"
-                      className={`btn ${tier.highlighted ? 'btn-primary' : 'btn-outline'} btn-block`}
-                      disabled
-                    >
-                      {tier.cta}
-                    </button>
-                  )}
+                  <Link
+                    to={tier.ctaLink}
+                    className={`btn ${tier.highlighted ? 'btn-primary' : 'btn-outline'} btn-block`}
+                  >
+                    {tier.cta}
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Value Propositions */}
+          <div className="pricing-callout">
+            <div>
+              <h2>Need the full founder offer before you apply?</h2>
+              <p>
+                Review the package details, fit criteria, and activation process on the founder page.
+              </p>
+            </div>
+            <div className="pricing-callout__actions">
+              <Link to={FOUNDING_PAGE_PATH} className="btn btn-primary">
+                View Founding Packages
+              </Link>
+              <Link to="/claim-profile" className="btn btn-outline">
+                Claim Existing Profile
+              </Link>
+            </div>
+          </div>
+
           <div className="features-technical" style={{ marginTop: 'var(--space-12)' }}>
-            <h2>Why List With Us?</h2>
+            <h2>Why providers use Wedding Counselors</h2>
             <div className="tech-features">
               <div className="tech-feature">
                 <h3><i className="fas fa-dollar-sign"></i> No Per-Lead Fees</h3>
                 <p>
-                  Unlike other directories, we never charge you for leads or take a
-                  commission. Couples contact you directly - you keep 100% of your fees.
+                  Couples contact you directly. We do not take a commission from your sessions.
                 </p>
               </div>
 
               <div className="tech-feature">
                 <h3><i className="fas fa-envelope"></i> Direct Contact</h3>
                 <p>
-                  Your email and phone go directly to couples. No middleman, no
-                  delayed inquiries - just real connections with engaged couples.
+                  Your email and phone stay in your control. There is no marketplace middleman between you and the couple.
                 </p>
               </div>
 
               <div className="tech-feature">
-                <h3><i className="fas fa-chart-line"></i> Track Your Results</h3>
+                <h3><i className="fas fa-chart-line"></i> Useful Visibility Upgrades</h3>
                 <p>
-                  See how many couples view your profile, reveal your contact info,
-                  and reach out. Make data-driven decisions about your online presence.
+                  Founder packages are designed around better positioning and cleaner presentation, not vague promises.
                 </p>
               </div>
 
               <div className="tech-feature">
-                <h3><i className="fas fa-edit"></i> Easy Updates</h3>
+                <h3><i className="fas fa-handshake"></i> Manual Review</h3>
                 <p>
-                  Update your profile anytime - specialties, availability, pricing,
-                  and more. Changes go live immediately, no approval needed.
+                  Paid placements are handled manually right now so the right providers get the right city or specialty surfaces.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Comparison Note */}
           <div className="features-hero" style={{ textAlign: 'center', marginTop: 'var(--space-8)' }}>
-            <h2>Built for Premarital Counselors</h2>
+            <h2>Start free or go straight to a founder application</h2>
             <p style={{
               maxWidth: '700px',
               margin: '0 auto var(--space-6)',
@@ -202,33 +180,29 @@ const PricingPage = () => {
               fontSize: 'var(--text-lg)',
               lineHeight: '1.7'
             }}>
-              Whether you're a licensed therapist, certified coach, or clergy member,
-              our directory helps couples find professionals who specialize in
-              pre-marriage preparation. Get listed where engaged couples are already searching.
+              The free listing is the right move if you need to claim your profile first. The founding offer is for providers who already know premarital counseling is a real growth channel for their practice.
             </p>
             <div className="cta-buttons" style={{ marginTop: 'var(--space-6)' }}>
-              <Link to="/professional/signup" className="btn btn-primary" rel="nofollow">
+              <Link to="/professional/signup" className="btn btn-outline" rel="nofollow">
                 Create Your Free Profile
               </Link>
-              <Link to="/features" className="btn btn-outline">
-                Learn More
+              <Link to={FOUNDING_PAGE_PATH} className="btn btn-primary">
+                Explore Founder Offer
               </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* FAQ Section */}
       <FAQ
         faqs={pricingFAQs}
         title="Pricing Questions"
-        description="Common questions about listing your practice on Wedding Counselors."
+        description="What is live right now for provider monetization."
         className="pricing-faq"
         showAside={false}
         showSearch={false}
       />
 
-      {/* Inline styles for pricing-specific elements */}
       <style>{`
         .pricing-page .page-header {
           padding-bottom: var(--space-8);
@@ -236,7 +210,7 @@ const PricingPage = () => {
 
         .pricing-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
           gap: var(--space-6);
           margin-top: var(--space-8);
         }
@@ -355,9 +329,41 @@ const PricingPage = () => {
           padding: var(--space-4) var(--space-6);
         }
 
-        .pricing-card__cta .btn:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
+        .pricing-callout {
+          margin-top: var(--space-10);
+          padding: var(--space-8);
+          border-radius: var(--radius-2xl);
+          background: linear-gradient(135deg, rgba(14, 94, 94, 0.96), rgba(24, 98, 89, 0.96));
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: var(--space-6);
+        }
+
+        .pricing-callout h2,
+        .pricing-callout p {
+          color: var(--white);
+        }
+
+        .pricing-callout p {
+          opacity: 0.9;
+          max-width: 640px;
+        }
+
+        .pricing-callout__actions {
+          display: flex;
+          gap: var(--space-3);
+          flex-wrap: wrap;
+        }
+
+        .pricing-callout__actions .btn.btn-outline {
+          border-color: rgba(255, 255, 255, 0.85);
+          color: var(--white);
+        }
+
+        .pricing-callout__actions .btn.btn-outline:hover:not(:disabled) {
+          background: rgba(255, 255, 255, 0.12);
+          color: var(--white);
         }
 
         .pricing-faq {
@@ -376,12 +382,17 @@ const PricingPage = () => {
           .pricing-card__amount {
             font-size: var(--text-3xl);
           }
+
+          .pricing-callout {
+            flex-direction: column;
+            align-items: flex-start;
+          }
         }
 
         @media (max-width: 768px) {
           .pricing-grid {
             grid-template-columns: 1fr;
-            max-width: 400px;
+            max-width: 440px;
             margin-left: auto;
             margin-right: auto;
           }
@@ -392,6 +403,20 @@ const PricingPage = () => {
 
           .pricing-card__amount {
             font-size: var(--text-2xl);
+          }
+
+          .pricing-callout {
+            padding: var(--space-6);
+          }
+
+          .pricing-callout__actions {
+            width: 100%;
+            flex-direction: column;
+          }
+
+          .pricing-callout__actions .btn {
+            width: 100%;
+            text-align: center;
           }
         }
       `}</style>

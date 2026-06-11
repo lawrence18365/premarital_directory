@@ -30,6 +30,7 @@ const SitemapGenerator = () => {
         { url: '/about', priority: '0.6', changefreq: 'monthly' },
         { url: '/contact', priority: '0.6', changefreq: 'monthly' },
         { url: '/pricing', priority: '0.7', changefreq: 'weekly' },
+        { url: '/for-providers/founding', priority: '0.7', changefreq: 'weekly' },
         { url: '/features', priority: '0.7', changefreq: 'weekly' },
         { url: '/support', priority: '0.6', changefreq: 'monthly' },
         { url: '/privacy', priority: '0.5', changefreq: 'yearly' },

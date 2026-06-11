@@ -87,6 +87,7 @@ const generateSitemap = async () => {
     '/about',
     '/contact',
     '/pricing',
+    '/for-providers/founding',
     '/features',
     '/guidelines',
     '/privacy',
