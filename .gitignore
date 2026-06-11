@@ -41,3 +41,7 @@ npm-debug.log*
 
 # GSC output — raw data and analysis reports (may contain sensitive traffic data)
 /scripts/gsc/output/
+
+# Claude Code + Playwright CLI local artifacts
+.claude/
+.playwright-cli/
