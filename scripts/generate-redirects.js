@@ -67,6 +67,18 @@ const STATE_MAP = {
   wy: 'wyoming',
 };
 
+const DISCOUNT_STATE_MAP = {
+  fl: 'florida',
+  ga: 'georgia',
+  md: 'maryland',
+  mn: 'minnesota',
+  ok: 'oklahoma',
+  tn: 'tennessee',
+  tx: 'texas',
+  ut: 'utah',
+  wv: 'west-virginia',
+};
+
 const SPECIALTIES = [
   'christian',
   'catholic',
@@ -142,8 +154,8 @@ function generate() {
   lines.push('');
 
   // Discount: /premarital-counseling/marriage-license-discount/{abbr} → .../{full}
-  lines.push('# Marriage license discount state abbreviation redirects (50 rules)');
-  for (const [abbr, full] of Object.entries(STATE_MAP)) {
+  lines.push('# Marriage license discount state abbreviation redirects (direct-incentive states only)');
+  for (const [abbr, full] of Object.entries(DISCOUNT_STATE_MAP)) {
     lines.push(`/premarital-counseling/marriage-license-discount/${abbr} /premarital-counseling/marriage-license-discount/${full} 301!`);
   }
   lines.push('');
@@ -162,8 +174,8 @@ function generate() {
   console.log(`Total redirect rules: ${ruleCount}`);
   console.log(`  - Base state abbr:      ${Object.keys(STATE_MAP).length * 2}`);
   console.log(`  - Specialty + state:     ${SPECIALTIES.length * Object.keys(STATE_MAP).length * 2}`);
-  console.log(`  - Discount state:        ${Object.keys(STATE_MAP).length}`);
-  console.log(`  - Other (domain, legacy): ${ruleCount - Object.keys(STATE_MAP).length * 2 - SPECIALTIES.length * Object.keys(STATE_MAP).length * 2 - Object.keys(STATE_MAP).length}`);
+  console.log(`  - Discount state:        ${Object.keys(DISCOUNT_STATE_MAP).length}`);
+  console.log(`  - Other (domain, legacy): ${ruleCount - Object.keys(STATE_MAP).length * 2 - SPECIALTIES.length * Object.keys(STATE_MAP).length * 2 - Object.keys(DISCOUNT_STATE_MAP).length}`);
 }
 
 generate();

@@ -75,7 +75,7 @@ const MarriageLicenseDiscountPage = () => {
   const faqs = [
     {
       question: 'Which states offer marriage license discounts for premarital counseling?',
-      answer: `Ten states currently offer discounts on marriage license fees for couples who complete premarital counseling: Florida (~$33 off), Texas ($60 off), Minnesota (up to $75 off), Tennessee ($60 off), Oklahoma ($45 off), Georgia ($16–50 off), Indiana ($60 off), Maryland (varies by county), Utah ($20 off via MED program), and West Virginia ($20 off). Florida, Texas, and Minnesota also waive mandatory waiting periods.`
+      answer: `Nine states currently offer direct discounts on marriage license fees for couples who complete premarital counseling or education: Florida (~$33 off), Texas ($60 off), Minnesota (up to $75 off), Tennessee ($60 off), Oklahoma ($45 off), Georgia (county-dependent), Maryland (county-dependent), Utah ($20 off via MED program), and West Virginia ($20 off). Florida and Texas also waive mandatory waiting periods.`
     },
     {
       question: 'How do I get the marriage license discount?',
@@ -107,7 +107,7 @@ const MarriageLicenseDiscountPage = () => {
     },
     {
       question: 'Does my state offer a marriage license discount?',
-      answer: 'Currently 10 states offer a direct fee reduction on your marriage license for completing premarital counseling: Florida, Texas, Minnesota, Tennessee, Oklahoma, Georgia, Indiana, Maryland, Utah, and West Virginia. South Carolina offers a $50 state income tax credit instead of a direct fee reduction. If your state isn\'t listed, premarital counseling is still a worthwhile investment — just without the license fee discount.'
+      answer: 'Currently 9 states offer a direct fee reduction on your marriage license for completing premarital counseling or education: Florida, Texas, Minnesota, Tennessee, Oklahoma, Georgia, Maryland, Utah, and West Virginia. South Carolina offers a $50 state income tax credit instead of a direct fee reduction. If your state isn\'t listed, premarital counseling is still a worthwhile investment — just without the license fee discount.'
     }
   ]
 
@@ -116,7 +116,7 @@ const MarriageLicenseDiscountPage = () => {
     "@context": "https://schema.org",
     "@type": "WebPage",
     "name": "Marriage License Discounts for Premarital Counseling",
-    "description": "10 states reduce your marriage license fee by $20–$75 when you complete premarital counseling. Compare discounts state by state and find approved counselors.",
+    "description": "9 states reduce your marriage license fee by $20–$75 when you complete premarital counseling. Compare discounts state by state and find approved counselors.",
     "mainEntity": {
       "@type": "ItemList",
       "name": "States Offering Marriage License Discounts",

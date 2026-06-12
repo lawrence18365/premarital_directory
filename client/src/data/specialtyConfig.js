@@ -228,7 +228,7 @@ export const SPECIALTY_CONFIG = {
       {
         heading: 'Marriage License Discounts Through Online Counseling',
         paragraphs: [
-          'If you live in Texas, Florida, Oklahoma, Indiana, Tennessee, Minnesota, Maryland, or Georgia, completing an online premarital course may qualify you for a discount of $16–$75 on your marriage license fee — and in some states, the waiting period is waived as well. Most states accept virtual programs as long as the provider holds a valid license in your state. Browse our state-by-state discount guide to confirm eligibility requirements before enrolling.'
+          'If you live in Texas, Florida, Oklahoma, Tennessee, Minnesota, Maryland, Georgia, Utah, or West Virginia, completing an online premarital course may qualify you for a discount of $20–$75 on your marriage license fee — and in some states, the waiting period is waived as well. Most states accept virtual programs as long as the provider holds a valid license in your state. Browse our state-by-state discount guide to confirm eligibility requirements before enrolling.'
         ]
       }
     ]
@@ -691,7 +691,7 @@ export const STATE_DISCOUNT_CONFIG = {
     discount: 'Up to $75',
     originalFee: '$125',
     discountedFee: '$50',
-    waitingPeriod: '5-day waiting period waived',
+    waitingPeriod: 'No waiting period impact',
     requirements: [
       'Complete at least 12 hours of premarital education',
       'Course must cover communication, conflict resolution, and commitment',
@@ -702,7 +702,7 @@ export const STATE_DISCOUNT_CONFIG = {
       'Complete at least 12 hours of premarital education covering communication, conflict resolution, and commitment',
       'Receive your certificate of completion from the provider',
       'Submit the certificate to your county when applying for a marriage license',
-      'Receive up to $75 off your marriage license fee and waiver of the 5-day waiting period'
+      'Receive up to $75 off your marriage license fee'
     ],
     faqs: [
       {
@@ -711,11 +711,11 @@ export const STATE_DISCOUNT_CONFIG = {
       },
       {
         question: 'Does Minnesota waive the waiting period with premarital education?',
-        answer: 'Yes, completing the 12-hour premarital education requirement waives the standard 5-day waiting period in Minnesota.'
+        answer: 'No. Minnesota eliminated its general 5-day waiting period in 2016, so there is no premarital-education waiting-period waiver to claim. The incentive is the reduced license fee.'
       }
     ],
     certificateUrl: null,
-    notes: 'One of the largest discounts in the country — up to $75 off the license fee.'
+    notes: 'One of the largest discounts in the country — up to $75 off the license fee. Minnesota no longer has a general waiting period.'
   },
   'oklahoma': {
     name: 'Oklahoma',
@@ -812,38 +812,6 @@ export const STATE_DISCOUNT_CONFIG = {
     ],
     certificateUrl: 'https://www.twogetherintexas.com/',
     notes: 'Twogether in Texas also waives the 72-hour waiting period — see program details.'
-  },
-  'indiana': {
-    name: 'Indiana',
-    abbr: 'IN',
-    discount: '$60',
-    originalFee: '$78',
-    discountedFee: '$18',
-    waitingPeriod: 'No waiting period impact',
-    requirements: [
-      'Complete premarital counseling with a licensed professional or clergy',
-      'Have your counselor sign the Certificate of Completion',
-      'Present the certificate when applying for your marriage license'
-    ],
-    steps: [
-      'Find a licensed professional or clergy member in Indiana for premarital counseling',
-      'Complete the premarital counseling program together as a couple',
-      'Have your counselor sign the official Indiana Certificate of Completion form',
-      'Present the signed certificate at the county clerk when applying for your marriage license',
-      'Receive a $60 discount, reducing the license fee from $78 to $18'
-    ],
-    faqs: [
-      {
-        question: 'Where can I get the Indiana premarital counseling certificate form?',
-        answer: 'The official Certificate of Completion form is available from the Indiana Courts website. Your counselor should be familiar with it, or you can download it and bring it to your sessions.'
-      },
-      {
-        question: 'Is there a minimum number of hours for Indiana premarital counseling?',
-        answer: 'Indiana does not specify a minimum number of hours. The requirement is completion of premarital counseling with a licensed professional or clergy member who signs the certificate.'
-      }
-    ],
-    certificateUrl: 'https://www.in.gov/courts/files/form-completion-premarital-counseling.pdf',
-    notes: 'Use the official Indiana courts certificate form to claim the $60 discount.'
   },
   'utah': {
     name: 'Utah',

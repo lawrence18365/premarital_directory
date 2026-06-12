@@ -10,6 +10,10 @@ const UNIVERSAL_SLUGS = [
   'premarital-counseling-cost',
 ];
 
+const EXCLUDED_RELATED_SLUGS = new Set([
+  'indiana-marriage-license-discount',
+]);
+
 const MAX_POSTS = 4;
 
 const RelatedBlogPosts = ({ stateSlug, stateName }) => {
@@ -29,13 +33,17 @@ const RelatedBlogPosts = ({ stateSlug, stateName }) => {
           .eq('status', 'published')
           .order('date', { ascending: false });
 
-        if (!allPublished) {
+        const eligiblePosts = (allPublished || []).filter(
+          (post) => !EXCLUDED_RELATED_SLUGS.has(post.slug)
+        );
+
+        if (!eligiblePosts.length) {
           setLoaded(true);
           return;
         }
 
         // Posts whose slug contains the state name (e.g. "florida-marriage-license-discount")
-        const stateSpecific = allPublished.filter(p =>
+        const stateSpecific = eligiblePosts.filter(p =>
           p.slug.includes(stateKey) && stateKey.length > 2
         );
 
@@ -43,7 +51,7 @@ const RelatedBlogPosts = ({ stateSlug, stateName }) => {
         const usedSlugs = new Set(stateSpecific.map(p => p.slug));
         const universalPosts = UNIVERSAL_SLUGS
           .filter(slug => !usedSlugs.has(slug))
-          .map(slug => allPublished.find(p => p.slug === slug))
+          .map(slug => eligiblePosts.find(p => p.slug === slug))
           .filter(Boolean);
 
         const combined = [...stateSpecific, ...universalPosts].slice(0, MAX_POSTS);

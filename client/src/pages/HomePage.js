@@ -325,8 +325,8 @@ const HomePage = () => {
                 { state: 'Texas', slug: 'texas', discount: '$60 off' },
                 { state: 'Minnesota', slug: 'minnesota', discount: 'Up to $75 off' },
                 { state: 'Tennessee', slug: 'tennessee', discount: '$60 off' },
-                { state: 'Oklahoma', slug: 'oklahoma', discount: '$50 off' },
-                { state: 'Indiana', slug: 'indiana', discount: '$60 off' }
+                { state: 'Oklahoma', slug: 'oklahoma', discount: '$45 off' },
+                { state: 'West Virginia', slug: 'west-virginia', discount: '$20 off' }
               ].map((item) => (
                 <Link
                   key={item.slug}

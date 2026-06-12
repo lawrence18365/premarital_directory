@@ -2,9 +2,6 @@
 http://weddingcounselors.com/* https://www.weddingcounselors.com/:splat 301!
 https://weddingcounselors.com/* https://www.weddingcounselors.com/:splat 301!
 
-# Unsubscribe — proxy to Supabase edge function (must be before SPA catch-all)
-/api/unsubscribe https://bkjwctlolhoxhnoospwp.supabase.co/functions/v1/unsubscribe-digest 200!
-
 # Remove trailing slashes (301 Permanent) - except root
 /about/ /about 301!
 /contact/ /contact 301!
@@ -1154,57 +1151,16 @@ https://weddingcounselors.com/* https://www.weddingcounselors.com/:splat 301!
 /premarital-counseling/affordable/wy /premarital-counseling/affordable/wyoming 301!
 /premarital-counseling/affordable/wy/* /premarital-counseling/affordable/wyoming/:splat 301!
 
-# Marriage license discount state abbreviation redirects (50 rules)
-/premarital-counseling/marriage-license-discount/al /premarital-counseling/marriage-license-discount/alabama 301!
-/premarital-counseling/marriage-license-discount/ak /premarital-counseling/marriage-license-discount/alaska 301!
-/premarital-counseling/marriage-license-discount/az /premarital-counseling/marriage-license-discount/arizona 301!
-/premarital-counseling/marriage-license-discount/ar /premarital-counseling/marriage-license-discount/arkansas 301!
-/premarital-counseling/marriage-license-discount/ca /premarital-counseling/marriage-license-discount/california 301!
-/premarital-counseling/marriage-license-discount/co /premarital-counseling/marriage-license-discount/colorado 301!
-/premarital-counseling/marriage-license-discount/ct /premarital-counseling/marriage-license-discount/connecticut 301!
-/premarital-counseling/marriage-license-discount/de /premarital-counseling/marriage-license-discount/delaware 301!
+# Marriage license discount state abbreviation redirects (direct-incentive states only)
 /premarital-counseling/marriage-license-discount/fl /premarital-counseling/marriage-license-discount/florida 301!
 /premarital-counseling/marriage-license-discount/ga /premarital-counseling/marriage-license-discount/georgia 301!
-/premarital-counseling/marriage-license-discount/hi /premarital-counseling/marriage-license-discount/hawaii 301!
-/premarital-counseling/marriage-license-discount/id /premarital-counseling/marriage-license-discount/idaho 301!
-/premarital-counseling/marriage-license-discount/il /premarital-counseling/marriage-license-discount/illinois 301!
-/premarital-counseling/marriage-license-discount/in /premarital-counseling/marriage-license-discount/indiana 301!
-/premarital-counseling/marriage-license-discount/ia /premarital-counseling/marriage-license-discount/iowa 301!
-/premarital-counseling/marriage-license-discount/ks /premarital-counseling/marriage-license-discount/kansas 301!
-/premarital-counseling/marriage-license-discount/ky /premarital-counseling/marriage-license-discount/kentucky 301!
-/premarital-counseling/marriage-license-discount/la /premarital-counseling/marriage-license-discount/louisiana 301!
-/premarital-counseling/marriage-license-discount/me /premarital-counseling/marriage-license-discount/maine 301!
 /premarital-counseling/marriage-license-discount/md /premarital-counseling/marriage-license-discount/maryland 301!
-/premarital-counseling/marriage-license-discount/ma /premarital-counseling/marriage-license-discount/massachusetts 301!
-/premarital-counseling/marriage-license-discount/mi /premarital-counseling/marriage-license-discount/michigan 301!
 /premarital-counseling/marriage-license-discount/mn /premarital-counseling/marriage-license-discount/minnesota 301!
-/premarital-counseling/marriage-license-discount/ms /premarital-counseling/marriage-license-discount/mississippi 301!
-/premarital-counseling/marriage-license-discount/mo /premarital-counseling/marriage-license-discount/missouri 301!
-/premarital-counseling/marriage-license-discount/mt /premarital-counseling/marriage-license-discount/montana 301!
-/premarital-counseling/marriage-license-discount/ne /premarital-counseling/marriage-license-discount/nebraska 301!
-/premarital-counseling/marriage-license-discount/nv /premarital-counseling/marriage-license-discount/nevada 301!
-/premarital-counseling/marriage-license-discount/nh /premarital-counseling/marriage-license-discount/new-hampshire 301!
-/premarital-counseling/marriage-license-discount/nj /premarital-counseling/marriage-license-discount/new-jersey 301!
-/premarital-counseling/marriage-license-discount/nm /premarital-counseling/marriage-license-discount/new-mexico 301!
-/premarital-counseling/marriage-license-discount/ny /premarital-counseling/marriage-license-discount/new-york 301!
-/premarital-counseling/marriage-license-discount/nc /premarital-counseling/marriage-license-discount/north-carolina 301!
-/premarital-counseling/marriage-license-discount/nd /premarital-counseling/marriage-license-discount/north-dakota 301!
-/premarital-counseling/marriage-license-discount/oh /premarital-counseling/marriage-license-discount/ohio 301!
 /premarital-counseling/marriage-license-discount/ok /premarital-counseling/marriage-license-discount/oklahoma 301!
-/premarital-counseling/marriage-license-discount/or /premarital-counseling/marriage-license-discount/oregon 301!
-/premarital-counseling/marriage-license-discount/pa /premarital-counseling/marriage-license-discount/pennsylvania 301!
-/premarital-counseling/marriage-license-discount/ri /premarital-counseling/marriage-license-discount/rhode-island 301!
-/premarital-counseling/marriage-license-discount/sc /premarital-counseling/marriage-license-discount/south-carolina 301!
-/premarital-counseling/marriage-license-discount/sd /premarital-counseling/marriage-license-discount/south-dakota 301!
 /premarital-counseling/marriage-license-discount/tn /premarital-counseling/marriage-license-discount/tennessee 301!
 /premarital-counseling/marriage-license-discount/tx /premarital-counseling/marriage-license-discount/texas 301!
 /premarital-counseling/marriage-license-discount/ut /premarital-counseling/marriage-license-discount/utah 301!
-/premarital-counseling/marriage-license-discount/vt /premarital-counseling/marriage-license-discount/vermont 301!
-/premarital-counseling/marriage-license-discount/va /premarital-counseling/marriage-license-discount/virginia 301!
-/premarital-counseling/marriage-license-discount/wa /premarital-counseling/marriage-license-discount/washington 301!
 /premarital-counseling/marriage-license-discount/wv /premarital-counseling/marriage-license-discount/west-virginia 301!
-/premarital-counseling/marriage-license-discount/wi /premarital-counseling/marriage-license-discount/wisconsin 301!
-/premarital-counseling/marriage-license-discount/wy /premarital-counseling/marriage-license-discount/wyoming 301!
 
 # SPA fallback (200 OK)
 /* /index.html 200

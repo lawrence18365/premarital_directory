@@ -145,9 +145,6 @@ const LINK_MAP = {
   'oklahoma-marriage-license-discount': [
     { url: '/premarital-counseling/marriage-license-discount', text: 'All states with marriage license discounts' },
   ],
-  'indiana-marriage-license-discount': [
-    { url: '/premarital-counseling/marriage-license-discount', text: 'All states with marriage license discounts' },
-  ],
 
   // Authority posts — add directory links
   'premarital-counseling-statistics': [

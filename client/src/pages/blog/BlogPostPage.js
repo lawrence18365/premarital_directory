@@ -22,6 +22,12 @@ const TONE_BY_CATEGORY = {
 const AFFILIATE_CONTEXT_BY_SLUG = {
   'prepare-enrich-vs-gottman-vs-symbis': 'therapy',
   'best-premarital-counseling-books': 'books',
+  'prepare-enrich-vs-foccus': 'therapy',
+  'symbis-vs-prepare-enrich': 'therapy',
+  'gottman-vs-eft-premarital-counseling': 'therapy',
+  'online-premarital-counseling-vs-self-paced-course': 'therapy',
+  'twogether-in-texas-vs-private-premarital-counseling': 'license',
+  'premarital-counseling-certificate-requirements-by-state': 'license',
 };
 
 const slugify = (value) => value

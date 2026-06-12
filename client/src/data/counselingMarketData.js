@@ -99,11 +99,11 @@ export const LICENSE_DISCOUNT_DATA = {
   'texas': { discount: '$60', waitingPeriodWaiver: true, courseHours: 8, notes: 'Twogether in Texas program; waives 72-hour waiting period' },
   'minnesota': { discount: 'Up to $75', waitingPeriodWaiver: false, courseHours: 12, notes: 'Requires minimum 12 hours of premarital education' },
   'tennessee': { discount: '$60', waitingPeriodWaiver: false, courseHours: 4, notes: 'Completion certificate required at application' },
-  'oklahoma': { discount: '$50', waitingPeriodWaiver: false, courseHours: 4, notes: 'Must be completed within 1 year of application' },
-  'georgia': { discount: '$15–$30', waitingPeriodWaiver: false, courseHours: 6, notes: 'County-dependent; some waive waiting period' },
-  'indiana': { discount: '$60', waitingPeriodWaiver: true, courseHours: 4, notes: 'Waives mandatory waiting period' },
-  'maryland': { discount: '$25', waitingPeriodWaiver: true, courseHours: 4, notes: 'Waives 48-hour waiting period' },
-  'utah': { discount: '$20', waitingPeriodWaiver: false, courseHours: 4, notes: 'Premarital counseling or education course' },
+  'oklahoma': { discount: '$45', waitingPeriodWaiver: false, courseHours: 4, notes: 'Standard $50 fee drops to $5 after qualifying premarital counseling' },
+  'georgia': { discount: 'County-dependent', waitingPeriodWaiver: false, courseHours: 6, notes: 'Qualifying education can remove the license fee; county fees vary' },
+  'maryland': { discount: 'County-dependent', waitingPeriodWaiver: false, courseHours: 4, notes: 'Counties may set the discount amount; 48-hour waiting period is not waived' },
+  'utah': { discount: '$20', waitingPeriodWaiver: false, courseHours: 6, notes: 'MED program: 6 hours education or 3 hours counseling' },
+  'west-virginia': { discount: '$20', waitingPeriodWaiver: false, courseHours: 4, notes: 'Certificate must be dated within 12 months of application' },
 }
 
 export function getStateLicenseDiscount(stateSlug) {

@@ -5,6 +5,7 @@ import Breadcrumbs from '../components/common/Breadcrumbs'
 import FAQ from '../components/common/FAQ'
 import ProfileCard from '../components/profiles/ProfileCard'
 import CitationsBlock from '../components/benefits/CitationsBlock'
+import AffiliateOffers from '../components/monetization/AffiliateOffers'
 import { STATE_DISCOUNT_CONFIG } from '../data/specialtyConfig'
 import { STATE_CONFIG } from '../data/locationConfig'
 import { SECTION_FIELD_REQUIREMENTS } from '../data/jurisdictionBenefitsSchema'
@@ -221,6 +222,9 @@ const MarriageLicenseStatePage = () => {
   }
 
   const faqs = [...staticFaqs, ...generatedFaqs]
+  const relatedDiscountStates = Object.entries(STATE_DISCOUNT_CONFIG)
+    .filter(([slug]) => slug !== state)
+    .slice(0, 4)
 
   // Structured data
   const howToStructuredData = staticConfig?.steps ? {
@@ -507,6 +511,25 @@ const MarriageLicenseStatePage = () => {
               </div>
             )}
 
+            <div className="content-section">
+              <h2>Choose a Course or Counselor Carefully</h2>
+              <p>
+                Before paying for a premarital course, confirm the provider can issue a certificate
+                accepted by {stateName} clerks and that the certificate will be dated inside the required
+                window for your wedding timeline.
+              </p>
+              <p>
+                If you want live sessions instead of a self-paced course, compare{' '}
+                <Link to={`/premarital-counseling/${state}`}>{stateName} premarital counselors</Link>
+                {' '}or browse <Link to="/premarital-counseling/online">online premarital counseling</Link>.
+                Providers who are listed here can also{' '}
+                <Link to="/claim-profile">claim or update their profile</Link> so couples see current certificate,
+                session format, and fee details.
+              </p>
+            </div>
+
+            <AffiliateOffers context="license" />
+
             {/* ── Local counselors ─────────────────────────────────────── */}
             <div className="content-section">
               <h2>Certified Premarital Counselors in {stateName}</h2>
@@ -581,6 +604,16 @@ const MarriageLicenseStatePage = () => {
                   <i className="fa fa-arrow-right"></i>
                   Online Premarital Counseling
                 </Link>
+                {relatedDiscountStates.map(([slug, config]) => (
+                  <Link
+                    key={slug}
+                    to={`/premarital-counseling/marriage-license-discount/${slug}`}
+                    className="related-page-link"
+                  >
+                    <i className="fa fa-arrow-right"></i>
+                    {config.name} License Discount
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
