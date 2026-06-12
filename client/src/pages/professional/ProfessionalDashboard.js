@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabaseClient'
 import { getStateNameFromAbbr } from '../../lib/utils'
 import { Link, Navigate } from 'react-router-dom'
+import UpgradeCTA from '../../components/monetization/UpgradeCTA'
 
 const RESPONSE_WINDOW_DAYS = 30
 const RESPONDED_STATUSES = new Set(['contacted', 'scheduled', 'converted', 'booked_elsewhere'])
@@ -547,6 +548,12 @@ const ProfessionalDashboard = () => {
           </div>
         )}
       </section>
+
+      <UpgradeCTA
+        profile={profile}
+        surface="professional_dashboard"
+        variant="compact"
+      />
 
       <section className="profdash-metrics">
         <article className="profdash-metric-card">

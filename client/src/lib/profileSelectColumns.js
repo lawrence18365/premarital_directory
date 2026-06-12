@@ -41,6 +41,7 @@ export const PROFILE_SELECT_COLUMNS = [
   'is_claimed',
   'claimed_at',
   'is_sponsored',
+  'sponsored_rank',
   'moderation_status',
   'tier',
   'slug',

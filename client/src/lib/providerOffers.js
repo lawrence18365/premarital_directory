@@ -1,9 +1,24 @@
 export const CONTACT_EMAIL = 'hello@weddingcounselors.com'
 export const FOUNDING_PAGE_PATH = '/for-providers/founding'
+const upgradeMode = process.env.REACT_APP_UPGRADE_MODE === 'subscription' ? 'subscription' : 'one_time'
+
 export const FOUNDING_PAYMENT_LINKS = {
   'founding-listing': process.env.REACT_APP_FOUNDING_LINK_LISTING || '',
   'founding-pro': process.env.REACT_APP_FOUNDING_LINK_PRO || '',
   'city-category-sponsor': process.env.REACT_APP_FOUNDING_LINK_SPONSOR || '',
+}
+
+export const UPGRADE_OFFER = {
+  mode: upgradeMode,
+  label: upgradeMode === 'subscription' ? 'Featured Listing' : 'Founding Listing',
+  price: process.env.REACT_APP_UPGRADE_PRICE || (upgradeMode === 'subscription' ? '$49' : '$79'),
+  billingNote: process.env.REACT_APP_UPGRADE_BILLING_NOTE || (upgradeMode === 'subscription' ? 'monthly, cancel anytime' : 'one-time founding placement'),
+  checkoutUrl: process.env.REACT_APP_UPGRADE_CHECKOUT_URL || FOUNDING_PAYMENT_LINKS['founding-listing'] || '',
+  valueProps: [
+    'Featured placement in your city',
+    'Professional profile polish',
+    'More visibility while the directory is early'
+  ]
 }
 
 const CONTACT_TYPES = new Set(['general', 'couple', 'professional', 'support', 'partnership'])

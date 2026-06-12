@@ -5,6 +5,7 @@ import FAQ from '../components/common/FAQ'
 import {
   FOUNDING_PACKAGES,
   FOUNDING_PAGE_PATH,
+  UPGRADE_OFFER,
   buildFoundingInquiryPath
 } from '../lib/providerOffers'
 import '../assets/css/features.css'
@@ -16,7 +17,7 @@ const pricingFAQs = [
   },
   {
     question: 'Are paid plans monthly?',
-    answer: 'Not right now. The paid provider offer is currently a one-time founding package that we activate manually after confirming fit and placement.'
+    answer: 'Not right now. The active provider offer is a one-time founding listing. Claimed providers can use self-serve checkout from their dashboard; larger placements are reviewed manually.'
   },
   {
     question: 'What do founding packages include?',
@@ -51,8 +52,12 @@ const PricingPage = () => {
       pricePeriod: pkg.priceSuffix,
       description: pkg.summary,
       features: pkg.features,
-      cta: pkg.cta,
-      ctaLink: buildFoundingInquiryPath(pkg),
+      cta: pkg.id === 'founding-listing' && UPGRADE_OFFER.checkoutUrl
+        ? 'Upgrade from Dashboard'
+        : pkg.cta,
+      ctaLink: pkg.id === 'founding-listing' && UPGRADE_OFFER.checkoutUrl
+        ? '/professional/dashboard'
+        : buildFoundingInquiryPath(pkg),
       highlighted: pkg.highlight
     }))
   ]
@@ -74,7 +79,9 @@ const PricingPage = () => {
             Start with a free community profile or apply for a one-time founding package if you want hands-on placement and profile support.
           </p>
           <p style={{ color: 'var(--text-secondary)', maxWidth: 760, margin: 'var(--space-4) auto 0' }}>
-            Self-serve monthly billing is not live yet. Paid placements are approved manually so city and specialty inventory stays limited and relevant.
+            {UPGRADE_OFFER.checkoutUrl
+              ? `Claimed providers can upgrade from their dashboard to ${UPGRADE_OFFER.label} at ${UPGRADE_OFFER.price} ${UPGRADE_OFFER.billingNote}. Monthly billing is not live yet.`
+              : 'Self-serve monthly billing is not live yet. Paid placements are approved manually so city and specialty inventory stays limited and relevant.'}
           </p>
         </div>
 

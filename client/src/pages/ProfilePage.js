@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import { generateSlug } from '../lib/utils'
 import { formatLocation, formatPhoneNumber } from '../lib/utils'
 import LeadContactForm from '../components/leads/LeadContactForm'
@@ -17,6 +18,7 @@ import UnclaimedProfileBanner from '../components/profiles/UnclaimedProfileBanne
 import NearbyProfessionals from '../components/profiles/NearbyProfessionals'
 import ShareButton from '../components/common/ShareButton'
 import CoupleEmailCapture from '../components/leads/CoupleEmailCapture'
+import UpgradeCTA from '../components/monetization/UpgradeCTA'
 import '../assets/css/profile-page-enhanced.css'
 import '../assets/css/share-button.css'
 
@@ -261,6 +263,7 @@ const buildProfileMetaDescription = (profile, {
 }
 
 const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
+  const { user } = useAuth()
   const params = useParams()
   const state = stateOverride || params.state
   const city = cityOverride || params.city
@@ -281,6 +284,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   const canShowDirectContact = profile?.tier === 'local_featured' || profile?.tier === 'area_spotlight'
   const claimQueryParam = new URLSearchParams(location.search).get('claim')
   const shouldShowClaimPrompts = ['1', 'true', 'yes'].includes(String(claimQueryParam || '').toLowerCase()) || Boolean(location.state?.showClaimCta)
+  const isProfileOwner = Boolean(user?.id && profile?.user_id && user.id === profile.user_id)
 
   useEffect(() => {
     loadProfile()
@@ -669,6 +673,14 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
         <section className="profile-premium-shell">
           <div className="container">
             <Breadcrumbs items={breadcrumbItems} className="profile-premium-breadcrumbs" />
+
+            {isProfileOwner && (
+              <UpgradeCTA
+                profile={profile}
+                surface="owner_public_profile"
+                variant="banner"
+              />
+            )}
 
             <header className="profile-premium-hero">
               <div className="profile-premium-photo-wrap">

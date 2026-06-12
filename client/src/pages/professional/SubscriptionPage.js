@@ -7,8 +7,10 @@ import {
   DIRECTORY_PLAN_DETAILS,
   FOUNDING_PACKAGES,
   FOUNDING_PAGE_PATH,
+  UPGRADE_OFFER,
   buildFoundingInquiryPath
 } from '../../lib/providerOffers'
+import UpgradeCTA from '../../components/monetization/UpgradeCTA'
 
 const SubscriptionPage = () => {
   const { user, profile, loading: authLoading } = useAuth()
@@ -30,6 +32,9 @@ const SubscriptionPage = () => {
   const currentPlan = DIRECTORY_PLAN_DETAILS[currentTier] || DIRECTORY_PLAN_DETAILS.community
   const hasManagedUpgrade = currentTier !== 'community'
   const userEmail = profile?.email || user?.email
+  const manualPackages = UPGRADE_OFFER.checkoutUrl
+    ? FOUNDING_PACKAGES.filter((pkg) => pkg.id !== 'founding-listing')
+    : FOUNDING_PACKAGES
 
   return (
     <>
@@ -139,18 +144,27 @@ const SubscriptionPage = () => {
           </div>
         </div>
 
+        <UpgradeCTA
+          profile={profile}
+          surface="subscription_page"
+          variant="compact"
+        />
+
         <div className="dashboard-section" style={{ marginTop: 'var(--space-8)' }}>
           <h2>Paid Options That Are Live</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-6)', maxWidth: '780px' }}>
-            Self-serve monthly billing is not active yet. If you want better placement or help tightening your profile, use a one-time founder package and we will activate it manually.
+            {UPGRADE_OFFER.checkoutUrl
+              ? `The active self-serve offer is ${UPGRADE_OFFER.label} at ${UPGRADE_OFFER.price} ${UPGRADE_OFFER.billingNote}. Larger placements are reviewed manually so city and specialty inventory stays limited.`
+              : 'Self-serve checkout is not active yet. If you want better placement or help tightening your profile, use a one-time founder package and we will activate it manually.'}
           </p>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: 'var(--space-6)'
-          }}>
-            {FOUNDING_PACKAGES.map((pkg) => (
+          {manualPackages.length > 0 && (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: 'var(--space-6)'
+            }}>
+              {manualPackages.map((pkg) => (
               <div key={pkg.id} style={{
                 background: 'white',
                 borderRadius: 'var(--radius-lg)',
@@ -218,8 +232,9 @@ const SubscriptionPage = () => {
                   {pkg.cta}
                 </Link>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div style={{
