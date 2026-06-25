@@ -101,7 +101,7 @@ serve(async (req) => {
             'Authorization': `Bearer ${RESEND_API_KEY}`
           },
           body: JSON.stringify({
-            from: 'WeddingCounselors <matchmaker@updates.weddingcounselors.com>',
+            from: 'Wedding Counselors <hello@weddingcounselors.com>',
             to: PLATFORM_EMAIL,
             reply_to: email,
             subject: `🚨 NEW CONCIERGE MATCH LEAD: ${city}, ${state}`,
