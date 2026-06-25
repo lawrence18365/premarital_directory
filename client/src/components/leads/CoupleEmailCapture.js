@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { trackEvent } from '../analytics/GoogleAnalytics'
 
 const INTEREST_OPTIONS = [
@@ -39,6 +39,8 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
   const [state, setState] = useState(defaultState)
   const [status, setStatus] = useState('idle') // idle | submitting | success | error
   const [dismissed, setDismissed] = useState(false)
+  const [hp, setHp] = useState('') // honeypot — must stay empty for real users
+  const formLoadedAt = useRef(Date.now())
 
   // Check if already submitted (localStorage)
   useEffect(() => {
@@ -104,6 +106,8 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
           city: city.trim() || null,
           state: state.trim() || null,
           source_page: sourcePage,
+          _hp: hp,
+          _t: Date.now() - formLoadedAt.current,
         })
       })
 
@@ -161,6 +165,17 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
         </p>
 
         <form onSubmit={handleSubmit} style={{ textAlign: 'left' }}>
+          {/* Honeypot — hidden from humans, bots auto-fill it. Real submits leave it empty. */}
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={hp}
+            onChange={(e) => setHp(e.target.value)}
+            aria-hidden="true"
+            style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+          />
           {/* Row 1: Name + Email */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
             <div style={{ flex: '0 0 140px', minWidth: '120px' }}>

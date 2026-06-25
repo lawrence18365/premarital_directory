@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4"
 import { normalizeCoupleSubscription } from "../_shared/coupleSubscription.ts"
+import { checkForSpam, silentSpamResponse } from "../_shared/spamDetection.ts"
 
 /**
  * Send Couple Guide — triggers immediately when a couple subscribes.
@@ -34,6 +35,21 @@ serve(async (req) => {
 
   try {
     const body = await req.json()
+
+    // --- Spam detection ---
+    // This is a public endpoint and was being hammered by bots submitting
+    // gibberish first_name / city values. Honeypot + timing + gibberish scoring.
+    const spamCheck = checkForSpam({
+      honeypot: body._hp,
+      elapsedMs: body._t,
+      name: body.first_name,
+      message: body.city,
+    })
+    if (spamCheck.isSpam) {
+      console.warn(`Spam couple-guide signup blocked (score=${spamCheck.score}, reason=${spamCheck.reason}):`, body.email)
+      return silentSpamResponse(corsHeaders)
+    }
+
     const subscriber = normalizeCoupleSubscription(body)
     const firstName = subscriber.firstName || 'there'
 
