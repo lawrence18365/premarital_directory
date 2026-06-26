@@ -323,6 +323,11 @@ jobs:
                 "continue": true
               },
               {
+                "src": "/(professionals-search|embed/.*|go/.*|claim-profile.*|claim/.*|claim-success|claim-program/.*|thank-you|quiz/.*)",
+                "headers": { "X-Robots-Tag": "noindex, follow" },
+                "continue": true
+              },
+              {
                 "handle": "filesystem"
               },
               {

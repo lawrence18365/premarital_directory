@@ -31,6 +31,8 @@ const { STATE_CONFIG, CITY_CONFIG } = require('../src/data/locations.json')
 const CORE_PAGES = [
   { url: '/', priority: 1.0, changefreq: 'weekly' },
   { url: '/premarital-counseling', priority: 0.9, changefreq: 'daily' },
+  { url: '/locations', priority: 0.7, changefreq: 'weekly' },
+  { url: '/premarital-counseling/state-requirements', priority: 0.7, changefreq: 'monthly' },
   { url: '/blog', priority: 0.8, changefreq: 'daily' },
   { url: '/features', priority: 0.7, changefreq: 'monthly' },
   { url: '/about', priority: 0.6, changefreq: 'monthly' },
@@ -38,6 +40,7 @@ const CORE_PAGES = [
   { url: '/support', priority: 0.6, changefreq: 'monthly' },
   { url: '/guidelines', priority: 0.5, changefreq: 'monthly' },
   { url: '/for-churches', priority: 0.7, changefreq: 'monthly' },
+  { url: '/for-officiants', priority: 0.6, changefreq: 'monthly' },
   { url: '/how-it-works', priority: 0.6, changefreq: 'monthly' },
   { url: '/editorial-standards', priority: 0.5, changefreq: 'monthly' },
   { url: '/corrections', priority: 0.5, changefreq: 'monthly' },
@@ -231,16 +234,28 @@ function safeWriteSitemap(filePath, xml, newUrlCount, label) {
   return true
 }
 
-function generateSitemapXML(urls) {
-  const today = new Date().toISOString().split('T')[0]
+// Normalize any date-ish value to YYYY-MM-DD, or null when unavailable.
+// We OMIT lastmod rather than stamp a fake build date: a build date on a page
+// that did not change is noise that trains Google to distrust the signal.
+function toDateStr(value) {
+  if (!value) return null
+  try {
+    const d = new Date(value)
+    if (isNaN(d.getTime())) return null
+    return d.toISOString().split('T')[0]
+  } catch {
+    return null
+  }
+}
 
+function generateSitemapXML(urls) {
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
   xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 
-  urls.forEach(({ url, priority = 0.5, changefreq = 'weekly', lastmod = today }) => {
+  urls.forEach(({ url, priority = 0.5, changefreq = 'weekly', lastmod = null }) => {
     xml += '  <url>\n'
     xml += `    <loc>${DOMAIN}${url}</loc>\n`
-    xml += `    <lastmod>${lastmod}</lastmod>\n`
+    if (lastmod) xml += `    <lastmod>${lastmod}</lastmod>\n`
     xml += `    <changefreq>${changefreq}</changefreq>\n`
     xml += `    <priority>${priority.toFixed(1)}</priority>\n`
     xml += '  </url>\n'
@@ -280,7 +295,7 @@ function calculatePriority(profileCount, maxCount, isAnchor) {
 async function fetchProfileCounts() {
   if (!createClient) {
     console.log('⚠️  Supabase client not available, using default priorities')
-    return { cityCounts: null, profiles: [] }
+    return { cityCounts: null, cityLastmod: null, profiles: [] }
   }
 
   const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
@@ -288,7 +303,7 @@ async function fetchProfileCounts() {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.log('⚠️  Supabase credentials not found, using default priorities')
-    return { cityCounts: null, profiles: [] }
+    return { cityCounts: null, cityLastmod: null, profiles: [] }
   }
 
   try {
@@ -304,22 +319,26 @@ async function fetchProfileCounts() {
 
     if (error) {
       console.log('⚠️  Error fetching profiles:', error.message)
-      return { cityCounts: null, profiles: [] }
+      return { cityCounts: null, cityLastmod: null, profiles: [] }
     }
 
-    // Count profiles per city/state combination
+    // Count profiles per city/state combination + track the most recent profile
+    // update in each city (a real lastmod signal for the city directory page).
     const cityCounts = {}
+    const cityLastmod = {}
     profiles.forEach(profile => {
       if (profile.city && profile.state_province) {
         const key = `${profile.city.toLowerCase()}|${getStateSlug(profile.state_province)}`
         cityCounts[key] = (cityCounts[key] || 0) + 1
+        const d = toDateStr(profile.onboarding_last_saved_at || profile.created_at)
+        if (d && (!cityLastmod[key] || d > cityLastmod[key])) cityLastmod[key] = d
       }
     })
 
-    return { cityCounts, profiles: profiles || [] }
+    return { cityCounts, cityLastmod, profiles: profiles || [] }
   } catch (err) {
     console.log('⚠️  Failed to connect to Supabase:', err.message)
-    return { cityCounts: null, profiles: [] }
+    return { cityCounts: null, cityLastmod: null, profiles: [] }
   }
 }
 
@@ -415,9 +434,11 @@ function profileMatchesSpecialty(profile, specialtySlug) {
 function buildSpecialtyDepth(profiles) {
   const stateCounts = {}
   const cityCounts = {}
+  const stateLastmod = {}
+  const cityLastmod = {}
 
   if (!profiles || profiles.length === 0) {
-    return { stateCounts, cityCounts }
+    return { stateCounts, cityCounts, stateLastmod, cityLastmod }
   }
 
   profiles.forEach(profile => {
@@ -425,6 +446,7 @@ function buildSpecialtyDepth(profiles) {
 
     const stateSlug = getStateSlug(profile.state_province)
     const citySlug = getCitySlug(profile.city)
+    const d = toDateStr(profile.onboarding_last_saved_at || profile.created_at)
 
     SPECIALTY_SLUGS.forEach(specialty => {
       if (!profileMatchesSpecialty(profile, specialty)) return
@@ -433,10 +455,12 @@ function buildSpecialtyDepth(profiles) {
       const cityKey = `${specialty}|${stateSlug}|${citySlug}`
       stateCounts[stateKey] = (stateCounts[stateKey] || 0) + 1
       cityCounts[cityKey] = (cityCounts[cityKey] || 0) + 1
+      if (d && (!stateLastmod[stateKey] || d > stateLastmod[stateKey])) stateLastmod[stateKey] = d
+      if (d && (!cityLastmod[cityKey] || d > cityLastmod[cityKey])) cityLastmod[cityKey] = d
     })
   })
 
-  return { stateCounts, cityCounts }
+  return { stateCounts, cityCounts, stateLastmod, cityLastmod }
 }
 
 async function main() {
@@ -446,14 +470,19 @@ async function main() {
   console.log('🗺️  Generating comprehensive sitemaps...')
 
   // Fetch profile counts and profiles from Supabase
-  const { cityCounts: profileCounts, profiles: allProfiles } = await fetchProfileCounts()
+  const { cityCounts: profileCounts, cityLastmod, profiles: allProfiles } = await fetchProfileCounts()
   const {
     stateCounts: catholicProgramStateCounts,
     cityCounts: catholicProgramCityCounts,
     totalPrograms: totalCatholicPrograms,
     hasCoverage: hasCatholicProgramCoverage
   } = await fetchCatholicProgramCounts()
-  const { stateCounts: specialtyStateCounts, cityCounts: specialtyCityCounts } = buildSpecialtyDepth(allProfiles)
+  const {
+    stateCounts: specialtyStateCounts,
+    cityCounts: specialtyCityCounts,
+    stateLastmod: specialtyStateLastmod,
+    cityLastmod: specialtyCityLastmod
+  } = buildSpecialtyDepth(allProfiles)
   const hasSpecialtyDepthData = Array.isArray(allProfiles) && allProfiles.length > 0
 
   // 1. Core pages sitemap
@@ -463,10 +492,9 @@ async function main() {
     return totalCatholicPrograms >= MIN_VERIFIED_CATHOLIC_PROGRAMS
   })
 
-  const coreUrls = corePages.map(page => ({
-    ...page,
-    lastmod: today
-  }))
+  // Core static pages have no reliable per-page change date — omit lastmod
+  // rather than stamp the build date.
+  const coreUrls = corePages.map(page => ({ ...page }))
 
   const coreSitemap = generateSitemapXML(coreUrls)
   fs.writeFileSync(path.join(publicDir, 'sitemap-core.xml'), coreSitemap)
@@ -503,8 +531,7 @@ async function main() {
       cityUrls.push({
         url: `/premarital-counseling/${stateSlug}`,
         priority: 0.7,
-        changefreq: 'weekly',
-        lastmod: today
+        changefreq: 'weekly'
       })
       includedStatePages++
     })
@@ -515,8 +542,7 @@ async function main() {
         cityUrls.push({
           url: `/premarital-counseling/${stateSlug}/${citySlug}`,
           priority: 0.8,
-          changefreq: 'daily',
-          lastmod: today
+          changefreq: 'daily'
         })
       })
     })
@@ -530,8 +556,7 @@ async function main() {
         cityUrls.push({
           url: `/premarital-counseling/${stateSlug}`,
           priority: 0.8,
-          changefreq: 'weekly',
-          lastmod: today
+          changefreq: 'weekly'
         })
         includedStatePages++
       } else {
@@ -569,7 +594,7 @@ async function main() {
         url: `/premarital-counseling/${city.stateSlug}/${city.citySlug}`,
         priority: priority,
         changefreq: 'daily',
-        lastmod: today
+        lastmod: (cityLastmod && cityLastmod[key]) || null
       })
     })
   }
@@ -625,7 +650,7 @@ async function main() {
           url: `/premarital-counseling/${specialty}/${stateSlug}`,
           priority: 0.8,
           changefreq: 'weekly',
-          lastmod: today
+          lastmod: (specialtyStateLastmod && specialtyStateLastmod[stateKey]) || null
         })
         includedSpecialtyStatePages++
       }
@@ -657,7 +682,7 @@ async function main() {
           url: `/premarital-counseling/${specialty}/${stateSlug}/${citySlug}`,
           priority: specialtyProfilesInCity >= MIN_SPECIALTY_CITY_PROFILES ? 0.7 : 0.6,
           changefreq: 'weekly',
-          lastmod: today
+          lastmod: (specialtyCityLastmod && specialtyCityLastmod[cityKey]) || null
         })
         includedSpecialtyCityPages++
       })
@@ -676,8 +701,7 @@ async function main() {
         specialtyUrls.push({
           url: `/premarital-counseling/${specialty}/${stateSlug}`,
           priority: 0.7,
-          changefreq: 'weekly',
-          lastmod: today
+          changefreq: 'weekly'
         })
         includedSpecialtyStatePages++
       })
@@ -703,7 +727,7 @@ async function main() {
     url: `/blog/${post.slug}`,
     priority: post.priority,
     changefreq: 'monthly',
-    lastmod: post.lastmod ? new Date(post.lastmod).toISOString().split('T')[0] : today
+    lastmod: toDateStr(post.lastmod)
   }))
 
   const blogSitemap = generateSitemapXML(blogUrls)
@@ -727,9 +751,7 @@ async function main() {
 
       const stateSlug = getStateSlug(profile.state_province)
       const citySlug = getCitySlug(profile.city)
-      const lastmod = profile.onboarding_last_saved_at
-        ? new Date(profile.onboarding_last_saved_at).toISOString().split('T')[0]
-        : today
+      const lastmod = toDateStr(profile.onboarding_last_saved_at || profile.created_at)
 
       // Claimed profiles with photos get higher priority
       const hasPhoto = !!profile.photo_url

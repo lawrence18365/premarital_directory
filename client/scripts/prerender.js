@@ -402,10 +402,12 @@ function routeIsNoindex(loc) {
 }
 
 function pruneNoindexFromSitemaps() {
-  // Profiles are not prerendered (served by the SSR renderer) so we cannot verify
-  // them from disk — leave that sitemap untouched. The generator already gates
-  // profiles on bio length, and the renderer noindexes missing profiles.
-  const targets = ['sitemap-core.xml', 'sitemap-cities.xml', 'sitemap-specialties.xml', 'sitemap-blog.xml']
+  // Profiles are prerendered on full deploys (PRERENDER_INCLUDE_PROFILES) but not
+  // on lean runs. The null-guard in routeIsNoindex keeps any profile whose HTML
+  // is absent (cannot verify -> keep), so it is safe to run profiles through the
+  // same prune: a profile is only dropped when its rendered HTML positively says
+  // noindex. The generator also gates profiles on bio length.
+  const targets = ['sitemap-core.xml', 'sitemap-cities.xml', 'sitemap-specialties.xml', 'sitemap-blog.xml', 'sitemap-profiles.xml']
   console.log('\n  Pruning noindex URLs from deployed sitemaps...')
   let totalPruned = 0
 
