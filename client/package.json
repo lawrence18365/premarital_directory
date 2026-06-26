@@ -35,41 +35,19 @@
     "deploy:netlify": "netlify deploy --prod",
     "analyze": "npm run build && npx source-map-explorer 'build/static/js/*.js'",
     "lint:css": "stylelint \"src/**/*.css\"",
-    "lint:js": "eslint src --ext .js,.jsx",
+    "lint:js": "eslint src --ext .js,.jsx --no-eslintrc --config eslint.lint.json",
     "snapshot": "node scripts/visual-snapshot.js",
     "prepare": "cd .. && husky client/.husky"
   },
   "lint-staged": {
     "src/**/*.css": "stylelint",
-    "src/**/*.{js,jsx}": "eslint"
+    "src/**/*.{js,jsx}": "eslint --no-eslintrc --config eslint.lint.json"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
-    ],
-    "rules": {
-      "react/forbid-dom-props": [
-        "warn",
-        {
-          "forbid": [
-            {
-              "propName": "style",
-              "message": "Prefer a CSS class or a ui/ component over inline styles"
-            }
-          ]
-        }
-      ],
-      "jsx-a11y/alt-text": "warn",
-      "jsx-a11y/anchor-has-content": "warn",
-      "jsx-a11y/anchor-is-valid": "warn",
-      "jsx-a11y/aria-props": "warn",
-      "jsx-a11y/aria-role": "warn",
-      "jsx-a11y/label-has-associated-control": "warn",
-      "jsx-a11y/no-static-element-interactions": "warn",
-      "jsx-a11y/click-events-have-key-events": "warn",
-      "jsx-a11y/role-has-required-aria-props": "warn"
-    }
+    ]
   },
   "browserslist": {
     "production": [
