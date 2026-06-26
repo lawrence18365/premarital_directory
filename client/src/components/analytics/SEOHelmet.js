@@ -53,6 +53,16 @@ const generateOrganizationStructuredData = (siteUrl) => {
   }
 }
 
+const generateWebSiteStructuredData = (siteUrl) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Wedding Counselors",
+    "url": siteUrl,
+    "publisher": { "@type": "Organization", "name": "Wedding Counselors", "url": siteUrl }
+  }
+}
+
 const generateReviewStructuredData = (reviews, professional) => {
   if (!reviews || reviews.length === 0) return null;
 
@@ -174,8 +184,9 @@ const SEOHelmet = ({
         {(() => {
           const allData = [];
 
-          // Always include Organization schema for E-E-A-T
+          // Always include Organization + WebSite schema for E-E-A-T / brand SERP
           allData.push(generateOrganizationStructuredData(siteUrl));
+          allData.push(generateWebSiteStructuredData(siteUrl));
 
           if (structuredData) {
             allData.push(structuredData);

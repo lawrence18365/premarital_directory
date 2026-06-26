@@ -42,7 +42,13 @@ const ok = (m) => { pass.push(m); console.log(`  [32m✓[0m ${m}`); };
 async function fetchText(url, { redirect = 'manual' } = {}) {
   const res = await fetch(url, { redirect, headers: { 'User-Agent': UA } });
   const body = res.status >= 200 && res.status < 300 ? await res.text() : '';
-  return { status: res.status, location: res.headers.get('location'), contentType: res.headers.get('content-type') || '', body };
+  return {
+    status: res.status,
+    location: res.headers.get('location'),
+    contentType: res.headers.get('content-type') || '',
+    xRobots: res.headers.get('x-robots-tag') || '',
+    body,
+  };
 }
 
 const extractLocs = (xml) => [...xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1]);
@@ -139,6 +145,26 @@ async function main() {
   if (phase1.status === 301 || phase1.status === 308) ok(`sitemap-phase1.xml -> ${phase1.location} (${phase1.status})`);
   else if (phase1.status === 200 && /<!doctype html|<html/i.test(phase1.body)) fail('sitemap-phase1.xml returns 200 HTML (stale ghost still live)');
   else warn(`sitemap-phase1.xml returned ${phase1.status}`);
+
+  // 6. server-level (header) noindex for non-indexable routes — must hold on a
+  // raw fetch without executing JS.
+  console.log('\nserver-level noindex headers (Phase 2)');
+  const noindexRoutes = ['/professionals-search', '/embed/find', '/thank-you'];
+  for (const r of noindexRoutes) {
+    const res = await fetchText(`${BASE}${r}`);
+    const metaNoindex = /<meta[^>]+name=["'](?:robots|googlebot)["'][^>]*content=["'][^"']*noindex/i.test(res.body);
+    if (/noindex/i.test(res.xRobots) || metaNoindex) ok(`${r} is noindex without JS (${res.xRobots ? 'X-Robots-Tag' : 'meta'})`);
+    else fail(`${r} is NOT noindex on raw fetch (X-Robots-Tag: "${res.xRobots || 'none'}")`);
+  }
+
+  // 7. newly-added indexable hub pages must be 200 + indexable
+  console.log('\nindexable hub pages');
+  for (const r of ['/for-officiants', '/premarital-counseling/state-requirements', '/locations']) {
+    const res = await fetchText(`${BASE}${r}`);
+    const isNoindex = /noindex/i.test(res.xRobots) || /<meta[^>]+name=["'](?:robots|googlebot)["'][^>]*content=["'][^"']*noindex/i.test(res.body);
+    if (res.status === 200 && !isNoindex) ok(`${r} is 200 + indexable`);
+    else warn(`${r} status ${res.status}, noindex=${isNoindex}`);
+  }
 
   if (BASE === CANONICAL_HOST) {
     const nonwww = await fetchText('https://weddingcounselors.com/');

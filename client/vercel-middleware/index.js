@@ -13,13 +13,26 @@
  * - API/webhook traffic
  */
 
+// IMPORTANT: never remove a major search crawler from this list. The match is a
+// substring test (ua.includes), so 'googlebot' also covers Googlebot-Image,
+// Googlebot-Video and Googlebot smartphone. This list is checked BEFORE the
+// bad-bot/headless checks, so adding a crawler here also exempts it from those
+// (that is why Lighthouse/PageSpeed, which run headless Chrome, are listed here).
 const ALLOWED_BOTS = [
+  // Google: search, indexing, rich-results/inspection, ads landing-page checks,
+  // shopping, site-safety, and the AI/Extended crawlers.
   'googlebot', 'google-inspectiontool', 'googleother', 'google-extended',
+  'adsbot-google', 'storebot-google', 'google-safety', 'googleweblight',
+  // Google performance tooling (run headless Chrome — must precede headless block)
+  'chrome-lighthouse', 'google page speed', 'google-pagespeed',
+  // Bing / Microsoft
   'bingbot', 'msnbot', 'adidxbot',
+  // Other search + social unfurlers
   'duckduckbot', 'slurp',
   'facebookexternalhit', 'facebot',
   'twitterbot', 'linkedinbot',
   'pinterestbot', 'applebot',
+  // Our own prerender pipeline
   'prerender', 'reactsnap',
 ];
 
