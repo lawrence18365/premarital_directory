@@ -1,0 +1,300 @@
+/*
+ * UI component library styles.
+ * House rules (enforced by stylelint):
+ *   - No raw hex colors. Use var(--token).
+ *   - font-size only via var(--text-*) tokens.
+ *   - spacing only via var(--space-*) tokens.
+ * Buttons intentionally reuse the existing .btn / .btn-primary etc. classes
+ * so <Button> renders visually identical to the legacy markup. The .ui-btn
+ * class only layers on new affordances (loading spinner, focus-visible ring,
+ * the new destructive variant).
+ */
+
+/* ========================================================================
+ * Button
+ * ===================================================================== */
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.ui-btn:disabled,
+.ui-btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
+.ui-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Destructive variant (no legacy equivalent). Mirrors .btn.btn-primary shape
+ * but swaps the brand color for the error token. */
+.ui-btn.btn-destructive {
+  background: var(--error);
+  border: 1px solid var(--error);
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.ui-btn.btn-destructive:hover {
+  background: var(--error-dark);
+  border-color: var(--error-dark);
+  transform: translateY(-1px);
+}
+
+.ui-btn__spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--radius-full);
+  animation: ui-spin 0.6s linear infinite;
+}
+
+@keyframes ui-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================================================
+ * Field (label + input/textarea/select)
+ * ===================================================================== */
+.ui-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.ui-field__label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+}
+
+.ui-field__required {
+  margin-left: var(--space-1);
+  color: var(--error);
+}
+
+.ui-field__input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border-strong);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.ui-field__input::placeholder {
+  color: var(--gray-400);
+  font-weight: var(--weight-normal);
+}
+
+.ui-field__input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--ds-accent-soft);
+}
+
+.ui-field__input:disabled {
+  background: var(--ds-surface-muted);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+textarea.ui-field__input {
+  min-height: var(--space-24);
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.ui-field--error .ui-field__input {
+  border-color: var(--error);
+}
+
+.ui-field--error .ui-field__input:focus {
+  box-shadow: 0 0 0 3px var(--error-bg);
+}
+
+.ui-field--success .ui-field__input {
+  border-color: var(--success);
+}
+
+.ui-field--success .ui-field__input:focus {
+  box-shadow: 0 0 0 3px var(--success-bg);
+}
+
+.ui-field__helper {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.ui-field__message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.ui-field__message--error {
+  color: var(--error);
+}
+
+.ui-field__message--success {
+  color: var(--success);
+}
+
+/* ========================================================================
+ * Card
+ * ===================================================================== */
+.ui-card {
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-soft);
+  padding: var(--space-6);
+}
+
+.ui-card--interactive {
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition),
+    border-color var(--transition);
+}
+
+.ui-card--interactive:hover {
+  border-color: var(--ds-border-strong);
+  box-shadow: var(--ds-shadow-card);
+  transform: translateY(-2px);
+}
+
+.ui-card--interactive:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.ui-card--pricing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-8);
+  text-align: center;
+}
+
+.ui-card--testimonial {
+  padding: var(--space-8);
+  border-left: 4px solid var(--accent);
+}
+
+/* ========================================================================
+ * Layout: Section, Container, Stack
+ * ===================================================================== */
+.ui-section {
+  width: 100%;
+  padding-top: var(--space-20);
+  padding-bottom: var(--space-20);
+}
+
+.ui-section--muted {
+  background: var(--ds-surface-muted);
+}
+
+.ui-container {
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+.ui-container--sm {
+  max-width: var(--container-sm);
+}
+
+.ui-container--md {
+  max-width: var(--container-md);
+}
+
+.ui-container--lg {
+  max-width: var(--container-lg);
+}
+
+.ui-container--xl {
+  max-width: var(--container-xl);
+}
+
+.ui-container--2xl {
+  max-width: var(--container-2xl);
+}
+
+.ui-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.ui-stack--gap-1 { gap: var(--space-1); }
+.ui-stack--gap-2 { gap: var(--space-2); }
+.ui-stack--gap-3 { gap: var(--space-3); }
+.ui-stack--gap-4 { gap: var(--space-4); }
+.ui-stack--gap-5 { gap: var(--space-5); }
+.ui-stack--gap-6 { gap: var(--space-6); }
+.ui-stack--gap-8 { gap: var(--space-8); }
+.ui-stack--gap-10 { gap: var(--space-10); }
+.ui-stack--gap-12 { gap: var(--space-12); }
+
+/* ========================================================================
+ * Governed states: Empty / Error / Loading
+ * ===================================================================== */
+.ui-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-8);
+  text-align: center;
+}
+
+.ui-state__icon {
+  font-size: var(--text-5xl);
+  line-height: 1;
+  color: var(--text-muted);
+}
+
+.ui-state__title {
+  font-size: var(--text-2xl);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.ui-state__description {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ui-state__action {
+  margin-top: var(--space-2);
+}
+
+.ui-state--error .ui-state__icon,
+.ui-state--error .ui-state__title {
+  color: var(--error);
+}
