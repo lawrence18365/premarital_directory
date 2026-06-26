@@ -1,0 +1,70 @@
+{
+  "extends": "stylelint-config-standard",
+  "defaultSeverity": "warning",
+  "rules": {
+    "color-hex-length": null,
+    "selector-pseudo-element-colon-notation": null,
+    "selector-attribute-quotes": null,
+    "keyframe-selector-notation": null,
+    "color-no-hex": [
+      true,
+      {
+        "severity": "warning",
+        "message": "Raw hex colors are only allowed in main.css and enterprise-theme.css. Use a var(--token) instead."
+      }
+    ],
+    "declaration-property-value-disallowed-list": [
+      {
+        "font-size": ["/^(?!var\\(|inherit$|initial$|unset$|0$|[\\d.]+%$).+$/"]
+      },
+      {
+        "severity": "warning",
+        "message": "Use a --text-* token for font-size, not a raw value (px/rem/em)."
+      }
+    ],
+
+    "rule-empty-line-before": null,
+    "declaration-empty-line-before": null,
+    "custom-property-empty-line-before": null,
+    "comment-empty-line-before": null,
+    "at-rule-empty-line-before": null,
+    "selector-class-pattern": null,
+    "selector-id-pattern": null,
+    "keyframes-name-pattern": null,
+    "custom-property-pattern": null,
+    "no-descending-specificity": null,
+    "value-keyword-case": null,
+    "alpha-value-notation": null,
+    "color-function-notation": null,
+    "color-function-alias-notation": null,
+    "hue-degree-notation": null,
+    "lightness-notation": null,
+    "length-zero-no-unit": null,
+    "shorthand-property-no-redundant-values": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+    "media-feature-range-notation": null,
+    "font-family-name-quotes": null,
+    "font-family-no-missing-generic-family-keyword": null,
+    "comment-whitespace-inside": null,
+    "declaration-block-single-line-max-declarations": null,
+    "number-max-precision": null,
+    "no-invalid-double-slash-comments": null,
+    "property-no-vendor-prefix": null,
+    "value-no-vendor-prefix": null,
+    "selector-no-vendor-prefix": null,
+    "at-rule-no-vendor-prefix": null,
+    "no-duplicate-selectors": null,
+    "declaration-block-no-duplicate-properties": null,
+    "no-empty-source": null,
+    "keyframe-block-no-duplicate-selectors": null,
+    "function-url-quotes": null
+  },
+  "overrides": [
+    {
+      "files": ["src/assets/css/main.css", "src/assets/css/enterprise-theme.css"],
+      "rules": {
+        "color-no-hex": null
+      }
+    }
+  ]
+}
