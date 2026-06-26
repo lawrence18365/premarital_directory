@@ -1,5 +1,5 @@
 .professional-signup {
-  background: linear-gradient(180deg, var(--ivory) 0%, var(--neutral) 40%, #fff 100%);
+  background: linear-gradient(180deg, var(--ivory) 0%, var(--neutral) 40%, var(--white) 100%);
   min-height: 100vh;
   padding-bottom: var(--space-20);
 }
@@ -559,7 +559,7 @@ textarea.form-control {
 }
 
 .photo-controls .btn-upload i {
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 
 .photo-controls .btn-remove {
@@ -1005,7 +1005,7 @@ textarea.form-control {
 }
 
 .quiz-option--icon i {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   color: var(--primary);
 }
 
@@ -1161,7 +1161,7 @@ textarea.form-control {
 }
 
 .quiz-photo__upload i {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
 }
 
 .quiz-photo__upload input {

@@ -206,7 +206,7 @@
   gap: 12px;
   color: var(--charcoal);
   font-weight: 500;
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 
 .benefit-requirements i {
@@ -352,7 +352,7 @@
   align-self: flex-start;
   color: var(--primary);
   font-weight: 600;
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   transition: transform var(--transition);
   position: relative;
   z-index: 1;
@@ -364,7 +364,7 @@
 
 /* FAQ and SEO Section Modernization */
 .state-seo-section {
-  background: #fff;
+  background: var(--white);
   padding: var(--space-20) 0;
   margin-top: var(--space-20);
   border-top: 1px solid rgba(14, 94, 94, 0.05);

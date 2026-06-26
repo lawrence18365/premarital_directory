@@ -84,7 +84,7 @@
   min-height: 44px;
   border-radius: 12px;
   border: 1px solid var(--ds-border);
-  background: #ffffff;
+  background: var(--white);
   color: var(--ds-ink);
   font-size: 0.95rem;
   padding: 0.72rem 0.95rem 0.72rem 2.45rem;
@@ -123,7 +123,7 @@
   padding: 0 0.72rem;
   border-radius: 10px;
   border: 1px solid var(--ds-border);
-  background: #ffffff;
+  background: var(--white);
   color: var(--ds-ink-muted);
   font-size: 0.82rem;
   font-weight: 600;
@@ -139,7 +139,7 @@
   min-height: 38px;
   border-radius: 10px;
   border: 1px solid var(--ds-border);
-  background: #ffffff;
+  background: var(--white);
   color: var(--ds-ink);
   padding: 0.42rem 0.75rem;
   font-size: 0.82rem;
@@ -175,7 +175,7 @@
 }
 
 .faq-item {
-  background: #ffffff;
+  background: var(--white);
   border: 1px solid rgba(14, 94, 94, 0.13);
   border-radius: 14px;
   box-shadow: 0 8px 20px rgba(6, 34, 34, 0.05);
@@ -266,7 +266,7 @@
   justify-content: center;
   color: var(--ds-ink-muted);
   font-size: 0.67rem;
-  background: #ffffff;
+  background: var(--white);
   transition: transform var(--transition), color var(--transition), border-color var(--transition);
 }
 
@@ -336,7 +336,7 @@
 .faq-help-card {
   border-radius: 14px;
   border: 1px solid var(--ds-border);
-  background: #ffffff;
+  background: var(--white);
   box-shadow: 0 10px 24px rgba(6, 34, 34, 0.06);
   padding: 1rem;
 }
@@ -344,7 +344,7 @@
 .faq-help-card h3 {
   margin: 0 0 0.52rem;
   color: var(--ds-ink);
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 
 .faq-help-card p {
@@ -383,7 +383,7 @@
   min-height: 38px;
   border-radius: 10px;
   border: 1px solid rgba(14, 94, 94, 0.3);
-  background: #ffffff;
+  background: var(--white);
   color: var(--ds-accent-strong);
   padding: 0.42rem 0.8rem;
   font-size: 0.82rem;

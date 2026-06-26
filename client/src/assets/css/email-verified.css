@@ -2,7 +2,7 @@
 
 .email-verified {
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--ivory) 0%, var(--neutral) 40%, #fff 100%);
+  background: linear-gradient(180deg, var(--ivory) 0%, var(--neutral) 40%, var(--white) 100%);
   padding: var(--space-12) var(--space-4);
   display: flex;
   align-items: center;
@@ -282,7 +282,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   flex-shrink: 0;
 }
 

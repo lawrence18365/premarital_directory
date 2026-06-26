@@ -34,7 +34,7 @@
 .compact-search-select {
   width: 100%;
   padding: 0.75rem 1rem;
-  font-size: 1rem;
+  font-size: var(--text-base);
   border: 1px solid var(--ds-border);
   border-radius: 6px;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -78,10 +78,10 @@
 .compact-search-button {
   padding: 0.75rem 1.5rem;
   background-color: var(--ds-accent);
-  color: #ffffff;
+  color: var(--white);
   border: none;
   border-radius: 6px;
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
