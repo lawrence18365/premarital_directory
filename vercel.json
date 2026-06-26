@@ -11,6 +11,11 @@
       "statusCode": 308
     },
     {
+      "source": "/sitemap-phase1.xml",
+      "destination": "/sitemap.xml",
+      "statusCode": 301
+    },
+    {
       "source": "/professionals",
       "destination": "/premarital-counseling",
       "statusCode": 301

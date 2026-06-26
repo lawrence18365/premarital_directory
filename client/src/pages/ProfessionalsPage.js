@@ -215,10 +215,11 @@ const ProfessionalsPage = () => {
 
   return (
     <div className="professionals-page">
-      <SEOHelmet 
+      <SEOHelmet
         title="Professional Search - Find Premarital Counselors"
         description={`Search and filter through ${profiles.length} qualified premarital counselors, therapists, and coaches. Find the perfect match for your needs.`}
         keywords="premarital counseling search, therapist directory, marriage counselor search"
+        noindex={true}
         structuredData={{
           '@context': 'https://schema.org',
           '@type': 'CollectionPage',
