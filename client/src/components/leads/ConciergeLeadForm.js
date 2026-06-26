@@ -10,7 +10,8 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
         phone: '',
         timeline: '',
         preference: 'Not Sure',
-        message: ''
+        message: '',
+        location: defaultLocation || ''
     })
     const [honeypot, setHoneypot] = useState('')
     const formLoadedAt = useRef(Date.now())
@@ -44,6 +45,13 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen])
 
+    // Pre-fill the location from page context when available, but keep it editable.
+    useEffect(() => {
+        if (defaultLocation) {
+            setFormData((prev) => (prev.location ? prev : { ...prev, location: defaultLocation }))
+        }
+    }, [defaultLocation])
+
     const handleInputChange = (e) => {
         const { name, value } = e.target
         trackFormStart()
@@ -54,8 +62,8 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
         e.preventDefault()
         trackFormStart()
 
-        if (!formData.name || !formData.email) {
-            setError('Name and email are required.')
+        if (!formData.name || !formData.email || !formData.location.trim()) {
+            setError('Please add your name, email, and your city and state.')
             trackEvent('lead_form_error', {
                 ...getFunnelContext(),
                 error_type: 'validation_missing_required'
@@ -68,10 +76,10 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
         setError('')
 
         try {
-            // Typically the location passed down is "Dallas, TX" or similar.
-            // We will blindly try to split it into a city and state for the schema, or just shove the whole thing into city.
-            const locationParts = defaultLocation.split(',').map(s => s.trim())
-            const city = locationParts[0] || defaultLocation
+            // Location now comes from the form field (pre-filled from page context when
+            // available). Split "Dallas, TX" into city and state for the schema.
+            const locationParts = formData.location.split(',').map(s => s.trim())
+            const city = locationParts[0] || formData.location.trim()
             const state = locationParts[1] || ''
 
             const payload = {
@@ -114,7 +122,8 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
                 phone: '',
                 timeline: '',
                 preference: 'Not Sure',
-                message: ''
+                message: '',
+                location: defaultLocation || ''
             })
 
             // Auto close after 5 seconds on success
@@ -230,6 +239,19 @@ const ConciergeLeadForm = ({ isOpen, onClose, defaultLocation = '', sourceUrl = 
                                         placeholder="you@email.com"
                                     />
                                 </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="concierge_location">Your City & State *</label>
+                                <input
+                                    type="text"
+                                    id="concierge_location"
+                                    name="location"
+                                    value={formData.location}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="e.g. Dallas, TX"
+                                />
                             </div>
 
                             <div className="form-group">
