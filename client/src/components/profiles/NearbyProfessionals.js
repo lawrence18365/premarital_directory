@@ -46,11 +46,11 @@ const NearbyProfessionals = ({ currentProfile }) => {
     const citySlug = generateSlug(currentProfile.city)
 
     return (
-        <section className="profile-premium-card profile-premium-nearby">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <h2 style={{ margin: 0 }}>More Providers in {currentProfile.city}</h2>
+        <section className="wellness-section wellness-glass delay-4" style={{ marginTop: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h2 style={{ margin: 0, border: 'none' }}>More Providers in {currentProfile.city}</h2>
                 {stateSlug && citySlug && (
-                    <Link to={`/premarital-counseling/${stateSlug}/${citySlug}`} className="btn btn-outline" style={{ fontSize: '0.85rem' }}>
+                    <Link to={`/premarital-counseling/${stateSlug}/${citySlug}`} className="wellness-btn-outline" style={{ fontSize: '0.85rem', width: 'auto', margin: 0, padding: '0.8rem 1.5rem' }}>
                         View All in {currentProfile.city}
                     </Link>
                 )}
@@ -59,7 +59,7 @@ const NearbyProfessionals = ({ currentProfile }) => {
             <div className="nearby-profiles-grid" style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: '1.5rem'
+                gap: '2rem'
             }}>
                 {profiles.map(profile => (
                     <ProfileCard key={profile.id} profile={profile} type="grid" />
