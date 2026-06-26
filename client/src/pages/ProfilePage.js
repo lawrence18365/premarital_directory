@@ -17,9 +17,9 @@ import { profileOperations, clickTrackingOperations } from '../lib/supabaseClien
 import UnclaimedProfileBanner from '../components/profiles/UnclaimedProfileBanner'
 import NearbyProfessionals from '../components/profiles/NearbyProfessionals'
 import ShareButton from '../components/common/ShareButton'
-import CoupleEmailCapture from '../components/leads/CoupleEmailCapture'
 import UpgradeCTA from '../components/monetization/UpgradeCTA'
-import '../assets/css/profile-page-enhanced.css'
+import '../assets/css/profile-wellness.css'
+import '../assets/css/share-button.css'
 import '../assets/css/share-button.css'
 
 // Helper: Convert state abbreviation to slug (OH -> ohio)
@@ -562,7 +562,6 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   const insuranceLabel = insuranceAccepted.length > 0 ? insuranceAccepted.join(', ') : 'Not listed'
   const pricingLabel = getPricingLabel(profile)
   const licenseType = getPrimaryLicenseType(profile, credentials, certifications)
-  const licenseTypeLabel = licenseType ? `${licenseType} (${profile.state_province || stateName || 'State'})` : null
   const licenseLabel = credentials.length > 0 ? credentials.join(', ') : 'Not listed'
   const professionLabel = (() => {
     const profession = profile?.profession || 'Premarital Counselor'
@@ -603,23 +602,6 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   ]
 
   const providedLogisticsItems = logisticsItems.filter((item) => !isMissingDescriptor(item.value))
-  const quickFacts = [
-    // Clergy don't have license types — omit "License type" quick fact for them
-    ...(!isClergy ? [{ label: 'License type', value: licenseTypeLabel }] : []),
-    { label: 'Session format', value: sessionFormatLabel },
-    { label: 'Typical pricing', value: pricingLabel },
-    ...(!isClergy ? [{ label: 'Insurance', value: insuranceAccepted.length > 0 ? 'Accepted' : null }] : [])
-  ].filter((fact) => !isMissingDescriptor(fact.value))
-
-  const sidebarFacts = [
-    profile.years_experience ? { label: 'Experience', value: `${profile.years_experience}+ years` } : null,
-    !isMissingDescriptor(availabilityLabel) ? { label: 'Status', value: availabilityLabel } : null,
-    !isMissingDescriptor(sessionFormatLabel) ? { label: 'Session format', value: sessionFormatLabel } : null,
-    !isMissingDescriptor(pricingLabel) ? { label: 'Pricing', value: pricingLabel } : null,
-    (!isClergy && insuranceAccepted.length > 0) ? { label: 'Insurance', value: 'Accepted plans listed' } : null
-  ].filter(Boolean)
-
-  const shouldCollapseLogistics = providedLogisticsItems.length < 3
   const availabilityIsVerified = availabilityLabel === 'Accepting new clients' || availabilityLabel === 'Limited availability'
 
   const hasPricingSection =
@@ -662,7 +644,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
         noindex={isLegacyRoute}
       />
 
-      <div className="profile-page profile-premium">
+      <div className="profile-page profile-wellness">
         {profile && !profile.is_claimed && shouldShowClaimPrompts && (
           <UnclaimedProfileBanner
             profile={profile}
@@ -670,536 +652,428 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
           />
         )}
 
-        <section className="profile-premium-shell">
-          <div className="container">
-            <Breadcrumbs items={breadcrumbItems} className="profile-premium-breadcrumbs" />
+        {/* Cleaned up shell */}
+        <section className="wellness-shell" style={{ width: '100%', position: 'relative' }}>
+          
+          <div className="wellness-container">
+            {/* Header / Breadcrumbs */}
+            <div className="wellness-header" style={{ marginBottom: '2rem', marginTop: '1.5rem', zIndex: 10, position: 'relative' }}>
+              <Breadcrumbs items={breadcrumbItems} className="wellness-breadcrumbs" />
 
-            {isProfileOwner && (
-              <UpgradeCTA
-                profile={profile}
-                surface="owner_public_profile"
-                variant="banner"
-              />
-            )}
+              {isProfileOwner && (
+                <UpgradeCTA
+                  profile={profile}
+                  surface="owner_public_profile"
+                  variant="banner"
+                />
+              )}
+            </div>
 
-            <header className="profile-premium-hero">
-              <div className="profile-premium-photo-wrap">
-                {profile.photo_url && !imageError ? (
-                  <img
-                    src={profile.photo_url}
-                    alt={profile.full_name}
-                    className="profile-premium-photo"
-                    onError={() => setImageError(true)}
-                  />
-                ) : (
-                  <div className="profile-premium-photo profile-premium-photo-placeholder">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
+            {/* HERO SECTION */}
+              <div className="wellness-hero wellness-glass">
+                <div className="wellness-avatar-wrapper">
+                  {profile.photo_url && !imageError ? (
+                    <img
+                      src={profile.photo_url}
+                      alt={profile.full_name}
+                      className="wellness-avatar"
+                      onError={() => setImageError(true)}
+                    />
+                  ) : (
+                    <div className="wellness-avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ width: '40%', opacity: 0.3 }}>
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="wellness-hero-content">
+                  <h1>{profile.full_name}</h1>
+                  <p className="role">
+                    {profile.is_officiant && profile.clergy_title ? `${professionLabel} & ${profile.clergy_title}` : professionLabel}
+                    {profile.pronouns ? ` (${profile.pronouns})` : ''}
+                  </p>
+                  
+                  <div className="wellness-meta">
+                    <span>{formatLocation(profile)}</span>
+                    {profile.years_experience && <span>{profile.years_experience}+ years exp</span>}
+                    {availabilityIsVerified && <span>{availabilityLabel}</span>}
                   </div>
-                )}
-                {(profile.tier === 'local_featured' || profile.tier === 'area_spotlight') && (
-                  <span className="profile-premium-badge">
-                    {profile.tier === 'area_spotlight' ? 'Area Spotlight' : `Featured in ${profile.city}`}
-                  </span>
-                )}
-                {(profile.is_verified || profile.badge_verified) && (
-                  <span className="profile-premium-badge" style={{ background: 'rgba(14, 130, 14, 0.1)', color: '#0b5e0b', border: '1px solid rgba(14, 130, 14, 0.3)' }}>
-                    <i className="fa fa-shield-alt" aria-hidden="true"></i> Verified
-                  </span>
-                )}
-                {profile.responds_quickly && (
-                  <span className="profile-premium-badge" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#92400e', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
-                    <i className="fa fa-bolt" aria-hidden="true"></i> Responds Quickly
-                  </span>
-                )}
-                {profile.is_officiant && (
-                  <span className="profile-premium-badge" style={{ background: 'var(--ds-accent-soft)', color: 'var(--ds-accent)', border: '1px solid var(--ds-border-strong)' }}>
-                    💒 Wedding Officiant
-                  </span>
-                )}
+
+                  {additionalLocations.length > 0 && (
+                    <p className="wellness-also-serving">
+                      Also serving:{' '}
+                      {additionalLocations.map((loc, i) => {
+                        const stateSlug = getStateSlugFromAbbr(loc.state_province)
+                        const citySlug = generateSlug(loc.city)
+                        return (
+                          <span key={loc.id}>
+                            {i > 0 && ' | '}
+                            <Link to={`/premarital-counseling/${stateSlug}/${citySlug}`}>
+                              {loc.city}, {loc.state_province}
+                            </Link>
+                          </span>
+                        )
+                      })}
+                    </p>
+                  )}
+
+                  {specialties.length > 0 && (
+                    <div className="wellness-chips">
+                      {specialties.slice(0, 4).map((specialty) => (
+                        <span key={specialty} className="wellness-chip">
+                          {specialty}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="wellness-hero-actions">
+                    {websiteUrl && (
+                      <a
+                        href={websiteUrl}
+                        target="_blank"
+                        rel="nofollow noopener noreferrer"
+                        className="wellness-btn-outline"
+                      >
+                        Visit Website
+                      </a>
+                    )}
+                    <ShareButton
+                      url={canonicalPath}
+                      title={`${profile.full_name} — Premarital Counselor in ${profile.city}, ${profile.state_province}`}
+                      text={`Check out ${profile.full_name}, a premarital counselor in ${profile.city}`}
+                      variant="icon"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="profile-premium-identity">
-                <p className="profile-premium-eyebrow">Professional Profile</p>
-                <h1>{profile.full_name}</h1>
-                <p className="profile-premium-role">
-                  {profile.is_officiant && profile.clergy_title ? `${professionLabel} & ${profile.clergy_title}` : professionLabel}
-                  {profile.pronouns ? ` (${profile.pronouns})` : ''}
-                </p>
-
-                <div className="profile-premium-meta">
-                  <span>{formatLocation(profile)}</span>
-                  {profile.years_experience && <span>{profile.years_experience}+ years experience</span>}
-                  {availabilityIsVerified && <span>{availabilityLabel}</span>}
-                </div>
-
-                {additionalLocations.length > 0 && (
-                  <div style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                    <i className="fa fa-map-marker" style={{ marginRight: '0.4rem', color: 'var(--color-primary)' }}></i>
-                    Also serving:{' '}
-                    {additionalLocations.map((loc, i) => {
-                      const stateSlug = getStateSlugFromAbbr(loc.state_province)
-                      const citySlug = generateSlug(loc.city)
-                      return (
-                        <span key={loc.id}>
-                          {i > 0 && ' | '}
-                          <Link
-                            to={`/premarital-counseling/${stateSlug}/${citySlug}`}
-                            style={{ color: 'var(--color-primary)', textDecoration: 'none' }}
-                          >
-                            {loc.city}, {loc.state_province}
-                          </Link>
-                        </span>
-                      )
-                    })}
+              {/* QUANTITATIVE METRICS DASHBOARD */}
+              <div className="wellness-metrics delay-1">
+                {profile.years_experience && (
+                  <div className="wellness-metric-box">
+                    <div className="wellness-metric-value">{profile.years_experience}+</div>
+                    <div className="wellness-metric-label">Years Experience</div>
                   </div>
                 )}
+                {pricingLabel && !isMissingDescriptor(pricingLabel) && (
+                  <div className="wellness-metric-box">
+                    <div className="wellness-metric-value">
+                      {pricingLabel.replace('Per session: ', '').replace(' / session', '').trim()}
+                    </div>
+                    <div className="wellness-metric-label">Per Session</div>
+                  </div>
+                )}
+                {specialties && specialties.length > 0 && (
+                  <div className="wellness-metric-box">
+                    <div className="wellness-metric-value">{specialties.length}</div>
+                    <div className="wellness-metric-label">Specialties</div>
+                  </div>
+                )}
+                <div className="wellness-metric-box">
+                  <div className="wellness-metric-value" style={{ fontSize: '1.8rem', paddingTop: '0.2rem', paddingBottom: '0.2rem' }}>
+                    {profile.is_claimed ? '✓' : '—'}
+                  </div>
+                  <div className="wellness-metric-label">{profile.is_claimed ? 'Verified' : 'Unclaimed'}</div>
+                </div>
+              </div>
 
-                {quickFacts.length > 0 && (
-                  <div className="profile-premium-quickfacts">
-                    {quickFacts.map((fact) => (
-                      <div key={fact.label} className="profile-premium-quickfact">
-                        <span>{fact.label}</span>
-                        <strong>{fact.value}</strong>
+              {/* ABOUT SECTION */}
+              <section className="wellness-section wellness-glass delay-1">
+                <h2>About {firstName}</h2>
+                <div className="wellness-prose">
+                  {profile.bio ? (
+                    profile.bio
+                      .split('\n')
+                      .map((paragraph) => paragraph.trim())
+                      .filter(Boolean)
+                      .map((paragraph, index) => (
+                        <p key={index}>{paragraph}</p>
+                      ))
+                  ) : (
+                    <p>
+                      {firstName} is listed as a {professionLabel || 'premarital counseling professional'} in {profile.city}, {profile.state_province}.
+                    </p>
+                  )}
+                </div>
+              </section>
+
+              {/* APPROACH SECTION */}
+              {profile.approach && (
+                <section className="wellness-section wellness-glass delay-2">
+                  <h2>Approach</h2>
+                  <div className="wellness-prose">
+                    {profile.approach
+                      .split('\n')
+                      .map((paragraph) => paragraph.trim())
+                      .filter(Boolean)
+                      .map((paragraph, index) => (
+                        <p key={index}>{paragraph}</p>
+                      ))}
+                  </div>
+                </section>
+              )}
+
+              {/* LOGISTICS & FOCUS */}
+              <section className="wellness-section wellness-glass delay-3">
+                <h2>Details & Logistics</h2>
+                
+                {providedLogisticsItems.length > 0 && (
+                  <div className="wellness-data-group">
+                    {providedLogisticsItems.map((item) => (
+                      <div key={item.key} className="wellness-data-row">
+                        <span className="wellness-data-label">{item.label}</span>
+                        <strong className="wellness-data-value">{item.value}</strong>
                       </div>
                     ))}
                   </div>
                 )}
 
-                {specialties.length > 0 && (
-                  <div className="profile-premium-top-tags">
-                    {specialties.slice(0, 6).map((specialty) => (
-                      <span key={specialty} className="profile-chip">
-                        {specialty}
-                      </span>
+                {focusGroups.length > 0 && (
+                  <div className="wellness-data-group">
+                    {focusGroups.map((group) => (
+                      <div key={group.label} className="wellness-data-row">
+                        <span className="wellness-data-label">{group.label}</span>
+                        <strong className="wellness-data-value">{group.items.join(', ')}</strong>
+                      </div>
                     ))}
                   </div>
                 )}
-              </div>
 
-              <div className="profile-premium-hero-actions">
-                <button onClick={scrollToContact} className="btn btn-primary">
-                  Send Message
-                </button>
-                {websiteUrl && (
-                  <a
-                    href={websiteUrl}
-                    target="_blank"
-                    rel="nofollow noopener noreferrer"
-                    className="btn btn-outline"
-                  >
-                    External Website
-                  </a>
+                {credentialGroups.length > 0 && (
+                  <div className="wellness-data-group">
+                    {credentialGroups.map((group) => (
+                      <div key={group.label} className="wellness-data-row">
+                        <span className="wellness-data-label">{group.label}</span>
+                        <strong className="wellness-data-value">{group.items.join(', ')}</strong>
+                      </div>
+                    ))}
+                  </div>
                 )}
-                <ShareButton
-                  url={canonicalPath}
-                  title={`${profile.full_name} — Premarital Counselor in ${profile.city}, ${profile.state_province}`}
-                  text={`Check out ${profile.full_name}, a premarital counselor in ${profile.city}`}
-                  variant="icon"
-                />
-              </div>
-            </header>
+              </section>
 
-            <div className="profile-premium-grid">
-              <main className="profile-premium-main">
-                <section className="profile-premium-card">
-                  <h2>About {firstName}</h2>
-                  <div className="profile-prose">
-                    {profile.bio ? (
-                      profile.bio
-                        .split('\n')
-                        .map((paragraph) => paragraph.trim())
-                        .filter(Boolean)
-                        .map((paragraph, index) => (
-                          <p key={index}>{paragraph}</p>
-                        ))
-                    ) : (
-                      <>
-                        <p>
-                          {firstName} is listed as a {professionLabel || 'premarital counseling professional'} in {profile.city}, {profile.state_province}. Public profile details are currently limited.
-                        </p>
-                        <p className="profile-note-inline">
-                          This profile has limited public details. If this is your listing,{' '}
-                          <Link to={`/claim-profile/${profile.slug || profile.id}`}>claim your profile</Link> to update it.
-                        </p>
-                      </>
+              {/* PRICING & INSURANCE */}
+              {hasPricingSection && (
+                <section className="wellness-section wellness-glass delay-3">
+                  <h2>{isClergy ? 'Fees & Availability' : 'Pricing & Insurance'}</h2>
+
+                  <div className="wellness-data-group">
+                    {profile.pricing_range && (
+                      <div className="wellness-data-row">
+                        <span className="wellness-data-label">{isClergy ? 'Fees' : 'Session Fees'}</span>
+                        <strong className="wellness-data-value">{profile.pricing_range}</strong>
+                      </div>
+                    )}
+                    {insuranceAccepted.length > 0 && (
+                      <div className="wellness-data-row">
+                        <span className="wellness-data-label">Insurance</span>
+                        <div className="wellness-data-value">
+                          <div className="wellness-chips wellness-chips-left">
+                            {insuranceAccepted.map((insurance) => (
+                              <span key={insurance} className="wellness-chip">{insurance}</span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {paymentMethods.length > 0 && (
+                      <div className="wellness-data-row">
+                        <span className="wellness-data-label">Payment Methods</span>
+                        <div className="wellness-data-value">
+                          <div className="wellness-chips wellness-chips-left">
+                            {paymentMethods.map((method) => (
+                              <span key={method} className="wellness-chip">{method}</span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </div>
-                  {(explicitPremaritalSpecialty || premaritalMethods.length > 0) && (
-                    <p className="profile-premarital-note">
-                      {explicitPremaritalSpecialty
-                        ? `Listed specialty: ${explicitPremaritalSpecialty}. `
-                        : 'Listed as a couples-focused provider. '}
-                      {premaritalMethods.length > 0
-                        ? `Methods listed: ${premaritalMethods.join(', ')}.`
-                        : 'Program methods are not listed.'}
-                    </p>
+
+                  {(freeConsultationEnabled || slidingScaleEnabled) && (
+                    <div className="wellness-chips wellness-chips-left">
+                      {freeConsultationEnabled && (
+                        <span className="wellness-chip">Free consultation</span>
+                      )}
+                      {slidingScaleEnabled && (
+                        <span className="wellness-chip">Sliding scale available</span>
+                      )}
+                    </div>
                   )}
                 </section>
+              )}
 
-                {profile.approach && (
-                  <section className="profile-premium-card">
-                    <h2>Approach</h2>
-                    <div className="profile-prose">
-                      {profile.approach
-                        .split('\n')
-                        .map((paragraph) => paragraph.trim())
-                        .filter(Boolean)
-                        .map((paragraph, index) => (
-                          <p key={index}>{paragraph}</p>
-                        ))}
-                    </div>
-                  </section>
+              {/* DIRECT CONTACT — paid tier reveal */}
+              {canShowDirectContact && (profile.phone || profile.email || websiteUrl || profile.address_line1) && (
+                <section className="wellness-section wellness-glass delay-4">
+                  <h2>Direct Contact</h2>
+                  <div className="wellness-data-group">
+                    {profile.phone && (
+                      <div className="wellness-data-row">
+                        <span className="wellness-data-label">Phone</span>
+                        <div className="wellness-data-value">
+                          {phoneRevealed ? (
+                            <a href={`tel:${profile.phone}`} className="wellness-contact-link">
+                              {formatPhoneNumber(profile.phone)}
+                            </a>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleRevealContact('phone')}
+                              className="wellness-reveal-btn"
+                            >
+                              Show phone
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {profile.email && (
+                      <div className="wellness-data-row">
+                        <span className="wellness-data-label">Email</span>
+                        <div className="wellness-data-value">
+                          {emailRevealed ? (
+                            <a href={`mailto:${profile.email}`} className="wellness-contact-link">
+                              {profile.email}
+                            </a>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleRevealContact('email')}
+                              className="wellness-reveal-btn"
+                            >
+                              Show email
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {websiteUrl && (
+                      <div className="wellness-data-row">
+                        <span className="wellness-data-label">Website</span>
+                        <div className="wellness-data-value">
+                          <a
+                            href={websiteUrl}
+                            target="_blank"
+                            rel="nofollow noopener noreferrer"
+                            className="wellness-contact-link"
+                            onClick={() => handleRevealContact('website')}
+                          >
+                            Visit website
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {profile.address_line1 && (
+                      <div className="wellness-data-row">
+                        <span className="wellness-data-label">Address</span>
+                        <div className="wellness-data-value">
+                          {profile.address_line1}
+                          <br />
+                          {formatLocation(profile)} {profile.postal_code}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              )}
+
+              {/* CONTACT FORM SECTION */}
+              <section id="contact-section" className="wellness-section wellness-glass wellness-contact delay-4">
+                <h2>Request an Introduction</h2>
+                {!profile.is_claimed && (
+                  <p className="wellness-prose" style={{ fontSize: '0.95rem' }}>
+                    This provider has not verified profile details yet. Messages are forwarded to the public email on file when available.
+                  </p>
                 )}
-
-                <section id="contact-section" className="profile-premium-card profile-contact-card profile-contact-inline">
-                  <h2>Send {firstName} a Message</h2>
-                  {!profile.is_claimed && (
-                    <p className="profile-contact-note">
-                      This provider has not verified profile details yet. Your message is forwarded to the public contact email on file when available, or to directory support for follow-up.
-                    </p>
-                  )}
+                
+                {profile.booking_url ? (
+                  <div style={{ marginTop: '2rem' }}>
+                    <a href={profile.booking_url} target="_blank" rel="nofollow noopener noreferrer" className="wellness-btn" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
+                      Book Consultation
+                    </a>
+                  </div>
+                ) : (
                   <LeadContactForm
                     profileId={profile.id}
                     professionalName={profile.full_name}
                     profile={profile}
                     isProfileClaimed={profile.is_claimed}
                     onSuccess={handleLeadSuccess}
+                    theme="wellness"
+                    hideHeader={true}
                   />
-                </section>
-
-                <section className="profile-premium-card">
-                  <h2>Premarital Fit & Logistics</h2>
-                  <p className="profile-data-note">
-                    Only details provided on this profile are shown below.
-                  </p>
-                  {shouldCollapseLogistics ? (
-                    <div className="profile-checklist-grid">
-                      <div className="profile-checklist-column">
-                        <h3>What&apos;s listed</h3>
-                        {providedLogisticsItems.length > 0 ? (
-                          <ul className="profile-checklist profile-checklist-provided">
-                            {providedLogisticsItems.map((item) => (
-                              <li key={item.key}>
-                                <strong>{item.label}:</strong> {item.value}
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <p className="profile-checklist-empty">No structured details listed yet.</p>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="profile-detail-stack">
-                      {providedLogisticsItems.map((item) => (
-                        <div key={item.key} className="profile-detail-row">
-                          <span>{item.label}</span>
-                          <strong>{item.value}</strong>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </section>
-
-                {focusGroups.length > 0 && (
-                  <section className="profile-premium-card">
-                    <h2>Practice Focus</h2>
-                    <div className="profile-group-stack">
-                      {focusGroups.map((group) => (
-                        <div key={group.label} className="profile-group-row">
-                          <h3>{group.label}</h3>
-                          <div className="profile-chip-list">
-                            {group.items.map((item) => (
-                              <span key={`${group.label}-${item}`} className="profile-chip profile-chip-soft">
-                                {item}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
                 )}
+              </section>
 
-                {credentialGroups.length > 0 && (
-                  <section className="profile-premium-card">
-                    <h2>Credentials</h2>
-                    <div className="profile-group-stack">
-                      {credentialGroups.map((group) => (
-                        <div key={group.label} className="profile-group-row">
-                          <h3>{group.label}</h3>
-                          <ul className="profile-list-clean">
-                            {group.items.map((item) => (
-                              <li key={`${group.label}-${item}`}>{item}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-                )}
+              {/* FAQ SECTION */}
+              <section className="wellness-section wellness-glass delay-4">
+                <h2>{providerFaqItems.length > 0 ? 'Frequently Asked Questions' : 'Questions to Ask Before Booking'}</h2>
+                <div className="wellness-faq-list">
+                  {faqItems.map((faq) => (
+                    <details key={faq.question} className="wellness-faq-item">
+                      <summary>{faq.question}</summary>
+                      <p>{faq.answer}</p>
+                    </details>
+                  ))}
+                </div>
+              </section>
 
-                {hasPricingSection && (
-                  <section className="profile-premium-card">
-                    <h2>{isClergy ? 'Fees & Availability' : 'Pricing & Availability'}</h2>
-                    <div className="profile-detail-stack">
-                      {profile.pricing_range && (
-                        <div className="profile-detail-row">
-                          <span>{isClergy ? 'Fees' : 'Session Fees'}</span>
-                          <strong>{profile.pricing_range}</strong>
-                        </div>
-                      )}
-                      {insuranceAccepted.length > 0 && (
-                        <div className="profile-detail-row profile-detail-row-wrap">
-                          <span>Insurance</span>
-                          <div className="profile-chip-list">
-                            {insuranceAccepted.map((insurance) => (
-                              <span key={insurance} className="profile-chip profile-chip-soft">
-                                {insurance}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      {paymentMethods.length > 0 && (
-                        <div className="profile-detail-row profile-detail-row-wrap">
-                          <span>Payment Methods</span>
-                          <div className="profile-chip-list">
-                            {paymentMethods.map((method) => (
-                              <span key={method} className="profile-chip profile-chip-soft">
-                                {method}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {(freeConsultationEnabled || slidingScaleEnabled) && (
-                      <div className="profile-status-row">
-                        {freeConsultationEnabled && (
-                          <span className="profile-status-pill">Free consultation</span>
-                        )}
-                        {slidingScaleEnabled && (
-                          <span className="profile-status-pill">Sliding scale available</span>
-                        )}
-                      </div>
-                    )}
-                  </section>
-                )}
-
-                <section className="profile-premium-card">
-                  <h2>{providerFaqItems.length > 0 ? 'Frequently Asked Questions' : 'Questions to Ask Before Booking'}</h2>
-                  <div className="profile-faq-list">
-                    {faqItems.map((faq) => (
-                      <article key={faq.question} className="profile-faq-item">
-                        <h3>{faq.question}</h3>
-                        <p>{faq.answer}</p>
-                      </article>
-                    ))}
-                  </div>
-                </section>
-
-                <CoupleEmailCapture
-                  sourcePage={`profile:${currentSlug}`}
-                  defaultCity={profile.city || ''}
-                  defaultState={profile.state_province || ''}
-                />
-
-                {profile.city && profile.state_province && (
-                  <section className="profile-premium-card profile-premium-card-muted">
-                    <h2>Premarital Counseling in {profile.city}, {profile.state_province}</h2>
-                    <div className="profile-prose">
-                      <p>
-                        {firstName} serves couples in {profile.city}
-                        {additionalLocations.length > 0
-                          ? `, ${additionalLocations.map(loc => loc.city).join(', ')}, and nearby communities.`
-                          : ' and nearby communities.'}
-                        {hasOnlineOption ? ' Online sessions are available.' : ''}
-                      </p>
-                    </div>
-                  </section>
-                )}
-              </main>
-
-              <aside className="profile-premium-side">
-                <section className="profile-premium-card profile-premium-card-emphasis">
-                  <h2>Work with {firstName}</h2>
-                  <div className="profile-kpi-list">
-                    {sidebarFacts.map((fact) => (
-                      <div key={fact.label} className="profile-kpi-row">
-                        <span>{fact.label}</span>
-                        <strong>{fact.value}</strong>
-                      </div>
-                    ))}
-                  </div>
-
-                  {profile.booking_url ? (
-                    <a
-                      href={profile.booking_url}
-                      target="_blank"
-                      rel="nofollow noopener noreferrer"
-                      className="btn btn-primary btn-full"
-                    >
-                      Book Consultation
-                    </a>
-                  ) : (
-                    <button onClick={scrollToContact} className="btn btn-primary btn-full">
-                      Send Message
-                    </button>
-                  )}
-                </section>
-
-                {canShowDirectContact && (
-                  <section className="profile-premium-card">
-                    <h2>Direct Contact</h2>
-                    <div className="profile-contact-list">
-                      {profile.phone && (
-                        <div className="profile-contact-row">
-                          <span>Phone</span>
-                          {phoneRevealed ? (
-                            <a href={`tel:${profile.phone}`} className="profile-contact-link">
-                              {formatPhoneNumber(profile.phone)}
-                            </a>
-                          ) : (
-                            <button onClick={() => handleRevealContact('phone')} className="profile-reveal-btn">
-                              Show phone
-                            </button>
-                          )}
-                        </div>
-                      )}
-
-                      {profile.email && (
-                        <div className="profile-contact-row">
-                          <span>Email</span>
-                          {emailRevealed ? (
-                            <a href={`mailto:${profile.email}`} className="profile-contact-link">
-                              {profile.email}
-                            </a>
-                          ) : (
-                            <button onClick={() => handleRevealContact('email')} className="profile-reveal-btn">
-                              Show email
-                            </button>
-                          )}
-                        </div>
-                      )}
-
-                      {websiteUrl && (
-                        <div className="profile-contact-row">
-                          <span>Website</span>
-                          <a
-                            href={websiteUrl}
-                            target="_blank"
-                            rel="nofollow noopener noreferrer"
-                            className="profile-contact-link"
-                            onClick={() => handleRevealContact('website')}
-                          >
-                            Visit website
-                          </a>
-                        </div>
-                      )}
-
-                      {profile.address_line1 && (
-                        <div className="profile-contact-row profile-contact-row-stack">
-                          <span>Address</span>
-                          <p>
-                            {profile.address_line1}
-                            <br />
-                            {formatLocation(profile)} {profile.postal_code}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </section>
-                )}
-
-                {profile.city && profile.state_province && (
-                  <section className="profile-premium-card">
-                    <h2>Explore More</h2>
-                    <div className="profile-link-list">
-                      <Link
-                        to={`/premarital-counseling/${normalizedStateSlug}/${generateSlug(profile.city)}`}
-                        className="profile-link-row"
-                      >
-                        Premarital counseling in {profile.city}
-                      </Link>
-                      <Link
-                        to={`/premarital-counseling/${normalizedStateSlug}`}
-                        className="profile-link-row"
-                      >
-                        Browse all {profile.state_province} counselors
-                      </Link>
-                      {/* Specialty cross-links based on provider's methods/faith */}
-                      {(() => {
-                        const profileText = [
-                          ...treatmentApproaches,
-                          ...certifications,
-                          ...specialties,
-                          profile.faith_tradition || ''
-                        ].join(' ').toLowerCase()
-                        const matchedSpecialties = Object.entries(SPECIALTY_CONFIG)
-                          .filter(([slug, config]) =>
-                            config.filterTerms.some((term) => profileText.includes(term.toLowerCase()))
-                          )
-                          .slice(0, 3)
-                        return matchedSpecialties.map(([slug, config]) => (
-                          <Link
-                            key={slug}
-                            to={`/premarital-counseling/${slug}/${normalizedStateSlug}`}
-                            className="profile-link-row"
-                          >
-                            {config.name} counseling in {stateName}
-                          </Link>
-                        ))
-                      })()}
-                    </div>
-                  </section>
-                )}
-
-                {!profile.is_claimed && shouldShowClaimPrompts && (
-                  <section className="profile-premium-card profile-premium-card-claim">
-                    <h2>Is this your profile?</h2>
-                    <p>
-                      Claim this profile to verify license, fees, and availability, then manage inquiries in your dashboard.
-                    </p>
-                    <Link
-                      to={`/claim-profile/${profile.slug || profile.id}`}
-                      className="btn btn-primary btn-full"
-                      onClick={() => {
-                        if (window.gtag) {
-                          window.gtag('event', 'click', {
-                            event_category: 'Claim Profile',
-                            event_label: 'Sidebar CTA',
-                            value: profile.id
-                          })
-                        }
-                      }}
-                    >
-                      Claim This Profile
+              {/* EXPLORE MORE LINKS */}
+              {profile.city && profile.state_province && (
+                <section className="wellness-section wellness-glass delay-4" style={{ marginBottom: '4rem' }}>
+                  <h2>Explore More</h2>
+                  <div className="wellness-explore-grid">
+                    <Link to={`/premarital-counseling/${normalizedStateSlug}/${generateSlug(profile.city)}`} className="wellness-btn-outline">
+                      Counseling in {profile.city}
                     </Link>
-                    <small>Free to claim. No credit card required.</small>
-                  </section>
-                )}
-              </aside>
+                    <Link to={`/premarital-counseling/${normalizedStateSlug}`} className="wellness-btn-outline">
+                      Browse all {profile.state_province}
+                    </Link>
+                    {(() => {
+                      const profileText = [
+                        ...treatmentApproaches,
+                        ...certifications,
+                        ...specialties,
+                        profile.faith_tradition || ''
+                      ].join(' ').toLowerCase()
+                      const matchedSpecialties = Object.entries(SPECIALTY_CONFIG)
+                        .filter(([slug, config]) =>
+                          config.filterTerms.some((term) => profileText.includes(term.toLowerCase()))
+                        )
+                        .slice(0, 2)
+                      return matchedSpecialties.map(([slug, config]) => (
+                        <Link
+                          key={slug}
+                          to={`/premarital-counseling/${slug}/${normalizedStateSlug}`}
+                          className="wellness-btn-outline"
+                        >
+                          {config.name} counseling in {stateName}
+                        </Link>
+                      ))
+                    })()}
+                  </div>
+                </section>
+              )}
+              
+              {/* Internal Linking Mesh: Nearby Counselors */}
+              {profile && <NearbyProfessionals currentProfile={profile} />}
             </div>
-
-            {/* Internal Linking Mesh: Nearby Counselors */}
-            {profile && <NearbyProfessionals currentProfile={profile} />}
-          </div>
         </section>
       </div>
 
       {/* Sticky mobile CTA — visible on tablet/mobile only via CSS */}
-      <div className="profile-sticky-cta">
+      <div className="profile-sticky-cta" style={{ display: 'none' }}>
         <div className="profile-sticky-cta-info">
           <div className="profile-sticky-cta-name">{profile.full_name}</div>
-          <div className="profile-sticky-cta-sub">Free to contact — no fees</div>
         </div>
-        <button onClick={scrollToContact} className="btn btn-primary">
-          Send Message
+        <button onClick={scrollToContact} className="wellness-btn">
+          Inquire
         </button>
       </div>
     </>
