@@ -18,7 +18,7 @@
 }
 
 .state-stats-lead {
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   line-height: 1.7;
   color: var(--text-secondary, var(--ds-ink-muted));
 }
@@ -74,14 +74,14 @@
 
 .state-stat-label {
   display: block;
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--text-primary, var(--ds-ink));
   margin-bottom: var(--space-1, 0.25rem);
 }
 
 .state-stat-detail {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary, var(--ds-ink-muted));
 }
 
@@ -94,14 +94,14 @@
 }
 
 .top-cities-section h3 {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 700;
   margin-bottom: var(--space-3, 0.75rem);
   color: var(--text-primary, var(--ds-ink));
 }
 
 .top-cities-intro {
-  font-size: 1rem;
+  font-size: var(--text-base);
   line-height: 1.6;
   color: var(--text-secondary, var(--ds-ink-muted));
   margin-bottom: var(--space-6, 1.5rem);
@@ -132,7 +132,7 @@
 }
 
 .top-city-rank {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 700;
   color: var(--primary-color, var(--ds-accent));
   width: 50px;
@@ -145,19 +145,19 @@
 }
 
 .top-city-name {
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--text-primary, var(--ds-ink));
   margin-bottom: var(--space-1, 0.25rem);
 }
 
 .top-city-count {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary, var(--ds-ink-muted));
 }
 
 .top-city-arrow {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   color: var(--primary-color, var(--ds-accent));
   flex-shrink: 0;
   transition: transform 0.2s ease;
@@ -177,7 +177,7 @@
 }
 
 .state-coverage-note h4 {
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   font-weight: 600;
   margin-bottom: var(--space-3, 0.75rem);
   color: var(--text-primary, var(--ds-ink));
@@ -196,11 +196,11 @@
 /* Responsive */
 @media (max-width: 768px) {
   .state-stats-header h2 {
-    font-size: 1.5rem;
+    font-size: var(--text-2xl);
   }
 
   .state-stats-lead {
-    font-size: 1rem;
+    font-size: var(--text-base);
   }
 
   .state-stats-grid {
@@ -220,11 +220,11 @@
   }
 
   .top-city-rank {
-    font-size: 1.25rem;
+    font-size: var(--text-xl);
     width: 40px;
   }
 
   .top-city-name {
-    font-size: 1rem;
+    font-size: var(--text-base);
   }
 }

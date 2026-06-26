@@ -203,7 +203,7 @@
 .progress-bar-fill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #0b4949 0%, #0e5e5e 52%, #1a7373 100%);
+  background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 52%, var(--accent-light) 100%);
   transition: width 260ms ease;
 }
 
@@ -213,7 +213,7 @@
   gap: 0.35rem;
   margin-top: 7px;
   color: var(--primary-dark);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 
@@ -377,7 +377,7 @@
   min-width: 164px;
   color: #f4fbfb;
   border: 1px solid rgba(11, 73, 73, 0.46);
-  background: linear-gradient(135deg, #0b4949 0%, #0e5e5e 52%, #1a7373 100%);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 52%, var(--accent-light) 100%);
   box-shadow: 0 16px 26px -16px rgba(11, 73, 73, 0.66);
 }
 
@@ -495,7 +495,7 @@
   outline: none;
   border-color: rgba(14, 94, 94, 0.78);
   box-shadow: 0 0 0 3px rgba(14, 94, 94, 0.16);
-  background: #fff;
+  background: var(--white);
 }
 
 .form-textarea {
@@ -509,7 +509,7 @@
   margin-top: 4px;
   text-align: right;
   color: rgba(35, 44, 44, 0.6);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
 }
 
 .chip-container {
@@ -545,7 +545,7 @@
 .chip.selected {
   color: #f4fbfb;
   border-color: rgba(11, 73, 73, 0.5);
-  background: linear-gradient(135deg, #0b4949 0%, #0e5e5e 100%);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
 }
 
 .radio-group {
@@ -670,7 +670,7 @@
 
 .upload-text {
   color: var(--charcoal);
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 600;
 }
 
@@ -764,7 +764,7 @@
   }
 
   .onboarding-page .signup-header h1 {
-    font-size: 1rem;
+    font-size: var(--text-base);
   }
 
   .onboarding-page .signup-header .subtitle {
@@ -808,7 +808,7 @@
   }
 
   .question-title {
-    font-size: 1rem;
+    font-size: var(--text-base);
   }
 
   .question-context {
@@ -863,7 +863,7 @@
   }
 
   .form-label-subtitle {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
   }
 
   .form-input,

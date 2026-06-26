@@ -276,6 +276,7 @@ const ProfessionalsPage = () => {
                 type="text"
                 className="form-control search-input-large"
                 placeholder="Search by name, location, specialty, or keyword..."
+                aria-label="Search by name, location, specialty, or keyword"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />

@@ -182,6 +182,7 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
               <input
                 type="text"
                 placeholder="First name"
+                aria-label="First name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 style={inputStyle}
@@ -191,6 +192,7 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
               <input
                 type="email"
                 placeholder="Email address"
+                aria-label="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -205,6 +207,7 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
               <select
                 value={interest}
                 onChange={(e) => setInterest(e.target.value)}
+                aria-label="What are you looking for?"
                 style={selectStyle}
               >
                 <option value="" disabled>What are you looking for?</option>
@@ -217,6 +220,7 @@ const CoupleEmailCapture = ({ sourcePage = 'unknown', defaultCity = '', defaultS
               <input
                 type="text"
                 placeholder="City, State (e.g. Nashville, TN)"
+                aria-label="City and state"
                 value={city && state ? `${city}, ${state}` : city || state || ''}
                 onChange={(e) => {
                   const val = e.target.value

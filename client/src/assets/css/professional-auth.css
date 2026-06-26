@@ -1,5 +1,5 @@
 .professional-auth {
-  background: linear-gradient(180deg, var(--ivory) 0%, #ffffff 45%, var(--neutral) 100%);
+  background: linear-gradient(180deg, var(--ivory) 0%, var(--white) 45%, var(--neutral) 100%);
   min-height: 100vh;
   padding-bottom: var(--space-16);
 }
@@ -285,7 +285,7 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto var(--space-4);
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
 }
 
 .professional-auth__success-lead {
