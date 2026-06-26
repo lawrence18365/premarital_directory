@@ -2,7 +2,7 @@
 
 .confirm-email {
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--ivory) 0%, var(--neutral) 40%, #fff 100%);
+  background: linear-gradient(180deg, var(--ivory) 0%, var(--neutral) 40%, var(--white) 100%);
   padding: var(--space-16) var(--space-4);
   display: flex;
   align-items: center;
@@ -278,7 +278,7 @@
 }
 
 .confirm-email__help-link i {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   transition: transform var(--transition);
 }
 

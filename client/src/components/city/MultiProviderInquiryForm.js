@@ -220,11 +220,12 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
         </div>
 
         <div style={{ marginBottom: 'var(--space-3)' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9rem' }}>
+          <label htmlFor="multi_name" style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9rem' }}>
             Your Name (optional)
           </label>
           <input
             type="text"
+            id="multi_name"
             value={formData.name}
             onChange={(event) => setFormData({ ...formData, name: event.target.value })}
             placeholder="Jane & John"
@@ -239,11 +240,12 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
         </div>
 
         <div style={{ marginBottom: 'var(--space-3)' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9rem' }}>
+          <label htmlFor="multi_email" style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9rem' }}>
             Your Email *
           </label>
           <input
             type="email"
+            id="multi_email"
             value={formData.email}
             onChange={(event) => setFormData({ ...formData, email: event.target.value })}
             required
@@ -259,10 +261,11 @@ const MultiProviderInquiryForm = ({ cityName, stateName, stateSlug, citySlug, pr
         </div>
 
         <div style={{ marginBottom: 'var(--space-4)' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9rem' }}>
+          <label htmlFor="multi_message" style={{ display: 'block', marginBottom: '4px', fontWeight: '500', fontSize: '0.9rem' }}>
             Your Message *
           </label>
           <textarea
+            id="multi_message"
             value={formData.message}
             onChange={(event) => setFormData({ ...formData, message: event.target.value })}
             required

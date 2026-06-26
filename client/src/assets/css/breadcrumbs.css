@@ -4,7 +4,7 @@
   border-bottom: none;
   padding: var(--space-4) 0;
   margin-bottom: 0;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 /* Compact, transparent style for use atop hero/headers */
@@ -63,7 +63,7 @@
   font-weight: 500;
   padding: 4px 8px;
   border-radius: 6px;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .breadcrumb-link:hover {
@@ -74,12 +74,12 @@
 .breadcrumb-current {
   color: var(--text-primary);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .breadcrumb-separator {
   color: var(--border);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   margin: 0;
   opacity: 0.5;
 }

@@ -93,6 +93,9 @@ const BlogPostPage = React.lazy(() => import('./pages/blog/BlogPostPage'))
 // Quiz
 const RelationshipQuizPage = React.lazy(() => import('./pages/RelationshipQuizPage'))
 
+// Dev-only UI styleguide (gated to non-production in the route below)
+const StyleguidePage = React.lazy(() => import('./pages/StyleguidePage'))
+
 // Authentication Pages
 const LoginForm = React.lazy(() => import('./components/auth/LoginForm'))
 const SignupForm = React.lazy(() => import('./components/auth/SignupForm'))
@@ -450,6 +453,16 @@ function AppInner() {
                 <ProtectedRoute requireAdmin={true}>
                   <DistributionOpsDashboard />
                 </ProtectedRoute>
+              }
+            />
+
+            {/* Dev-only UI styleguide. In production this renders the 404 page
+                so it never ships. The route is not in any sitemap, so the
+                prerender step skips it. */}
+            <Route
+              path="/_styleguide"
+              element={
+                process.env.NODE_ENV === 'production' ? <NotFoundPage /> : <StyleguidePage />
               }
             />
 

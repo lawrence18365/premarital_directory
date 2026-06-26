@@ -33,7 +33,15 @@
     "build:prod": "npm run build",
     "deploy:vercel": "vercel --prod",
     "deploy:netlify": "netlify deploy --prod",
-    "analyze": "npm run build && npx source-map-explorer 'build/static/js/*.js'"
+    "analyze": "npm run build && npx source-map-explorer 'build/static/js/*.js'",
+    "lint:css": "stylelint \"src/**/*.css\"",
+    "lint:js": "eslint src --ext .js,.jsx --no-eslintrc --config eslint.lint.json",
+    "snapshot": "node scripts/visual-snapshot.js",
+    "prepare": "cd .. && husky client/.husky"
+  },
+  "lint-staged": {
+    "src/**/*.css": "stylelint",
+    "src/**/*.{js,jsx}": "eslint --no-eslintrc --config eslint.lint.json"
   },
   "eslintConfig": {
     "extends": [
@@ -55,6 +63,10 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "puppeteer": "^24.37.3"
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
+    "puppeteer": "^24.37.3",
+    "stylelint": "^17.14.0",
+    "stylelint-config-standard": "^40.0.0"
   }
 }

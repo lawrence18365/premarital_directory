@@ -1,0 +1,49 @@
+/* navbar-glass.css */
+.navbar--glass {
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03) !important;
+  transition: all 0.3s ease;
+}
+
+.navbar--glass .navbar-brand {
+  color: #2c3531 !important;
+}
+
+.navbar--glass .navbar-nav > li > a {
+  color: #5b6962 !important;
+  font-weight: 500;
+}
+
+.navbar--glass .navbar-nav > li > a:hover,
+.navbar--glass .navbar-nav > li > a.active {
+  color: #2c3531 !important;
+}
+
+.navbar--glass .navbar-actions .btn.btn-outline {
+  border-color: rgba(44, 53, 49, 0.2) !important;
+  color: #2c3531 !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+}
+
+.navbar--glass .navbar-actions .btn.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(44, 53, 49, 0.4) !important;
+}
+
+.navbar--glass .navbar-actions .btn.btn-primary {
+  background: #d27c6b !important;
+  color: var(--white) !important;
+  border: none !important;
+}
+
+.navbar--glass .navbar-actions .btn.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(210, 124, 107, 0.2);
+}
+
+.navbar--glass .hamburger {
+  background: #2c3531 !important;
+}

@@ -1,0 +1,604 @@
+/* profile-wellness.css - Editorial Wellness Aesthetic */
+
+/* Base Layout & Elegant Ivory Background */
+.profile-page.profile-wellness {
+  --wellness-ink: var(--primary); /* Deep Teal */
+  --wellness-ink-soft: var(--slate); 
+  --wellness-accent: var(--accent); /* Coral */
+  --wellness-bg-blur: rgba(255, 255, 255, 0.85);
+  --wellness-border: rgba(14, 94, 94, 0.15); /* Subtle teal border */
+  --wellness-shadow: 0 8px 32px rgba(14, 94, 94, 0.05); /* Teal tinted shadow */
+  
+  --font-sans: var(--font-body); /* Inter */
+  --font-serif: var(--font-display); /* Cormorant Garamond */
+
+  font-family: var(--font-sans);
+  color: var(--wellness-ink);
+  min-height: 100vh;
+  position: relative;
+  background-color: var(--neutral-light); /* Ivory */
+  padding-bottom: 6rem;
+  overflow-x: hidden;
+}
+
+/* Subtle Editorial Glow Background (No chaotic peach mesh) */
+.profile-wellness::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(14, 94, 94, 0.04), transparent 60%),
+    radial-gradient(circle at 85% 30%, rgba(137, 181, 162, 0.04), transparent 50%); /* Subtle Sage */
+  pointer-events: none;
+}
+
+/* Container */
+.wellness-container {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .wellness-container {
+    padding: 0 2rem;
+  }
+}
+
+/* Glass Card Mixin - Refined for Editorial */
+.wellness-glass {
+  background: var(--wellness-bg-blur);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--wellness-border);
+  box-shadow: var(--wellness-shadow);
+  border-radius: 16px; /* Slightly sharper corners for editorial feel */
+}
+
+/* Hero Section */
+.wellness-hero {
+  margin-top: 6rem;
+  padding: 4rem 2rem 3rem 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.wellness-avatar-wrapper {
+  position: absolute;
+  top: -4.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: var(--white);
+  padding: 6px;
+  box-shadow: 0 12px 24px rgba(14, 94, 94, 0.08); /* Teal tinted shadow */
+  border: 1px solid var(--wellness-border);
+}
+
+.wellness-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--neutral-mid);
+}
+
+.wellness-hero-content {
+  margin-top: 2rem;
+}
+
+.wellness-hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  color: var(--wellness-ink);
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.wellness-hero .role {
+  font-size: 1.15rem;
+  color: var(--wellness-accent);
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase; /* Editorial feel */
+}
+
+/* Mobile Hero Adjustments */
+@media (max-width: 600px) {
+  .wellness-hero {
+    margin-top: 5rem;
+    padding: 3.5rem 1.25rem 2rem 1.25rem;
+  }
+  
+  .wellness-avatar-wrapper {
+    width: 110px;
+    height: 110px;
+    top: -3.5rem;
+  }
+  
+  .wellness-hero h1 {
+    font-size: 2.2rem;
+  }
+  
+  .wellness-meta {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+.wellness-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  color: var(--wellness-ink-soft);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.wellness-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.wellness-meta i {
+  color: var(--wellness-accent);
+}
+
+/* Quick Facts & Chips */
+.wellness-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.wellness-chip {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--wellness-border);
+  padding: 0.4rem 1.2rem;
+  border-radius: 4px; /* Squared off for editorial */
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--wellness-ink);
+  box-shadow: 0 2px 8px rgba(14, 94, 94, 0.02);
+}
+
+/* Content Sections */
+.wellness-section {
+  padding: 3.5rem 2.5rem;
+  margin-top: 2rem;
+  opacity: 0;
+  animation: slideUpFade 0.8s ease forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .wellness-section {
+    padding: 2.5rem 1.5rem;
+  }
+}
+
+.wellness-section h2 {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--wellness-ink);
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--wellness-border);
+}
+
+.wellness-prose p {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--wellness-ink-soft);
+  margin-bottom: 1.5rem;
+}
+
+.wellness-prose p:last-child {
+  margin-bottom: 0;
+}
+
+/* Data Rows */
+.wellness-data-group {
+  margin-bottom: 2rem;
+}
+.wellness-data-group:last-child {
+  margin-bottom: 0;
+}
+
+.wellness-data-row {
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem 0;
+  border-bottom: 1px solid rgba(14, 94, 94, 0.08);
+}
+
+.wellness-data-row:last-child {
+  border-bottom: none;
+}
+
+@media (min-width: 600px) {
+  .wellness-data-row {
+    flex-direction: row;
+    align-items: baseline;
+  }
+}
+
+.wellness-data-label {
+  font-weight: 600;
+  color: var(--wellness-ink);
+  width: 200px;
+  flex-shrink: 0;
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wellness-data-value {
+  color: var(--wellness-ink-soft);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+/* Contact Form Specifics */
+.wellness-contact {
+  margin-top: 3rem;
+  text-align: left;
+}
+
+.lead-contact-form.wellness-form {
+  margin-top: 1rem;
+}
+
+.lead-contact-form.wellness-form input,
+.lead-contact-form.wellness-form textarea,
+.lead-contact-form.wellness-form select {
+  width: 100%;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid var(--wellness-border);
+  border-radius: 8px; /* Slightly sharper */
+  padding: 1.2rem;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--wellness-ink);
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.lead-contact-form.wellness-form input:focus,
+.lead-contact-form.wellness-form textarea:focus,
+.lead-contact-form.wellness-form select:focus {
+  outline: none;
+  background: var(--white);
+  border-color: var(--wellness-ink);
+  box-shadow: 0 0 0 4px rgba(14, 94, 94, 0.1);
+}
+
+.lead-contact-form.wellness-form label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--wellness-ink);
+  margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wellness-btn {
+  background: var(--wellness-accent);
+  color: var(--white);
+  border: none;
+  padding: 1.2rem 2.5rem;
+  border-radius: 8px; /* Sharper */
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.25);
+}
+
+.wellness-btn:hover {
+  background: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.35);
+}
+
+.wellness-btn-outline {
+  background: rgba(255,255,255,0.9);
+  color: var(--wellness-ink);
+  border: 2px solid var(--wellness-ink);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.wellness-btn-outline:hover {
+  background: var(--wellness-ink);
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(14, 94, 94, 0.15);
+}
+
+/* Explore Grid */
+.wellness-explore-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 600px) {
+  .wellness-explore-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Wellness Breadcrumbs */
+.wellness-breadcrumbs {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.wellness-breadcrumbs .breadcrumb-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wellness-breadcrumbs .breadcrumb-item {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--wellness-ink-soft);
+}
+
+.wellness-breadcrumbs .breadcrumb-link {
+  color: var(--wellness-ink);
+  text-decoration: none;
+  background: transparent;
+  padding: 0.3rem 0;
+  border-radius: 0;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid transparent;
+  font-weight: 500;
+}
+
+.wellness-breadcrumbs .breadcrumb-link:hover {
+  border-bottom: 1px solid var(--wellness-ink);
+}
+
+.wellness-breadcrumbs .breadcrumb-current {
+  color: var(--wellness-ink-soft);
+  font-weight: 400;
+  padding: 0.3rem 0;
+}
+
+.wellness-breadcrumbs .breadcrumb-separator {
+  color: rgba(14, 94, 94, 0.3);
+  font-size: var(--text-xs);
+  margin: 0 0.4rem;
+}
+
+/* Quantitative Metrics Dashboard */
+.wellness-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px; /* Used for the internal borders via background color */
+  background: rgba(14, 94, 94, 0.1); /* Teal grid lines */
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 1.5rem;
+  box-shadow: var(--wellness-shadow);
+  border: 1px solid var(--wellness-border);
+  animation: slideUpFade 0.8s ease forwards;
+  opacity: 0;
+}
+
+@media (min-width: 600px) {
+  .wellness-metrics {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.wellness-metric-box {
+  background: var(--wellness-bg-blur);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: background 0.3s ease;
+}
+
+@media (max-width: 600px) {
+  .wellness-metric-box {
+    padding: 1.25rem 0.5rem;
+  }
+  
+  .wellness-metric-value {
+    font-size: 2rem !important; /* Scale down massive numbers on mobile */
+  }
+  
+  .wellness-metric-label {
+    font-size: var(--text-xs);
+  }
+}
+
+.wellness-metric-box:hover {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.wellness-metric-value {
+  font-family: var(--font-serif);
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: var(--wellness-ink);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.wellness-metric-label {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--wellness-ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Hero actions (website + share) */
+.wellness-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+/* Additional locations served */
+.wellness-also-serving {
+  font-size: 0.95rem;
+  color: var(--wellness-ink-soft);
+  margin: 0 0 1.5rem 0;
+}
+
+.wellness-also-serving a {
+  color: var(--wellness-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.wellness-also-serving a:hover {
+  text-decoration: underline;
+}
+
+/* Left-aligned chip rows (inside data sections) */
+.wellness-chips-left {
+  justify-content: flex-start;
+}
+
+/* Direct contact reveal (paid tier) */
+.wellness-reveal-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--wellness-ink);
+  color: var(--wellness-ink);
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.wellness-reveal-btn:hover {
+  background: var(--wellness-ink);
+  color: var(--white);
+}
+
+.wellness-contact-link {
+  color: var(--wellness-accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.wellness-contact-link:hover {
+  text-decoration: underline;
+}
+
+/* FAQ */
+.wellness-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.wellness-faq-item {
+  border-bottom: 1px solid rgba(14, 94, 94, 0.08);
+  padding: 1.2rem 0;
+}
+
+.wellness-faq-item:last-child {
+  border-bottom: none;
+}
+
+.wellness-faq-item summary {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--wellness-ink);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.wellness-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.wellness-faq-item summary::after {
+  content: '+';
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--wellness-accent);
+  line-height: 1;
+}
+
+.wellness-faq-item[open] summary::after {
+  content: '–';
+}
+
+.wellness-faq-item p {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--wellness-ink-soft);
+  margin: 1rem 0 0 0;
+}

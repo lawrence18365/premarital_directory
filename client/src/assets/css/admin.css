@@ -35,7 +35,7 @@
 
 .stat-content small {
   color: var(--color-gray-500, #6b7280);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 400;
   margin-top: 0.25rem;
   display: block;
@@ -60,7 +60,7 @@
 .chart-card h3 {
   color: var(--color-gray-900, #1a1a1a);
   margin: 0 0 1rem 0;
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
 }
 
@@ -77,7 +77,7 @@
 .activity-section h2 {
   color: var(--color-gray-900, #1a1a1a);
   margin: 0 0 1.5rem 0;
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   font-weight: 600;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--color-gray-200, #e5e5e5);
@@ -107,7 +107,7 @@
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 1rem;
+  font-size: var(--text-base);
   flex-shrink: 0;
 }
 
@@ -126,13 +126,13 @@
 .activity-content p {
   color: var(--color-gray-900, #1a1a1a);
   margin: 0 0 0.25rem 0;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   font-weight: 500;
 }
 
 .activity-content small {
   color: var(--color-gray-500, #6b7280);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
 }
 
 /* Quick Actions Section */
@@ -147,7 +147,7 @@
 .quick-actions-section h2 {
   color: var(--color-gray-900, #1a1a1a);
   margin: 0 0 1.5rem 0;
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   font-weight: 600;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--color-gray-200, #e5e5e5);
@@ -180,7 +180,7 @@
 
 .admin-actions .action-card h4 {
   margin-bottom: 0.75rem;
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
 }
 
 .admin-actions .action-card p {
@@ -221,7 +221,7 @@
 
 .stat-label {
   color: var(--color-gray-600, #666);
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   font-weight: 500;
 }
 
@@ -249,7 +249,7 @@
   font-weight: 600;
   color: var(--color-gray-700, #374151);
   margin-bottom: 0.5rem;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .filter-group input,
@@ -258,7 +258,7 @@
   padding: 0.75rem;
   border: 1px solid var(--color-gray-300, #d1d5db);
   border-radius: 8px;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 /* Lead Cards */
@@ -293,7 +293,7 @@
 .lead-info h3 {
   color: var(--color-gray-900, #1a1a1a);
   margin: 0 0 0.5rem 0;
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
 }
 
@@ -309,7 +309,7 @@
   gap: 0.5rem;
   color: var(--teal);
   text-decoration: none;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .contact-link:hover {
@@ -325,7 +325,7 @@
 
 .lead-meta small {
   color: var(--color-gray-500, #6b7280);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
 }
 
 /* Lead Details */
@@ -338,7 +338,7 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .detail-item i {
@@ -358,7 +358,7 @@
   border-radius: 8px;
   margin-top: 0.5rem;
   border-left: 4px solid var(--color-coral, #ff6b35);
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   line-height: 1.5;
   color: var(--color-gray-700, #374151);
   font-style: italic;
@@ -382,7 +382,7 @@
 }
 
 .status-actions label {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--color-gray-700, #374151);
 }
@@ -391,7 +391,7 @@
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-gray-300, #d1d5db);
   border-radius: 6px;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   background: white;
 }
 
@@ -413,7 +413,7 @@
 .subscription-card h3 {
   color: var(--color-gray-900, #1a1a1a);
   margin: 0 0 0.5rem 0;
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   font-weight: 600;
 }
 
@@ -423,7 +423,7 @@
 }
 
 .billing-info {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--color-gray-500, #6b7280);
 }
 
@@ -469,7 +469,7 @@
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 999px;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.025em;
@@ -478,7 +478,7 @@
 .plan-header h3 {
   color: var(--color-gray-900, #1a1a1a);
   margin: 0 0 1rem 0;
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 700;
 }
 
@@ -493,7 +493,7 @@
 }
 
 .period {
-  font-size: 1rem;
+  font-size: var(--text-base);
   color: var(--color-gray-500, #6b7280);
 }
 
@@ -507,7 +507,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem 0;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .feature-item i {
@@ -533,7 +533,7 @@
   text-align: center;
   color: var(--color-gray-900, #1a1a1a);
   margin: 0 0 2rem 0;
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 600;
 }
 
@@ -557,13 +557,13 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem auto;
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
 }
 
 .benefit-item h4 {
   color: var(--color-gray-900, #1a1a1a);
   margin: 0 0 0.75rem 0;
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
 }
 
@@ -586,7 +586,7 @@
   text-align: center;
   color: var(--color-gray-900, #1a1a1a);
   margin: 0 0 2rem 0;
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 600;
 }
 
@@ -599,7 +599,7 @@
 .faq-item h4 {
   color: var(--color-gray-900, #1a1a1a);
   margin: 0 0 0.75rem 0;
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 600;
 }
 
@@ -607,7 +607,7 @@
   color: var(--color-gray-600, #666);
   margin: 0;
   line-height: 1.5;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 /* Responsive Design */

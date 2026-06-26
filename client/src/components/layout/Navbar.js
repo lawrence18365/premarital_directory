@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import '../../assets/css/premium-mobile-nav.css'
 import '../../assets/css/navbar-transparent.css'
+import '../../assets/css/navbar-glass.css'
 
 const SPECIALTY_LINKS = [
   { slug: 'christian', label: 'Christian Counseling' },
@@ -40,7 +41,6 @@ const Navbar = () => {
   const location = useLocation()
   const { user, signOut } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [showNavbar, setShowNavbar] = useState(true);
   const [solid, setSolid] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null)
@@ -76,23 +76,38 @@ const Navbar = () => {
   }, [location.pathname])
 
   const isHome = ['/', '/therapists', '/coaches', '/clergy'].includes(location.pathname)
+  
+  // Profile pages have 3 slashes: /premarital-counseling/state/city/slug
+  const isProfilePage = location.pathname.startsWith('/premarital-counseling/') && location.pathname.split('/').filter(Boolean).length >= 4
 
   useEffect(() => {
+    let lastScrollYValue = window.scrollY;
+
     const handleScroll = () => {
-      if (window.scrollY > lastScrollY && window.scrollY > 100) {
+      const currentScrollY = window.scrollY;
+      
+      // Show navbar if mobile menu is open
+      if (mobileMenuOpen) {
+        setShowNavbar(true);
+        lastScrollYValue = currentScrollY;
+        return;
+      }
+
+      if (currentScrollY > lastScrollYValue && currentScrollY > 100) {
         setShowNavbar(false);
-      } else if (window.scrollY < lastScrollY) {
+      } else if (currentScrollY < lastScrollYValue) {
         setShowNavbar(true);
       }
-      setLastScrollY(window.scrollY);
+      
+      lastScrollYValue = currentScrollY;
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [lastScrollY]);
+  }, [mobileMenuOpen]);
 
   // Solid/transparent transition on home hero
   useEffect(() => {
@@ -109,7 +124,7 @@ const Navbar = () => {
 
 
   return (
-    <nav className={`navbar ${isHome && !solid ? 'navbar--transparent' : ''} ${!showNavbar ? 'navbar-hidden' : ''}`}>
+    <nav className={`navbar ${isHome && !solid ? 'navbar--transparent' : ''} ${isProfilePage ? 'navbar--glass' : ''} ${!showNavbar ? 'navbar-hidden' : ''}`}>
       <div className="container">
         <div className="navbar-content">
 

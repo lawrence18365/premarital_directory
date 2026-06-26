@@ -78,7 +78,7 @@
 }
 
 .specialty-icon i {
-  font-size: 3rem;
+  font-size: var(--text-4xl);
   color: var(--white);
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
@@ -133,7 +133,7 @@
 .specialty-cta .btn {
   min-width: 240px;
   padding: var(--space-4) var(--space-8);
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 600;
   border-radius: var(--radius-full);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -217,7 +217,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 16px;
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
 }
 
 .benefit-card span {
@@ -252,7 +252,7 @@
 }
 
 .specialty-body-para {
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   line-height: 1.8;
   color: var(--text-secondary);
   margin-bottom: var(--space-6);
@@ -339,14 +339,14 @@
 
 .related-specialty-card h3 {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: var(--space-3);
 }
 
 .related-specialty-card p {
-  font-size: 1rem;
+  font-size: var(--text-base);
   color: var(--text-secondary);
   line-height: 1.6;
   margin: 0;
@@ -374,7 +374,7 @@
   }
 
   .specialty-title {
-    font-size: 2.25rem;
+    font-size: var(--text-3xl);
   }
 
   .specialty-subtitle {

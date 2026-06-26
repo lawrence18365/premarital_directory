@@ -103,8 +103,8 @@
 }
 
 .mobile-menu-logo a {
-  color: #0e5e5e;
-  font-size: 1.5rem;
+  color: var(--primary);
+  font-size: var(--text-2xl);
   font-weight: 700;
   text-decoration: none;
   letter-spacing: -0.02em;
@@ -116,7 +116,7 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #0e5e5e;
+  color: var(--primary);
   border-radius: 50%;
   width: 44px;
   height: 44px;
@@ -137,7 +137,7 @@
 .mobile-menu-close:hover {
   background: rgba(14, 94, 94, 0.2);
   border-color: rgba(14, 94, 94, 0.4);
-  color: #ffffff;
+  color: var(--white);
   transform: scale(1.05);
   box-shadow: 
     0 8px 25px rgba(14, 94, 94, 0.3),
@@ -179,7 +179,7 @@
 .navbar-mobile.active .navbar-mobile-nav li:nth-child(8) { animation: slideInLeft 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.8s forwards; }
 
 .navbar-mobile-nav a {
-  color: #0e5e5e;
+  color: var(--primary);
   display: flex;
   align-items: center;
   gap: 1.5rem;
@@ -225,7 +225,7 @@
 .navbar-mobile-nav a:hover {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(14, 94, 94, 0.3);
-  color: #0e5e5e;
+  color: var(--primary);
   transform: translateY(-2px) scale(1.02);
   box-shadow: 
     0 8px 32px rgba(14, 94, 94, 0.15),
@@ -242,14 +242,14 @@
 }
 
 .navbar-mobile-nav a:hover i {
-  color: #0e5e5e;
+  color: var(--primary);
   transform: scale(1.15);
 }
 
 .navbar-mobile-nav a.active {
   background: rgba(14, 94, 94, 0.12);
   border-color: rgba(14, 94, 94, 0.3);
-  color: #0e5e5e;
+  color: var(--primary);
   box-shadow: 
     0 4px 20px rgba(14, 94, 94, 0.2),
     0 2px 8px rgba(0, 0, 0, 0.1),
@@ -257,7 +257,7 @@
 }
 
 .navbar-mobile-nav a.active i {
-  color: #0e5e5e;
+  color: var(--primary);
 }
 
 /* Special styling for auth section */
@@ -289,8 +289,8 @@
 }
 
 .mobile-auth-btn.btn-primary {
-  background: linear-gradient(135deg, #0e5e5e 0%, #1a7373 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent-light) 100%);
+  color: var(--white);
   border: none;
   box-shadow: 
     0 4px 15px rgba(14, 94, 94, 0.3),
@@ -299,7 +299,7 @@
 
 .mobile-auth-btn.btn-primary:hover {
   transform: translateY(-3px);
-  background: linear-gradient(135deg, #1a7373 0%, #0e5e5e 100%);
+  background: linear-gradient(135deg, var(--accent-light) 0%, var(--primary) 100%);
   box-shadow: 
     0 8px 25px rgba(14, 94, 94, 0.4),
     0 4px 12px rgba(0, 0, 0, 0.15),
@@ -310,7 +310,7 @@
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  color: #0e5e5e;
+  color: var(--primary);
   border: 1.5px solid rgba(14, 94, 94, 0.4);
   box-shadow: 
     0 2px 8px rgba(0, 0, 0, 0.08),
@@ -319,7 +319,7 @@
 
 .mobile-auth-btn.btn-outline:hover {
   background: rgba(14, 94, 94, 0.12);
-  color: #0e5e5e;
+  color: var(--primary);
   border-color: rgba(14, 94, 94, 0.6);
   transform: translateY(-2px);
   box-shadow: 
@@ -347,8 +347,8 @@
 
 .mobile-sign-out-btn:hover {
   background: rgba(255, 99, 99, 0.1);
-  color: #0e5e5e;
-  border-color: #0e5e5e;
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 /* Premium Animations */
@@ -421,5 +421,28 @@
   .mobile-auth-section {
     margin-top: 1rem;
     padding: 1.5rem;
+  }
+}
+
+/* Hide desktop elements on mobile */
+@media (max-width: 991px) {
+  .navbar-nav,
+  .navbar-actions {
+    display: none !important;
+  }
+  
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+}
+
+/* Hide mobile toggle on desktop */
+@media (min-width: 992px) {
+  .mobile-menu-btn {
+    display: none !important;
+  }
+  
+  .navbar-mobile, .navbar-backdrop {
+    display: none !important;
   }
 }

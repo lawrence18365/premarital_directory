@@ -7,7 +7,7 @@ import { getAttribution, getSourceLabel } from '../../lib/attribution'
 import { PostInquiryShare } from '../common/ShareButton'
 import '../../assets/css/share-button.css'
 
-const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaimed = true, isStateMatching, isSpecialtyMatching, isDiscountMatching, stateName, specialtyType, onSuccess }) => {
+const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaimed = true, isStateMatching, isSpecialtyMatching, isDiscountMatching, stateName, specialtyType, onSuccess, theme = 'default', hideHeader = false }) => {
   const shortName = professionalName?.split(' ')[0] || 'this professional'
   const [formData, setFormData] = useState({
     partner_one_name: '',
@@ -179,11 +179,13 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
   }
 
   return (
-    <div className="lead-contact-form">
-      <div className="form-header">
-        <h3>Contact {shortName}</h3>
-        <p>Share your details and what you need help with.</p>
-      </div>
+    <div className={`lead-contact-form ${theme === 'wellness' ? 'wellness-form' : ''}`}>
+      {!hideHeader && (
+        <div className="form-header">
+          <h3>Contact {shortName}</h3>
+          <p>Share your details and what you need help with.</p>
+        </div>
+      )}
 
       {error && (
         <div className="error-message">
@@ -235,13 +237,13 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
 
         <div className="form-group">
           <label htmlFor="message">Message *</label>
-          {!formData.message && (
             <div style={{
               display: 'flex',
-              flexWrap: 'wrap',
+              flexDirection: 'column',
               gap: '6px',
-              marginBottom: '8px'
+              marginBottom: '12px'
             }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--profile-ink-soft)', fontWeight: 600 }}>Need ideas? Try:</span>
               {[
                 "We're engaged and exploring premarital counseling options.",
                 "We'd like to learn about your availability and pricing.",
@@ -255,22 +257,23 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
                     setFormData(prev => ({ ...prev, message: template }))
                   }}
                   style={{
-                    padding: '4px 10px',
-                    fontSize: '0.8rem',
-                    background: 'var(--gray-100, #f3f4f6)',
-                    border: '1px solid var(--gray-300, #d1d5db)',
-                    borderRadius: '999px',
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    textAlign: 'left',
+                    fontSize: '0.95rem',
+                    color: theme === 'wellness' ? 'var(--wellness-ink)' : 'var(--profile-accent)',
                     cursor: 'pointer',
-                    color: 'var(--gray-700, #374151)',
                     lineHeight: 1.4,
-                    whiteSpace: 'nowrap'
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '4px',
+                    textDecorationColor: theme === 'wellness' ? 'var(--wellness-line)' : 'var(--profile-line-strong)'
                   }}
                 >
-                  {template}
+                  "{template}"
                 </button>
               ))}
             </div>
-          )}
           <textarea
             id="message"
             name="message"
@@ -356,7 +359,7 @@ const LeadContactForm = ({ profileId, professionalName, profile, isProfileClaime
         <div className="form-actions">
           <button
             type="submit"
-            className="btn btn-primary btn-full"
+            className={theme === 'wellness' ? 'wellness-btn' : 'btn btn-primary btn-full'}
             disabled={loading}
           >
             {loading ? (

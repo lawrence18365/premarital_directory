@@ -74,7 +74,7 @@
 }
 
 .hero-modern .hero-form {
-  background: var(--white, #fff);
+  background: var(--white, var(--white));
   border: 1px solid var(--gray-200, #e5e7eb);
   border-radius: 16px;
   padding: 12px;
