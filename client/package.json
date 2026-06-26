@@ -36,6 +36,7 @@
     "analyze": "npm run build && npx source-map-explorer 'build/static/js/*.js'",
     "lint:css": "stylelint \"src/**/*.css\"",
     "lint:js": "eslint src --ext .js,.jsx",
+    "snapshot": "node scripts/visual-snapshot.js",
     "prepare": "cd .. && husky client/.husky"
   },
   "lint-staged": {

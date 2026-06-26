@@ -29,9 +29,21 @@ What an automated multi-agent pass completed, all build-verified (webpack compil
 | 6 UX & conversion | NOT STARTED | Needs product judgment + analytics |
 | 7 Accessibility | PARTIAL | 8 money-path form labels fixed; jsx-a11y guardrail on (93 warnings now visible). Onboarding wizard labels backlog |
 | 8 Performance | DONE (font) | Render-blocking font @import moved to index.html preconnect/preload/swap. Routes already lazy-loaded. Lighthouse run pending |
-| 9 QA & lock | PARTIAL | Build verified repeatedly. Playwright + puppeteer already installed for visual regression. Cross-browser + warn→error flip pending |
+| 9 QA & lock | PARTIAL | Build verified repeatedly. Visual-snapshot harness added (`npm run snapshot`), 22 pages captured desktop+mobile. Cross-browser + warn→error flip pending |
 
-Everything above is UNCOMMITTED on branch `feat/self-serve-and-content-engine`.
+### Key finding from visual review (do not skip)
+Screenshotting the live build at desktop and mobile showed the rendered site is already a
+coherent, professional teal/cream editorial design. The funnel pages (founding-provider,
+pricing) have clear tiers, hierarchy, CTAs, and FAQs. The CEO brief's premise that the site
+"looks amateur and stitched together" is NOT borne out by the rendered pages. The real
+problems were all under the hood (token conflict, 367 stray hex, 1527 inline styles, dead CSS,
+no guardrails), which is what got fixed. CONCLUSION: Phase 5 (redesign every page) is largely
+unnecessary and risky. Reprioritize remaining effort to: (a) finish the mechanical sprawl
+migration incrementally, now enforced by guardrails; (b) Phase 6 conversion tuning driven by
+real analytics, not guesswork; (c) the 3 user decisions below.
+
+The 4 design-system commits are on branch `feat/self-serve-and-content-engine`
+(`d35718c`, `cdaa7ff`, `70f5435`, `708b445`) plus the visual harness commit.
 
 ---
 
