@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Repo root is the parent of client/, but the npm project (and lint config)
+# lives in client/. Hooks run with cwd = repo root, so cd into client first.
+# Rules are currently WARN-only, so this reports but does not block commits.
+cd client && npx lint-staged
