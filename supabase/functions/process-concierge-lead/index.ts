@@ -5,6 +5,11 @@ import { checkForSpam, silentSpamResponse } from "../_shared/spamDetection.ts"
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 const PLATFORM_EMAIL = 'hello@weddingcounselors.com' // Send leads to platform owner
 
+// A malformed couple email must NOT sink the whole notification. Resend 422s an
+// invalid `reply_to`, which would silently drop the lead. Only set reply_to when
+// the address is valid; otherwise omit it (the email still shows in the body).
+const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((e || '').trim())
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -103,7 +108,7 @@ serve(async (req) => {
           body: JSON.stringify({
             from: 'Wedding Counselors <hello@weddingcounselors.com>',
             to: PLATFORM_EMAIL,
-            reply_to: email,
+            ...(isValidEmail(email) ? { reply_to: email } : {}),
             subject: `🚨 NEW CONCIERGE MATCH LEAD: ${city}, ${state}`,
             html: `
               <h2>New Concierge Lead Requires Matching</h2>
