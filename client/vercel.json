@@ -1,7 +1,5 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
+  "version": 2,
   "redirects": [
     {
       "source": "/(.*)",
@@ -13,6 +11,310 @@
         }
       ],
       "statusCode": 301
+    },
+    {
+      "source": "/(.*)/",
+      "destination": "/$1",
+      "statusCode": 308
+    },
+    {
+      "source": "/professionals",
+      "destination": "/premarital-counseling",
+      "statusCode": 301
+    },
+    {
+      "source": "/professionals/:path*",
+      "destination": "/premarital-counseling/:path*",
+      "statusCode": 301
+    },
+    {
+      "source": "/states",
+      "destination": "/premarital-counseling",
+      "statusCode": 301
+    },
+    {
+      "source": "/states/:path*",
+      "destination": "/premarital-counseling/:path*",
+      "statusCode": 301
+    },
+    {
+      "source": "/therapists",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/coaches",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/clergy",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/find-counselor",
+      "destination": "/premarital-counseling",
+      "statusCode": 301
+    },
+    {
+      "source": "/find-counselors",
+      "destination": "/premarital-counseling",
+      "statusCode": 301
+    },
+    {
+      "source": "/counselors",
+      "destination": "/premarital-counseling",
+      "statusCode": 301
+    },
+    {
+      "source": "/pre-cana",
+      "destination": "/premarital-counseling/catholic",
+      "statusCode": 301
+    },
+    {
+      "source": "/pre-cana/:path*",
+      "destination": "/premarital-counseling/catholic",
+      "statusCode": 301
+    },
+    {
+      "source": "/professionals-list",
+      "destination": "/premarital-counseling",
+      "statusCode": 301
+    },
+    {
+      "source": "/blog/financial-questions-before-marriage",
+      "destination": "/blog/financial-questions-to-ask-before-marriage",
+      "statusCode": 301
+    },
+    {
+      "source": "/blog/wedding-planning-fights",
+      "destination": "/blog/fighting-about-wedding-planning",
+      "statusCode": 301
+    },
+    {
+      "source": "/blog/inlaw-boundaries",
+      "destination": "/blog/setting-healthy-boundaries-with-inlaws",
+      "statusCode": 301
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/unsubscribe",
+      "destination": "https://bkjwctlolhoxhnoospwp.supabase.co/functions/v1/unsubscribe-digest"
+    },
+    {
+      "source": "/auth/v1/:path*",
+      "destination": "https://bkjwctlolhoxhnoospwp.supabase.co/auth/v1/:path*"
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(ahrefsbot|semrushbot|dotbot|mj12bot|blexbot|bytespider|petalbot|sogou|yandexbot|baiduspider|megaindex|serpstatbot|zoominfobot|dataforseo|python-requests|python-urllib|go-http-client|scrapy|httpclient|libwww-perl|mechanize|headlesschrome|phantomjs|puppeteer|playwright|selenium|webdriver|gptbot|claudebot|ccbot).*"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/:path*",
+      "missing": [
+        {
+          "type": "header",
+          "key": "user-agent"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "^(?!US|CA|GB|AU|DE|PR|GU|VI|AS|MP|JP|KR|IT|ES)."
+        }
+      ],
+      "missing": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(googlebot|google-inspectiontool|bingbot|msnbot|duckduckbot|slurp|facebookexternalhit|facebot|twitterbot|linkedinbot|pinterestbot|applebot).*"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/premarital-counseling/:path*",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "^(?!US|CA|GB|AU|DE|PR|GU|VI|AS|MP|JP|KR|IT|ES)."
+        }
+      ],
+      "missing": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(googlebot|google-inspectiontool|bingbot|msnbot|duckduckbot|slurp|facebookexternalhit|facebot|twitterbot|linkedinbot|pinterestbot|applebot).*"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/blog/:path*",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "^(?!US|CA|GB|AU|DE|PR|GU|VI|AS|MP|JP|KR|IT|ES)."
+        }
+      ],
+      "missing": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(googlebot|google-inspectiontool|bingbot|msnbot|duckduckbot|slurp|facebookexternalhit|facebot|twitterbot|linkedinbot|pinterestbot|applebot).*"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/contact",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "^(?!US|CA|GB|AU|DE|PR|GU|VI|AS|MP|JP|KR|IT|ES)."
+        }
+      ],
+      "missing": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(googlebot|google-inspectiontool|bingbot|msnbot|duckduckbot|slurp|facebookexternalhit|facebot|twitterbot|linkedinbot|pinterestbot|applebot).*"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/claim-profile",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "^(?!US|CA|GB|AU|DE|PR|GU|VI|AS|MP|JP|KR|IT|ES)."
+        }
+      ],
+      "missing": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(googlebot|google-inspectiontool|bingbot|msnbot|duckduckbot|slurp|facebookexternalhit|facebot|twitterbot|linkedinbot|pinterestbot|applebot).*"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/about",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "^(?!US|CA|GB|AU|DE|PR|GU|VI|AS|MP|JP|KR|IT|ES)."
+        }
+      ],
+      "missing": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(googlebot|google-inspectiontool|bingbot|msnbot|duckduckbot|slurp|facebookexternalhit|facebot|twitterbot|linkedinbot|pinterestbot|applebot).*"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/profile/:path*",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "^(?!US|CA|GB|AU|DE|PR|GU|VI|AS|MP|JP|KR|IT|ES)."
+        }
+      ],
+      "missing": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(googlebot|google-inspectiontool|bingbot|msnbot|duckduckbot|slurp|facebookexternalhit|facebot|twitterbot|linkedinbot|pinterestbot|applebot).*"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/for-churches",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "^(?!US|CA|GB|AU|DE|PR|GU|VI|AS|MP|JP|KR|IT|ES)."
+        }
+      ],
+      "missing": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(googlebot|google-inspectiontool|bingbot|msnbot|duckduckbot|slurp|facebookexternalhit|facebot|twitterbot|linkedinbot|pinterestbot|applebot).*"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/for-officiants",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "^(?!US|CA|GB|AU|DE|PR|GU|VI|AS|MP|JP|KR|IT|ES)."
+        }
+      ],
+      "missing": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(googlebot|google-inspectiontool|bingbot|msnbot|duckduckbot|slurp|facebookexternalhit|facebot|twitterbot|linkedinbot|pinterestbot|applebot).*"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/professional/:path*",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "^(?!US|CA|GB|AU|DE|PR|GU|VI|AS|MP|JP|KR|IT|ES|FR|NL|IE|SE|NO|DK|FI|CH|AT|BE|NZ|PT|MX|IL|ZA|IN|PH)."
+        }
+      ],
+      "missing": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(googlebot|google-inspectiontool|bingbot|msnbot|duckduckbot|slurp|facebookexternalhit|facebot|twitterbot|linkedinbot|pinterestbot|applebot).*"
+        }
+      ],
+      "destination": "/api/bot-blocked"
+    },
+    {
+      "source": "/premarital-counseling/:state/:city/:slug",
+      "destination": "/api/seo-profile-renderer"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -28,6 +330,14 @@
     {
       "source": "/(.*)",
       "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
         {
           "key": "X-Robots-Tag",
           "value": "index, follow"

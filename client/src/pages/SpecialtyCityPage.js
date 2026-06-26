@@ -237,9 +237,11 @@ const SpecialtyCityPage = ({ specialtyOverride, stateOverride, cityOverride }) =
       ? specialty.cityMetaDescription(cityName, stateAbbr, profiles.length)
       : `Compare ${specialtyCityCount} ${specialty.name.toLowerCase()} premarital counselors in ${cityName}, ${stateAbbr}. Browse profiles, see pricing, and contact a therapist directly.`
   const isAnchorCity = cityConfig?.is_anchor === true
+  // 2026-05-17: tightened from "<2 non-anchor" to "<5 for everyone".
+  // Specialty×city combos are the largest non-indexed bucket in GSC.
   const shouldNoindex = isCatholic
     ? programs.length < MIN_VERIFIED_PROGRAMS_FOR_INDEX
-    : (profiles.length === 0 || (!isAnchorCity && profiles.length < 2))
+    : profiles.length < 5 && !(isAnchorCity && profiles.length >= 3)
 
   if (loading) return <LoadingSpinner />
 
