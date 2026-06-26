@@ -230,6 +230,11 @@ jobs:
                 "status": 308
               },
               {
+                "src": "/sitemap-phase1\\.xml",
+                "headers": { "Location": "/sitemap.xml" },
+                "status": 301
+              },
+              {
                 "src": "/therapists",
                 "headers": { "Location": "/" },
                 "status": 301
