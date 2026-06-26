@@ -99,11 +99,30 @@ module.exports = async function (req, res) {
             .eq('slug', slug)
             .eq('is_hidden', false)
             .or('moderation_status.eq.approved,moderation_status.is.null')
-            .single();
+            .maybeSingle();
 
-        // 5. If profile not found, let React Router handle the 404 client-side.
-        if (error || !profile) {
+        // 5a. Transient Supabase error: keep the live page indexable and let React
+        // render client-side. Do not penalize a valid profile for a backend hiccup.
+        if (error) {
+            console.error('Supabase profile lookup error:', error.message);
             return res.status(200).send(htmlData);
+        }
+
+        // 5b. Genuine not-found / hidden / unapproved profile: this is a soft-404.
+        // Return 404 with an explicit noindex so Google drops the URL instead of
+        // indexing an empty shell. Override BOTH robots and the crawler-specific
+        // googlebot tag (the static shell ships googlebot: index, follow).
+        if (!profile) {
+            let notFoundHtml = htmlData.replace(
+                /<meta\s+name="googlebot"[^>]*>/gi,
+                '<meta name="googlebot" content="noindex, follow" />'
+            );
+            if (!/name="googlebot"/i.test(notFoundHtml)) {
+                notFoundHtml = notFoundHtml.replace('</head>', '  <meta name="googlebot" content="noindex, follow" />\n</head>');
+            }
+            notFoundHtml = notFoundHtml.replace('</head>', '  <meta name="robots" content="noindex, follow" />\n</head>');
+            res.setHeader('Cache-Control', 's-maxage=60');
+            return res.status(404).send(notFoundHtml);
         }
 
         // 6. Generate Profile-specific Meta Information.

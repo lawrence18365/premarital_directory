@@ -374,6 +374,67 @@ function verifyResults(results) {
 }
 
 // ---------------------------------------------------------------------------
+// 6. Prune noindex URLs from the deployed sitemaps
+// ---------------------------------------------------------------------------
+
+// The sitemap generator decides inclusion with heuristics (e.g. bio keyword
+// matching for specialty depth) that can drift from a page's actual render-time
+// noindex decision. That drift puts noindex URLs in the sitemap — which Google
+// flags and which wastes crawl budget. After prerendering, the rendered HTML is
+// the single source of truth, so we re-read each prerendered page and drop any
+// noindex URL from its child sitemap. Conservative: a URL is only removed when we
+// can positively read its prerendered HTML and find a noindex directive.
+
+const NOINDEX_RE = /<meta[^>]+name=["'](?:robots|googlebot)["'][^>]*content=["'][^"']*noindex/i
+
+function routeIsNoindex(loc) {
+  const routePath = loc.replace(/^https?:\/\/[^/]+/, '') || '/'
+  const cleanRoute = routePath === '/' ? '/' : routePath.replace(/\/+$/, '')
+  const htmlPath = cleanRoute === '/'
+    ? path.join(BUILD_DIR, 'index.html')
+    : path.join(BUILD_DIR, cleanRoute, 'index.html')
+  if (!fs.existsSync(htmlPath)) return null // not prerendered → cannot verify, keep it
+  try {
+    return NOINDEX_RE.test(fs.readFileSync(htmlPath, 'utf-8'))
+  } catch {
+    return null
+  }
+}
+
+function pruneNoindexFromSitemaps() {
+  // Profiles are not prerendered (served by the SSR renderer) so we cannot verify
+  // them from disk — leave that sitemap untouched. The generator already gates
+  // profiles on bio length, and the renderer noindexes missing profiles.
+  const targets = ['sitemap-core.xml', 'sitemap-cities.xml', 'sitemap-specialties.xml', 'sitemap-blog.xml']
+  console.log('\n  Pruning noindex URLs from deployed sitemaps...')
+  let totalPruned = 0
+
+  for (const file of targets) {
+    const filePath = path.join(BUILD_DIR, file)
+    if (!fs.existsSync(filePath)) continue
+    const xml = fs.readFileSync(filePath, 'utf-8')
+    const blocks = xml.match(/<url>[\s\S]*?<\/url>/g) || []
+    let pruned = 0
+    const kept = blocks.filter(block => {
+      const loc = (block.match(/<loc>\s*([^<\s]+)\s*<\/loc>/) || [])[1]
+      if (!loc) return true
+      if (routeIsNoindex(loc) === true) { pruned++; return false }
+      return true
+    })
+    if (pruned > 0) {
+      const header = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+      const newXml = header + kept.join('\n') + '\n</urlset>'
+      fs.writeFileSync(filePath, newXml)
+      totalPruned += pruned
+      console.log(`    ${file}: removed ${pruned} noindex URL(s), ${kept.length} kept`)
+    } else {
+      console.log(`    ${file}: clean (${blocks.length} URLs)`)
+    }
+  }
+  console.log(`  Pruned ${totalPruned} noindex URL(s) total`)
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -465,6 +526,13 @@ async function main() {
   } finally {
     if (browser) await browser.close()
     server.close()
+  }
+
+  // Make the deployed sitemaps a strict subset of indexable pages.
+  try {
+    pruneNoindexFromSitemaps()
+  } catch (err) {
+    console.warn('  WARN: sitemap noindex pruning failed:', err.message)
   }
 
   console.log('=== Prerender done ===\n')

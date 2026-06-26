@@ -25,6 +25,7 @@
     "build": "react-scripts build",
     "postbuild": "node scripts/prerender.js",
     "build:sitemap": "node scripts/generate-sitemap.js",
+    "validate:seo": "node scripts/validate-seo.mjs",
     "audit:contrast": "node scripts/a11y-contrast-audit.js",
     "audit:contrast:full": "node scripts/a11y-contrast-audit.js --full",
     "test": "react-scripts test",

@@ -127,6 +127,12 @@ const SEOHelmet = ({
       <title>{fullTitle}</title>
       <meta name="description" content={description || defaultDescription} />
       <meta name="robots" content={noindex ? "noindex, follow" : "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"} />
+      {/* Mirror the directive onto the Googlebot-specific tag. The static shell in
+          public/index.html ships `googlebot: index, follow`, and Google obeys the
+          crawler-specific tag over the generic `robots` tag — so without this a
+          noindex page would still be indexed by Googlebot. Helmet dedupes by name
+          and overrides the static tag. */}
+      <meta name="googlebot" content={noindex ? "noindex, follow" : "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"} />
       <link rel="canonical" href={fullUrl} />
 
       {/* Keywords */}
