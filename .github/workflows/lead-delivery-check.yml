@@ -21,9 +21,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install minimal deps
-        run: npm install @supabase/supabase-js dotenv --no-save
-
       - name: Check lead delivery (fails if any lead is stuck)
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

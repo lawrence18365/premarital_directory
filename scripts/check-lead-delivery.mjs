@@ -9,12 +9,10 @@
  * them, emails an alert to hello@ via Resend when RESEND_API_KEY is set, and
  * exits non-zero so the GitHub Actions run fails and notifies the owner.
  *
+ * Uses the Supabase REST API via fetch, so it has ZERO npm dependencies.
  * Env: SUPABASE_SERVICE_ROLE_KEY (required), RESEND_API_KEY (optional).
- *   node scripts/check-lead-delivery.mjs
+ *   node --env-file=.env scripts/check-lead-delivery.mjs   # local
  */
-
-import 'dotenv/config'
-import { createClient } from '@supabase/supabase-js'
 
 const SUPABASE_URL = 'https://bkjwctlolhoxhnoospwp.supabase.co'
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -26,29 +24,27 @@ if (!SERVICE_KEY) {
   process.exit(2)
 }
 
-const supabase = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } })
 const since = new Date(Date.now() - 48 * 3600 * 1000).toISOString()
 const isTest = (n) => /sample|test/i.test(n || '')
 
+async function rest(path) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
+  })
+  if (!res.ok) {
+    console.error(`REST query failed: ${res.status} ${await res.text()}`)
+    process.exit(2)
+  }
+  return res.json()
+}
+
 async function main() {
-  const { data: platform, error: e1 } = await supabase
-    .from('platform_leads')
-    .select('couple_name, couple_email, city, state, created_at, email_delivery_error')
-    .eq('email_delivery_status', 'failed')
-    .gte('created_at', since)
-    .order('created_at', { ascending: false })
-  if (e1) { console.error('platform_leads query failed:', e1.message); process.exit(2) }
+  const s = encodeURIComponent(since)
+  const platform = await rest(`platform_leads?email_delivery_status=eq.failed&created_at=gte.${s}&select=couple_name,couple_email,city,state,email_delivery_error&order=created_at.desc`)
+  const profile = await rest(`profile_leads?delivery_status=in.(failed,pending)&created_at=gte.${s}&select=couple_name,couple_email,delivery_status,delivery_error&order=created_at.desc`)
 
-  const { data: profile, error: e2 } = await supabase
-    .from('profile_leads')
-    .select('couple_name, couple_email, created_at, delivery_status, delivery_error')
-    .in('delivery_status', ['failed', 'pending'])
-    .gte('created_at', since)
-    .order('created_at', { ascending: false })
-  if (e2) { console.error('profile_leads query failed:', e2.message); process.exit(2) }
-
-  const stuckPlatform = (platform || []).filter((l) => !isTest(l.couple_name))
-  const stuckProfile = (profile || []).filter((l) => !isTest(l.couple_name))
+  const stuckPlatform = platform.filter((l) => !isTest(l.couple_name))
+  const stuckProfile = profile.filter((l) => !isTest(l.couple_name))
   const total = stuckPlatform.length + stuckProfile.length
 
   if (total === 0) {
@@ -70,7 +66,7 @@ async function main() {
     try {
       const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           from: 'Wedding Counselors <hello@weddingcounselors.com>',
           to: ALERT_TO,
