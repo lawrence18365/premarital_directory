@@ -1,0 +1,31 @@
+name: Lead delivery check
+
+# Daily guardrail: alert if any couple lead failed or stalled in delivery.
+# A broken delivery pipe once silently cost months of leads; this catches it early.
+
+on:
+  schedule:
+    - cron: '0 14 * * *'   # 14:00 UTC daily (~9-10am ET)
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install minimal deps
+        run: npm install @supabase/supabase-js dotenv --no-save
+
+      - name: Check lead delivery (fails if any lead is stuck)
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: node scripts/check-lead-delivery.mjs

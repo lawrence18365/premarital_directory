@@ -48,9 +48,9 @@ serve(async (req) => {
       _t,
     } = payload
 
-    if (!email || !name) {
+    if (!email || !name || !city) {
       return new Response(
-        JSON.stringify({ error: 'Name and email are required' }),
+        JSON.stringify({ error: 'Name, email, and location are required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
