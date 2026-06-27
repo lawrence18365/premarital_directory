@@ -5,9 +5,8 @@ import { formatLocation, formatPhoneNumber } from '../lib/utils'
 import LeadContactForm from '../components/leads/LeadContactForm'
 import Breadcrumbs, { generateBreadcrumbs } from '../components/common/Breadcrumbs'
 import SEOHelmet, { generateProfessionalStructuredData } from '../components/analytics/SEOHelmet'
-import { trackProfileView, trackContactSubmission } from '../components/analytics/GoogleAnalytics'
-import { trackFacebookProfileView, trackFacebookLead } from '../components/analytics/FacebookPixel'
-import { trackProfessionalContact } from '../components/analytics/GoogleAds'
+import { trackProfileView } from '../components/analytics/GoogleAnalytics'
+import { trackFacebookProfileView } from '../components/analytics/FacebookPixel'
 import { STATE_CONFIG } from '../data/locationConfig'
 import { SPECIALTY_CONFIG } from '../data/specialtyConfig'
 import { getAttribution } from '../lib/attribution'
@@ -395,10 +394,9 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
     } catch (err) {
       console.error('unlock persist failed:', err)
     }
-    // The inquiry is the conversion event; fire tracking here.
-    trackContactSubmission(profile?.full_name, 'inquiry')
-    trackFacebookLead(profile?.full_name)
-    trackProfessionalContact(profile?.full_name)
+    // LeadContactForm already fires the conversion events (trackContactSubmission,
+    // trackFacebookLead, trackProfessionalContact) on submit, so we do NOT fire them
+    // again here. This handler only records the unlock and connects the couple.
     setConnectionUnlocked(true)
   }
 
