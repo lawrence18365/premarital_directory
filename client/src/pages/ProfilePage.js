@@ -272,8 +272,7 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
   const [additionalLocations, setAdditionalLocations] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [phoneRevealed, setPhoneRevealed] = useState(false)
-  const [emailRevealed, setEmailRevealed] = useState(false)
+  const [connectionUnlocked, setConnectionUnlocked] = useState(false)
   const [imageError, setImageError] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -376,35 +375,39 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
 
   const handleLeadSuccess = (leadData) => {
     console.log('Lead submitted successfully:', leadData)
-  }
-
-  const handleRevealContact = async (type) => {
+    // The captured inquiry is what unlocks the counselor's direct details.
+    // This is how the platform owns the connection instead of leaking it.
     try {
-      await profileOperations.logContactReveal({
-        profile_id: profile.id,
-        reveal_type: type,
-        ip_address: null,
-        user_agent: navigator.userAgent,
-        session_id: sessionStorage.getItem('session_id') || null,
-        city: profile.city || city || null,
-        state_province: profile.state_province || state || null,
-        page_url: window.location.href,
-        referrer: document.referrer || null
-      })
-
-      // Fire conversion tracking for contact reveals
-      trackContactSubmission(profile.full_name, type)
-      trackFacebookLead(profile.full_name)
-      trackProfessionalContact(profile.full_name)
-
-      if (type === 'phone') setPhoneRevealed(true)
-      if (type === 'email') setEmailRevealed(true)
+      if (profile?.id) {
+        localStorage.setItem('wc_unlocked_' + profile.id, '1')
+        profileOperations.logContactReveal({
+          profile_id: profile.id,
+          reveal_type: 'inquiry',
+          ip_address: null,
+          user_agent: navigator.userAgent,
+          session_id: sessionStorage.getItem('session_id') || null,
+          city: profile.city || city || null,
+          state_province: profile.state_province || state || null,
+          page_url: window.location.href,
+          referrer: document.referrer || null
+        }).catch(() => {})
+      }
     } catch (err) {
-      console.error('Failed to log reveal:', err)
-      if (type === 'phone') setPhoneRevealed(true)
-      if (type === 'email') setEmailRevealed(true)
+      console.error('unlock persist failed:', err)
     }
+    // The inquiry is the conversion event; fire tracking here.
+    trackContactSubmission(profile?.full_name, 'inquiry')
+    trackFacebookLead(profile?.full_name)
+    trackProfessionalContact(profile?.full_name)
+    setConnectionUnlocked(true)
   }
+
+  // A returning couple who already inquired stays unlocked.
+  useEffect(() => {
+    if (profile?.id && localStorage.getItem('wc_unlocked_' + profile.id) === '1') {
+      setConnectionUnlocked(true)
+    }
+  }, [profile?.id])
 
   const scrollToContact = () => {
     document.getElementById('contact-section')?.scrollIntoView({
@@ -717,7 +720,10 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                   )}
 
                   <div className="wellness-hero-actions">
-                    {websiteUrl && (
+                    <button type="button" onClick={scrollToContact} className="wellness-btn">
+                      Contact {profile.full_name ? profile.full_name.split(' ')[0] : 'this counselor'}
+                    </button>
+                    {websiteUrl && connectionUnlocked && (
                       <a
                         href={websiteUrl}
                         target="_blank"
@@ -892,81 +898,63 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                 </section>
               )}
 
-              {/* DIRECT CONTACT — paid tier reveal */}
+              {/* DIRECT CONTACT — unlocked only after a captured inquiry */}
               {canShowDirectContact && (profile.phone || profile.email || websiteUrl || profile.address_line1) && (
                 <section className="wellness-section wellness-glass delay-4">
                   <h2>Direct Contact</h2>
-                  <div className="wellness-data-group">
-                    {profile.phone && (
-                      <div className="wellness-data-row">
-                        <span className="wellness-data-label">Phone</span>
-                        <div className="wellness-data-value">
-                          {phoneRevealed ? (
+                  {!connectionUnlocked ? (
+                    <div className="wellness-data-group">
+                      <p className="wellness-prose" style={{ fontSize: '0.95rem', marginBottom: '1rem' }}>
+                        Send {profile.full_name ? profile.full_name.split(' ')[0] : 'them'} a quick request below and their direct phone, email, and website unlock right away. We also let them know you reached out, so they can respond.
+                      </p>
+                      <button type="button" onClick={scrollToContact} className="wellness-btn" style={{ width: '100%' }}>
+                        Request {profile.full_name ? profile.full_name.split(' ')[0] : 'their'} details
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="wellness-data-group">
+                      {profile.phone && (
+                        <div className="wellness-data-row">
+                          <span className="wellness-data-label">Phone</span>
+                          <div className="wellness-data-value">
                             <a href={`tel:${profile.phone}`} className="wellness-contact-link">
                               {formatPhoneNumber(profile.phone)}
                             </a>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => handleRevealContact('phone')}
-                              className="wellness-reveal-btn"
-                            >
-                              Show phone
-                            </button>
-                          )}
+                          </div>
                         </div>
-                      </div>
-                    )}
-
-                    {profile.email && (
-                      <div className="wellness-data-row">
-                        <span className="wellness-data-label">Email</span>
-                        <div className="wellness-data-value">
-                          {emailRevealed ? (
+                      )}
+                      {profile.email && (
+                        <div className="wellness-data-row">
+                          <span className="wellness-data-label">Email</span>
+                          <div className="wellness-data-value">
                             <a href={`mailto:${profile.email}`} className="wellness-contact-link">
                               {profile.email}
                             </a>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => handleRevealContact('email')}
-                              className="wellness-reveal-btn"
-                            >
-                              Show email
-                            </button>
-                          )}
+                          </div>
                         </div>
-                      </div>
-                    )}
-
-                    {websiteUrl && (
-                      <div className="wellness-data-row">
-                        <span className="wellness-data-label">Website</span>
-                        <div className="wellness-data-value">
-                          <a
-                            href={websiteUrl}
-                            target="_blank"
-                            rel="nofollow noopener noreferrer"
-                            className="wellness-contact-link"
-                            onClick={() => handleRevealContact('website')}
-                          >
-                            Visit website
-                          </a>
+                      )}
+                      {websiteUrl && (
+                        <div className="wellness-data-row">
+                          <span className="wellness-data-label">Website</span>
+                          <div className="wellness-data-value">
+                            <a href={websiteUrl} target="_blank" rel="nofollow noopener noreferrer" className="wellness-contact-link">
+                              Visit website
+                            </a>
+                          </div>
                         </div>
-                      </div>
-                    )}
-
-                    {profile.address_line1 && (
-                      <div className="wellness-data-row">
-                        <span className="wellness-data-label">Address</span>
-                        <div className="wellness-data-value">
-                          {profile.address_line1}
-                          <br />
-                          {formatLocation(profile)} {profile.postal_code}
+                      )}
+                      {profile.address_line1 && (
+                        <div className="wellness-data-row">
+                          <span className="wellness-data-label">Address</span>
+                          <div className="wellness-data-value">
+                            {profile.address_line1}
+                            <br />
+                            {formatLocation(profile)} {profile.postal_code}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                    </div>
+                  )}
                 </section>
               )}
 
@@ -979,22 +967,21 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
                   </p>
                 )}
                 
-                {profile.booking_url ? (
+                <LeadContactForm
+                  profileId={profile.id}
+                  professionalName={profile.full_name}
+                  profile={profile}
+                  isProfileClaimed={profile.is_claimed}
+                  onSuccess={handleLeadSuccess}
+                  theme="wellness"
+                  hideHeader={true}
+                />
+                {profile.booking_url && connectionUnlocked && (
                   <div style={{ marginTop: '2rem' }}>
                     <a href={profile.booking_url} target="_blank" rel="nofollow noopener noreferrer" className="wellness-btn" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
                       Book Consultation
                     </a>
                   </div>
-                ) : (
-                  <LeadContactForm
-                    profileId={profile.id}
-                    professionalName={profile.full_name}
-                    profile={profile}
-                    isProfileClaimed={profile.is_claimed}
-                    onSuccess={handleLeadSuccess}
-                    theme="wellness"
-                    hideHeader={true}
-                  />
                 )}
               </section>
 
@@ -1054,8 +1041,8 @@ const ProfilePage = ({ stateOverride, cityOverride, profileSlugOverride }) => {
         </section>
       </div>
 
-      {/* Sticky mobile CTA — visible on tablet/mobile only via CSS */}
-      <div className="profile-sticky-cta" style={{ display: 'none' }}>
+      {/* Sticky mobile CTA, visible on tablet/mobile only via CSS */}
+      <div className="profile-sticky-cta">
         <div className="profile-sticky-cta-info">
           <div className="profile-sticky-cta-name">{profile.full_name}</div>
         </div>
